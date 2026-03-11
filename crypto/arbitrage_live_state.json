@@ -2,204 +2,15 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -24.4,
+  "totalPnl": -26.4,
   "realizedPnl": -663.579136352341,
   "unrealizedPnl": 0,
-  "dailyPnl": -22,
+  "dailyPnl": -24,
   "dailyPnlDate": "2026-03-11",
-  "trades": 24,
+  "trades": 25,
   "wins": 2,
   "losses": 15,
   "positions": [
-    {
-      "id": "mmkx3w93",
-      "symbol": "KITE",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bybit",
-      "size": 500,
-      "qty": 15978,
-      "entryPrice": 0.28252,
-      "entryTime": "2026-03-10T18:02:34.119Z",
-      "spread": 0.00593658,
-      "annualized": 650.05551,
-      "earned": 9.336604239999996,
-      "longOrderId": 1099826393,
-      "shortOrderId": "54db7ff9-cbac-4af7-9adb-af7084913c56",
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": 0.06261652,
-        "short": 0.55386397
-      }
-    },
-    {
-      "id": "mmkx3wo6",
-      "symbol": "LYN",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 300,
-      "qty": 9785,
-      "entryPrice": 0.33713000000000004,
-      "entryTime": "2026-03-10T18:02:34.662Z",
-      "spread": 0.0037184500000000003,
-      "annualized": 407.1702750000001,
-      "earned": 7.694818639999999,
-      "longOrderId": "d5958ccf-5ef2-4273-8345-cea0f02c1da7",
-      "shortOrderId": 812498835,
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": null,
-        "short": 0.6793894
-      }
-    },
-    {
-      "id": "mmkx9lxl",
-      "symbol": "PIXEL",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 500,
-      "qty": 1099812,
-      "entryPrice": 0.0078685,
-      "entryTime": "2026-03-10T18:07:00.681Z",
-      "spread": 0.008272609999999998,
-      "annualized": 905.8507949999997,
-      "earned": 116.20940119000004,
-      "longOrderId": "68c2a7dc-3add-475a-8ba8-6a556ddc3315",
-      "shortOrderId": 2795381449,
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": 0.0053981,
-        "short": 0.01226218
-      }
-    },
-    {
-      "id": "mml1cusc",
-      "symbol": "RONIN",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bybit",
-      "size": 300,
-      "qty": 3167.5,
-      "entryPrice": 0.09470999999999999,
-      "entryTime": "2026-03-10T20:01:30.588Z",
-      "spread": 0.00346811,
-      "annualized": 379.758045,
-      "earned": -0.011814149999999978,
-      "longOrderId": 1744948603,
-      "shortOrderId": "e1fde1a4-3f2f-4b53-8dba-64eb3de7bc01",
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": 0,
-        "short": 1.51323902
-      }
-    },
-    {
-      "id": "mml1j9aa",
-      "symbol": "1000000MOG",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bybit",
-      "size": 300,
-      "qty": 1903,
-      "entryPrice": 0.157635,
-      "entryTime": "2026-03-10T20:06:29.314Z",
-      "spread": 0.00329029,
-      "annualized": 360.286755,
-      "earned": 0.04602934,
-      "longOrderId": 1684069661,
-      "shortOrderId": "1c94afa1-a7a5-4565-8593-4fd733393717",
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": 0,
-        "short": 2.5239246
-      }
-    },
-    {
-      "id": "mml292ih",
-      "symbol": "XAI",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 300,
-      "qty": 27181,
-      "entryPrice": 0.011037,
-      "entryTime": "2026-03-10T20:26:33.593Z",
-      "spread": 0.00428511,
-      "annualized": 469.219545,
-      "earned": 1.28480316,
-      "longOrderId": "39bbd199-73ab-4359-88d6-ed6271a08135",
-      "shortOrderId": 3776123616,
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": null,
-        "short": 0.12880896
-      }
-    },
-    {
-      "id": "mml354mo",
-      "symbol": "MAGIC",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 300,
-      "qty": 4568,
-      "entryPrice": 0.06566,
-      "entryTime": "2026-03-10T20:51:29.328Z",
-      "spread": 0.0031199400000000003,
-      "annualized": 341.63343000000003,
-      "earned": -0.14172554,
-      "longOrderId": "50274820-4f57-4ac7-851b-5bdabead084f",
-      "shortOrderId": 5495181941,
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": null,
-        "short": 0.76043386
-      }
-    },
-    {
-      "id": "mml9xgc3",
-      "symbol": "ICX",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 500,
-      "qty": 13789,
-      "entryPrice": 0.03626,
-      "entryTime": "2026-03-11T00:01:28.563Z",
-      "spread": 0.01597268,
-      "annualized": 1749.00846,
-      "earned": 0,
-      "longOrderId": "a5f4e944-1b24-415e-90b3-3e23a7c00315",
-      "shortOrderId": 5464519033,
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": null,
-        "short": 0.27046898
-      }
-    },
-    {
-      "id": "mmlaabls",
-      "symbol": "SLP",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 500,
-      "qty": 827330,
-      "entryPrice": 0.00060435,
-      "entryTime": "2026-03-11T00:11:28.960Z",
-      "spread": 0.006212570000000001,
-      "annualized": 680.276415,
-      "earned": -0.76898935,
-      "longOrderId": "c2e90c2e-09a6-42d4-bf4e-8d77f02dd7e9",
-      "shortOrderId": 239902415,
-      "unrealizedPnl": 0,
-      "liqPrice": {
-        "long": null,
-        "short": 0.00444725
-      }
-    },
     {
       "id": "mmlhauvw",
       "symbol": "ROBO",
@@ -215,7 +26,7 @@
       "earned": 1.2638010300000002,
       "longOrderId": "e842217c-354f-4511-9487-5702ffa81f35",
       "shortOrderId": "1415467501167976449",
-      "unrealizedPnl": 15.3773199928
+      "unrealizedPnl": 21.4431199928
     },
     {
       "id": "mmlhav0u",
@@ -232,7 +43,7 @@
       "earned": -2.18198855,
       "longOrderId": "af8c9274-a515-4eb2-83cb-bd4b83b614da",
       "shortOrderId": "1415467502514348033",
-      "unrealizedPnl": 4.8183099993
+      "unrealizedPnl": 14.2845099993
     },
     {
       "id": "mmlhx4b9",
@@ -249,24 +60,7 @@
       "earned": -2.36872565,
       "longOrderId": "835c7980-9a0a-43e9-8792-b5266e997109",
       "shortOrderId": "1415471857569243137",
-      "unrealizedPnl": 21.018379932585
-    },
-    {
-      "id": "mmli3jel",
-      "symbol": "VTHO",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bitget",
-      "size": 1000,
-      "qty": 1569600,
-      "entryPrice": 0.0006371,
-      "entryTime": "2026-03-11T03:50:09.405Z",
-      "spread": 0.00416748,
-      "annualized": 456.33906,
-      "earned": 1.1718872,
-      "longOrderId": 597238781,
-      "shortOrderId": "1415473114480517123",
-      "unrealizedPnl": 17.227639224
+      "unrealizedPnl": 26.612229932585
     },
     {
       "id": "mmlimtwz",
@@ -283,7 +77,7 @@
       "earned": 0,
       "longOrderId": "7fb1e400-6e9f-4bbb-8b1d-798eb25fdf67",
       "shortOrderId": "1415476889551249409",
-      "unrealizedPnl": 7.30988895345
+      "unrealizedPnl": 25.33328895345
     },
     {
       "id": "mmlitggb",
@@ -300,41 +94,7 @@
       "earned": 0,
       "longOrderId": "51ec4876-f7f7-4e93-adda-35d285d79f31",
       "shortOrderId": "1415478186149027841",
-      "unrealizedPnl": 45.301119960096
-    },
-    {
-      "id": "mmlizvyv",
-      "symbol": "ONT",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 1000,
-      "qty": 24527,
-      "entryPrice": 0.04077,
-      "entryTime": "2026-03-11T04:15:18.679Z",
-      "spread": 0.00490832,
-      "annualized": 537.46104,
-      "earned": 0,
-      "longOrderId": "0c76d0a4-9de0-49f0-adc4-9758efb89dce",
-      "shortOrderId": 8374305933,
-      "unrealizedPnl": 0
-    },
-    {
-      "id": "mmljj6bo",
-      "symbol": "GAS",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
-      "size": 1000,
-      "qty": 637.7,
-      "entryPrice": 1.5680999999999998,
-      "entryTime": "2026-03-11T04:30:18.564Z",
-      "spread": 0.0046156800000000005,
-      "annualized": 505.4169600000001,
-      "earned": 0,
-      "longOrderId": "11abf2b3-ef42-4502-be4e-1f0d0e167823",
-      "shortOrderId": 3791340375,
-      "unrealizedPnl": 0
+      "unrealizedPnl": 48.857919960096
     },
     {
       "id": "mmlljnt1",
@@ -351,14 +111,31 @@
       "earned": 0,
       "longOrderId": "1415497403728535553",
       "shortOrderId": "5b48db3b-11a6-4f9c-8c4e-5a19d2cece0b",
-      "unrealizedPnl": 2.83966061456
+      "unrealizedPnl": 5.82430061456
+    },
+    {
+      "id": "mmloyr4p",
+      "symbol": "ONG",
+      "type": "funding",
+      "longEx": "bybit",
+      "shortEx": "bitget",
+      "size": 1000,
+      "qty": 15555,
+      "entryPrice": 0.06428500000000001,
+      "entryTime": "2026-03-11T07:02:23.449Z",
+      "spread": 0.00354232,
+      "annualized": 387.88403999999997,
+      "earned": 0,
+      "longOrderId": "8d4512e8-f1eb-4248-bdfd-2150c685f891",
+      "shortOrderId": "1415521491591241729",
+      "unrealizedPnl": 0
     }
   ],
   "balances": {
-    "binance": 5725.18606499,
-    "bybit": 2963.56862074,
-    "bitget": 2436.0399537750473,
-    "okx": 2999.980000674372
+    "binance": 4855.51715852,
+    "bybit": 6756.13275187,
+    "bitget": 2461.0889159217027,
+    "okx": 6.743723247e-7
   },
   "lastTrade": {
     "PIXEL_bybit_binance": 1773166020681,
@@ -395,10 +172,20 @@
     "AERGO_bybit_bitget": 1773202218635,
     "ONT_bybit_binance": 1773202518679,
     "GAS_bybit_binance": 1773203418564,
-    "RLS_bitget_bybit": 1773206800453
+    "RLS_bitget_bybit": 1773206800453,
+    "ONG_bybit_bitget": 1773212543449
   },
   "errors": 22,
   "consecutiveErrors": 0,
   "lastError": "Cannot access 'tradeSize' before initialization",
-  "_lastEarnedCheck": 1773211023310
+  "_lastEarnedCheck": 1773214143180,
+  "pendingOpps": {
+    "PIXEL": {
+      "lowEx": "bybit",
+      "highEx": "binance",
+      "spread": 0.00544907,
+      "priceDiff": 1.9222732971165957,
+      "time": 1773213378841
+    }
+  }
 }

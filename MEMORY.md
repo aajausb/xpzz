@@ -92,7 +92,11 @@
 - Base聪明钱特征：钻石手（买了不卖，独立判断，top核心100%胜率）
 - **交易速度**: 报价~110ms + 签名~23ms + 发送~200ms = 333ms（链上确认1-4秒额外）
 - **密钥预热**: 启动时解密一次缓存内存，签名从112ms→23ms
-- **看板独立脚本**: `crypto/dashboard_refresh.js`（直接调TG API，1-3秒，不烧token）
+- **看板独立脚本**: `crypto/refresh_dashboard.js` + HTTP server port 9876（0.1s，不烧token）
+- Dashboard messageId: **3713**（从2443→3524→3713）
+- **Heartbeat 不能直接 message edit 看板**（会丢按钮），必须走引擎 HTTP 刷新
+- 看板时间精确到秒，防止 Telegram editMessage 内容相同不刷新
+- 总计 **33 个 bug** found and fixed
 - **DEX-CEX策略已关闭**: $0收益后注释掉
 - **套利内存优化**: --expose-gc + 定时global.gc()，2.4GB→69MB
 

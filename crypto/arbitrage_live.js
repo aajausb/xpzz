@@ -45,7 +45,11 @@ const CONFIG = {
   
   // 极端行情保护
   MAX_PRICE_DEVIATION_PCT: 10, // 同一币种四所最大价差超10%才暂停（小币波动大）
-  MIN_MARGIN_RATIO: 0.1,     // 保证金率低于10%强制平仓
+  // 保证金安全监控
+  MARGIN_WARN_RATIO: 0.15,    // 可用余额/仓位名义值 < 30% → 通知
+  MARGIN_CLOSE_RATIO: 0.10,   // < 20% → 自动平掉最大浮亏仓位
+  MARGIN_EMERGENCY_RATIO: 0.08, // < 15% → 全平该交易所所有仓位
+  MARGIN_CHECK_INTERVAL: 60000, // 每60秒检查一次
   EXCHANGE_TIMEOUT_PAUSE: 3,  // 连续3次API超时暂停该交易所
   TOTAL_LOSS_LIMIT: 800, // [已废弃] 不再使用，对冲仓位不需要总亏损检查
   UNREALIZED_LOSS_LIMIT: 500, // [已废弃] 不再使用，浮亏是纸面数字
@@ -168,7 +172,7 @@ async function notify(msg) {
 async function updateDashboard() {
   try {
     const { execSync } = require('child_process');
-    const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' });
+    const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
     const bn = state.balances.binance || 0;
     const by = state.balances.bybit || 0;
@@ -948,6 +952,97 @@ async function closeFundingPosition(pos) {
 }
 
 // ============ 动态仓位管理（每小时） ============
+// ============ 保证金安全监控（每60秒） ============
+async function checkMarginSafety() {
+  try {
+    // 1. 获取每个交易所余额和持仓
+    const [bnBal, byBal, bgBal] = await Promise.all([
+      binance.getFuturesBalance().catch(() => ({ usdt: 0 })),
+      bybit.getBalance().catch(() => ({ usdt: 0 })),
+      bitget.getFuturesBalance().catch(() => ({ usdt: 0 }))
+    ]);
+
+    const [bnPos, byPos, bgPos] = await Promise.all([
+      binance.getFuturesPositions().catch(() => []),
+      bybit.api('GET', '/v5/position/list', { category: 'linear', settleCoin: 'USDT' }).catch(() => ({})),
+      bitget.api('GET', '/api/v2/mix/position/all-position', { productType: 'USDT-FUTURES' }).catch(() => ({}))
+    ]);
+
+    // 2. 计算每个交易所的名义总值和浮盈
+    const exchanges = [
+      {
+        name: 'binance', balance: +(bnBal.usdt || 0),
+        positions: (bnPos || []).filter(p => +p.positionAmt !== 0).map(p => ({
+          symbol: p.symbol, notional: Math.abs(+p.positionAmt * +p.markPrice),
+          pnl: +p.unRealizedProfit
+        }))
+      },
+      {
+        name: 'bybit', balance: +(byBal.usdt || 0),
+        positions: (byPos.result?.list?.filter(x => +x.size > 0) || []).map(p => ({
+          symbol: p.symbol, notional: +p.positionValue,
+          pnl: +p.unrealisedPnl
+        }))
+      },
+      {
+        name: 'bitget', balance: +(bgBal.usdt || 0),
+        positions: (bgPos.data?.filter(x => +x.total > 0) || []).map(p => ({
+          symbol: p.symbol, notional: Math.abs(+p.total * +p.marketPrice),
+          pnl: +(p.unrealizedPL || 0)
+        }))
+      }
+    ];
+
+    for (const ex of exchanges) {
+      if (ex.positions.length === 0) continue;
+
+      const totalNotional = ex.positions.reduce((s, p) => s + p.notional, 0);
+      const totalPnl = ex.positions.reduce((s, p) => s + p.pnl, 0);
+      const available = ex.balance + totalPnl; // 可用 = 余额 + 浮盈（浮亏是负数）
+      const ratio = totalNotional > 0 ? available / totalNotional : 1;
+
+      // 3. 分级处理
+      if (ratio < CONFIG.MARGIN_EMERGENCY_RATIO) {
+        // 🚨 紧急：全平该交易所
+        log(`🚨🚨🚨 ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}% < 15%! 紧急全平!`);
+        await notify(`🚨🚨🚨 紧急！${ex.name} 保证金率仅 ${(ratio*100).toFixed(1)}%\n余额: $${available.toFixed(0)} / 仓位: $${totalNotional.toFixed(0)}\n🔴 正在全平该所所有仓位!`);
+        
+        const toClose = state.positions.filter(p => p.longEx === ex.name || p.shortEx === ex.name);
+        for (const pos of toClose) {
+          try { await closeFundingPosition(pos); } catch (e) { log(`  ❌ 紧急平仓失败 ${pos.symbol}: ${e.message}`); }
+        }
+        
+      } else if (ratio < CONFIG.MARGIN_CLOSE_RATIO) {
+        // ⚠️ 危险：平掉该交易所最大浮亏仓位
+        const worstPos = ex.positions.sort((a, b) => a.pnl - b.pnl)[0];
+        const statePos = state.positions.find(p => {
+          const sym = getFuturesSymbol(p.symbol, ex.name);
+          return sym === worstPos.symbol && (p.longEx === ex.name || p.shortEx === ex.name);
+        });
+        
+        if (statePos) {
+          log(`⚠️ ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}% < 20%! 平掉最大浮亏: ${statePos.symbol} ($${worstPos.pnl.toFixed(2)})`);
+          await notify(`⚠️ ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}%\n自动平仓最大浮亏: ${statePos.symbol} (浮亏 $${worstPos.pnl.toFixed(2)})\n两边同时平，不留裸敞口`);
+          try { await closeFundingPosition(statePos); } catch (e) { log(`  ❌ 保证金平仓失败: ${e.message}`); }
+        }
+        
+      } else if (ratio < CONFIG.MARGIN_WARN_RATIO) {
+        // 📢 预警：只通知
+        log(`📢 ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}% < 30% 预警 | 余额$${available.toFixed(0)} 仓位$${totalNotional.toFixed(0)}`);
+        // 每30分钟最多通知一次
+        const warnKey = `margin_warn_${ex.name}`;
+        if (!state._lastMarginWarn) state._lastMarginWarn = {};
+        if (!state._lastMarginWarn[warnKey] || Date.now() - state._lastMarginWarn[warnKey] > 1800000) {
+          state._lastMarginWarn[warnKey] = Date.now();
+          await notify(`📢 ${ex.name} 保证金预警\n保证金率: ${(ratio*100).toFixed(1)}%\n可用: $${available.toFixed(0)} | 仓位: $${totalNotional.toFixed(0)}\n建议补充保证金或减仓`);
+        }
+      }
+    }
+  } catch (e) {
+    log('⚠️ 保证金检查异常: ' + e.message);
+  }
+}
+
 async function rebalancePositions() {
   if (state.positions.length === 0) return;
 
@@ -1668,6 +1763,10 @@ async function main() {
   // 余额更新 - 每10分钟
   setInterval(updateBalances, 600000);
 
+  // 保证金安全监控 - 每60秒
+  setInterval(checkMarginSafety, CONFIG.MARGIN_CHECK_INTERVAL);
+  await checkMarginSafety(); // 启动时立即检查一次
+
   // 状态报告 - 每30分钟
   setInterval(statusReport, 1800000);
 
@@ -1734,7 +1833,7 @@ function startDashboardServer() {
         return `├ ${p.s}: ${p.e >= 0 ? '+' : ''}$${p.e.toFixed(2)} ${icon} | ${szStr} ${exMap[p.l]}↑${exMap[p.h]}↓`;
       }).join('\n');
 
-      const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' });
+      const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const elapsed = ((Date.now() - start) / 1000).toFixed(1);
 
       const text = `📊 系统看板 (${ts})\n\n` +
