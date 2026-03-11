@@ -1,10 +1,8 @@
 # HEARTBEAT.md
 
 ## 看板自动更新（每次heartbeat执行）
-1. 查三所真实浮盈（binance+bybit+bitget 的 unrealizedPnl 两侧合计）
-2. 读取 `crypto/arbitrage_live_state.json` 的 PnL 和仓位
-3. 用 `message` tool `action=edit` 更新看板消息 (messageId=3524, target=877233818)
-4. 聪明钱/土狗已暂停，不显示
+1. 运行 `curl -s http://127.0.0.1:9876/refresh`（引擎内部刷新，自带按钮）
+2. **不要用 message tool edit 直接编辑看板**（会丢按钮）
 
 ## 内存检查（每次heartbeat执行）
 1. 运行 `free -m` 检查可用内存

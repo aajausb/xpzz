@@ -193,7 +193,7 @@ async function updateDashboard() {
       `⚙️ arbitrage-live ✅ | WS 4所\n└ 🟢 运行中 | ⏰ ${ts}`;
 
     const body = JSON.stringify({
-      chat_id: CONFIG.TG_CHAT_ID, message_id: 2443, text,
+      chat_id: CONFIG.TG_CHAT_ID, message_id: 3713, text,
       reply_markup: JSON.stringify({ inline_keyboard: [[{ text: '🔄 刷新', callback_data: 'refresh_dashboard' }]] })
     });
     const req = https.request({
@@ -1687,7 +1687,7 @@ async function main() {
 // ============ 本地 HTTP 服务 — 看板秒刷 ============
 function startDashboardServer() {
   const http = require('http');
-  const DASHBOARD_MSG_ID = 3524;
+  const DASHBOARD_MSG_ID = 3713;
   
   async function refreshDashboardDirect() {
     const start = Date.now();

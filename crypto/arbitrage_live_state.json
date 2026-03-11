@@ -215,7 +215,7 @@
       "earned": 1.2638010300000002,
       "longOrderId": "e842217c-354f-4511-9487-5702ffa81f35",
       "shortOrderId": "1415467501167976449",
-      "unrealizedPnl": 10.9446199928
+      "unrealizedPnl": 15.3773199928
     },
     {
       "id": "mmlhav0u",
@@ -232,7 +232,7 @@
       "earned": -2.18198855,
       "longOrderId": "af8c9274-a515-4eb2-83cb-bd4b83b614da",
       "shortOrderId": "1415467502514348033",
-      "unrealizedPnl": 5.8701099993
+      "unrealizedPnl": 4.8183099993
     },
     {
       "id": "mmlhx4b9",
@@ -249,7 +249,7 @@
       "earned": -2.36872565,
       "longOrderId": "835c7980-9a0a-43e9-8792-b5266e997109",
       "shortOrderId": "1415471857569243137",
-      "unrealizedPnl": 22.005529932585
+      "unrealizedPnl": 21.018379932585
     },
     {
       "id": "mmli3jel",
@@ -266,7 +266,7 @@
       "earned": 1.1718872,
       "longOrderId": 597238781,
       "shortOrderId": "1415473114480517123",
-      "unrealizedPnl": 17.698519224
+      "unrealizedPnl": 17.227639224
     },
     {
       "id": "mmlimtwz",
@@ -283,7 +283,7 @@
       "earned": 0,
       "longOrderId": "7fb1e400-6e9f-4bbb-8b1d-798eb25fdf67",
       "shortOrderId": "1415476889551249409",
-      "unrealizedPnl": 5.12963895345
+      "unrealizedPnl": 7.30988895345
     },
     {
       "id": "mmlitggb",
@@ -300,7 +300,7 @@
       "earned": 0,
       "longOrderId": "51ec4876-f7f7-4e93-adda-35d285d79f31",
       "shortOrderId": "1415478186149027841",
-      "unrealizedPnl": 42.099999960096
+      "unrealizedPnl": 45.301119960096
     },
     {
       "id": "mmlizvyv",
@@ -351,7 +351,7 @@
       "earned": 0,
       "longOrderId": "1415497403728535553",
       "shortOrderId": "5b48db3b-11a6-4f9c-8c4e-5a19d2cece0b",
-      "unrealizedPnl": -4.62193938544
+      "unrealizedPnl": 2.83966061456
     }
   ],
   "balances": {
@@ -400,5 +400,5 @@
   "errors": 22,
   "consecutiveErrors": 0,
   "lastError": "Cannot access 'tradeSize' before initialization",
-  "_lastEarnedCheck": 1773210356064
+  "_lastEarnedCheck": 1773211023310
 }
