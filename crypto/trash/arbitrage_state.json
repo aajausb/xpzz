@@ -1,0 +1,29 @@
+{
+  "balance": {
+    "okx": 3047.695185187314,
+    "bybit": 2600.2102339753224,
+    "bitget": 2596.649764347071,
+    "binance": 3022.855349231336
+  },
+  "fundingPositions": [
+    {
+      "symbol": "KITE",
+      "longEx": "bitget",
+      "shortEx": "bybit",
+      "size": 500,
+      "spread": 0.0012949999999999993,
+      "ann": 141.80249999999992,
+      "openTime": "2026-03-09T12:22:55.058Z",
+      "earned": 195.27372500000004
+    }
+  ],
+  "totalPnl": 271.0830899777131,
+  "trades": 2847,
+  "crossArbPnl": 75.08672527343946,
+  "fundingPnl": 197.99636470427362,
+  "dexCexPnl": 0,
+  "startTime": "2026-03-09T12:22:54.227Z",
+  "maxDrawdown": 7.636555159546149,
+  "peakBalance": 13119.249382741047,
+  "paused": true
+}

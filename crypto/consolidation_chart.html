@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { margin: 0; padding: 20px; background: #1a1a2e; font-family: Arial, sans-serif; }
+canvas { display: block; margin: 0 auto; border-radius: 8px; }
+</style>
+</head>
+<body>
+<canvas id="c" width="750" height="500"></canvas>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+
+// 背景
+ctx.fillStyle = '#16213e';
+ctx.fillRect(0, 0, 750, 500);
+
+// 标题
+ctx.font = 'bold 20px Arial';
+ctx.fillStyle = '#fff';
+ctx.textAlign = 'center';
+ctx.fillText('小胖崽崽理解的「横盘」🐷', 375, 30);
+ctx.font = '13px Arial';
+ctx.fillStyle = '#888';
+ctx.fillText('4H + 1H 波动率 < 30% → 横盘确认 → 结合内幕钱包决定买入', 375, 50);
+
+// 网格
+ctx.strokeStyle = '#1a3a5c';
+ctx.lineWidth = 0.5;
+for (let y = 70; y < 440; y += 40) {
+  ctx.beginPath(); ctx.moveTo(55, y); ctx.lineTo(720, y); ctx.stroke();
+}
+
+// K线数据
+const candles = [
+  {o:100,h:115,l:95,c:112},
+  {o:112,h:132,l:108,c:128},
+  {o:128,h:148,l:125,c:142},
+  {o:142,h:165,l:138,c:158},
+  {o:158,h:180,l:152,c:175},
+  {o:175,h:198,l:170,c:192},
+  {o:192,h:210,l:185,c:205},
+  // 横盘
+  {o:205,h:214,l:196,c:198},
+  {o:198,h:212,l:194,c:208},
+  {o:208,h:215,l:197,c:200},
+  {o:200,h:213,l:195,c:210},
+  {o:210,h:216,l:198,c:199},
+  {o:199,h:212,l:196,c:207},
+  {o:207,h:214,l:195,c:201},
+  {o:201,h:213,l:197,c:209},
+  {o:209,h:217,l:198,c:203},
+  {o:203,h:215,l:196,c:211},
+  // 突破
+  {o:211,h:235,l:208,c:232},
+  {o:232,h:260,l:228,c:255},
+  {o:255,h:290,l:250,c:285},
+];
+
+const minP = 75, maxP = 310;
+const toY = (p) => 450 - (p - minP) / (maxP - minP) * 390;
+const cw = 30;
+const sx = 70;
+const hpS = 7, hpE = 16;
+
+// 横盘区域背景
+ctx.fillStyle = 'rgba(0, 255, 136, 0.07)';
+ctx.fillRect(sx + hpS * cw - 8, toY(218), (hpE - hpS + 1) * cw + 16, toY(194) - toY(218));
+
+// 横盘上下界虚线
+ctx.setLineDash([6, 4]);
+ctx.strokeStyle = '#00ff88';
+ctx.lineWidth = 1.5;
+ctx.beginPath(); ctx.moveTo(sx + hpS * cw - 12, toY(217)); ctx.lineTo(sx + (hpE+1) * cw + 5, toY(217)); ctx.stroke();
+ctx.beginPath(); ctx.moveTo(sx + hpS * cw - 12, toY(194)); ctx.lineTo(sx + (hpE+1) * cw + 5, toY(194)); ctx.stroke();
+ctx.setLineDash([]);
+
+// 画K线
+candles.forEach((k, i) => {
+  const x = sx + i * cw;
+  const up = k.c >= k.o;
+  const col = up ? '#00d4aa' : '#ff4757';
+  
+  ctx.strokeStyle = col;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(x + cw/2, toY(k.h));
+  ctx.lineTo(x + cw/2, toY(k.l));
+  ctx.stroke();
+  
+  ctx.fillStyle = col;
+  const top = toY(Math.max(k.o, k.c));
+  const bot = toY(Math.min(k.o, k.c));
+  ctx.fillRect(x + 5, top, cw - 10, Math.max(bot - top, 2));
+});
+
+ctx.textAlign = 'center';
+
+// 上涨标注
+ctx.font = 'bold 15px Arial';
+ctx.fillStyle = '#00d4aa';
+ctx.fillText('📈 拉升阶段', sx + 3 * cw, 68);
+
+// 横盘标注
+ctx.fillStyle = '#00ff88';
+ctx.fillText('📊 横盘整理', sx + 11.5 * cw, 68);
+ctx.font = '12px Arial';
+ctx.fillStyle = '#aaa';
+ctx.fillText('4H+1H 波动率<30%', sx + 11.5 * cw, 85);
+
+// 突破标注
+ctx.font = 'bold 15px Arial';
+ctx.fillStyle = '#ffd700';
+ctx.fillText('🚀 突破拉升', sx + 18.5 * cw, 68);
+
+// 买入点标注
+const buyX = sx + 13 * cw + cw/2;
+const buyY = toY(196);
+ctx.fillStyle = '#ffd700';
+ctx.beginPath();
+ctx.moveTo(buyX, buyY + 5);
+ctx.lineTo(buyX - 8, buyY + 20);
+ctx.lineTo(buyX + 8, buyY + 20);
+ctx.fill();
+ctx.font = 'bold 13px Arial';
+ctx.fillStyle = '#ffd700';
+ctx.fillText('⬆ 买入点', buyX, buyY + 35);
+ctx.font = '11px Arial';
+ctx.fillStyle = '#ccc';
+ctx.fillText('横盘+内幕加仓', buyX, buyY + 50);
+
+// 波动率标注
+ctx.textAlign = 'left';
+ctx.font = '12px Arial';
+
+// 上界标注
+ctx.fillStyle = '#00ff88';
+ctx.fillText('压力位', sx + (hpE+1) * cw + 10, toY(217) + 4);
+
+// 下界标注
+ctx.fillText('支撑位', sx + (hpE+1) * cw + 10, toY(194) + 4);
+
+// 右侧价格标注
+ctx.textAlign = 'right';
+ctx.fillStyle = '#666';
+ctx.font = '11px Arial';
+for (let p = 100; p <= 300; p += 50) {
+  ctx.fillText('$' + (p/10000).toFixed(4), 48, toY(p) + 4);
+}
+
+// 底部说明
+ctx.textAlign = 'center';
+ctx.font = '13px Arial';
+ctx.fillStyle = '#ff4757';
+ctx.fillText('❌ 不在这买（追高）', sx + 3 * cw, 480);
+ctx.fillStyle = '#00ff88';
+ctx.fillText('✅ 在这买（横盘+内幕加仓）', sx + 11.5 * cw, 480);
+ctx.fillStyle = '#888';
+ctx.fillText('💰 已经赚了', sx + 18.5 * cw, 480);
+</script>
+</body>
+</html>

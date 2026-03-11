@@ -1,0 +1,514 @@
+{
+  "wallets": [
+    {
+      "address": "8psNvWTrdNTiVRNzAgsou9kETXNJm2SXZyaKuJraVRtf",
+      "score": "15.00",
+      "winRate": "9币",
+      "tokens": "WAR / USD1,$michi / SOL,67 / SOL,MISSILE / SOL,SOS / USDC",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "62qc2CNXwrYqQScmEdiZFFAnJR262PxWEuNQtxfafNgV",
+      "score": "9.00",
+      "winRate": "5币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "9rPYyANsfQZw3DnDmKE3YCQF5E8oD89UXoHn9JFEhJUz",
+      "score": "8.00",
+      "winRate": "4币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "AVmoTthdrX6tKt4nDjco2D775W2YK3sDhxPcMmzUAmTY",
+      "score": "8.00",
+      "winRate": "5币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "G5UZAVbAf46s7cKWoyKu8kYTip9DGTpbLZ2qa9Aq69dP",
+      "score": "8.00",
+      "winRate": "5币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "7hTckgnGnLQR6sdH7YkqFTAA7VwTfYFaZ6EhEsU3saCX",
+      "score": "8.00",
+      "winRate": "5币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "7VtfL8fvgNfhz17qKRMjzQEXgbdpnHHHQRh54R9jP2RJ",
+      "score": "7.00",
+      "winRate": "4币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "FWsW1xNtWscwNmKv6wVsU1iTzRN6wmmk3MjxRP5tT7hz",
+      "score": "7.00",
+      "winRate": "5币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "JCRGumoE9Qi5BBgULTgdgTLjSgkCMSbF62ZZfGs84JeU",
+      "score": "6.00",
+      "winRate": "4币",
+      "tokens": "COIN / SOL,U.S OIL / SOL,COIN / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "HFqp6ErWHY6Uzhj8rFyjYuDya2mXUpYEk8VW75K9PSiY",
+      "score": "4.00",
+      "winRate": "2币",
+      "tokens": "67 / SOL,Lobstar / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "DJocqRPK2uKWvmR5WnWcd7m8fDw6az1L54R4UuH3GrGN",
+      "score": "4.00",
+      "winRate": "2币",
+      "tokens": "MISSILE / SOL,Nana / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "7iWnBRRhBCiNXXPhqiGzvvBkKrvFSWqqmxRyu9VyYBxE",
+      "score": "3.80",
+      "winRate": "2币",
+      "tokens": "BILLY / SOL,Lobstar / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "HU23r7UoZbqTUuh3vA7emAGztFtqwTeVips789vqxxBw",
+      "score": "3.00",
+      "winRate": "2币",
+      "tokens": "Nana / SOL,Lobstar / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "F2LsTgsepmoAuorgQDz9c28eQKnQem8quKX1tzQ2nDE6",
+      "score": "2.82",
+      "winRate": "3币",
+      "tokens": "COIN / SOL,COIN / SOL,U.S OIL / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "pSwTTFE92RsRtvMCpb3mjruv5ww2KgBNVPscwdWwbxk",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "WAR / USD1",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "DnMYWYpfamA1Ha5Q1urV3zuHk9FLfWxk5bjMQXpj2iNU",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "WAR / USD1",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "D9GYt4W7VvteKCSvTgyjzuiBJyTy94Kmr6YiC9fbxGjW",
+      "score": "2.00",
+      "winRate": "2币",
+      "tokens": "WAR / USD1,PENGUIN / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "DEGeNMZV8ur7JoJNG7AHZYRKGu8xT4w9U6VHdaRG6wWL",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "6aLyVzxacEAj5YYXWMURs9zRq7Gc2hwjp9PzT7koqo1X",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "EtcypjU3iERqtNZGmTa5jQ1qSyQvTN6KX6Fet7m2KyAj",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "7sMr5eyJ8ZTj1sESfjnUxDaB9qZ7QYS28ZZaSr39rQ1z",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "BWrLxrpLQtNGSgYm3skJUwRJGCKC4XkMujVWDihN9eBC",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "J4aBJCKr7aKZJQwcTpHa7RwbnVVAoPgBZkpFrfdtcFnN",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "6LY1JzAFVZsP2a2xKrtU6znQMQ5h4i7tocWdgrkZzkzF",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "DGPRnSxhywgh5ezJ7g4r2xAQ7oiSTrWjahufTNVaYDdN",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "GWjyzrV47deYbL3nzvbMgM38CZAEsT2x5KhSteWagq4Z",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "$michi / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "FMVHP1xw6ZHB9zLGyrJeeAvEzCBgouH8bPzdkYqq2C5W",
+      "score": "2.00",
+      "winRate": "2币",
+      "tokens": "$michi / SOL,Nana / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "3hs2zxnxHiWVTUgLyyEVUa2VtGGEb298PWb2UqNvdxQY",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "Distorted / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "F6gVrazoefJaf6Ry8Vvt5irsqFjwgyXZ7bau4jzdk97C",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "Distorted / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "En8MVCMb7KQZtxAq7rmcspdDRq2sPnEVKsJtZsymjoxu",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "2eT3MAFm7cZM6WtJSTztVNE1nuzoGoTxgGaaSAMhvRYR",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "4UFRBsJ8vs7iKywQacGkh8LhRym8mRujoiu2vhhkqZRH",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "9vipEqXA6rCnfm4JBHmaN5NLPioVdBK1qs343aGSk89s",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "GueLuoNeXF2AJzQt6ytQtjTcjkWczzXnFTPWcGfBpQ4i",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "By4vowiD8jU3sfwr4HBjg1mpBFeGobwHrBEQfW3e4avC",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "H5EZAoiYxjNwQQNjdzzj2MtAQ3gEwBWCazKvqDhRhTLy",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "85gjRdKhAgo7M3bgVqCJxFtou5ibRBqeivLCoeD3xZvw",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "67 / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "EQhFxVGwUfTjSsbd7AW9W5KZaFwYctUNykJsENt6xV68",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "8urmsd4yUnH5fnuLy1S1U3muJgS2mdhhc2pg2T1awovR",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "2FgNDBcVHo1n87tmhztrDfJUPMWsGPJbqZVFcfxksHov",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "GThfGHzeJmiKXjMLZaPjBHztPYwBvUtoJ4GruiQe3bpt",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "69yhtoJR4JYPPABZcSNkzuqbaFbwHsCkja1sP1Q2aVT5",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "Etw1vUUcWoYU9svVqJdwPpbnWii5yfV72RmacW4ZnFDZ",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "9L4V3dAiKjzeaRpYMkGVnZs1kXwhuS4zWuf6m9mkjTKQ",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "3ErZcuLGTT1SS98nVoTpzh8zeEwzBCuZirkNdgYPjwbt",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "Bs6cTDM6Ac6WfenqEG4mNp156b7ZYGMcTXzo2MoZxtg5",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "BILLY / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "3PEAKQyFGnCHEjapGtHTAuXYCsZerkw5ZAN5fcvWg9nc",
+      "score": "2.00",
+      "winRate": "2币",
+      "tokens": "BILLY / SOL,LOBSTER / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "DzYETTPwjr16aJ2LvmXijXVXpNYMQD3wRjUwzojjUk4V",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "MISSILE / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "2z6ebJ1mS2uGNzLCDrvT8ASz1eUAV2b1FQj1XHgw8NEj",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "MISSILE / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "7bVSmepVpqXHMcCkDfJ86gxxvkfuCxDW4NDsu8X2bnUQ",
+      "score": "2.00",
+      "winRate": "1币",
+      "tokens": "MISSILE / SOL",
+      "source": "auto_identify",
+      "identifiedAt": "2026-03-11T01:21:05.145Z",
+      "missCount": 0
+    },
+    {
+      "address": "ASTyfSima4LLAdDgoFGkgqoKowG1LZFDr9fAQrg7iaJZ",
+      "score": 8,
+      "winRate": "4/4",
+      "tokens": [
+        "$michi / SOL",
+        "BILLY / SOL",
+        "Punch / SOL",
+        "PENGUIN / SOL"
+      ],
+      "missCount": 1,
+      "note": "缺席1/5"
+    },
+    {
+      "address": "DU8W6ritu6LuDm6DFkVtrtVyW8KEruMhHagvjxg4DRys",
+      "score": 4,
+      "winRate": "2/2",
+      "tokens": [
+        "$michi / SOL",
+        "BILLY / SOL"
+      ],
+      "missCount": 1,
+      "note": "缺席1/5"
+    },
+    {
+      "address": "A77HErqtfN1hLLpvZ9pCtu66FEtM8BveoaKbbMoZ4RiR",
+      "score": 4,
+      "winRate": "2/2",
+      "tokens": [
+        "BILLY / SOL",
+        "PENGUIN / SOL"
+      ],
+      "missCount": 1,
+      "note": "缺席1/5"
+    },
+    {
+      "address": "BM9CcyErJcu2mjrFvUsRRrD3snGeHDDVirJLvL6EjvMN",
+      "score": 4,
+      "winRate": "2/2",
+      "tokens": [
+        "OILLESS / SOL",
+        "TripleT / SOL"
+      ],
+      "missCount": 1,
+      "note": "缺席1/5"
+    },
+    {
+      "address": "6KZVr4mjcJLPcVCHScKZsWkJcfbRvwn8se6bxjwquGG7",
+      "score": 4,
+      "winRate": "2/2",
+      "tokens": [
+        "TripleT / SOL",
+        "Lobstar / SOL"
+      ],
+      "missCount": 1,
+      "note": "缺席1/5"
+    }
+  ],
+  "updatedAt": "2026-03-11T01:21:05.146Z",
+  "autoCount": 50,
+  "lockedCount": 0
+}

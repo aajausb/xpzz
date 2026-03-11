@@ -1,0 +1,79 @@
+{
+  "updated_at": "2026-03-09T03:38:41.397Z",
+  "hot_narratives": [
+    {
+      "narrative": "AI",
+      "count": 6
+    },
+    {
+      "narrative": "Solana生态",
+      "count": 4
+    },
+    {
+      "narrative": "地缘政治",
+      "count": 1
+    }
+  ],
+  "trending_coins": {
+    "coingecko": [],
+    "okx_top_volume": [
+      {
+        "symbol": "ARP",
+        "name": "Agent Relay Protocol",
+        "vol1h": 568482.9504212836,
+        "mcap": 1710.494465438285
+      },
+      {
+        "symbol": "AGI",
+        "name": "Artificial General Intelligence",
+        "vol1h": 161407.7287658953,
+        "mcap": 53231.73937485162
+      },
+      {
+        "symbol": "AGI",
+        "name": "A Genius Inu",
+        "vol1h": 156657.39003296834,
+        "mcap": 28008.27712034
+      },
+      {
+        "symbol": "CORNINU",
+        "name": "Corn Inu",
+        "vol1h": 89260.97668991571,
+        "mcap": 14162.769554182
+      },
+      {
+        "symbol": "RISK",
+        "name": "Take The Risk",
+        "vol1h": 86794.45726485268,
+        "mcap": 3907.894237816
+      }
+    ],
+    "geckoterminal": [
+      {
+        "chain": "solana",
+        "name": "XPD / SOL",
+        "fdv": "836129.586"
+      },
+      {
+        "chain": "solana",
+        "name": "Nana / SOL",
+        "fdv": "389740.9282"
+      },
+      {
+        "chain": "solana",
+        "name": "Mirabel / SOL",
+        "fdv": "69363.28709"
+      },
+      {
+        "chain": "solana",
+        "name": "WAR / USD1",
+        "fdv": "30041296.6348884"
+      },
+      {
+        "chain": "solana",
+        "name": "Jellybean / SOL",
+        "fdv": "1737279.62019292"
+      }
+    ]
+  }
+}

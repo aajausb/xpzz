@@ -1,0 +1,11 @@
+.env
+*.key
+*.pem
+wallet_encrypted.json
+node_modules/
+crypto/backups/
+crypto/*.log
+crypto/health_check.log
+media/
+skills/
+.openclaw/

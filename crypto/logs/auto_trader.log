@@ -1,0 +1,20 @@
+[dotenv@17.3.1] injecting env (2) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+[16:44:29] 🚀 自动交易器启动
+Error: WALLET_ENCRYPTION_KEY not found in .env
+    at getEncryptionKey (/root/.openclaw/workspace/crypto/solana_signer.js:21:21)
+    at decryptPrivateKey (/root/.openclaw/workspace/crypto/solana_signer.js:33:18)
+    at getSolanaKeypair (/root/.openclaw/workspace/crypto/solana_signer.js:50:14)
+    at warmupKeypair (/root/.openclaw/workspace/crypto/auto_trader.js:44:21)
+    at main (/root/.openclaw/workspace/crypto/auto_trader.js:1093:3)
+    at Object.<anonymous> (/root/.openclaw/workspace/crypto/auto_trader.js:1120:1)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+[dotenv@17.3.1] injecting env (17) from .env -- tip: ⚡️ secrets for agents: https://dotenvx.com/as2
+[00:19:05] 🚀 自动交易器启动
+[00:19:05] 🔑 密钥预热完成
+[00:19:05] 💰 SOL余额: 0.4261
+[00:19:05] 📋 每笔买入: 0.5 SOL
+[00:19:05] 📊 当前持仓: 1个
+[00:19:05] ✅ 自动交易器就绪，等待信号...

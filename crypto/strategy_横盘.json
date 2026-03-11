@@ -1,0 +1,82 @@
+{
+  "strategy": "横盘买入",
+  "version": "1.0",
+  "description": "等币价进入横盘整理阶段，结合内幕钱包动向决定买入",
+
+  "chain": ["solana", "bsc", "base"],
+  "wallet": "jLVNxrQ6QX8neHx8bFeEvcTgRed4e4YXiePpfcPHosK",
+
+  "筛选条件": {
+    "max_market_cap_usd": 2000000,
+    "max_age_days": 14,
+    "min_holders": 100,
+    "min_volume_24h_usd": 0,
+    "min_market_cap_usd": 50000,
+    "require_lp_locked": true
+  },
+
+  "合约安全": {
+    "no_honeypot": true,
+    "max_buy_tax_pct": 5,
+    "max_sell_tax_pct": 5,
+    "no_mint_function": true,
+    "no_blacklist_function": true,
+    "no_proxy_contract": true,
+    "min_safety_score": 70,
+    "check_tools": ["honeypot.is", "OKX swap quote", "Rugcheck(Solana)"]
+  },
+
+  "横盘判断": {
+    "timeframes": ["4h", "1h"],
+    "逻辑": "冲高回落后在底部横住，4H和1H都要确认",
+    "模式": "上线→冲高→回落→底部横盘（抛压释放完毕）",
+    "4h": "近4根K线波动率<30%，且价格在回落后的低位区间",
+    "1h": "近6根K线波动率<30%",
+    "模式一_冲高回落": "从高点回落>40%后，在底部区间横住不再创新低",
+    "模式二_底部抬升": "低点不断抬高，震荡上行，重心缓慢爬升",
+    "模式三_W底": "跌→反弹→再跌不破前低→再反弹，双底确认支撑",
+    "模式四_腰部横盘": "拉升→冲高→回落到中间位置（回撤30-60%）→在腰部横盘震荡→等待二次拉升",
+    "min_klines_4h": 4,
+    "min_klines_1h": 6,
+    "max_volatility_pct": 30
+  },
+
+  "买入逻辑": {
+    "买入": "横盘 + 内幕钱包加仓 → 直接进",
+    "观察": "横盘 + 内幕没动 → 加入观察列表",
+    "不买": "横盘 + 内幕在卖 → 跳过"
+  },
+
+  "买入金额": {
+    "amount_sol": 0.5,
+    "等值": "~0.005 BNB / ~0.001 ETH"
+  },
+
+  "止盈": {
+    "第一步": "涨100%卖50%，出本金",
+    "第二步": "剩下50%跟着聪明钱走：他们卖→我们卖，他们拿→我们拿",
+    "兜底": "聪明钱跑了→我们也跑"
+  },
+
+  "止损": {
+    "唯一依据": "内幕钱包",
+    "一级内幕卖出→立刻跑": ["Bundler", "Sniper", "Dev资金来源"],
+    "二级内幕卖出→警惕": ["Dev关联钱包", "早期大额买入", "聪明钱早期建仓"]
+  },
+
+  "扫描频率": "每30分钟",
+  "auto_trade": true,
+  "notify_telegram": true,
+
+  "防夹": {
+    "solana": "Jito Bundle",
+    "bsc": "Private Mempool",
+    "base": "Flashbots Protect"
+  },
+
+  "同币种限仓": {
+    "启用": true,
+    "逻辑": "横盘策略和聪明钱跟单策略同时看上同一个币时，不重复买入，合并仓位",
+    "持仓文件": "crypto/positions.json"
+  }
+}

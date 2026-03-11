@@ -1,0 +1,83 @@
+{
+  "strategy": "聪明钱跟单",
+  "version": "1.0",
+  "description": "新币上线后，发现多个聪明钱同时买入 → 跟着买",
+
+  "chain": ["solana", "bsc", "base"],
+  "wallet": "jLVNxrQ6QX8neHx8bFeEvcTgRed4e4YXiePpfcPHosK",
+
+  "筛选条件": {
+    "max_market_cap_usd": 1000000,
+    "max_age_days": 14,
+    "min_smart_wallets": 3,
+    "wallet_types": ["Smart Money (type 1)"],
+    "不跟": ["KOL (type 2)", "鲸鱼 (type 3)"],
+    "max_sold_ratio_pct": 30,
+    "max_top10_holder_pct": 40
+  },
+
+  "合约安全": {
+    "no_honeypot": true,
+    "max_buy_tax_pct": 5,
+    "max_sell_tax_pct": 5,
+    "no_mint_function": true,
+    "no_blacklist_function": true,
+    "no_proxy_contract": true,
+    "min_safety_score": 70,
+    "check_tools": ["honeypot.is", "OKX swap quote", "Rugcheck(Solana)"]
+  },
+
+  "买入逻辑": {
+    "条件": "聪明钱共识度权重>=5 + 卖出比<30% + 合约安全",
+    "聪明钱共识度": {
+      "Top10胜率聪明钱": "权重=3",
+      "普通聪明钱": "权重=1",
+      "触发阈值": "总权重>=5",
+      "示例": "2个大佬(6)够了 | 1大佬+2普通(5)够了 | 5个普通(5)够了 | 1大佬+1普通(4)不够"
+    },
+    "加分项": "匹配当前热点叙事 → 权重翻倍"
+  },
+
+  "买入金额": {
+    "amount_sol": 0.5,
+    "说明": "比横盘策略小，因为风险更高"
+  },
+
+  "止盈": {
+    "第一步": "涨100%卖50%，出本金",
+    "第二步": "剩下50%跟着聪明钱走：他们卖→我们卖，他们拿→我们拿",
+    "兜底": "聪明钱跑了→我们也跑"
+  },
+
+  "止损": {
+    "唯一依据": "内幕钱包",
+    "一级内幕卖出→立刻跑": ["Bundler", "Sniper", "Dev资金来源"],
+    "二级内幕卖出→警惕": ["Dev关联钱包", "早期大额买入", "聪明钱早期建仓"]
+  },
+
+  "监控方式": {
+    "WebSocket": "毫秒级监听聪明钱地址变化",
+    "兜底": "每5分钟OKX signal-list扫描"
+  },
+
+  "叙事追踪": {
+    "数据源": ["CoinGecko热搜", "GeckoTerminal热门池", "OKX热门代币"],
+    "更新频率": "每小时",
+    "逻辑": "新币匹配热点叙事 → 买入权重加倍"
+  },
+
+  "auto_trade": true,
+  "notify_telegram": true,
+
+  "防夹": {
+    "solana": "Jito Bundle",
+    "bsc": "Private Mempool",
+    "base": "Flashbots Protect"
+  },
+
+  "同币种限仓": {
+    "启用": true,
+    "逻辑": "如果横盘策略已买入该币，不重复买入，合并仓位",
+    "持仓文件": "crypto/positions.json"
+  }
+}

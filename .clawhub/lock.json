@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "skills": {
+    "tavily-search": {
+      "version": "1.0.0",
+      "installedAt": 1773127377863
+    },
+    "summarize": {
+      "version": "1.0.0",
+      "installedAt": 1773127381432
+    },
+    "agent-browser": {
+      "version": "0.2.0",
+      "installedAt": 1773127390517
+    },
+    "find-skills": {
+      "version": "0.1.0",
+      "installedAt": 1773127400868
+    },
+    "github": {
+      "version": "1.0.0",
+      "installedAt": 1773127408703
+    },
+    "obsidian": {
+      "version": "1.0.0",
+      "installedAt": 1773127417885
+    },
+    "notion": {
+      "version": "1.0.0",
+      "installedAt": 1772637001453
+    },
+    "weather": {
+      "version": "1.0.0",
+      "installedAt": 1773127421694
+    },
+    "tencentcloud-lighthouse-skill": {
+      "version": "1.0.0",
+      "installedAt": 1772637005244
+    },
+    "tencent-docs": {
+      "version": "1.0.3",
+      "installedAt": 1772637007657
+    },
+    "multi-search-engine": {
+      "version": "2.0.1",
+      "installedAt": 1772978717904
+    },
+    "local-vosk": {
+      "version": "1.0.1",
+      "installedAt": 1772986229139
+    },
+    "skill-vetter": {
+      "version": "1.0.0",
+      "installedAt": 1772992578619
+    },
+    "self-improving-agent-cn": {
+      "version": "1.0.0",
+      "installedAt": 1772992687356
+    },
+    "telegram": {
+      "version": "",
+      "installedAt": 1773133780640
+    },
+    "telegram-api": {
+      "version": "1.0.2",
+      "installedAt": 1773133894684
+    }
+  }
+}

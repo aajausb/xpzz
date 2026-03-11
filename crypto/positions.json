@@ -1,0 +1,60 @@
+{
+  "active": [
+    {
+      "token": "6QU3XDQt4pXSStujRCheGJAxHguhy5bN4cZ5MYXQpump",
+      "buyPrice": 0,
+      "amountSol": 0.5,
+      "buyTime": "2026-03-10T04:58:34.873Z",
+      "txHash": "4CxVqDPGxAD5T8n6bF3r7i9JnHPaSGfGFZ4Dk4Vp2jq3qWyvd7YcWB13MK7z6rmDioGCsaaDJkLAbp3D975Mt8kU",
+      "reason": "聪明钱跟单",
+      "status": "holding",
+      "halfSold": false,
+      "highestPrice": 0,
+      "smSoldPct": 0
+    }
+  ],
+  "closed": [
+    {
+      "token": "7cn36pNehCnH75wynBgcYbUqXvBu8MBaQQCJb823pump",
+      "buyPrice": 0,
+      "amountSol": 0.5,
+      "buyTime": "2026-03-09T23:22:18.729Z",
+      "txHash": "pending",
+      "reason": "聪明钱跟单",
+      "status": "holding",
+      "halfSold": false,
+      "highestPrice": 0,
+      "smSoldPct": 0,
+      "closeReason": "假交易清理",
+      "closeTime": "2026-03-10T12:50:00Z"
+    },
+    {
+      "token": "2SN5omCCJPzseBpm7t38Qt2muy8gd4oknbF34tzLpump",
+      "buyPrice": 0,
+      "amountSol": 0.5,
+      "buyTime": "2026-03-10T04:13:45.046Z",
+      "txHash": "pending",
+      "reason": "聪明钱跟单",
+      "status": "holding",
+      "halfSold": false,
+      "highestPrice": 0,
+      "smSoldPct": 0,
+      "closeReason": "假交易清理",
+      "closeTime": "2026-03-10T12:50:00Z"
+    },
+    {
+      "token": "DUr5rZAfYduvihaiyMnfqgnhqYWbPWJXvK954qyTpump",
+      "buyPrice": 0,
+      "amountSol": 0.5,
+      "buyTime": "2026-03-10T04:43:28.410Z",
+      "txHash": "pending",
+      "reason": "聪明钱跟单",
+      "status": "holding",
+      "halfSold": false,
+      "highestPrice": 0,
+      "smSoldPct": 0,
+      "closeReason": "假交易清理",
+      "closeTime": "2026-03-10T12:50:00Z"
+    }
+  ]
+}
