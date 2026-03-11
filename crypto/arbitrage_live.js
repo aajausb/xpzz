@@ -458,14 +458,16 @@ async function scanFundingArbitrage() {
     const lowNext = nextFundingTimes[sym]?.[lowEx] || 0;
     const highNext = nextFundingTimes[sym]?.[highEx] || 0;
     
-    // 1. 两所结算时间必须对齐（差 ≤ 30 分钟）
-    if (lowNext && highNext) {
+    // 1. 两所结算时间对齐检查（只在两边都有数据时比较）
+    if (lowNext > 0 && highNext > 0) {
       const timeDiff = Math.abs(lowNext - highNext);
       if (timeDiff > 30 * 60 * 1000) continue; // 差 > 30 分钟，跳过
     }
     
-    // 2. 距最近结算必须在 1 小时内
-    const earlierNext = Math.min(lowNext || Infinity, highNext || Infinity);
+    // 2. 距最近结算必须在 1 小时内（用有数据的那个，都有取较早的）
+    const validTimes = [lowNext, highNext].filter(t => t > 0);
+    if (validTimes.length === 0) continue; // 两边都没结算时间数据
+    const earlierNext = Math.min(...validTimes);
     if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
     const msToSettle = earlierNext - now;
     if (msToSettle < 0 || msToSettle > 60 * 60 * 1000) continue; // 不在结算前1小时窗口内
