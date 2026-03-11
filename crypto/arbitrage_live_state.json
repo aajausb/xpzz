@@ -28,7 +28,7 @@
       "shortOrderId": 3780943048,
       "unrealizedPnl": 0,
       "totalFee": 3,
-      "currentSpread": -0.00630982,
+      "currentSpread": -0.00504686,
       "spreadHistory": [
         {
           "time": 1773237246989,
@@ -54,7 +54,7 @@
       "shortOrderId": 4423653089,
       "unrealizedPnl": 0,
       "totalFee": 2.9,
-      "currentSpread": -0.0039228,
+      "currentSpread": -0.0029751399999999994,
       "spreadHistory": [
         {
           "time": 1773237246989,
@@ -113,7 +113,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773237246689,
+  "_lastEarnedCheck": 1773239046692,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
