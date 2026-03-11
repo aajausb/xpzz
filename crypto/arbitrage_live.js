@@ -71,6 +71,8 @@ const CONFIG = {
 };
 
 // ============ 全局状态 ============
+let isScanning = false;    // 防止 scanFundingRates 并发
+let isClosing = false;     // 防止 closeFundingPosition 并发
 let state = {
   startTime: new Date().toISOString(),
   running: true,
@@ -378,7 +380,11 @@ async function handleFundingOpportunity(opp) {
 // ============ 费率套利扫描 ============
 async function scanFundingArbitrage() {
   if (state.paused) return;
+  if (isScanning) { log('⏳ 上一轮扫描未完成，跳过'); return; }
   if (state.positions.length >= CONFIG.MAX_POSITIONS) return;
+  
+  isScanning = true;
+  try {
 
   const rates = await fetchFundingRates();
   const opportunities = [];
@@ -452,6 +458,9 @@ async function scanFundingArbitrage() {
         state.consecutiveErrors = 0; // 重置，继续运行
       }
     }
+  }
+  } finally {
+    isScanning = false;
   }
 }
 
@@ -876,7 +885,10 @@ async function closeFundingPosition(pos) {
       await notify(`📤 平仓 ${pos.symbol}\n已收: $${pos.earned.toFixed(2)} | 净利: $${netPnl.toFixed(2)}`);
     } else {
       log(`  ⚠️ 平仓部分失败: 多${closeLOk} 空${closeSOk}`);
-      await notify(`⚠️ 平仓部分失败 ${pos.symbol}，需检查`);
+      // 标记仓位异常，巡检会捕获
+      pos.closeError = { longOk: closeLOk, shortOk: closeSOk, time: new Date().toISOString() };
+      saveState();
+      await notify(`🚨 平仓部分失败 ${pos.symbol}\n多(${pos.longEx}): ${closeLOk ? '✅' : '❌'}\n空(${pos.shortEx}): ${closeSOk ? '✅' : '❌'}\n⚠️ 需要手动检查!`);
     }
   } catch (e) {
     log(`  ❌ 平仓异常: ${e.message}`);

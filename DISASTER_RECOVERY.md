@@ -41,9 +41,8 @@ apt update && apt install -y git
 ## 第四步：拉代码（1分钟）
 
 ```bash
-# 从 GitHub 克隆（需要先配 GitHub 访问）
 cd /root/.openclaw
-git clone https://github.com/Oxhooo/openclaw-workspace workspace
+git clone https://github.com/aajausb/xpzz.git workspace
 cd workspace
 ```
 
