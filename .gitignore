@@ -9,3 +9,7 @@ crypto/health_check.log
 media/
 skills/
 .openclaw/
+crypto/trash/*.log
+*.swp
+.env.save
+trading_key
