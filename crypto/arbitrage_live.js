@@ -250,9 +250,9 @@ async function updateBalances() {
     ]);
     state.balances = {
       binance: (+bnSpot.usdt || 0) + (+bnFut.usdt || 0),
-      bybit: +(by.usdt) || state.balances.bybit,  // walletBalance，不含浮盈
+      bybit: by.usdt !== undefined && by.usdt !== null ? +by.usdt : (state.balances.bybit || 0),  // walletBalance，不含浮盈
       bitget: (+bgSpot.usdt || 0) + (+bgFut.usdt || 0),
-      okx: +(ok.usdt) || state.balances.okx  // walletBalance
+      okx: ok.usdt !== undefined && ok.usdt !== null ? +ok.usdt : (state.balances.okx || 0)  // walletBalance
     };
     return state.balances;
   } catch (e) {
@@ -324,10 +324,10 @@ async function fetchFundingRates() {
 
 // ============ 动态仓位大小 ============
 function getTradeSize(spread) {
-  // 集中资金在高确定性机会上
-  if (spread >= 0.008) return 3000;  // ≥0.8% → $3000 极品
-  if (spread >= 0.005) return 2000;  // 0.5%-0.8% → $2000
-  if (spread >= 0.003) return 1000;  // 0.3%-0.5% → $1000
+  // 动态仓位：高费率重仓，低费率轻仓
+  if (spread >= 0.008) return 7000;  // ≥0.8% → $7000 极品
+  if (spread >= 0.005) return 5000;  // 0.5%-0.8% → $5000
+  if (spread >= 0.003) return 3000;  // 0.3%-0.5% → $3000
   return 0;                           // <0.3% → 不开
 }
 
@@ -951,8 +951,16 @@ async function closeFundingPosition(pos) {
       shortExObj.futuresCloseShort(shortSym, pos.qty)
     ]);
 
-    const closeLOk = checkOrderSuccess(closeL, pos.longEx);
-    const closeSOk = checkOrderSuccess(closeS, pos.shortEx);
+    let closeLOk = checkOrderSuccess(closeL, pos.longEx);
+    let closeSOk = checkOrderSuccess(closeS, pos.shortEx);
+
+    // Binance NEW 状态等待确认
+    if (!closeLOk && pos.longEx === 'binance' && closeL?.status === 'NEW' && closeL?.orderId) {
+      closeLOk = await waitForBinanceFill(closeL.orderId, longSym);
+    }
+    if (!closeSOk && pos.shortEx === 'binance' && closeS?.status === 'NEW' && closeS?.orderId) {
+      closeSOk = await waitForBinanceFill(closeS.orderId, shortSym);
+    }
 
     if (closeLOk && closeSOk) {
       const fee = pos.size * 2 * CONFIG.FEE_BPS / 10000;
@@ -1231,8 +1239,16 @@ async function rebalancePositions() {
         highExObj.futuresShort(shortSym, shortAddQty)
       ]);
       
-      const longOk = checkOrderSuccess(longR, pos.longEx);
-      const shortOk = checkOrderSuccess(shortR, pos.shortEx);
+      let longOk = checkOrderSuccess(longR, pos.longEx);
+      let shortOk = checkOrderSuccess(shortR, pos.shortEx);
+      
+      // Binance NEW 状态等待确认
+      if (!longOk && pos.longEx === 'binance' && longR?.status === 'NEW' && longR?.orderId) {
+        longOk = await waitForBinanceFill(longR.orderId, longSym);
+      }
+      if (!shortOk && pos.shortEx === 'binance' && shortR?.status === 'NEW' && shortR?.orderId) {
+        shortOk = await waitForBinanceFill(shortR.orderId, shortSym);
+      }
       
       if (longOk && shortOk) {
         pos.size = targetSize;
@@ -1442,6 +1458,7 @@ async function updateEarned() {
 
 // ============ 状态报告 ============
 async function statusReport() {
+  checkLogRotate(); // 日志轮转检查
   await updateEarned(); // 先从交易所拉真实结算数据
   const runtime = ((Date.now() - new Date(state.startTime).getTime()) / 3600000).toFixed(1);
   const winRate = state.trades > 0 ? (state.wins / state.trades * 100).toFixed(1) : '0';
@@ -1512,9 +1529,7 @@ async function main() {
   await updateBalances();
   log(`💰 初始余额: BN$${state.balances.binance.toFixed(0)} BY$${state.balances.bybit.toFixed(0)} BG$${state.balances.bitget.toFixed(0)} OK$${state.balances.okx.toFixed(0)}`);
   
-  await notify('🚀 实盘套利引擎启动\n' +
-    `余额: BN$${state.balances.binance.toFixed(0)} BY$${state.balances.bybit.toFixed(0)} BG$${state.balances.bitget.toFixed(0)} OK$${state.balances.okx.toFixed(0)}\n` +
-    `动态仓位$1k-3k | 最大${CONFIG.MAX_POSITIONS}仓 | 费率标准化✅`);
+  await notify('套利实盘策略更新成功✅');
 
   // WebSocket 实时费率监控（替代 REST 轮询）
   let wsProcessing = false;

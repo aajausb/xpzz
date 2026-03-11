@@ -23,10 +23,10 @@
       "entryTime": "2026-03-11T03:27:51.260Z",
       "spread": 0.0030296800000000003,
       "annualized": 331.74996000000004,
-      "earned": 1.2638010300000002,
+      "earned": 1.5504591600000002,
       "longOrderId": "e842217c-354f-4511-9487-5702ffa81f35",
       "shortOrderId": "1415467501167976449",
-      "unrealizedPnl": 26.8090199928
+      "unrealizedPnl": 62.0373199928
     },
     {
       "id": "mmlhav0u",
@@ -40,10 +40,10 @@
       "entryTime": "2026-03-11T03:27:51.438Z",
       "spread": 0.0030026,
       "annualized": 328.7847,
-      "earned": -2.18198855,
+      "earned": -0.3440448199999999,
       "longOrderId": "af8c9274-a515-4eb2-83cb-bd4b83b614da",
       "shortOrderId": "1415467502514348033",
-      "unrealizedPnl": 16.3881099993
+      "unrealizedPnl": 22.6989099993
     },
     {
       "id": "mmlhx4b9",
@@ -57,10 +57,10 @@
       "entryTime": "2026-03-11T03:45:09.909Z",
       "spread": 0.0030661899999999995,
       "annualized": 335.7478049999999,
-      "earned": -2.36872565,
+      "earned": -0.63606136,
       "longOrderId": "835c7980-9a0a-43e9-8792-b5266e997109",
       "shortOrderId": "1415471857569243137",
-      "unrealizedPnl": 29.902729932585
+      "unrealizedPnl": 38.128979932585
     },
     {
       "id": "mmlimtwz",
@@ -74,10 +74,10 @@
       "entryTime": "2026-03-11T04:05:09.491Z",
       "spread": 0.00465402,
       "annualized": 509.61519,
-      "earned": 0,
+      "earned": 0.11603342999999999,
       "longOrderId": "7fb1e400-6e9f-4bbb-8b1d-798eb25fdf67",
       "shortOrderId": "1415476889551249409",
-      "unrealizedPnl": 36.38957895345
+      "unrealizedPnl": 44.63576895345
     },
     {
       "id": "mmlitggb",
@@ -91,10 +91,10 @@
       "entryTime": "2026-03-11T04:10:18.635Z",
       "spread": 0.00656594,
       "annualized": 718.9704300000001,
-      "earned": 0,
+      "earned": 0.10465421,
       "longOrderId": "51ec4876-f7f7-4e93-adda-35d285d79f31",
       "shortOrderId": "1415478186149027841",
-      "unrealizedPnl": 59.883999960096
+      "unrealizedPnl": 66.997599960096
     },
     {
       "id": "mmlljnt1",
@@ -108,10 +108,10 @@
       "entryTime": "2026-03-11T05:26:40.453Z",
       "spread": 0.00367038,
       "annualized": 401.90661,
-      "earned": 0,
+      "earned": 0.6530995199999999,
       "longOrderId": "1415497403728535553",
       "shortOrderId": "5b48db3b-11a6-4f9c-8c4e-5a19d2cece0b",
-      "unrealizedPnl": -2.88089938544
+      "unrealizedPnl": -2.63217938544
     },
     {
       "id": "mmloyr4p",
@@ -125,10 +125,10 @@
       "entryTime": "2026-03-11T07:02:23.449Z",
       "spread": 0.00354232,
       "annualized": 387.88403999999997,
-      "earned": 0,
+      "earned": 1.4967214899999997,
       "longOrderId": "8d4512e8-f1eb-4248-bdfd-2150c685f891",
       "shortOrderId": "1415521491591241729",
-      "unrealizedPnl": 13.11329998002
+      "unrealizedPnl": 31.77929998002
     },
     {
       "id": "mmlqsmh3",
@@ -142,16 +142,16 @@
       "entryTime": "2026-03-11T07:53:36.711Z",
       "spread": 0.00357546,
       "annualized": 391.51287,
-      "earned": 0,
+      "earned": 1.71717489,
       "longOrderId": 1106107131,
       "shortOrderId": "80e56ca5-8aab-422b-8707-47afc27fb6c8",
       "unrealizedPnl": 0
     }
   ],
   "balances": {
-    "binance": 4855.07631993,
-    "bybit": 6750.44787797,
-    "bitget": 2461.0889159217027,
+    "binance": 4856.78105631,
+    "bybit": 6762.60307957,
+    "bitget": 2454.623458651703,
     "okx": 6.743723247e-7
   },
   "lastTrade": {
@@ -195,7 +195,7 @@
   "errors": 26,
   "consecutiveErrors": 0,
   "lastError": "Cannot access 'tradeSize' before initialization",
-  "_lastEarnedCheck": 1773215616714,
+  "_lastEarnedCheck": 1773217447320,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
