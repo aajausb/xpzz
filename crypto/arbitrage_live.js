@@ -73,6 +73,7 @@ const CONFIG = {
 // ============ 全局状态 ============
 let isScanning = false;    // 防止 scanFundingRates 并发
 let isClosing = false;     // 防止 closeFundingPosition 并发
+const openingSymbols = new Set(); // 防止 WS 和 REST 同时开同一个币
 let state = {
   startTime: new Date().toISOString(),
   running: true,
@@ -107,6 +108,23 @@ let state = {
 function log(msg) {
   const ts = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
   console.log(`[${ts}] ${msg}`);
+}
+
+// 日志轮转：systemd journal 自动管理 stdout，但也写文件作为备份
+// logrotate 由 cron 每天检查，超过 5MB 轮转
+let _lastLogRotateCheck = 0;
+function checkLogRotate() {
+  if (Date.now() - _lastLogRotateCheck < 3600000) return; // 每小时检查一次
+  _lastLogRotateCheck = Date.now();
+  try {
+    const logFile = '/root/.openclaw/workspace/crypto/arbitrage_live.log';
+    const stat = fs.statSync(logFile);
+    if (stat.size > 5 * 1024 * 1024) { // > 5MB
+      const oldLog = logFile + '.old';
+      if (fs.existsSync(oldLog)) fs.unlinkSync(oldLog);
+      fs.renameSync(logFile, oldLog);
+    }
+  } catch (e) {}
 }
 
 function saveState() {
@@ -318,21 +336,39 @@ function alignQty(symbol, ex1, ex2, rawQty) {
   const info1 = monitor.symbolInfo[symbol]?.[ex1];
   const info2 = monitor.symbolInfo[symbol]?.[ex2];
   
-  // 找最大的stepSize
-  const step1 = info1?.stepSize || 1;
-  const step2 = info2?.stepSize || 1;
+  // OKX 用张数(lots)下单，需要转换: qty_lots = qty_coins / ctVal
+  // 其他交易所用币数下单
+  // 统一按币数计算，开仓时再根据交易所转换
+  
+  // 找最大的stepSize（按币数统一）
+  let step1 = info1?.stepSize || 1;
+  let step2 = info2?.stepSize || 1;
+  // OKX 的 stepSize 是张数，转成币数
+  if (ex1 === 'okx' && info1?.ctVal) step1 = step1 * info1.ctVal;
+  if (ex2 === 'okx' && info2?.ctVal) step2 = step2 * info2.ctVal;
   const maxStep = Math.max(step1, step2);
   
   // 用最粗的精度取整
   let qty = Math.floor(rawQty / maxStep) * maxStep;
   
-  // 确保两边的最小数量都满足
-  const minQty = Math.max(info1?.minQty || 1, info2?.minQty || 1);
+  // 确保两边的最小数量都满足（按币数）
+  let min1 = info1?.minQty || 1;
+  let min2 = info2?.minQty || 1;
+  if (ex1 === 'okx' && info1?.ctVal) min1 = min1 * info1.ctVal;
+  if (ex2 === 'okx' && info2?.ctVal) min2 = min2 * info2.ctVal;
+  const minQty = Math.max(min1, min2);
   if (qty < minQty) return 0;
   
   // 保留合适小数位
   const decimals = maxStep < 1 ? Math.ceil(-Math.log10(maxStep)) : 0;
   return parseFloat(qty.toFixed(decimals));
+}
+
+// OKX 币数转张数
+function coinsToLots(symbol, coins) {
+  const info = monitor.symbolInfo[symbol]?.okx;
+  if (!info?.ctVal) return coins;
+  return Math.round(coins / info.ctVal);
 }
 
 // ============ WebSocket 触发的快速开仓 ============
@@ -468,6 +504,15 @@ async function scanFundingArbitrage() {
 async function executeFundingArbitrage(opp) {
   const { symbol, lowEx, highEx, spread, annualized } = opp;
 
+  // 防止 WS 和 REST 同时开同一个币
+  if (openingSymbols.has(symbol)) {
+    log(`⏳ ${symbol} 正在开仓中，跳过`);
+    return;
+  }
+  openingSymbols.add(symbol);
+  
+  try {
+
   log(`🔍 费率套利机会: ${symbol} ${lowEx}(${opp.lowRate.toFixed(4)}) → ${highEx}(${opp.highRate.toFixed(4)}) 差${(spread*100).toFixed(3)}% 年化${annualized.toFixed(0)}%`);
 
   // 1. 检查合约盘口深度
@@ -559,13 +604,16 @@ async function executeFundingArbitrage(opp) {
   }
 
   // 4. 同时下单: 低费率所做多 + 高费率所做空
-  log(`  🚀 下单: ${lowEx}做多 + ${highEx}做空 ${symbol} x${qty}`);
+  // OKX 用张数下单，其他用币数
+  const longQty = lowEx === 'okx' ? coinsToLots(symbol, qty) : qty;
+  const shortQty = highEx === 'okx' ? coinsToLots(symbol, qty) : qty;
+  log(`  🚀 下单: ${lowEx}做多 + ${highEx}做空 ${symbol} x${qty}${lowEx === 'okx' || highEx === 'okx' ? ` (OKX张数: ${lowEx === 'okx' ? longQty : shortQty})` : ''}`);
 
   let longResult, shortResult;
   try {
     [longResult, shortResult] = await Promise.all([
-      lowExObj.futuresLong(lowFutSym, qty),
-      highExObj.futuresShort(highFutSym, qty)
+      lowExObj.futuresLong(lowFutSym, longQty),
+      highExObj.futuresShort(highFutSym, shortQty)
     ]);
   } catch (e) {
     log(`  ❌ 下单异常: ${e.message}`);
@@ -641,6 +689,9 @@ async function executeFundingArbitrage(opp) {
     // 两边都没成
     log(`  ❌ 两边都失败: ${JSON.stringify(longResult).slice(0,100)} / ${JSON.stringify(shortResult).slice(0,100)}`);
     state.errors++;
+  }
+  } finally {
+    openingSymbols.delete(symbol);
   }
 }
 
@@ -774,7 +825,7 @@ async function executeSpreadArbitrage(symbol, lowEx, highEx, lowPrice, highPrice
 function checkOrderSuccess(result, exchange) {
   if (!result) return false;
   switch (exchange) {
-    case 'binance': return result.orderId && (result.status === 'FILLED' || result.status === 'NEW');
+    case 'binance': return result.orderId && result.status === 'FILLED';
     case 'bybit': return result.retCode === 0;
     case 'bitget': return result.code === '00000';
     case 'okx': return result.code === '0';
@@ -1007,7 +1058,107 @@ async function rebalancePositions() {
     }
   }
   
-  // 4. 统计报告
+  // 4. 自动加仓：费率好但仓位小的，加到对应档位
+  for (const pos of state.positions) {
+    if (pos.type !== 'funding' || pos.health !== 'healthy') continue;
+    const targetSize = getTradeSize(pos.currentSpread || 0);
+    if (targetSize <= pos.size) continue;
+    
+    const addSize = targetSize - pos.size;
+    if (addSize < 500) continue;
+    
+    const totalExposure = state.positions.reduce((s, p) => s + p.size, 0);
+    if (totalExposure + addSize > 14000) {
+      log(`⏸️ [加仓] ${pos.symbol} 想加$${addSize}，但总敞口已$${totalExposure}，超限`);
+      continue;
+    }
+    
+    log(`📈 [加仓] ${pos.symbol} $${pos.size} → $${targetSize}（费率${((pos.currentSpread||0)*100).toFixed(3)}%）`);
+    
+    const lowExObj = getExchange(pos.longEx);
+    const highExObj = getExchange(pos.shortEx);
+    const longSym = getFuturesSymbol(pos.symbol, pos.longEx);
+    const shortSym = getFuturesSymbol(pos.symbol, pos.shortEx);
+    
+    // 深度和价差检查
+    let addQtyReal = 0;
+    try {
+      const [lowOB, highOB] = await Promise.all([
+        pos.longEx === 'binance' ? binance.getFuturesOrderbook(longSym, 10) :
+        pos.longEx === 'bybit' ? httpGet(`https://api.bybit.com/v5/market/orderbook?category=linear&symbol=${longSym}&limit=10`).then(r => r?.result ? { bids: r.result.b.map(b=>({price:+b[0],qty:+b[1]})), asks: r.result.a.map(a=>({price:+a[0],qty:+a[1]})) } : null) :
+        pos.longEx === 'bitget' ? httpGet(`https://api.bitget.com/api/v2/mix/market/orderbook?symbol=${longSym}&productType=USDT-FUTURES&limit=10`).then(r => r?.data ? { bids: r.data.bids.map(b=>({price:+b[0],qty:+b[1]})), asks: r.data.asks.map(a=>({price:+a[0],qty:+a[1]})) } : null) :
+        null,
+        pos.shortEx === 'binance' ? binance.getFuturesOrderbook(shortSym, 10) :
+        pos.shortEx === 'bybit' ? httpGet(`https://api.bybit.com/v5/market/orderbook?category=linear&symbol=${shortSym}&limit=10`).then(r => r?.result ? { bids: r.result.b.map(b=>({price:+b[0],qty:+b[1]})), asks: r.result.a.map(a=>({price:+a[0],qty:+a[1]})) } : null) :
+        pos.shortEx === 'bitget' ? httpGet(`https://api.bitget.com/api/v2/mix/market/orderbook?symbol=${shortSym}&productType=USDT-FUTURES&limit=10`).then(r => r?.data ? { bids: r.data.bids.map(b=>({price:+b[0],qty:+b[1]})), asks: r.data.asks.map(a=>({price:+a[0],qty:+a[1]})) } : null) :
+        null
+      ]);
+      
+      if (!lowOB?.asks?.[0] || !highOB?.bids?.[0]) {
+        log(`  ⚠️ [加仓] ${pos.symbol} 深度获取失败，跳过`);
+        continue;
+      }
+      
+      const buyPrice = lowOB.asks[0].price;
+      const sellPrice = highOB.bids[0].price;
+      const priceDiff = Math.abs(buyPrice - sellPrice) / Math.min(buyPrice, sellPrice);
+      
+      if (priceDiff > 0.01) {
+        log(`  ⚠️ [加仓] ${pos.symbol} 两所价差${(priceDiff*100).toFixed(2)}% > 1%，跳过`);
+        continue;
+      }
+      
+      const realMidPrice = (buyPrice + sellPrice) / 2;
+      addQtyReal = alignQty(pos.symbol, pos.longEx, pos.shortEx, addSize / realMidPrice);
+      if (!addQtyReal || addQtyReal <= 0) continue;
+      
+      const lowFill = calcDepthFill(lowOB.asks, addSize);
+      const highFill = calcDepthFill(highOB.bids, addSize);
+      if (lowFill.slippageBps > 30 || highFill.slippageBps > 30) {
+        log(`  ⚠️ [加仓] ${pos.symbol} 滑点过大: ${lowFill.slippageBps}/${highFill.slippageBps}bps，跳过`);
+        continue;
+      }
+    } catch (e) {
+      log(`  ⚠️ [加仓] ${pos.symbol} 深度检查异常: ${e.message}`);
+      continue;
+    }
+    
+    // 下单
+    const longAddQty = pos.longEx === 'okx' ? coinsToLots(pos.symbol, addQtyReal) : addQtyReal;
+    const shortAddQty = pos.shortEx === 'okx' ? coinsToLots(pos.symbol, addQtyReal) : addQtyReal;
+    
+    try {
+      const [longR, shortR] = await Promise.all([
+        lowExObj.futuresLong(longSym, longAddQty),
+        highExObj.futuresShort(shortSym, shortAddQty)
+      ]);
+      
+      const longOk = checkOrderSuccess(longR, pos.longEx);
+      const shortOk = checkOrderSuccess(shortR, pos.shortEx);
+      
+      if (longOk && shortOk) {
+        pos.size = targetSize;
+        pos.qty += addQtyReal;
+        const fee = addSize * 2 * CONFIG.FEE_BPS / 10000;
+        state.totalPnl -= fee;
+        saveState();
+        log(`  ✅ 加仓成功! ${pos.symbol} 现$${targetSize} qty=${pos.qty}`);
+        await notify(`📈 加仓 ${pos.symbol}\n$${targetSize - addSize} → $${targetSize}\n费率: ${((pos.currentSpread||0)*100).toFixed(3)}%`);
+      } else if (longOk && !shortOk) {
+        log(`  ⚠️ 加仓单腿! 平回多头`);
+        try { await lowExObj.futuresCloseLong(longSym, longAddQty); } catch(e2) {}
+        await notify(`⚠️ ${pos.symbol} 加仓单腿失败，已回滚`);
+      } else if (!longOk && shortOk) {
+        log(`  ⚠️ 加仓单腿! 平回空头`);
+        try { await highExObj.futuresCloseShort(shortSym, shortAddQty); } catch(e2) {}
+        await notify(`⚠️ ${pos.symbol} 加仓单腿失败，已回滚`);
+      }
+    } catch (e) {
+      log(`  ❌ 加仓异常: ${e.message}`);
+    }
+  }
+
+  // 5. 统计报告
   const healthy = state.positions.filter(p => p.health === 'healthy').length;
   const ok = state.positions.filter(p => p.health === 'ok').length;
   const weak = state.positions.filter(p => p.health === 'weak').length;
@@ -1255,6 +1406,9 @@ async function reconcilePositions() {
 async function main() {
   log('🚀 实盘套利引擎启动');
   loadState();
+
+  // 启动时立即对账（防止 state qty 与交易所不一致）
+  await reconcilePositions();
 
   // 初始余额
   await updateBalances();
