@@ -215,11 +215,13 @@ async function updateDashboard() {
 
 function httpGet(url, timeout = 5000) {
   return new Promise((resolve) => {
-    https.get(url, { timeout }, res => {
+    const req = https.get(url, { timeout }, res => {
       let d = '';
       res.on('data', c => d += c);
       res.on('end', () => { try { resolve(JSON.parse(d)); } catch (e) { resolve(null); } });
-    }).on('error', () => resolve(null));
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => { req.destroy(); resolve(null); });
   });
 }
 
@@ -590,7 +592,7 @@ async function executeFundingArbitrage(opp) {
   }
 
   // 2. 动态仓位大小（提前算，深度检查要用）
-  const tradeSize = opp.tradeSize || getTradeSize(spread);
+  let tradeSize = opp.tradeSize || getTradeSize(spread);
   if (tradeSize === 0) { log(`  ⚠️ 费率差太小，不开仓`); return; }
 
   // 3. 检查深度（用实际仓位大小）
@@ -598,8 +600,16 @@ async function executeFundingArbitrage(opp) {
   const highFill = calcDepthFill(highBook.bids, tradeSize);
 
   if (!lowFill.filled || !highFill.filled) {
-    log(`  ⚠️ 深度不足: 低所$${lowFill.fillableUsd.toFixed(0)} 高所$${highFill.fillableUsd.toFixed(0)}`);
-    return;
+    // 按盘口能吃的量降级，最低 $500
+    const fillable = Math.min(lowFill.fillableUsd, highFill.fillableUsd);
+    const adjusted = Math.floor(fillable / 100) * 100; // 向下取整到百
+    if (adjusted >= 200) {
+      log(`  ⚠️ 深度不足(低$${lowFill.fillableUsd.toFixed(0)}/高$${highFill.fillableUsd.toFixed(0)})，降级到$${adjusted}`);
+      tradeSize = adjusted;
+    } else {
+      log(`  ⚠️ 深度不足: 低所$${lowFill.fillableUsd.toFixed(0)} 高所$${highFill.fillableUsd.toFixed(0)}，最低$200也不够，跳过`);
+      return;
+    }
   }
 
   if (lowFill.slippageBps > CONFIG.MAX_SLIPPAGE_BPS || highFill.slippageBps > CONFIG.MAX_SLIPPAGE_BPS) {
@@ -712,6 +722,79 @@ async function executeFundingArbitrage(opp) {
     log(`  ✅ 费率套利开仓成功! ${symbol} ${lowEx}多/${highEx}空 $${tradeSize} 手续费$${fee.toFixed(2)}`);
     await notify(`✅ 开仓 ${symbol}\n${lowEx}多 / ${highEx}空\n$${tradeSize} | 费率差${(spread*100).toFixed(3)}% | 年化${annualized.toFixed(0)}%`);
 
+    // 深度降级后立刻重试补仓（最多3次，每次间隔2秒等盘口恢复）
+    const targetSize = getTradeSize(spread);
+    if (tradeSize < targetSize) {
+      for (let retry = 0; retry < 3; retry++) {
+        await new Promise(r => setTimeout(r, 2000));
+        const remaining = targetSize - position.size;
+        if (remaining < 500) break;
+        
+        log(`  🔄 补仓尝试 ${retry+1}/3: 目标$${targetSize}，当前$${position.size}，还差$${remaining}`);
+        
+        // 重新拉盘口
+        const [lb2, hb2] = await Promise.all([
+          lowEx === 'binance' ? httpGet(`https://fapi.binance.com/fapi/v1/depth?symbol=${lowFutSym}&limit=10`).then(r => r ? { asks: r.asks.map(a=>({price:+a[0],qty:+a[1]})), bids: r.bids.map(b=>({price:+b[0],qty:+b[1]})) } : null) :
+          lowEx === 'bybit' ? httpGet(`https://api.bybit.com/v5/market/orderbook?category=linear&symbol=${lowFutSym}&limit=10`).then(r => r?.result ? { bids: r.result.b.map(b=>({price:+b[0],qty:+b[1]})), asks: r.result.a.map(a=>({price:+a[0],qty:+a[1]})) } : null) :
+          lowEx === 'bitget' ? httpGet(`https://api.bitget.com/api/v2/mix/market/orderbook?symbol=${lowFutSym}&productType=USDT-FUTURES&limit=10`).then(r => r?.data ? { bids: r.data.bids.map(b=>({price:+b[0],qty:+b[1]})), asks: r.data.asks.map(a=>({price:+a[0],qty:+a[1]})) } : null) : null,
+          highEx === 'binance' ? httpGet(`https://fapi.binance.com/fapi/v1/depth?symbol=${highFutSym}&limit=10`).then(r => r ? { asks: r.asks.map(a=>({price:+a[0],qty:+a[1]})), bids: r.bids.map(b=>({price:+b[0],qty:+b[1]})) } : null) :
+          highEx === 'bybit' ? httpGet(`https://api.bybit.com/v5/market/orderbook?category=linear&symbol=${highFutSym}&limit=10`).then(r => r?.result ? { bids: r.result.b.map(b=>({price:+b[0],qty:+b[1]})), asks: r.result.a.map(a=>({price:+a[0],qty:+a[1]})) } : null) :
+          highEx === 'bitget' ? httpGet(`https://api.bitget.com/api/v2/mix/market/orderbook?symbol=${highFutSym}&productType=USDT-FUTURES&limit=10`).then(r => r?.data ? { bids: r.data.bids.map(b=>({price:+b[0],qty:+b[1]})), asks: r.data.asks.map(a=>({price:+a[0],qty:+a[1]})) } : null) : null
+        ]);
+        
+        if (!lb2?.asks?.length || !hb2?.bids?.length) { log(`  🔄 补仓: 盘口数据不可用`); continue; }
+        
+        const fillable2 = Math.min(
+          calcDepthFill(lb2.asks, remaining).fillableUsd,
+          calcDepthFill(hb2.bids, remaining).fillableUsd
+        );
+        const addSize = Math.min(Math.floor(fillable2 / 100) * 100, remaining);
+        if (addSize < 200) { log(`  🔄 补仓: 盘口只够$${fillable2.toFixed(0)}，不足$200，等下次`); break; }
+        
+        const addMid = (lb2.asks[0].price + hb2.bids[0].price) / 2;
+        
+        // 补仓价差检查（>1%不补）
+        const addPriceDiff = Math.abs(lb2.asks[0].price - hb2.bids[0].price) / addMid * 100;
+        if (addPriceDiff > 1.0) { log(`  🔄 补仓: 价差${addPriceDiff.toFixed(2)}%>1%，暂停补仓`); break; }
+        
+        const addQty = alignQty(symbol, lowEx, highEx, addSize / addMid) || Math.floor(addSize / addMid);
+        if (addQty <= 0) break;
+        
+        const addLongQty = lowEx === 'okx' ? coinsToLots(symbol, addQty) : addQty;
+        const addShortQty = highEx === 'okx' ? coinsToLots(symbol, addQty) : addQty;
+        
+        try {
+          const [lr2, sr2] = await Promise.all([
+            lowExObj.futuresLong(lowFutSym, addLongQty),
+            highExObj.futuresShort(highFutSym, addShortQty)
+          ]);
+          
+          let lr2Ok = checkOrderSuccess(lr2, lowEx);
+          let sr2Ok = checkOrderSuccess(sr2, highEx);
+          if (!lr2Ok && lowEx === 'binance' && lr2?.status === 'NEW' && lr2?.orderId) lr2Ok = await waitForBinanceFill(lr2.orderId, lowFutSym);
+          if (!sr2Ok && highEx === 'binance' && sr2?.status === 'NEW' && sr2?.orderId) sr2Ok = await waitForBinanceFill(sr2.orderId, highFutSym);
+          
+          if (lr2Ok && sr2Ok) {
+            position.size += addSize;
+            position.qty += addQty;
+            const addFee = addSize * 2 * CONFIG.FEE_BPS / 10000;
+            state.totalPnl -= addFee;
+            state.dailyPnl -= addFee;
+            saveState();
+            log(`  ✅ 补仓成功! +$${addSize}，总$${position.size}`);
+          } else {
+            log(`  ⚠️ 补仓单腿，跳过后续补仓`);
+            // 单腿处理：平掉成功的那边
+            if (lr2Ok && !sr2Ok) await lowExObj.futuresCloseLong(lowFutSym, addQty).catch(()=>{});
+            if (!lr2Ok && sr2Ok) await highExObj.futuresCloseShort(highFutSym, addQty).catch(()=>{});
+            break;
+          }
+        } catch (e) {
+          log(`  ❌ 补仓异常: ${e.message}`);
+          break;
+        }
+      }
+    }
   } else if (longOk && !shortOk) {
     // 单腿: 多单成了空单没成，平掉多单
     log(`  ⚠️ 单腿! ${lowEx}多成功但${highEx}空失败，反向平仓`);
@@ -1219,7 +1302,7 @@ async function rebalancePositions() {
     if (targetSize <= pos.size) continue;
     
     const addSize = targetSize - pos.size;
-    if (addSize < 500) continue;
+    if (addSize < 200) continue;
     
     const totalExposure = state.positions.reduce((s, p) => s + p.size, 0);
     if (totalExposure + addSize > 14000) {
