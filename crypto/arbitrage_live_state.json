@@ -23,10 +23,11 @@
       "entryTime": "2026-03-11T11:06:00.871Z",
       "spread": 0.00490432,
       "annualized": 537.02304,
-      "earned": 0,
+      "earned": 10.343293470000006,
       "longOrderId": "377bb645-234a-4536-bf23-2bd6205df446",
       "shortOrderId": 3780943048,
-      "unrealizedPnl": 0
+      "unrealizedPnl": 0,
+      "totalFee": 3
     },
     {
       "id": "mmlybzot",
@@ -40,15 +41,16 @@
       "entryTime": "2026-03-11T11:24:37.613Z",
       "spread": 0.003237870000000001,
       "annualized": 354.54676500000016,
-      "earned": 0,
+      "earned": 5.154426900000001,
       "longOrderId": "2c696a85-a072-46bc-a915-a48be60a4f72",
       "shortOrderId": 4423653089,
-      "unrealizedPnl": 0
+      "unrealizedPnl": 0,
+      "totalFee": 2.9
     }
   ],
   "balances": {
-    "binance": 4715.37873161,
-    "bybit": 6580.63331283,
+    "binance": 4669.11874262,
+    "bybit": 6642.39102219,
     "bitget": 2712.294829171703,
     "okx": 6.743723247e-7
   },
@@ -95,7 +97,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773229947334,
+  "_lastEarnedCheck": 1773231928568,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
