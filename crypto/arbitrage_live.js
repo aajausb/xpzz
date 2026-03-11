@@ -266,6 +266,7 @@ const EXCHANGES_LIST = ['okx', 'bybit', 'bitget', 'binance'];
 
 async function fetchFundingRates() {
   const allRates = {};
+  const nextFundingTimes = {}; // { SYM: { binance: timestamp, bybit: timestamp, ... } }
   
   try {
     const [bnData, byData, bgData, okData] = await Promise.all([
@@ -282,6 +283,8 @@ async function fetchFundingRates() {
         const sym = p.symbol.replace('USDT', '');
         if (!allRates[sym]) allRates[sym] = {};
         allRates[sym].binance = parseFloat(p.lastFundingRate);
+        if (!nextFundingTimes[sym]) nextFundingTimes[sym] = {};
+        nextFundingTimes[sym].binance = p.nextFundingTime;
       }
     }
 
@@ -292,6 +295,8 @@ async function fetchFundingRates() {
         const sym = p.symbol.replace('USDT', '');
         if (!allRates[sym]) allRates[sym] = {};
         allRates[sym].bybit = parseFloat(p.fundingRate);
+        if (!nextFundingTimes[sym]) nextFundingTimes[sym] = {};
+        nextFundingTimes[sym].bybit = +p.nextFundingTime;
       }
     }
 
@@ -302,6 +307,8 @@ async function fetchFundingRates() {
         const sym = p.symbol.replace('USDT', '');
         if (!allRates[sym]) allRates[sym] = {};
         allRates[sym].bitget = parseFloat(p.fundingRate || 0);
+        if (!nextFundingTimes[sym]) nextFundingTimes[sym] = {};
+        nextFundingTimes[sym].bitget = +p.nextFundingTime || 0;
       }
     }
 
@@ -313,13 +320,15 @@ async function fetchFundingRates() {
         const sym = match[1];
         if (!allRates[sym]) allRates[sym] = {};
         allRates[sym].okx = parseFloat(p.fundingRate);
+        if (!nextFundingTimes[sym]) nextFundingTimes[sym] = {};
+        nextFundingTimes[sym].okx = +p.nextFundingTime || 0;
       }
     }
   } catch (e) {
     log('⚠️ 费率获取失败: ' + e.message);
   }
 
-  return allRates;
+  return { rates: allRates, nextFundingTimes };
 }
 
 // ============ 动态仓位大小 ============
@@ -426,7 +435,8 @@ async function scanFundingArbitrage() {
   isScanning = true;
   try {
 
-  const rates = await fetchFundingRates();
+  const { rates, nextFundingTimes } = await fetchFundingRates();
+  const now = Date.now();
   const opportunities = [];
 
   for (const [sym, exRates] of Object.entries(rates)) {
@@ -443,6 +453,22 @@ async function scanFundingArbitrage() {
     normalized.sort((a, b) => a[2] - b[2]);
     const [lowEx, lowRate, lowHourly, lowInterval] = normalized[0];
     const [highEx, highRate, highHourly, highInterval] = normalized[normalized.length - 1];
+
+    // === 结算时间窗口检查 ===
+    const lowNext = nextFundingTimes[sym]?.[lowEx] || 0;
+    const highNext = nextFundingTimes[sym]?.[highEx] || 0;
+    
+    // 1. 两所结算时间必须对齐（差 ≤ 30 分钟）
+    if (lowNext && highNext) {
+      const timeDiff = Math.abs(lowNext - highNext);
+      if (timeDiff > 30 * 60 * 1000) continue; // 差 > 30 分钟，跳过
+    }
+    
+    // 2. 距最近结算必须在 1 小时内
+    const earlierNext = Math.min(lowNext || Infinity, highNext || Infinity);
+    if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
+    const msToSettle = earlierNext - now;
+    if (msToSettle < 0 || msToSettle > 60 * 60 * 1000) continue; // 不在结算前1小时窗口内
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 
@@ -887,7 +913,7 @@ function getQtyPrecision(symbol) {
 async function checkFundingPositions() {
   if (state.positions.length === 0) return;
 
-  const rates = await fetchFundingRates();
+  const { rates } = await fetchFundingRates();
 
   for (const pos of state.positions) {
     if (pos.type !== 'funding') continue;
@@ -1066,7 +1092,7 @@ async function checkMarginSafety() {
 async function rebalancePositions() {
   if (state.positions.length === 0) return;
 
-  const rates = await fetchFundingRates();
+  const { rates } = await fetchFundingRates();
   
   // 1. 给每个仓位评分：标准化为等效8小时费率差
   for (const pos of state.positions) {

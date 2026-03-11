@@ -26,7 +26,15 @@
       "earned": 1.5504591600000002,
       "longOrderId": "e842217c-354f-4511-9487-5702ffa81f35",
       "shortOrderId": "1415467501167976449",
-      "unrealizedPnl": 74.6355199928
+      "unrealizedPnl": 76.0353199928,
+      "spreadHistory": [
+        {
+          "time": 1773222151794,
+          "spread": -0.00019466666666666666
+        }
+      ],
+      "health": "ok",
+      "currentSpread": -0.00019466666666666666
     },
     {
       "id": "mmlhav0u",
@@ -43,7 +51,15 @@
       "earned": -0.3440448199999999,
       "longOrderId": "af8c9274-a515-4eb2-83cb-bd4b83b614da",
       "shortOrderId": "1415467502514348033",
-      "unrealizedPnl": 21.6471099993
+      "unrealizedPnl": 22.6989099993,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": -0.000040260000000000004
+        }
+      ],
+      "health": "ok",
+      "currentSpread": -0.000040260000000000004
     },
     {
       "id": "mmlhx4b9",
@@ -60,7 +76,15 @@
       "earned": -0.63606136,
       "longOrderId": "835c7980-9a0a-43e9-8792-b5266e997109",
       "shortOrderId": "1415471857569243137",
-      "unrealizedPnl": 34.180379932585
+      "unrealizedPnl": 24.966979932585,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": -0.000059800000000000003
+        }
+      ],
+      "health": "ok",
+      "currentSpread": -0.000059800000000000003
     },
     {
       "id": "mmlimtwz",
@@ -77,7 +101,15 @@
       "earned": 0.11603342999999999,
       "longOrderId": "7fb1e400-6e9f-4bbb-8b1d-798eb25fdf67",
       "shortOrderId": "1415476889551249409",
-      "unrealizedPnl": 34.10273895345
+      "unrealizedPnl": 37.85276895345,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": -0.00029866666666666664
+        }
+      ],
+      "health": "ok",
+      "currentSpread": -0.00029866666666666664
     },
     {
       "id": "mmlitggb",
@@ -94,7 +126,15 @@
       "earned": 0.10465421,
       "longOrderId": "51ec4876-f7f7-4e93-adda-35d285d79f31",
       "shortOrderId": "1415478186149027841",
-      "unrealizedPnl": 63.085119960096
+      "unrealizedPnl": 59.172639960096,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": 0
+        }
+      ],
+      "health": "ok",
+      "currentSpread": 0
     },
     {
       "id": "mmlljnt1",
@@ -111,7 +151,15 @@
       "earned": 0.6530995199999999,
       "longOrderId": "1415497403728535553",
       "shortOrderId": "5b48db3b-11a6-4f9c-8c4e-5a19d2cece0b",
-      "unrealizedPnl": -1.13985938544
+      "unrealizedPnl": 3.08838061456,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": 0
+        }
+      ],
+      "health": "ok",
+      "currentSpread": 0
     },
     {
       "id": "mmloyr4p",
@@ -128,7 +176,15 @@
       "earned": 1.4967214899999997,
       "longOrderId": "8d4512e8-f1eb-4248-bdfd-2150c685f891",
       "shortOrderId": "1415521491591241729",
-      "unrealizedPnl": 28.66829998002
+      "unrealizedPnl": 0,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": -0.00010933333333333334
+        }
+      ],
+      "health": "ok",
+      "currentSpread": -0.00010933333333333334
     },
     {
       "id": "mmlqsmh3",
@@ -145,7 +201,15 @@
       "earned": 1.72962796,
       "longOrderId": 1106107131,
       "shortOrderId": "80e56ca5-8aab-422b-8707-47afc27fb6c8",
-      "unrealizedPnl": 0
+      "unrealizedPnl": 0,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": 0.004691488
+        }
+      ],
+      "health": "healthy",
+      "currentSpread": 0.004691488
     },
     {
       "id": "mmls8q2a",
@@ -162,7 +226,15 @@
       "earned": 0,
       "longOrderId": "9f9a110c-a256-47f9-a16f-e356f445df30",
       "shortOrderId": 12517381980,
-      "unrealizedPnl": 0
+      "unrealizedPnl": 0,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": 0.00296489
+        }
+      ],
+      "health": "ok",
+      "currentSpread": 0.00296489
     },
     {
       "id": "mmlsweiz",
@@ -179,7 +251,15 @@
       "earned": 0,
       "longOrderId": "86151970-5c39-42b3-8e4f-ab20662ff016",
       "shortOrderId": 5496318451,
-      "unrealizedPnl": 0
+      "unrealizedPnl": 0,
+      "spreadHistory": [
+        {
+          "time": 1773222151795,
+          "spread": -0.00010566000000000004
+        }
+      ],
+      "health": "ok",
+      "currentSpread": -0.00010566000000000004
     }
   ],
   "balances": {
@@ -230,7 +310,7 @@
   "errors": 26,
   "consecutiveErrors": 0,
   "lastError": "Cannot access 'tradeSize' before initialization",
-  "_lastEarnedCheck": 1773220351743,
+  "_lastEarnedCheck": 1773222338681,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
