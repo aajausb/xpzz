@@ -2,12 +2,12 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -47.199999999999996,
+  "totalPnl": -53.199999999999996,
   "realizedPnl": -663.579136352341,
   "unrealizedPnl": 0,
-  "dailyPnl": -44.8,
+  "dailyPnl": -50.8,
   "dailyPnlDate": "2026-03-11",
-  "trades": 30,
+  "trades": 31,
   "wins": 2,
   "losses": 15,
   "positions": [
@@ -28,11 +28,15 @@
       "shortOrderId": 3780943048,
       "unrealizedPnl": 0,
       "totalFee": 3,
-      "currentSpread": -0.00504686,
+      "currentSpread": -0.0036833400000000002,
       "spreadHistory": [
         {
           "time": 1773237246989,
           "spread": -0.006720519999999999
+        },
+        {
+          "time": 1773240846736,
+          "spread": -0.00381834
         }
       ],
       "health": "ok"
@@ -54,14 +58,37 @@
       "shortOrderId": 4423653089,
       "unrealizedPnl": 0,
       "totalFee": 2.9,
-      "currentSpread": -0.0029751399999999994,
+      "currentSpread": -0.0020731200000000003,
       "spreadHistory": [
         {
           "time": 1773237246989,
           "spread": -0.00414218
+        },
+        {
+          "time": 1773240846736,
+          "spread": -0.002171
         }
       ],
       "health": "ok"
+    },
+    {
+      "id": "mmm5tee8",
+      "symbol": "RONIN",
+      "type": "funding",
+      "longEx": "bybit",
+      "shortEx": "binance",
+      "size": 3000,
+      "qty": 28226.2,
+      "entryPrice": 0.10622999999999999,
+      "entryTime": "2026-03-11T14:54:07.136Z",
+      "spread": 0.003983720000000001,
+      "annualized": 436.21734000000015,
+      "earned": 0,
+      "totalFee": 6,
+      "longOrderId": "412dc7e2-67c8-408f-940b-028a92d6f475",
+      "shortOrderId": 1746483454,
+      "currentSpread": 0.0034436599999999994,
+      "unrealizedPnl": 0
     }
   ],
   "balances": {
@@ -108,12 +135,13 @@
     "RLS_bitget_bybit": 1773206800453,
     "ONG_bybit_bitget": 1773212543449,
     "COMP_bybit_binance": 1773218047474,
-    "ACE_bybit_binance": 1773228277613
+    "ACE_bybit_binance": 1773228277613,
+    "RONIN_bybit_binance": 1773240847136
   },
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773239046692,
+  "_lastEarnedCheck": 1773240846692,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
