@@ -361,6 +361,15 @@ const bitget = {
 
   // 合约平多
   async futuresCloseLong(symbol, quantity) {
+    // 用 place-order 指定数量平仓（支持部分平仓）
+    if (quantity) {
+      return this.api('POST', '/api/v2/mix/order/place-order', null, {
+        symbol, productType: 'USDT-FUTURES', marginMode: 'crossed',
+        side: 'sell', tradeSide: 'close', orderType: 'market',
+        size: String(quantity)
+      });
+    }
+    // 不传数量则全平
     return this.api('POST', '/api/v2/mix/order/close-positions', null, {
       symbol, productType: 'USDT-FUTURES', holdSide: 'long'
     });
@@ -368,6 +377,13 @@ const bitget = {
 
   // 合约平空
   async futuresCloseShort(symbol, quantity) {
+    if (quantity) {
+      return this.api('POST', '/api/v2/mix/order/place-order', null, {
+        symbol, productType: 'USDT-FUTURES', marginMode: 'crossed',
+        side: 'buy', tradeSide: 'close', orderType: 'market',
+        size: String(quantity)
+      });
+    }
     return this.api('POST', '/api/v2/mix/order/close-positions', null, {
       symbol, productType: 'USDT-FUTURES', holdSide: 'short'
     });

@@ -171,45 +171,11 @@ async function notify(msg) {
 
 async function updateDashboard() {
   try {
-    const { execSync } = require('child_process');
-    const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-    const bn = state.balances.binance || 0;
-    const by = state.balances.bybit || 0;
-    const bg = state.balances.bitget || 0;
-    const ok = state.balances.okx || 0;
-    const total = bn + by + bg + ok;
-
-    let posStr = '';
-    let totalEarned = 0;
-    for (const p of state.positions) {
-      const e = p.earned || 0;
-      totalEarned += e;
-      const icon = e > 0 ? '✅' : e < -0.5 ? '⚠️' : '➖';
-      posStr += `├ ${p.symbol}: ${e >= 0 ? '+' : ''}$${e.toFixed(2)} ${icon} | $${p.size}\n`;
-    }
-
-    const text = `📊 系统看板 (${ts})\n\n` +
-      `💵 四所资产\n├ Binance: $${Math.round(bn)}\n├ Bybit: $${Math.round(by)}\n├ Bitget: $${Math.round(bg)}\n├ OKX: $${Math.round(ok)}\n└ 总计: $${Math.round(total)}\n\n` +
-      `📍 费率套利 (${state.positions.length}仓) 累计: +$${totalEarned.toFixed(2)}\n` +
-      posStr +
-      `└ 净敞口: 全部=0 ✅\n\n` +
-      `⚙️ arbitrage-live ✅ | WS 4所\n└ 🟢 运行中 | ⏰ ${ts}`;
-
-    const body = JSON.stringify({
-      chat_id: CONFIG.TG_CHAT_ID, message_id: 3713, text,
-      reply_markup: JSON.stringify({ inline_keyboard: [[{ text: '🔄 刷新', callback_data: 'refresh_dashboard' }]] })
-    });
-    const req = https.request({
-      hostname: 'api.telegram.org',
-      path: '/bot' + CONFIG.TG_BOT_TOKEN + '/editMessageText',
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
-      timeout: 5000
-    });
-    req.on('error', () => {});
-    req.write(body);
-    req.end();
+    // 统一走 HTTP handler 刷新看板，避免多份代码不一致
+    const http = require('http');
+    http.get('http://127.0.0.1:9876/refresh', { timeout: 3000 }, (res) => {
+      res.resume(); // drain
+    }).on('error', () => {});
   } catch (e) { /* 看板更新失败不影响交易 */ }
 }
 
@@ -473,10 +439,8 @@ async function scanFundingArbitrage() {
     if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
     const msToSettle = earlierNext - now;
     if (msToSettle < 0 || msToSettle > 70 * 60 * 1000) continue; // 超过70分钟的跳过
-    // 两个扫描点：结算前60-70分钟（~65min）+ 结算前40-50分钟（~45min），都可以开仓
-    const inWindow65 = msToSettle >= 60 * 60 * 1000 && msToSettle <= 70 * 60 * 1000;  // 60-70min
-    const inWindow45 = msToSettle >= 40 * 60 * 1000 && msToSettle <= 50 * 60 * 1000;  // 40-50min
-    if (!inWindow65 && !inWindow45) continue;
+    // 连续窗口：结算前40-70分钟，覆盖1h/4h/8h所有结算频率
+    if (msToSettle < 40 * 60 * 1000) continue; // 太近了不开（<40min）
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 
@@ -1025,15 +989,24 @@ async function checkFundingPositions() {
 
     const currentSpread = (symRates[pos.shortEx] || 0) - (symRates[pos.longEx] || 0);
 
+    // 标准化费率差（考虑不同结算频率）
+    const lowInterval = monitor.fundingIntervals?.[pos.symbol]?.[pos.longEx] || 8;
+    const highInterval = monitor.fundingIntervals?.[pos.symbol]?.[pos.shortEx] || 8;
+    const avgInterval = (lowInterval + highInterval) / 2;
+    const hourlySpread = currentSpread / avgInterval;
+    const equiv8hSpread = hourlySpread * 8;
+    
+    pos.currentSpread = equiv8hSpread; // 更新当前标准化费率差
+
     // 如果费率反转，只通知不自动平
-    if (currentSpread < -CONFIG.MIN_FUNDING_SPREAD) {
-      log(`⚠️ ${pos.symbol} 费率反转! 当前差${(currentSpread*100).toFixed(3)}%`);
+    if (equiv8hSpread < -CONFIG.MIN_FUNDING_SPREAD) {
+      log(`⚠️ ${pos.symbol} 费率反转! 当前差${(equiv8hSpread*100).toFixed(3)}% (原始${(currentSpread*100).toFixed(3)}%)`);
       // 不自动平仓，费率可能下一期就回来了
     }
 
-    // 估算已收费率（每个结算周期收一次 spread * size）
+    // 估算已收费率（用实际结算频率）
     const hoursOpen = (Date.now() - new Date(pos.entryTime).getTime()) / 3600000;
-    const fundingPeriods = Math.floor(hoursOpen / 8);
+    const fundingPeriods = Math.floor(hoursOpen / avgInterval);
     const estimatedEarned = fundingPeriods * pos.spread * pos.size;
     
     // 同时查实际合约浮盈（更准确）

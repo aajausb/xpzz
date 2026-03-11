@@ -27,7 +27,8 @@
       "longOrderId": "377bb645-234a-4536-bf23-2bd6205df446",
       "shortOrderId": 3780943048,
       "unrealizedPnl": 0,
-      "totalFee": 3
+      "totalFee": 3,
+      "currentSpread": -0.00566848
     },
     {
       "id": "mmlybzot",
@@ -45,7 +46,8 @@
       "longOrderId": "2c696a85-a072-46bc-a915-a48be60a4f72",
       "shortOrderId": 4423653089,
       "unrealizedPnl": 0,
-      "totalFee": 2.9
+      "totalFee": 2.9,
+      "currentSpread": -0.0024885800000000007
     }
   ],
   "balances": {
@@ -97,7 +99,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773231928568,
+  "_lastEarnedCheck": 1773233647577,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
