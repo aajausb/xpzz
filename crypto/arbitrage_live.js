@@ -512,6 +512,17 @@ async function scanFundingArbitrage() {
   // 按等效费率差排序
   opportunities.sort((a, b) => b.spread - a.spread);
 
+  if (opportunities.length === 0) {
+    // 每10次静默扫描打一次日志，避免刷屏
+    if (!scanFundingArbitrage._count) scanFundingArbitrage._count = 0;
+    scanFundingArbitrage._count++;
+    if (scanFundingArbitrage._count % 10 === 1) {
+      log(`🔍 扫描完成: 无符合条件的机会（窗口+对齐+门槛）`);
+    }
+  } else {
+    log(`🔍 扫描发现 ${opportunities.length} 个机会: ${opportunities.slice(0,3).map(o=>o.symbol+'('+(o.spread*100).toFixed(2)+'%)').join(', ')}`);
+  }
+
   for (const opp of opportunities.slice(0, 3)) {
     try {
       await executeFundingArbitrage(opp);
