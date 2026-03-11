@@ -1196,6 +1196,13 @@ async function rebalancePositions() {
     pos.spreadHistory.push({ time: Date.now(), spread: equiv8h });
     if (pos.spreadHistory.length > 3) pos.spreadHistory.shift();
     
+    // 连续倒贴计数（回正就重置）
+    if (equiv8h < 0) {
+      pos.consecutiveNeg = (pos.consecutiveNeg || 0) + 1;
+    } else {
+      pos.consecutiveNeg = 0;
+    }
+    
     // 健康度评分
     const recent = pos.spreadHistory;
     const avgSpread = recent.reduce((s, r) => s + r.spread, 0) / recent.length;
@@ -1207,8 +1214,8 @@ async function rebalancePositions() {
       pos.health = 'ok';          // 一般：还在赚，没连续下降
     } else if (avgSpread >= 0 && allDecreasing) {
       pos.health = 'weak';        // 亚健康：连续3次下降，标记可替换
-    } else if (recent.length >= 3 && recent.every(r => r.spread <= 0)) {
-      pos.health = 'bad';         // 不健康：连续3次倒贴
+    } else if (pos.consecutiveNeg >= 2) {
+      pos.health = 'bad';         // 不健康：连续2次倒贴
     } else {
       pos.health = 'ok';
     }
@@ -1219,8 +1226,8 @@ async function rebalancePositions() {
   // 2. 自动平仓：连续3次倒贴的仓位
   for (const pos of state.positions) {
     if (pos.health === 'bad') {
-      log(`🔴 [调仓] ${pos.symbol} 连续3次倒贴，自动平仓`);
-      await notify(`🔴 ${pos.symbol} 连续3次费率倒贴\n正在平仓释放资金...`);
+      log(`🔴 [调仓] ${pos.symbol} 连续2次倒贴，自动平仓`);
+      await notify(`🔴 ${pos.symbol} 连续2次费率倒贴\n正在平仓释放资金...`);
       try {
         await closeFundingPosition(pos);
       } catch (e) {
