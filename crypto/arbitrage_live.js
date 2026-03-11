@@ -426,13 +426,16 @@ async function scanFundingArbitrage() {
     const lowNext = nextFundingTimes[sym]?.[lowEx] || 0;
     const highNext = nextFundingTimes[sym]?.[highEx] || 0;
     
-    // 1. 两所结算时间对齐检查（只在两边都有数据时比较）
+    // 1. 两所结算时间对齐检查
+    let settlementAligned = true; // 默认对齐
+    let timeDiffMs = 0;
     if (lowNext > 0 && highNext > 0) {
-      const timeDiff = Math.abs(lowNext - highNext);
-      if (timeDiff > 30 * 60 * 1000) continue; // 差 > 30 分钟，跳过
+      timeDiffMs = Math.abs(lowNext - highNext);
+      if (timeDiffMs > 3 * 60 * 60 * 1000) continue; // 差 > 3小时，完全不做
+      if (timeDiffMs > 30 * 60 * 1000) settlementAligned = false; // 30min-3h: 不对齐，需更高门槛
     }
     
-    // 2. 距最近结算必须在 1 小时内（用有数据的那个，都有取较早的）
+    // 2. 距最近结算必须在窗口内（用有数据的那个，都有取较早的）
     const validTimes = [lowNext, highNext].filter(t => t > 0);
     if (validTimes.length === 0) continue; // 两边都没结算时间数据
     const earlierNext = Math.min(...validTimes);
@@ -444,7 +447,9 @@ async function scanFundingArbitrage() {
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 
-    if (equiv8hSpread < CONFIG.MIN_FUNDING_SPREAD) continue;
+    // 门槛：对齐的0.3%，不对齐的1.0%
+    const minSpread = settlementAligned ? CONFIG.MIN_FUNDING_SPREAD : 0.01;
+    if (equiv8hSpread < minSpread) continue;
 
     // 最低绝对门槛：原始费率差不能低于0.1%
     const rawSpread = highRate - lowRate;
@@ -475,7 +480,8 @@ async function scanFundingArbitrage() {
       spread: equiv8hSpread,
       hourlySpread,
       lowInterval, highInterval,
-      annualized: hourlySpread * 24 * 365 * 100
+      annualized: hourlySpread * 24 * 365 * 100,
+      settlementAligned
     });
   }
 
@@ -671,6 +677,7 @@ async function executeFundingArbitrage(opp) {
       annualized,
       earned: 0,
       totalFee: 0,
+      settlementAligned: opp.settlementAligned !== false, // 默认true
       longOrderId: getOrderId(longResult, lowEx),
       shortOrderId: getOrderId(shortResult, highEx)
     };
@@ -1218,6 +1225,23 @@ async function rebalancePositions() {
         await closeFundingPosition(pos);
       } catch (e) {
         log(`❌ 平仓失败: ${e.message}`);
+      }
+    }
+  }
+  
+  // 2.5 不对齐仓位净利归零保护
+  for (const pos of state.positions) {
+    if (pos.settlementAligned === false) {
+      const netProfit = (pos.earned || 0) - (pos.totalFee || 0);
+      if (netProfit <= 0 && (pos.earned || 0) > 0) {
+        // 曾经赚过但净利归零了 → 平仓
+        log(`🟡 [调仓] ${pos.symbol} 不对齐仓位净利归零(earned:$${(pos.earned||0).toFixed(2)} fee:$${(pos.totalFee||0).toFixed(2)})，提前平仓`);
+        await notify(`🟡 ${pos.symbol} 不对齐仓位净利归零，提前平仓`);
+        try {
+          await closeFundingPosition(pos);
+        } catch (e) {
+          log(`❌ 平仓失败: ${e.message}`);
+        }
       }
     }
   }
