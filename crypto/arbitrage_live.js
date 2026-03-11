@@ -472,7 +472,11 @@ async function scanFundingArbitrage() {
     const earlierNext = Math.min(...validTimes);
     if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
     const msToSettle = earlierNext - now;
-    if (msToSettle < 0 || msToSettle > 60 * 60 * 1000) continue; // 不在结算前1小时窗口内
+    if (msToSettle < 0 || msToSettle > 70 * 60 * 1000) continue; // 超过70分钟的跳过
+    // 两个扫描点：结算前60-70分钟（~65min）+ 结算前40-50分钟（~45min），都可以开仓
+    const inWindow65 = msToSettle >= 60 * 60 * 1000 && msToSettle <= 70 * 60 * 1000;  // 60-70min
+    const inWindow45 = msToSettle >= 40 * 60 * 1000 && msToSettle <= 50 * 60 * 1000;  // 40-50min
+    if (!inWindow65 && !inWindow45) continue;
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 
@@ -515,7 +519,6 @@ async function scanFundingArbitrage() {
   opportunities.sort((a, b) => b.spread - a.spread);
 
   if (opportunities.length === 0) {
-    // 每10次静默扫描打一次日志，避免刷屏
     if (!scanFundingArbitrage._count) scanFundingArbitrage._count = 0;
     scanFundingArbitrage._count++;
     if (scanFundingArbitrage._count % 10 === 1) {
@@ -1924,6 +1927,18 @@ async function main() {
 
   // 仓位qty对账 - 每2小时（引擎内部做，不依赖外部脚本）
   setInterval(reconcilePositions, 7200000);
+
+  // 等待频率缓存完成（避免用默认值8h导致误判）
+  const waitForIntervals = () => new Promise(resolve => {
+    const check = () => {
+      if (Object.keys(monitor.fundingIntervals).length > 100) resolve();
+      else setTimeout(check, 500);
+    };
+    check();
+    setTimeout(resolve, 10000); // 最多等10秒
+  });
+  await waitForIntervals();
+  log('📊 频率缓存就绪: ' + Object.keys(monitor.fundingIntervals).length + ' 个币种');
 
   // 首次扫描
   await scanFundingArbitrage();

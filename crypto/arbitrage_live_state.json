@@ -17,7 +17,7 @@
       "type": "funding",
       "longEx": "bybit",
       "shortEx": "binance",
-      "size": 500,
+      "size": 3000,
       "qty": 207212,
       "entryPrice": 0.0143245,
       "entryTime": "2026-03-11T11:06:00.871Z",
@@ -48,7 +48,7 @@
   ],
   "balances": {
     "binance": 4715.37873161,
-    "bybit": 6582.23344328,
+    "bybit": 6580.63331283,
     "bitget": 2712.294829171703,
     "okx": 6.743723247e-7
   },
@@ -95,14 +95,14 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773228281986,
+  "_lastEarnedCheck": 1773229947334,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
       "highEx": "binance",
-      "spread": 0.0033603900000000004,
-      "priceDiff": 2.0913080011203298,
-      "time": 1773214719632
+      "spread": 0.004999099999999999,
+      "priceDiff": 3.3778896052838445,
+      "time": 1773228822681
     }
   }
 }
