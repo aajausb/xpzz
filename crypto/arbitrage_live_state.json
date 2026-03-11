@@ -28,7 +28,14 @@
       "shortOrderId": 3780943048,
       "unrealizedPnl": 0,
       "totalFee": 3,
-      "currentSpread": -0.0073463999999999995
+      "currentSpread": -0.00630982,
+      "spreadHistory": [
+        {
+          "time": 1773237246989,
+          "spread": -0.006720519999999999
+        }
+      ],
+      "health": "ok"
     },
     {
       "id": "mmlybzot",
@@ -47,7 +54,14 @@
       "shortOrderId": 4423653089,
       "unrealizedPnl": 0,
       "totalFee": 2.9,
-      "currentSpread": -0.00511352
+      "currentSpread": -0.0039228,
+      "spreadHistory": [
+        {
+          "time": 1773237246989,
+          "spread": -0.00414218
+        }
+      ],
+      "health": "ok"
     }
   ],
   "balances": {
@@ -99,7 +113,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773235446689,
+  "_lastEarnedCheck": 1773237246689,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
