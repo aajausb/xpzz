@@ -76,7 +76,7 @@ const CONFIG = {
 
 // ============ 全局状态 ============
 let isScanning = false;    // 防止 scanFundingRates 并发
-let isClosing = false;     // 防止 closeFundingPosition 并发
+
 const openingSymbols = new Set(); // 防止 WS 和 REST 同时开同一个币
 let state = {
   startTime: new Date().toISOString(),
@@ -937,15 +937,22 @@ async function checkFundingPositions() {
   saveState();
 }
 
+const closingSymbols = new Set(); // 防止同币并发平仓
+
 async function closeFundingPosition(pos) {
-  const longExObj = getExchange(pos.longEx);
-  const shortExObj = getExchange(pos.shortEx);
-  const longSym = getFuturesSymbol(pos.symbol, pos.longEx);
-  const shortSym = getFuturesSymbol(pos.symbol, pos.shortEx);
+  if (closingSymbols.has(pos.symbol)) {
+    log(`⏳ ${pos.symbol} 正在平仓中，跳过`);
+    return;
+  }
+  closingSymbols.add(pos.symbol);
+  try {
+    const longExObj = getExchange(pos.longEx);
+    const shortExObj = getExchange(pos.shortEx);
+    const longSym = getFuturesSymbol(pos.symbol, pos.longEx);
+    const shortSym = getFuturesSymbol(pos.symbol, pos.shortEx);
 
   log(`📤 平仓 ${pos.symbol} ${pos.longEx}多/${pos.shortEx}空 数量${pos.qty}`);
 
-  try {
     const [closeL, closeS] = await Promise.all([
       longExObj.futuresCloseLong(longSym, pos.qty),
       shortExObj.futuresCloseShort(shortSym, pos.qty)
@@ -986,6 +993,8 @@ async function closeFundingPosition(pos) {
   } catch (e) {
     log(`  ❌ 平仓异常: ${e.message}`);
     await notify(`❌ 平仓异常 ${pos.symbol}: ${e.message}`);
+  } finally {
+    closingSymbols.delete(pos.symbol);
   }
 }
 
@@ -1395,10 +1404,12 @@ async function updateEarned() {
         startTime: startTime
       }).catch(() => []),
       bybit.api('GET', '/v5/account/transaction-log', { 
-        accountType: 'UNIFIED', type: 'SETTLEMENT', limit: '100'
+        accountType: 'UNIFIED', type: 'SETTLEMENT', limit: '100',
+        startTime: '' + startTime
       }).catch(() => ({})),
       bitget.api('GET', '/api/v2/mix/account/bill', { 
-        productType: 'USDT-FUTURES', limit: '50'
+        productType: 'USDT-FUTURES', limit: '100',
+        startTime: '' + startTime
       }).catch(() => ({}))
     ]);
 
