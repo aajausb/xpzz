@@ -625,9 +625,19 @@ async function executeFundingArbitrage(opp) {
     return;
   }
 
-  // 5. 检查成交
-  const longOk = checkOrderSuccess(longResult, lowEx);
-  const shortOk = checkOrderSuccess(shortResult, highEx);
+  // 5. 检查成交（Binance 低流动性币可能返回 NEW，需要等待）
+  let longOk = checkOrderSuccess(longResult, lowEx);
+  let shortOk = checkOrderSuccess(shortResult, highEx);
+
+  // Binance NEW 状态等待确认
+  if (!longOk && lowEx === 'binance' && longResult?.status === 'NEW' && longResult?.orderId) {
+    log('  ⏳ Binance 多单 NEW，等待成交...');
+    longOk = await waitForBinanceFill(longResult.orderId, lowFutSym);
+  }
+  if (!shortOk && highEx === 'binance' && shortResult?.status === 'NEW' && shortResult?.orderId) {
+    log('  ⏳ Binance 空单 NEW，等待成交...');
+    shortOk = await waitForBinanceFill(shortResult.orderId, highFutSym);
+  }
 
   if (longOk && shortOk) {
     // 两边都成了
@@ -829,12 +839,32 @@ async function executeSpreadArbitrage(symbol, lowEx, highEx, lowPrice, highPrice
 function checkOrderSuccess(result, exchange) {
   if (!result) return false;
   switch (exchange) {
-    case 'binance': return result.orderId && result.status === 'FILLED';
+    case 'binance': return result.orderId && (result.status === 'FILLED' || result.status === 'PARTIALLY_FILLED');
     case 'bybit': return result.retCode === 0;
     case 'bitget': return result.code === '00000';
     case 'okx': return result.code === '0';
     default: return false;
   }
+}
+
+// Binance 市价单可能返回 NEW（低流动性币），需要等待确认
+async function waitForBinanceFill(orderId, symbol, maxWaitMs = 1000) {
+  const start = Date.now();
+  while (Date.now() - start < maxWaitMs) {
+    await new Promise(r => setTimeout(r, 200));
+    try {
+      const order = await binance.futuresApi('GET', '/fapi/v1/order', { symbol, orderId });
+      if (order.status === 'FILLED') return true;
+      if (order.status === 'CANCELED' || order.status === 'EXPIRED' || order.status === 'REJECTED') return false;
+      // 还是 NEW 或 PARTIALLY_FILLED，继续等
+    } catch (e) { break; }
+  }
+  // 超时，取消未成交的订单
+  try {
+    await binance.futuresApi('DELETE', '/fapi/v1/order', { symbol, orderId });
+    log('  ⚠️ Binance 订单超时未成交，已取消: ' + symbol);
+  } catch (e) {}
+  return false;
 }
 
 function getOrderId(result, exchange) {
@@ -955,86 +985,58 @@ async function closeFundingPosition(pos) {
 // ============ 保证金安全监控（每60秒） ============
 async function checkMarginSafety() {
   try {
-    // 1. 获取每个交易所余额和持仓
-    const [bnBal, byBal, bgBal] = await Promise.all([
-      binance.getFuturesBalance().catch(() => ({ usdt: 0 })),
-      bybit.getBalance().catch(() => ({ usdt: 0 })),
-      bitget.getFuturesBalance().catch(() => ({ usdt: 0 }))
-    ]);
-
     const [bnPos, byPos, bgPos] = await Promise.all([
       binance.getFuturesPositions().catch(() => []),
       bybit.api('GET', '/v5/position/list', { category: 'linear', settleCoin: 'USDT' }).catch(() => ({})),
       bitget.api('GET', '/api/v2/mix/position/all-position', { productType: 'USDT-FUTURES' }).catch(() => ({}))
     ]);
 
-    // 2. 计算每个交易所的名义总值和浮盈
-    const exchanges = [
-      {
-        name: 'binance', balance: +(bnBal.usdt || 0),
-        positions: (bnPos || []).filter(p => +p.positionAmt !== 0).map(p => ({
-          symbol: p.symbol, notional: Math.abs(+p.positionAmt * +p.markPrice),
-          pnl: +p.unRealizedProfit
-        }))
-      },
-      {
-        name: 'bybit', balance: +(byBal.usdt || 0),
-        positions: (byPos.result?.list?.filter(x => +x.size > 0) || []).map(p => ({
-          symbol: p.symbol, notional: +p.positionValue,
-          pnl: +p.unrealisedPnl
-        }))
-      },
-      {
-        name: 'bitget', balance: +(bgBal.usdt || 0),
-        positions: (bgPos.data?.filter(x => +x.total > 0) || []).map(p => ({
-          symbol: p.symbol, notional: Math.abs(+p.total * +p.marketPrice),
-          pnl: +(p.unrealizedPL || 0)
-        }))
+    const positionRisks = [];
+
+    for (const p of (bnPos || []).filter(x => +x.positionAmt !== 0)) {
+      const liq = +p.liquidationPrice, mark = +p.markPrice;
+      if (liq > 0 && mark > 0) {
+        const isShort = +p.positionAmt < 0;
+        const distPct = isShort ? ((liq - mark) / mark * 100) : ((mark - liq) / mark * 100);
+        positionRisks.push({ symbol: p.symbol.replace('USDT',''), exchange: 'binance', mark, liq, distPct, isShort });
       }
-    ];
+    }
 
-    for (const ex of exchanges) {
-      if (ex.positions.length === 0) continue;
+    for (const p of (byPos.result?.list || []).filter(x => +x.size > 0)) {
+      const liq = +p.liqPrice, mark = +p.markPrice;
+      if (liq > 0 && mark > 0) {
+        const isShort = p.side === 'Sell';
+        const distPct = isShort ? ((liq - mark) / mark * 100) : ((mark - liq) / mark * 100);
+        positionRisks.push({ symbol: p.symbol.replace('USDT',''), exchange: 'bybit', mark, liq, distPct, isShort });
+      }
+    }
 
-      const totalNotional = ex.positions.reduce((s, p) => s + p.notional, 0);
-      const totalPnl = ex.positions.reduce((s, p) => s + p.pnl, 0);
-      const available = ex.balance + totalPnl; // 可用 = 余额 + 浮盈（浮亏是负数）
-      const ratio = totalNotional > 0 ? available / totalNotional : 1;
+    for (const p of (bgPos.data || []).filter(x => +x.total > 0)) {
+      const liq = +p.liquidationPrice, mark = +p.markPrice;
+      if (liq > 0 && mark > 0) {
+        const isShort = p.holdSide === 'short';
+        const distPct = isShort ? ((liq - mark) / mark * 100) : ((mark - liq) / mark * 100);
+        positionRisks.push({ symbol: p.symbol.replace('USDT',''), exchange: 'bitget', mark, liq, distPct, isShort });
+      }
+    }
 
-      // 3. 分级处理
-      if (ratio < CONFIG.MARGIN_EMERGENCY_RATIO) {
-        // 🚨 紧急：全平该交易所
-        log(`🚨🚨🚨 ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}% < 15%! 紧急全平!`);
-        await notify(`🚨🚨🚨 紧急！${ex.name} 保证金率仅 ${(ratio*100).toFixed(1)}%\n余额: $${available.toFixed(0)} / 仓位: $${totalNotional.toFixed(0)}\n🔴 正在全平该所所有仓位!`);
-        
-        const toClose = state.positions.filter(p => p.longEx === ex.name || p.shortEx === ex.name);
-        for (const pos of toClose) {
-          try { await closeFundingPosition(pos); } catch (e) { log(`  ❌ 紧急平仓失败 ${pos.symbol}: ${e.message}`); }
-        }
-        
-      } else if (ratio < CONFIG.MARGIN_CLOSE_RATIO) {
-        // ⚠️ 危险：平掉该交易所最大浮亏仓位
-        const worstPos = ex.positions.sort((a, b) => a.pnl - b.pnl)[0];
-        const statePos = state.positions.find(p => {
-          const sym = getFuturesSymbol(p.symbol, ex.name);
-          return sym === worstPos.symbol && (p.longEx === ex.name || p.shortEx === ex.name);
-        });
-        
+    positionRisks.sort((a, b) => a.distPct - b.distPct);
+
+    for (const risk of positionRisks) {
+      if (risk.distPct <= 10) {
+        const statePos = state.positions.find(p => p.symbol === risk.symbol && (p.longEx === risk.exchange || p.shortEx === risk.exchange));
         if (statePos) {
-          log(`⚠️ ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}% < 20%! 平掉最大浮亏: ${statePos.symbol} ($${worstPos.pnl.toFixed(2)})`);
-          await notify(`⚠️ ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}%\n自动平仓最大浮亏: ${statePos.symbol} (浮亏 $${worstPos.pnl.toFixed(2)})\n两边同时平，不留裸敞口`);
-          try { await closeFundingPosition(statePos); } catch (e) { log(`  ❌ 保证金平仓失败: ${e.message}`); }
+          log('🚨 ' + risk.exchange + ' ' + risk.symbol + ' 距离强平仅 ' + risk.distPct.toFixed(1) + '%! 自动平仓');
+          await notify('🚨 爆仓预警！' + '\n' + risk.exchange + ' ' + risk.symbol + '\n当前价: ' + risk.mark + '\n强平价: ' + risk.liq + '\n距离: ' + risk.distPct.toFixed(1) + '%\n🔴 自动平仓中（两边同时）');
+          try { await closeFundingPosition(statePos); } catch (e) { log('  ❌ 强平预防失败: ' + e.message); }
         }
-        
-      } else if (ratio < CONFIG.MARGIN_WARN_RATIO) {
-        // 📢 预警：只通知
-        log(`📢 ${ex.name} 保证金率 ${(ratio*100).toFixed(1)}% < 30% 预警 | 余额$${available.toFixed(0)} 仓位$${totalNotional.toFixed(0)}`);
-        // 每30分钟最多通知一次
-        const warnKey = `margin_warn_${ex.name}`;
+      } else if (risk.distPct <= 20) {
         if (!state._lastMarginWarn) state._lastMarginWarn = {};
-        if (!state._lastMarginWarn[warnKey] || Date.now() - state._lastMarginWarn[warnKey] > 1800000) {
+        const warnKey = 'liq_warn_' + risk.exchange + '_' + risk.symbol;
+        if (!state._lastMarginWarn[warnKey] || Date.now() - state._lastMarginWarn[warnKey] > 600000) {
           state._lastMarginWarn[warnKey] = Date.now();
-          await notify(`📢 ${ex.name} 保证金预警\n保证金率: ${(ratio*100).toFixed(1)}%\n可用: $${available.toFixed(0)} | 仓位: $${totalNotional.toFixed(0)}\n建议补充保证金或减仓`);
+          log('⚠️ ' + risk.exchange + ' ' + risk.symbol + ' 距离强平 ' + risk.distPct.toFixed(1) + '%');
+          await notify('⚠️ 强平预警\n' + risk.exchange + ' ' + risk.symbol + '\n当前价: ' + risk.mark + '\n强平价: ' + risk.liq + '\n距离: ' + risk.distPct.toFixed(1) + '%\n建议关注或减仓');
         }
       }
     }
@@ -1042,6 +1044,7 @@ async function checkMarginSafety() {
     log('⚠️ 保证金检查异常: ' + e.message);
   }
 }
+
 
 async function rebalancePositions() {
   if (state.positions.length === 0) return;
@@ -1764,8 +1767,9 @@ async function main() {
   setInterval(updateBalances, 600000);
 
   // 保证金安全监控 - 每60秒
+  // 保证金安全监控 - 暂时禁用，需要改用交易所原生保证金率 API
   setInterval(checkMarginSafety, CONFIG.MARGIN_CHECK_INTERVAL);
-  await checkMarginSafety(); // 启动时立即检查一次
+  await checkMarginSafety();
 
   // 状态报告 - 每30分钟
   setInterval(statusReport, 1800000);

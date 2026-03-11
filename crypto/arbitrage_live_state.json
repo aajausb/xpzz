@@ -2,12 +2,12 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -26.4,
+  "totalPnl": -28.4,
   "realizedPnl": -663.579136352341,
   "unrealizedPnl": 0,
-  "dailyPnl": -24,
+  "dailyPnl": -26,
   "dailyPnlDate": "2026-03-11",
-  "trades": 25,
+  "trades": 26,
   "wins": 2,
   "losses": 15,
   "positions": [
@@ -26,7 +26,7 @@
       "earned": 1.2638010300000002,
       "longOrderId": "e842217c-354f-4511-9487-5702ffa81f35",
       "shortOrderId": "1415467501167976449",
-      "unrealizedPnl": 21.4431199928
+      "unrealizedPnl": 26.8090199928
     },
     {
       "id": "mmlhav0u",
@@ -43,7 +43,7 @@
       "earned": -2.18198855,
       "longOrderId": "af8c9274-a515-4eb2-83cb-bd4b83b614da",
       "shortOrderId": "1415467502514348033",
-      "unrealizedPnl": 14.2845099993
+      "unrealizedPnl": 16.3881099993
     },
     {
       "id": "mmlhx4b9",
@@ -60,7 +60,7 @@
       "earned": -2.36872565,
       "longOrderId": "835c7980-9a0a-43e9-8792-b5266e997109",
       "shortOrderId": "1415471857569243137",
-      "unrealizedPnl": 26.612229932585
+      "unrealizedPnl": 29.902729932585
     },
     {
       "id": "mmlimtwz",
@@ -77,7 +77,7 @@
       "earned": 0,
       "longOrderId": "7fb1e400-6e9f-4bbb-8b1d-798eb25fdf67",
       "shortOrderId": "1415476889551249409",
-      "unrealizedPnl": 25.33328895345
+      "unrealizedPnl": 36.38957895345
     },
     {
       "id": "mmlitggb",
@@ -94,7 +94,7 @@
       "earned": 0,
       "longOrderId": "51ec4876-f7f7-4e93-adda-35d285d79f31",
       "shortOrderId": "1415478186149027841",
-      "unrealizedPnl": 48.857919960096
+      "unrealizedPnl": 59.883999960096
     },
     {
       "id": "mmlljnt1",
@@ -111,7 +111,7 @@
       "earned": 0,
       "longOrderId": "1415497403728535553",
       "shortOrderId": "5b48db3b-11a6-4f9c-8c4e-5a19d2cece0b",
-      "unrealizedPnl": 5.82430061456
+      "unrealizedPnl": -2.88089938544
     },
     {
       "id": "mmloyr4p",
@@ -128,12 +128,29 @@
       "earned": 0,
       "longOrderId": "8d4512e8-f1eb-4248-bdfd-2150c685f891",
       "shortOrderId": "1415521491591241729",
+      "unrealizedPnl": 13.11329998002
+    },
+    {
+      "id": "mmlqsmh3",
+      "symbol": "KITE",
+      "type": "funding",
+      "longEx": "binance",
+      "shortEx": "bybit",
+      "size": 1000,
+      "qty": 3758,
+      "entryPrice": 0.26608,
+      "entryTime": "2026-03-11T07:53:36.711Z",
+      "spread": 0.00357546,
+      "annualized": 391.51287,
+      "earned": 0,
+      "longOrderId": 1106107131,
+      "shortOrderId": "80e56ca5-8aab-422b-8707-47afc27fb6c8",
       "unrealizedPnl": 0
     }
   ],
   "balances": {
-    "binance": 4855.51715852,
-    "bybit": 6756.13275187,
+    "binance": 4855.07631993,
+    "bybit": 6750.44787797,
     "bitget": 2461.0889159217027,
     "okx": 6.743723247e-7
   },
@@ -141,7 +158,7 @@
     "PIXEL_bybit_binance": 1773166020681,
     "FOLKS_bitget_bybit": 1773155572768,
     "PIXEL_bybit_bitget": 1773156781225,
-    "KITE_binance_bybit": 1773165754119,
+    "KITE_binance_bybit": 1773215616711,
     "CVC_bybit_binance": 1773156958443,
     "B_binance_bybit": 1773157267664,
     "SAHARA_bybit_bitget": 1773157267874,
@@ -175,17 +192,17 @@
     "RLS_bitget_bybit": 1773206800453,
     "ONG_bybit_bitget": 1773212543449
   },
-  "errors": 22,
+  "errors": 26,
   "consecutiveErrors": 0,
   "lastError": "Cannot access 'tradeSize' before initialization",
-  "_lastEarnedCheck": 1773214143180,
+  "_lastEarnedCheck": 1773215616714,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
       "highEx": "binance",
-      "spread": 0.00544907,
-      "priceDiff": 1.9222732971165957,
-      "time": 1773213378841
+      "spread": 0.0033603900000000004,
+      "priceDiff": 2.0913080011203298,
+      "time": 1773214719632
     }
   }
 }
