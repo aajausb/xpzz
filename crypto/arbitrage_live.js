@@ -1236,22 +1236,8 @@ async function rebalancePositions() {
     }
   }
   
-  // 2.5 不对齐仓位净利归零保护
-  for (const pos of state.positions) {
-    if (pos.settlementAligned === false) {
-      const netProfit = (pos.earned || 0) - (pos.totalFee || 0);
-      if (netProfit <= 0 && (pos.earned || 0) > 0) {
-        // 曾经赚过但净利归零了 → 平仓
-        log(`🟡 [调仓] ${pos.symbol} 不对齐仓位净利归零(earned:$${(pos.earned||0).toFixed(2)} fee:$${(pos.totalFee||0).toFixed(2)})，提前平仓`);
-        await notify(`🟡 ${pos.symbol} 不对齐仓位净利归零，提前平仓`);
-        try {
-          await closeFundingPosition(pos);
-        } catch (e) {
-          log(`❌ 平仓失败: ${e.message}`);
-        }
-      }
-    }
-  }
+  // 2.5 不对齐仓位净利归零保护（已关闭，由连续2次倒贴统一处理）
+  // for (const pos of state.positions) { ... }
   
   // 3. 智能换仓：如果有新机会比 weak 仓位好
   if (state.positions.length >= CONFIG.MAX_POSITIONS) {
