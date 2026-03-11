@@ -2,50 +2,39 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -49.50227962999999,
-  "realizedPnl": -659.881415982341,
+  "totalPnl": -59.75616293999999,
+  "realizedPnl": -664.135299292341,
   "unrealizedPnl": 0,
-  "dailyPnl": -47.10227962999999,
+  "dailyPnl": -57.35616293999999,
   "dailyPnlDate": "2026-03-11",
-  "trades": 31,
+  "trades": 32,
   "wins": 3,
-  "losses": 16,
+  "losses": 17,
   "positions": [
     {
-      "id": "mmm5tee8",
-      "symbol": "RONIN",
+      "id": "mmmf6sva",
+      "symbol": "KITE",
       "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "binance",
+      "longEx": "binance",
+      "shortEx": "bybit",
       "size": 3000,
-      "qty": 28226.2,
-      "entryPrice": 0.10622999999999999,
-      "entryTime": "2026-03-11T14:54:07.136Z",
-      "spread": 0.003983720000000001,
-      "annualized": 436.21734000000015,
-      "earned": 1.74611669,
+      "qty": 11538,
+      "entryPrice": 0.259975,
+      "entryTime": "2026-03-11T19:16:28.966Z",
+      "spread": 0.0035557199999999996,
+      "annualized": 389.35133999999994,
+      "earned": 0,
       "totalFee": 6,
-      "longOrderId": "412dc7e2-67c8-408f-940b-028a92d6f475",
-      "shortOrderId": 1746483454,
-      "currentSpread": -0.0017439600000000001,
-      "unrealizedPnl": 0,
-      "spreadHistory": [
-        {
-          "time": 1773244446732,
-          "spread": 0.0011104599999999997
-        },
-        {
-          "time": 1773252088552,
-          "spread": -0.00108976
-        }
-      ],
-      "health": "ok",
-      "consecutiveNeg": 1
+      "settlementAligned": true,
+      "longOrderId": 1111987056,
+      "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
+      "currentSpread": 0.0053952639999999994,
+      "unrealizedPnl": 0
     }
   ],
   "balances": {
-    "binance": 5215.16256372,
-    "bybit": 6039.68239123,
+    "binance": 5286.61767246,
+    "bybit": 5940.05239946,
     "bitget": 2712.294829171703,
     "okx": 6.743723247e-7
   },
@@ -53,7 +42,7 @@
     "PIXEL_bybit_binance": 1773166020681,
     "FOLKS_bitget_bybit": 1773155572768,
     "PIXEL_bybit_bitget": 1773156781225,
-    "KITE_binance_bybit": 1773215616711,
+    "KITE_binance_bybit": 1773256588966,
     "CVC_bybit_binance": 1773156958443,
     "B_binance_bybit": 1773157267664,
     "SAHARA_bybit_bitget": 1773157267874,
@@ -93,7 +82,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773253888493,
+  "_lastEarnedCheck": 1773255688494,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
