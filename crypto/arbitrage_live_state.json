@@ -2,12 +2,12 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -73.75616294,
+  "totalPnl": -82.75616293999998,
   "realizedPnl": -664.135299292341,
   "unrealizedPnl": 0,
-  "dailyPnl": 0,
+  "dailyPnl": -9,
   "dailyPnlDate": "2026-03-12",
-  "trades": 32,
+  "trades": 33,
   "wins": 3,
   "losses": 17,
   "positions": [
@@ -23,13 +23,13 @@
       "entryTime": "2026-03-11T19:16:28.966Z",
       "spread": 0.0035557199999999996,
       "annualized": 389.35133999999994,
-      "earned": 24.255485309999997,
+      "earned": 20.181615709999996,
       "totalFee": 20,
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.008869824000000002,
-      "unrealizedPnl": 139.79577,
+      "currentSpread": 0.007699647999999999,
+      "unrealizedPnl": 170.06601,
       "spreadHistory": [
         {
           "time": 1773277288802,
@@ -49,9 +49,9 @@
     }
   ],
   "balances": {
-    "binance": 5344.71271116,
-    "bybit": 5898.86230493,
-    "bitget": 2712.294829171703,
+    "binance": 5215.3912564,
+    "bybit": 5894.78843533,
+    "bitget": 2878.089630549271,
     "okx": 6.743723247e-7
   },
   "lastTrade": {
@@ -93,12 +93,13 @@
     "ONG_bybit_bitget": 1773212543449,
     "COMP_bybit_binance": 1773218047474,
     "ACE_bybit_binance": 1773228277613,
-    "RONIN_bybit_binance": 1773240847136
+    "RONIN_bybit_binance": 1773240847136,
+    "LYN_binance_bitget": 1773298801750
   },
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773298105614,
+  "_lastEarnedCheck": 1773300306348,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
