@@ -6,7 +6,7 @@
 require('dotenv').config({ path: '/root/.openclaw/workspace/.env' });
 const https = require('https');
 const fs = require('fs');
-const { binance, bybit, bitget, okx } = require('./exchange_trader');
+// exchange_trader 不再需要，全部用 state 缓存
 
 const CHAT_ID = '877233818';
 const MESSAGE_ID = 3713;
@@ -41,30 +41,15 @@ function tgEdit(text, buttons) {
 (async () => {
   const start = Date.now();
   
-  // 并行查四所
-  const [bnSpot, bnFut, by, bgSpot, bgFut, ok, bnPos, byPos, bgPos] = await Promise.all([
-    binance.getBalance().catch(() => ({ usdt: 0 })),
-    binance.getFuturesBalance().catch(() => ({ usdt: 0 })),
-    bybit.getBalance().catch(() => ({ usdt: 0 })),
-    bitget.getBalance().catch(() => ({ usdt: 0 })),
-    bitget.getFuturesBalance().catch(() => ({ usdt: 0 })),
-    okx.getBalance().catch(() => ({ usdt: 0 })),
-    binance.getFuturesPositions().catch(() => []),
-    bybit.api('GET', '/v5/position/list', { category: 'linear', settleCoin: 'USDT' }).catch(() => ({})),
-    bitget.api('GET', '/api/v2/mix/position/all-position', { productType: 'USDT-FUTURES' }).catch(() => ({}))
-  ]);
-
-  const bn = (+bnSpot.usdt || 0) + (+bnFut.usdt || 0);
-  const byW = +(by.usdt || 0);
-  const bg = (+bgSpot.usdt || 0) + (+bgFut.usdt || 0);
-  const okW = +(ok.usdt || 0);
+  // 全部用 state 缓存，0 API 调用
+  const bn = state.balances?.binance || 0;
+  const byW = state.balances?.bybit || 0;
+  const bg = state.balances?.bitget || 0;
+  const okW = state.balances?.okx || 0;
   const total = bn + byW + bg + okW;
 
-  let bnPnl = 0, byPnl = 0, bgPnl = 0;
-  if (Array.isArray(bnPos)) for (const p of bnPos) bnPnl += +p.unRealizedProfit;
-  for (const p of (byPos.result?.list?.filter(x => +x.size > 0) || [])) byPnl += +p.unrealisedPnl;
-  for (const p of (bgPos.data?.filter(x => +x.total > 0) || [])) bgPnl += +(p.unrealizedPL || 0);
-  const allPnl = bnPnl + byPnl + bgPnl;
+  let allPnl = 0;
+  for (const p of state.positions) allPnl += (p.unrealizedPnl || 0);
   const netValue = total + allPnl;
   const pnl = netValue - 14232;
 
