@@ -829,7 +829,7 @@ async function executeFundingArbitrage(opp) {
     // 深度降级后持续补仓直到达标（每次间隔2秒等盘口恢复）
     const targetSize = getTradeSize(spread);
     if (tradeSize < targetSize) {
-      for (let retry = 0; retry < 20; retry++) {
+      for (let retry = 0; ; retry++) {
         await new Promise(r => setTimeout(r, 2000));
         const remaining = targetSize - position.size;
         if (remaining < 100) break; // 差不到$100就算补满了
@@ -2280,6 +2280,75 @@ async function main() {
 
   // 余额更新 - 每10分钟
   setInterval(updateBalances, 600000);
+
+  // 补仓检查 - 每30秒，确保未满仓位继续补（价差≤1%时）
+  setInterval(async () => {
+    for (const pos of state.positions) {
+      const target = getTradeSize(pos.spread || 0.003);
+      if (pos.size < target) {
+        // 检查价差
+        try {
+          const [bnR, byR, bgR] = await Promise.all([
+            httpGet('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=' + pos.symbol + 'USDT'),
+            httpGet('https://api.bybit.com/v5/market/tickers?category=linear&symbol=' + pos.symbol + 'USDT'),
+            httpGet('https://api.bitget.com/api/v2/mix/market/tickers?productType=USDT-FUTURES&symbol=' + pos.symbol + 'USDT')
+          ]);
+          const rates = [];
+          if (bnR) rates.push({ex: 'binance', r: +bnR.lastFundingRate});
+          if (byR?.result?.list?.[0]) rates.push({ex: 'bybit', r: +(byR.result.list[0].fundingRate)});
+          if (bgR?.data?.[0]) rates.push({ex: 'bitget', r: +(bgR.data[0].fundingRate)});
+          
+          if (rates.length >= 2) {
+            rates.sort((a, b) => a.r - b.r);
+            const spread = rates[rates.length - 1].r - rates[0].r;
+            if (spread > 0.01) {
+              log(`🔄 [补仓检查] ${pos.symbol} 价差${(spread*100).toFixed(3)}% > 1%，暂停补仓`);
+              continue;
+            }
+          }
+        } catch (e) {}
+        
+        log(`🔄 [补仓检查] ${pos.symbol} $${pos.size} < 目标$${target}，触发补仓`);
+        try {
+          const lowEx = {binance, bybit, bitget, okx}[pos.longEx];
+          const highEx = {binance, bybit, bitget, okx}[pos.shortEx];
+          const lowSym = pos.symbol + 'USDT';
+          const highSym = pos.symbol + 'USDT';
+          
+          // 查实际持仓
+          const [lPos, sPos] = await Promise.all([
+            lowEx.getFuturesPositions(),
+            highEx.getFuturesPositions()
+          ]);
+          const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
+          const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
+          const lQty = lp ? Math.abs(+(lp.positionAmt || lp.total || lp.size || 0)) : 0;
+          const sQty = sp ? Math.abs(+(sp.positionAmt || sp.total || sp.size || 0)) : 0;
+          
+          // 补到对齐
+          if (lQty !== sQty) {
+            const diff = Math.abs(lQty - sQty);
+            if (lQty < sQty) {
+              log(`  补${pos.longEx}多 ${diff}`);
+              await lowEx.futuresLong(lowSym, diff);
+            } else {
+              log(`  补${pos.shortEx}空 ${diff}`);
+              await highEx.futuresShort(highSym, diff);
+            }
+          }
+          
+          // 更新 state
+          const maxQty = Math.max(lQty, sQty);
+          pos.qty = maxQty;
+          pos.size = maxQty * (pos.size / pos.qty || 1);
+          log(`  ✅ 补仓完成 qty=${maxQty}`);
+          saveState();
+        } catch (e) {
+          log(`  ❌ 补仓失败: ${e.message}`);
+        }
+      }
+    }
+  }, 30000);
 
   // 保证金安全监控 - 每60秒，≤10%距强平自动平仓，≤20%通知
   setInterval(checkMarginSafety, CONFIG.MARGIN_CHECK_INTERVAL);

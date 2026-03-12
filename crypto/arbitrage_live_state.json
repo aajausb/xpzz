@@ -2,12 +2,12 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -82.75616293999998,
+  "totalPnl": -85.55616293999998,
   "realizedPnl": -664.135299292341,
   "unrealizedPnl": 0,
-  "dailyPnl": -9,
+  "dailyPnl": -11.8,
   "dailyPnlDate": "2026-03-12",
-  "trades": 33,
+  "trades": 34,
   "wins": 3,
   "losses": 17,
   "positions": [
@@ -23,13 +23,13 @@
       "entryTime": "2026-03-11T19:16:28.966Z",
       "spread": 0.0035557199999999996,
       "annualized": 389.35133999999994,
-      "earned": 43.477129299999994,
+      "earned": 40.205502339999995,
       "totalFee": 20,
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.006138592,
-      "unrealizedPnl": 133.97457,
+      "currentSpread": 0.006400032,
+      "unrealizedPnl": 225.56145,
       "spreadHistory": [
         {
           "time": 1773283529253,
@@ -46,12 +46,32 @@
       ],
       "consecutiveNeg": 0,
       "health": "healthy"
+    },
+    {
+      "id": "mmnawao9",
+      "symbol": "LYN",
+      "type": "funding",
+      "longEx": "bybit",
+      "shortEx": "bitget",
+      "size": 10000,
+      "qty": 62142,
+      "entryPrice": 0.16081,
+      "entryTime": "2026-03-12T10:04:06.537Z",
+      "spread": 0.02672556,
+      "annualized": 2926.44882,
+      "earned": 0,
+      "totalFee": 2.8,
+      "settlementAligned": true,
+      "longOrderId": "ff051bbb-13b7-4ae6-95bf-fcc658f2f479",
+      "shortOrderId": "1415929610322452481",
+      "currentSpread": 0.001672782222222222,
+      "unrealizedPnl": 99.13291977316001
     }
   ],
   "balances": {
     "binance": 5242.37484178,
-    "bybit": 5891.10036354,
-    "bitget": 2878.089630549271,
+    "bybit": 5882.2132096,
+    "bitget": 2871.962659969271,
     "okx": 6.743723247e-7
   },
   "lastTrade": {
@@ -94,12 +114,13 @@
     "COMP_bybit_binance": 1773218047474,
     "ACE_bybit_binance": 1773228277613,
     "RONIN_bybit_binance": 1773240847136,
-    "LYN_binance_bitget": 1773298801750
+    "LYN_binance_bitget": 1773298801750,
+    "LYN_bybit_bitget": 1773309846537
   },
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773309246506,
+  "_lastEarnedCheck": 1773311279955,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
