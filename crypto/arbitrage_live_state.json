@@ -28,7 +28,7 @@
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.005067776,
+      "currentSpread": 0.006198047999999999,
       "unrealizedPnl": 442.88625,
       "spreadHistory": [
         {
@@ -64,7 +64,7 @@
       "settlementAligned": true,
       "longOrderId": "1415944430258102273",
       "shortOrderId": "83c3d359-4e05-4469-a1e3-0caa6e664dcd",
-      "currentSpread": 0.0009368666666666666,
+      "currentSpread": 0.0008298533333333333,
       "unrealizedPnl": -5.108100001109989,
       "spreadHistory": [
         {
@@ -100,7 +100,7 @@
       "settlementAligned": true,
       "longOrderId": 856087314,
       "shortOrderId": "b0986004-68e0-4064-955e-aae0da4d030f",
-      "currentSpread": 0.00498072,
+      "currentSpread": 0.0037293599999999997,
       "unrealizedPnl": -2373.29627544,
       "spreadHistory": [
         {
@@ -174,7 +174,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773355188147,
+  "_lastEarnedCheck": 1773356988148,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
