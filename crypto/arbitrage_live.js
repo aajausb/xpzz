@@ -711,7 +711,22 @@ async function executeFundingArbitrage(opp) {
     ]);
   } catch (e) {
     log(`  ❌ 下单异常: ${e.message}`);
-    // TODO: 单腿保护
+    // 单腿保护: 检查是否有一边已成交
+    try {
+      const [checkL, checkS] = await Promise.all([
+        lowExObj.getFuturesPositions(),
+        highExObj.getFuturesPositions()
+      ]);
+      const hasLong = checkL.find(p => (p.symbol||'').includes(symbol) && Math.abs(+(p.positionAmt||p.total||p.size||0)) > 0);
+      const hasShort = checkS.find(p => (p.symbol||'').includes(symbol) && Math.abs(+(p.positionAmt||p.total||p.size||0)) > 0);
+      if (hasLong && !hasShort) {
+        log(`  ⚠️ 单腿: ${lowEx}多已成交，平掉`);
+        await lowExObj.futuresCloseLong(lowFutSym, qty).catch(()=>{});
+      } else if (!hasLong && hasShort) {
+        log(`  ⚠️ 单腿: ${highEx}空已成交，平掉`);
+        await highExObj.futuresCloseShort(highFutSym, qty).catch(()=>{});
+      }
+    } catch (e2) { log(`  ❌ 单腿检查失败: ${e2.message}`); }
     return;
   }
 
@@ -1874,51 +1889,7 @@ async function extremeMarketCheck() {
     }
   }
 
-  // 爆仓检测: 暂时禁用 — 重启时API返回不完整会误判
-  // TODO: 加启动后冷却期（60秒内不检测）再重新启用
-  /*
-  for (const pos of [...state.positions]) {
-    try {
-      const longEx = pos.longEx, shortEx = pos.shortEx;
-      const sym = pos.symbol + 'USDT';
-      let longExists = false, shortExists = false;
-      
-      if (longEx === 'binance') {
-        const ps = await exchanges.binance.getFuturesPositions();
-        longExists = ps?.some(p => p.symbol === sym && +p.positionAmt > 0);
-      } else if (longEx === 'bybit') {
-        const r = await exchanges.bybit.api('GET', '/v5/position/list', {category:'linear', symbol: sym});
-        longExists = r?.result?.list?.some(p => p.side === 'Buy' && +p.size > 0);
-      } else if (longEx === 'bitget') {
-        const ps = await exchanges.bitget.getFuturesPositions();
-        longExists = ps?.some(p => p.symbol === sym && p.holdSide === 'long');
-      }
-      
-      if (shortEx === 'binance') {
-        const ps = await exchanges.binance.getFuturesPositions();
-        shortExists = ps?.some(p => p.symbol === sym && +p.positionAmt < 0);
-      } else if (shortEx === 'bybit') {
-        const r = await exchanges.bybit.api('GET', '/v5/position/list', {category:'linear', symbol: sym});
-        shortExists = r?.result?.list?.some(p => p.side === 'Sell' && +p.size > 0);
-      } else if (shortEx === 'bitget') {
-        const ps = await exchanges.bitget.getFuturesPositions();
-        shortExists = ps?.some(p => p.symbol === sym && p.holdSide === 'short');
-      }
-      
-      if (!longExists && shortExists) {
-        log(`🚨 爆仓检测! ${pos.symbol} ${longEx}多头消失，紧急平${shortEx}空头`);
-        await notify(`🚨 爆仓! ${pos.symbol}\n${longEx}多头被强平\n正在平${shortEx}空头止损`);
-        await closeFundingPosition(pos);
-      } else if (longExists && !shortExists) {
-        log(`🚨 爆仓检测! ${pos.symbol} ${shortEx}空头消失，紧急平${longEx}多头`);
-        await notify(`🚨 爆仓! ${pos.symbol}\n${shortEx}空头被强平\n正在平${longEx}多头止损`);
-        await closeFundingPosition(pos);
-      }
-    } catch (e) {
-      // 网络问题不触发误判
-    }
-  }
-  */
+  // 爆仓检测已由 checkMarginSafety（强平价监控）+ reconcilePositions（10分钟对账）替代
 
 
   // 浮亏检查 — 已移除。对冲仓位浮亏是纸面数字，不应触发平仓
@@ -2310,8 +2281,7 @@ async function main() {
   // 余额更新 - 每10分钟
   setInterval(updateBalances, 600000);
 
-  // 保证金安全监控 - 每60秒
-  // 保证金安全监控 - 暂时禁用，需要改用交易所原生保证金率 API
+  // 保证金安全监控 - 每60秒，≤10%距强平自动平仓，≤20%通知
   setInterval(checkMarginSafety, CONFIG.MARGIN_CHECK_INTERVAL);
   await checkMarginSafety();
 
@@ -2351,11 +2321,22 @@ function startDashboardServer() {
   async function refreshDashboardDirect() {
     const start = Date.now();
     try {
-      // 全部用引擎缓存数据，0 API调用
-      const bn = state.balances.binance || 0;
-      const byW = state.balances.bybit || 0;
-      const bg = state.balances.bitget || 0;
-      const okW = state.balances.okx || 0;
+      // 实时拉余额（并发~76ms），失败则用缓存
+      let bn, byW, bg, okW = 0;
+      try {
+        const [bnBal, byBal, bgBal] = await Promise.all([
+          binance.getFuturesBalance().catch(() => null),
+          bybit.getBalance().catch(() => null),
+          bitget.getFuturesBalance().catch(() => null)
+        ]);
+        bn = bnBal?.usdt ?? state.balances.binance ?? 0;
+        byW = byBal?.usdt ?? state.balances.bybit ?? 0;
+        bg = bgBal?.usdt ?? bgBal?.equity ?? state.balances.bitget ?? 0;
+      } catch (e) {
+        bn = state.balances.binance || 0;
+        byW = state.balances.bybit || 0;
+        bg = state.balances.bitget || 0;
+      }
       const total = bn + byW + bg + okW;
 
       // 浮盈用缓存（checkFundingPositions每5分钟更新）

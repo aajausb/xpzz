@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * 快速刷新看板 — 直接查 API + 更新 Telegram，不经过 AI
+ * 快速刷新看板 — 实时查余额 + state仓位，不经过 AI
  * 用法: node refresh_dashboard.js
  */
 require('dotenv').config({ path: '/root/.openclaw/workspace/.env' });
 const https = require('https');
 const fs = require('fs');
-// exchange_trader 不再需要，全部用 state 缓存
+const { binance, bybit, bitget } = require('./exchange_trader');
 
 const CHAT_ID = '877233818';
 const MESSAGE_ID = 3713;
@@ -40,26 +40,37 @@ function tgEdit(text, buttons) {
 
 (async () => {
   const start = Date.now();
-  
-  // 全部用 state 缓存，0 API 调用
-  const bn = state.balances?.binance || 0;
-  const byW = state.balances?.bybit || 0;
-  const bg = state.balances?.bitget || 0;
-  const okW = state.balances?.okx || 0;
-  const total = bn + byW + bg + okW;
-
-  let allPnl = 0;
-  for (const p of state.positions) allPnl += (p.unrealizedPnl || 0);
-  const netValue = total + allPnl;
-  const pnl = netValue - 14232;
 
   // 读 state
   let state;
   try {
     state = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
   } catch (e) {
-    state = { positions: [] };
+    state = { positions: [], balances: {} };
   }
+
+  // 实时拉三所余额（并发，~76ms）
+  let bn = 0, byW = 0, bg = 0, okW = 0;
+  try {
+    const [bnBal, byBal, bgBal] = await Promise.all([
+      binance.getFuturesBalance().catch(() => ({ usdt: state.balances?.binance || 0 })),
+      bybit.getFuturesBalance().catch(() => ({ usdt: state.balances?.bybit || 0 })),
+      bitget.getFuturesBalance().catch(() => ({ usdt: state.balances?.bitget || 0 }))
+    ]);
+    bn = bnBal.usdt || 0;
+    byW = byBal.usdt || 0;
+    bg = bgBal.usdt || bgBal.equity || 0;
+  } catch (e) {
+    bn = state.balances?.binance || 0;
+    byW = state.balances?.bybit || 0;
+    bg = state.balances?.bitget || 0;
+  }
+  const total = bn + byW + bg + okW;
+
+  let allPnl = 0;
+  for (const p of state.positions) allPnl += (p.unrealizedPnl || 0);
+  const netValue = total + allPnl;
+  const pnl = netValue - 14232;
 
   let totalEarned = 0;
   const posArr = [];
@@ -76,13 +87,13 @@ function tgEdit(text, buttons) {
   const exMap = { binance: 'BN', bybit: 'BY', bitget: 'BG', okx: 'OK' };
   const posLines = posArr.map(p => {
     const icon = p.net > 0 ? '✅' : p.net < -0.5 ? '⚠️' : (p.net < -0.01 ? '➖' : '🆕');
-    const dualSz = p.sz * 2; // 双边总额
+    const dualSz = p.sz * 2;
     const szStr = dualSz >= 1000 ? `$${(dualSz/1000).toFixed(0)}k` : `$${dualSz}`;
     const longSz = p.sz >= 1000 ? `$${(p.sz/1000).toFixed(0)}k` : `$${p.sz}`;
     return `├ ${p.s}: 净${p.net >= 0 ? '+' : ''}$${p.net.toFixed(2)} ${icon} | ${szStr} (${exMap[p.l]}多${longSz} ${exMap[p.h]}空${longSz})`;
   }).join('\n');
 
-  const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' });
+  const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const elapsed = ((Date.now() - start) / 1000).toFixed(1);
 
   const totalExposure = state.positions.reduce((s, p) => s + p.size, 0);

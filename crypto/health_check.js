@@ -189,6 +189,56 @@ function notify(msg) {
     }
   } catch (e) {}
 
+  // ============ 7. 限价单方法检查 ============
+  try {
+    const methods = ['futuresCloseLongLimit','futuresCloseShortLimit','futuresCancelOrder','futuresGetOrder'];
+    for (const ex of ['binance','bybit','bitget']) {
+      const obj = {binance,bybit,bitget}[ex];
+      const missing = methods.filter(m => typeof obj[m] !== 'function');
+      if (missing.length > 0) issues.push(`❌ ${ex}缺少方法: ${missing.join(',')}`);
+    }
+  } catch (e) {}
+
+  // ============ 8. 保证金安全检查 ============
+  try {
+    const [bnPos2, byPos2, bgPos2] = await Promise.all([
+      binance.getFuturesPositions().catch(() => []),
+      bybit.api('GET', '/v5/position/list', { category: 'linear', settleCoin: 'USDT' }).catch(() => ({})),
+      bitget.api('GET', '/api/v2/mix/position/all-position', { productType: 'USDT-FUTURES' }).catch(() => ({}))
+    ]);
+    for (const p of (Array.isArray(bnPos2) ? bnPos2 : []).filter(x => +x.positionAmt !== 0)) {
+      const liq = +p.liquidationPrice, mark = +p.markPrice;
+      if (liq > 0 && mark > 0) {
+        const isShort = +p.positionAmt < 0;
+        const dist = isShort ? ((liq - mark) / mark * 100) : ((mark - liq) / mark * 100);
+        if (dist <= 20) issues.push(`🚨 BN ${p.symbol} 距强平${dist.toFixed(1)}%!`);
+      }
+    }
+    for (const p of (byPos2.result?.list || []).filter(x => +x.size > 0)) {
+      const liq = +p.liqPrice, mark = +p.markPrice;
+      if (liq > 0 && mark > 0) {
+        const isShort = p.side === 'Sell';
+        const dist = isShort ? ((liq - mark) / mark * 100) : ((mark - liq) / mark * 100);
+        if (dist <= 20) issues.push(`🚨 BY ${p.symbol} 距强平${dist.toFixed(1)}%!`);
+      }
+    }
+    for (const p of (bgPos2.data || []).filter(x => +x.total > 0)) {
+      const liq = +p.liquidationPrice, mark = +p.markPrice;
+      if (liq > 0 && mark > 0) {
+        const isShort = p.holdSide === 'short';
+        const dist = isShort ? ((liq - mark) / mark * 100) : ((mark - liq) / mark * 100);
+        if (dist <= 20) issues.push(`🚨 BG ${p.symbol} 距强平${dist.toFixed(1)}%!`);
+      }
+    }
+  } catch (e) {}
+
+  // ============ 9. 日志文件大小 ============
+  try {
+    const logStat = fs.statSync('/root/.openclaw/workspace/crypto/arbitrage_live.log');
+    const sizeMB = logStat.size / 1024 / 1024;
+    if (sizeMB > 100) issues.push(`⚠️ 日志文件${sizeMB.toFixed(0)}MB，过大`);
+  } catch (e) {}
+
   // ============ 结果处理 ============
   if (issues.length > 0) {
     // 有修复的话保存 state

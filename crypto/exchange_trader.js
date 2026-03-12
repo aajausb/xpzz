@@ -245,6 +245,11 @@ const bybit = {
     };
   },
 
+  // Bybit统一账户，getFuturesBalance = getBalance（兼容其他交易所接口）
+  async getFuturesBalance() {
+    return this.getBalance();
+  },
+
   async getOrderbook(symbol, limit = 10) {
     const res = await httpGet(`https://api.bybit.com/v5/market/orderbook?category=spot&symbol=${symbol}&limit=${limit}`);
     if (!res?.result?.b) return null;
