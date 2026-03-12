@@ -28,8 +28,8 @@
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.006400032,
-      "unrealizedPnl": 225.56145,
+      "currentSpread": 0.006208256,
+      "unrealizedPnl": 136.69113,
       "spreadHistory": [
         {
           "time": 1773283529253,
@@ -64,14 +64,14 @@
       "settlementAligned": true,
       "longOrderId": "ff051bbb-13b7-4ae6-95bf-fcc658f2f479",
       "shortOrderId": "1415929610322452481",
-      "currentSpread": 0.001672782222222222,
-      "unrealizedPnl": 99.13291977316001
+      "currentSpread": 0.0007760177777777776,
+      "unrealizedPnl": 87.94735977316002
     }
   ],
   "balances": {
-    "binance": 5242.37484178,
+    "binance": 4242.37484178,
     "bybit": 5882.2132096,
-    "bitget": 2871.962659969271,
+    "bitget": 3871.942659969271,
     "okx": 6.743723247e-7
   },
   "lastTrade": {
@@ -120,7 +120,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773311279955,
+  "_lastEarnedCheck": 1773313079343,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
