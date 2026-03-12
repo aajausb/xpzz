@@ -165,11 +165,35 @@ const binance = {
     });
   },
 
+  // 合约限价平多 (Post-Only)
+  async futuresCloseLongLimit(symbol, quantity, price) {
+    return this.futuresApi('POST', '/fapi/v1/order', {
+      symbol, side: 'SELL', type: 'LIMIT', timeInForce: 'GTX', price: price.toString(), quantity: quantity.toString(), reduceOnly: 'true'
+    });
+  },
+
   // 合约平空
   async futuresCloseShort(symbol, quantity) {
     return this.futuresApi('POST', '/fapi/v1/order', {
       symbol, side: 'BUY', type: 'MARKET', quantity: quantity.toString(), reduceOnly: 'true'
     });
+  },
+
+  // 合约限价平空 (Post-Only)
+  async futuresCloseShortLimit(symbol, quantity, price) {
+    return this.futuresApi('POST', '/fapi/v1/order', {
+      symbol, side: 'BUY', type: 'LIMIT', timeInForce: 'GTX', price: price.toString(), quantity: quantity.toString(), reduceOnly: 'true'
+    });
+  },
+
+  // 撤单
+  async futuresCancelOrder(symbol, orderId) {
+    return this.futuresApi('DELETE', '/fapi/v1/order', { symbol, orderId: orderId.toString() });
+  },
+
+  // 查订单
+  async futuresGetOrder(symbol, orderId) {
+    return this.futuresApi('GET', '/fapi/v1/order', { symbol, orderId: orderId.toString() });
   },
 
   // 查合约持仓
@@ -272,6 +296,30 @@ const bybit = {
     return this.api('POST', '/v5/order/create', {
       category: 'linear', symbol, side: 'Buy', orderType: 'Market', qty: quantity.toString(), reduceOnly: true
     });
+  },
+
+  // 合约限价平多 (Post-Only)
+  async futuresCloseLongLimit(symbol, quantity, price) {
+    return this.api('POST', '/v5/order/create', {
+      category: 'linear', symbol, side: 'Sell', orderType: 'Limit', price: price.toString(), qty: quantity.toString(), reduceOnly: true, timeInForce: 'PostOnly'
+    });
+  },
+
+  // 合约限价平空 (Post-Only)
+  async futuresCloseShortLimit(symbol, quantity, price) {
+    return this.api('POST', '/v5/order/create', {
+      category: 'linear', symbol, side: 'Buy', orderType: 'Limit', price: price.toString(), qty: quantity.toString(), reduceOnly: true, timeInForce: 'PostOnly'
+    });
+  },
+
+  // 撤单
+  async futuresCancelOrder(symbol, orderId) {
+    return this.api('POST', '/v5/order/cancel', { category: 'linear', symbol, orderId });
+  },
+
+  // 查订单
+  async futuresGetOrder(symbol, orderId) {
+    return this.api('GET', '/v5/order/realtime', { category: 'linear', symbol, orderId });
   },
 
   async getFuturesPositions(symbol) {
@@ -387,6 +435,36 @@ const bitget = {
     return this.api('POST', '/api/v2/mix/order/close-positions', null, {
       symbol, productType: 'USDT-FUTURES', holdSide: 'short'
     });
+  },
+
+  // 合约限价平多 (Post-Only)
+  async futuresCloseLongLimit(symbol, quantity, price) {
+    return this.api('POST', '/api/v2/mix/order/place-order', null, {
+      symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
+      side: 'sell', tradeSide: 'close', orderType: 'limit', price: String(price),
+      size: String(quantity), force: 'post_only'
+    });
+  },
+
+  // 合约限价平空 (Post-Only)
+  async futuresCloseShortLimit(symbol, quantity, price) {
+    return this.api('POST', '/api/v2/mix/order/place-order', null, {
+      symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
+      side: 'buy', tradeSide: 'close', orderType: 'limit', price: String(price),
+      size: String(quantity), force: 'post_only'
+    });
+  },
+
+  // 撤单
+  async futuresCancelOrder(symbol, orderId) {
+    return this.api('POST', '/api/v2/mix/order/cancel-order', null, {
+      symbol, productType: 'USDT-FUTURES', orderId
+    });
+  },
+
+  // 查订单
+  async futuresGetOrder(symbol, orderId) {
+    return this.api('GET', '/api/v2/mix/order/detail', { symbol, productType: 'USDT-FUTURES', orderId });
   },
 
   async getFuturesPositions(symbol) {

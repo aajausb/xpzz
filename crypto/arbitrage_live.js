@@ -767,6 +767,50 @@ async function executeFundingArbitrage(opp) {
     const notifyTargetSize = getTradeSize(spread);
     await notify(`✅ 开仓 ${symbol}\n${lowEx}多 / ${highEx}空\n$${tradeSize}（目标$${notifyTargetSize}）| 费率差${(spread*100).toFixed(3)}% | 年化${annualized.toFixed(0)}%`);
 
+    // 首单对齐校验：确认两边实际成交量一致
+    try {
+      const [realLP, realSP] = await Promise.all([
+        lowExObj.getFuturesPositions(),
+        highExObj.getFuturesPositions()
+      ]);
+      const rlp = realLP.find(p => (p.symbol||'').includes(symbol));
+      const rsp = realSP.find(p => (p.symbol||'').includes(symbol));
+      const realLQ = rlp ? Math.abs(+(rlp.positionAmt || rlp.total || rlp.size || 0)) : 0;
+      const realSQ = rsp ? Math.abs(+(rsp.positionAmt || rsp.total || rsp.size || 0)) : 0;
+      if (realLQ !== realSQ && realLQ > 0 && realSQ > 0) {
+        const diff = Math.abs(realLQ - realSQ);
+        const pctDiff = diff / Math.max(realLQ, realSQ) * 100;
+        if (pctDiff > 1) {
+          log(`  🔧 首单对齐: ${lowEx}多${realLQ} ${highEx}空${realSQ} 偏差${pctDiff.toFixed(1)}%`);
+          if (realLQ < realSQ) {
+            for (let fix = 0; ; fix++) {
+              try {
+                const fq = lowEx === 'okx' ? coinsToLots(symbol, realSQ - realLQ) : (realSQ - realLQ);
+                const fr = await lowExObj.futuresLong(lowFutSym, fq);
+                let fOk = checkOrderSuccess(fr, lowEx);
+                if (!fOk && lowEx === 'binance' && fr?.status === 'NEW' && fr?.orderId) fOk = await waitForBinanceFill(fr.orderId, lowFutSym);
+                if (fOk) { log(`  ✅ 首单对齐成功: 两边${realSQ}`); position.qty = realSQ; saveState(); break; }
+              } catch (e) {}
+              await new Promise(r => setTimeout(r, 2000));
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 首单对齐补多头已重试${fix+1}次`);
+            }
+          } else {
+            for (let fix = 0; ; fix++) {
+              try {
+                const fq = highEx === 'okx' ? coinsToLots(symbol, realLQ - realSQ) : (realLQ - realSQ);
+                const fr = await highExObj.futuresShort(highFutSym, fq);
+                let fOk = checkOrderSuccess(fr, highEx);
+                if (!fOk && highEx === 'binance' && fr?.status === 'NEW' && fr?.orderId) fOk = await waitForBinanceFill(fr.orderId, highFutSym);
+                if (fOk) { log(`  ✅ 首单对齐成功: 两边${realLQ}`); position.qty = realLQ; saveState(); break; }
+              } catch (e) {}
+              await new Promise(r => setTimeout(r, 2000));
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 首单对齐补空头已重试${fix+1}次`);
+            }
+          }
+        }
+      }
+    } catch (e) { log(`  ⚠️ 首单对齐检查失败: ${e.message}`); }
+
     // 深度降级后持续补仓直到达标（每次间隔2秒等盘口恢复）
     const targetSize = getTradeSize(spread);
     if (tradeSize < targetSize) {
@@ -829,10 +873,10 @@ async function executeFundingArbitrage(opp) {
             saveState();
             log(`  ✅ 补仓成功! +$${addSize}，总$${position.size}`);
           } else if (lr2Ok && !sr2Ok) {
-            // 多头开了空头没开 → 补空头，不平多头
-            log(`  ⚠️ 补仓单腿: ${lowEx}多OK ${highEx}空失败，重试空头`);
-            for (let fix = 0; fix < 3; fix++) {
-              await new Promise(r => setTimeout(r, 1000));
+            // 多头开了空头没开 → 一直补空头直到成功
+            log(`  ⚠️ 补仓单腿: ${lowEx}多OK ${highEx}空失败，持续重试空头`);
+            for (let fix = 0; ; fix++) {
+              await new Promise(r => setTimeout(r, 2000));
               try {
                 const fixR = await highExObj.futuresShort(highFutSym, addShortQty);
                 let fixOk = checkOrderSuccess(fixR, highEx);
@@ -845,21 +889,18 @@ async function executeFundingArbitrage(opp) {
                   state.totalPnl -= addFee;
                   state.dailyPnl -= addFee;
                   saveState();
-                  log(`  ✅ 空头补救成功! +$${addSize}，总$${position.size}`);
+                  log(`  ✅ 空头补救成功! 第${fix+1}次 +$${addSize}，总$${position.size}`);
                   break;
                 }
-              } catch (e) {}
-              if (fix === 2) {
-                log(`  ❌ 空头补救3次失败，平掉多余多头`);
-                await lowExObj.futuresCloseLong(lowFutSym, addQty).catch(()=>{});
-              }
+              } catch (e) { log(`  ⚠️ 空头重试${fix+1}失败: ${e.message}`); }
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 空头已重试${fix+1}次仍未成功，持续重试中`);
             }
             break;
           } else if (!lr2Ok && sr2Ok) {
             // 空头开了多头没开 → 补多头
             log(`  ⚠️ 补仓单腿: ${highEx}空OK ${lowEx}多失败，重试多头`);
-            for (let fix = 0; fix < 3; fix++) {
-              await new Promise(r => setTimeout(r, 1000));
+            for (let fix = 0; ; fix++) {
+              await new Promise(r => setTimeout(r, 2000));
               try {
                 const fixR = await lowExObj.futuresLong(lowFutSym, addLongQty);
                 let fixOk = checkOrderSuccess(fixR, lowEx);
@@ -872,14 +913,11 @@ async function executeFundingArbitrage(opp) {
                   state.totalPnl -= addFee;
                   state.dailyPnl -= addFee;
                   saveState();
-                  log(`  ✅ 多头补救成功! +$${addSize}，总$${position.size}`);
+                  log(`  ✅ 多头补救成功! 第${fix+1}次 +$${addSize}，总$${position.size}`);
                   break;
                 }
-              } catch (e) {}
-              if (fix === 2) {
-                log(`  ❌ 多头补救3次失败，平掉多余空头`);
-                await highExObj.futuresCloseShort(highFutSym, addQty).catch(()=>{});
-              }
+              } catch (e) { log(`  ⚠️ 多头重试${fix+1}失败: ${e.message}`); }
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 多头已重试${fix+1}次仍未成功，持续重试中`);
             }
             break;
           }
@@ -889,6 +927,63 @@ async function executeFundingArbitrage(opp) {
         }
       }
     }
+
+    // 补仓结束后：校验两边实际持仓是否对齐
+    try {
+      const [realLongPos, realShortPos] = await Promise.all([
+        lowExObj.getFuturesPositions(),
+        highExObj.getFuturesPositions()
+      ]);
+      const realLong = realLongPos.find(p => p.symbol === lowFutSym || p.symbol === symbol + 'USDT');
+      const realShort = realShortPos.find(p => p.symbol === highFutSym || p.symbol === symbol + 'USDT');
+      const realLongQty = realLong ? Math.abs(+(realLong.positionAmt || realLong.total || realLong.size || 0)) : 0;
+      const realShortQty = realShort ? Math.abs(+(realShort.positionAmt || realShort.total || realShort.size || 0)) : 0;
+
+      if (realLongQty !== realShortQty && realLongQty > 0 && realShortQty > 0) {
+        const diff = Math.abs(realLongQty - realShortQty);
+        const pctDiff = diff / Math.max(realLongQty, realShortQty) * 100;
+        if (pctDiff > 1) { // 偏差>1%才修
+          log(`  🔧 对齐校验: ${lowEx}多${realLongQty} ${highEx}空${realShortQty} 偏差${pctDiff.toFixed(1)}%`);
+          if (realLongQty < realShortQty) {
+            // 多头少，补多头
+            const fixQty = realShortQty - realLongQty;
+            log(`  🔧 补${lowEx}多头 ${fixQty}`);
+            for (let fix = 0; ; fix++) {
+              try {
+                const fixLongQty = lowEx === 'okx' ? coinsToLots(symbol, fixQty) : fixQty;
+                const fixR = await lowExObj.futuresLong(lowFutSym, fixLongQty);
+                let fixOk = checkOrderSuccess(fixR, lowEx);
+                if (!fixOk && lowEx === 'binance' && fixR?.status === 'NEW' && fixR?.orderId) fixOk = await waitForBinanceFill(fixR.orderId, lowFutSym);
+                if (fixOk) { log(`  ✅ 对齐成功: 两边都${realShortQty}`); break; }
+              } catch (e) {}
+              await new Promise(r => setTimeout(r, 2000));
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 对齐补多头已重试${fix+1}次`);
+            }
+          } else {
+            // 空头少，补空头
+            const fixQty = realLongQty - realShortQty;
+            log(`  🔧 补${highEx}空头 ${fixQty}`);
+            for (let fix = 0; ; fix++) {
+              try {
+                const fixShortQty = highEx === 'okx' ? coinsToLots(symbol, fixQty) : fixQty;
+                const fixR = await highExObj.futuresShort(highFutSym, fixShortQty);
+                let fixOk = checkOrderSuccess(fixR, highEx);
+                if (!fixOk && highEx === 'binance' && fixR?.status === 'NEW' && fixR?.orderId) fixOk = await waitForBinanceFill(fixR.orderId, highFutSym);
+                if (fixOk) { log(`  ✅ 对齐成功: 两边都${realLongQty}`); break; }
+              } catch (e) {}
+              await new Promise(r => setTimeout(r, 2000));
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 对齐补空头已重试${fix+1}次`);
+            }
+          }
+          // 更新state中的qty为实际值
+          position.qty = Math.max(realLongQty, realShortQty);
+          saveState();
+        }
+      }
+    } catch (e) {
+      log(`  ⚠️ 对齐校验失败: ${e.message}`);
+    }
+
   } else if (longOk && !shortOk) {
     // 单腿: 多单成了空单没成，平掉多单
     log(`  ⚠️ 单腿! ${lowEx}多成功但${highEx}空失败，反向平仓`);
@@ -1164,7 +1259,7 @@ async function checkFundingPositions() {
 
 const closingSymbols = new Set(); // 防止同币并发平仓
 
-async function closeFundingPosition(pos) {
+async function closeFundingPosition(pos, urgent = false) {
   if (closingSymbols.has(pos.symbol)) {
     log(`⏳ ${pos.symbol} 正在平仓中，跳过`);
     return;
@@ -1178,50 +1273,47 @@ async function closeFundingPosition(pos) {
 
   log(`📤 平仓 ${pos.symbol} ${pos.longEx}多/${pos.shortEx}空 数量${pos.qty}`);
 
-    // 分批平仓：先查实时深度，够就一次平，不够按深度分批
-    let remainQty = pos.qty;
+    // 平仓策略：直接市价下全量，查实际成交，没平完继续平
     let closeLOk = false, closeSOk = false;
     let batchCount = 0;
 
-    while (remainQty > 0 && batchCount < 20) {
+    while (batchCount < 20) {
       batchCount++;
 
-      // 实时拉盘口深度（平多=吃bids，平空=吃asks）
-      let longDepthQty = remainQty, shortDepthQty = remainQty;
-      try {
-        const [longOB, shortOB] = await Promise.all([
-          getOrderbook(pos.longEx, longSym, 20),
-          getOrderbook(pos.shortEx, shortSym, 20)
-        ]);
-        if (longOB?.bids?.length) {
-          longDepthQty = Math.floor(longOB.bids.reduce((s, b) => s + b.qty, 0));
-        }
-        if (shortOB?.asks?.length) {
-          shortDepthQty = Math.floor(shortOB.asks.reduce((s, a) => s + a.qty, 0));
-        }
-      } catch (e) {
-        log(`  ⚠️ 平仓深度查询失败: ${e.message}，用全量尝试`);
+      // 查当前实际持仓
+      let currentLongQty = 0, currentShortQty = 0;
+      if (batchCount > 1) {
+        try {
+          const [lPos, sPos] = await Promise.all([
+            longExObj.getFuturesPositions(),
+            shortExObj.getFuturesPositions()
+          ]);
+          const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
+          const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
+          currentLongQty = lp ? Math.abs(+(lp.positionAmt || lp.total || lp.size || 0)) : 0;
+          currentShortQty = sp ? Math.abs(+(sp.positionAmt || sp.total || sp.size || 0)) : 0;
+          if (currentLongQty === 0 && currentShortQty === 0) {
+            closeLOk = true; closeSOk = true;
+            log(`  ✅ 两边已全部平完`);
+            break;
+          }
+        } catch (e) {}
       }
 
-      // 两边取最小深度，确保两边平等量
-      const depthQty = Math.min(longDepthQty, shortDepthQty);
-      const batchQty = Math.min(remainQty, Math.max(depthQty, 1));
+      const longQtyToClose = batchCount === 1 ? pos.qty : currentLongQty;
+      const shortQtyToClose = batchCount === 1 ? pos.qty : currentShortQty;
 
-      if (batchCount === 1 && batchQty >= remainQty) {
-        log(`  📊 深度充足(多bids:${longDepthQty} 空asks:${shortDepthQty})，一次平`);
-      } else if (batchCount === 1) {
-        log(`  📊 深度不足(多bids:${longDepthQty} 空asks:${shortDepthQty} 需:${remainQty})，分批平`);
-      }
+      const promises = [];
+      if (longQtyToClose > 0) promises.push(longExObj.futuresCloseLong(longSym, longQtyToClose));
+      else promises.push(Promise.resolve({ status: 'SKIP' }));
+      if (shortQtyToClose > 0) promises.push(shortExObj.futuresCloseShort(shortSym, shortQtyToClose));
+      else promises.push(Promise.resolve({ status: 'SKIP' }));
 
-      const [closeL, closeS] = await Promise.all([
-        longExObj.futuresCloseLong(longSym, batchQty),
-        shortExObj.futuresCloseShort(shortSym, batchQty)
-      ]);
+      const [closeL, closeS] = await Promise.all(promises);
 
-      let batchLOk = checkOrderSuccess(closeL, pos.longEx);
-      let batchSOk = checkOrderSuccess(closeS, pos.shortEx);
+      let batchLOk = closeL?.status === 'SKIP' || checkOrderSuccess(closeL, pos.longEx);
+      let batchSOk = closeS?.status === 'SKIP' || checkOrderSuccess(closeS, pos.shortEx);
 
-      // Binance NEW 状态等待确认
       if (!batchLOk && pos.longEx === 'binance' && closeL?.status === 'NEW' && closeL?.orderId) {
         batchLOk = await waitForBinanceFill(closeL.orderId, longSym);
       }
@@ -1230,20 +1322,14 @@ async function closeFundingPosition(pos) {
       }
 
       if (batchLOk && batchSOk) {
-        remainQty -= batchQty;
-        if (remainQty <= 0) { closeLOk = true; closeSOk = true; break; }
-        log(`  🔄 平仓批次${batchCount}: 已平${batchQty}，剩余${remainQty}，等2秒`);
-        await new Promise(r => setTimeout(r, 2000));
-      } else if (!batchLOk && !batchSOk) {
-        log(`  ⚠️ 平仓批次${batchCount}: 两边都失败，2秒后重试`);
-        await new Promise(r => setTimeout(r, 2000));
+        closeLOk = true; closeSOk = true;
+        if (batchCount === 1) break; // 一次搞定
+        // 多次的话继续检查是否真的全平了
       } else {
-        // 一边成功一边失败 → 单腿问题
-        closeLOk = batchLOk;
-        closeSOk = batchSOk;
-        remainQty -= batchQty; // 记录已平部分
-        break;
+        log(`  ⚠️ 平仓批次${batchCount}: 多${batchLOk?'OK':'失败'} 空${batchSOk?'OK':'失败'}，2秒后重试`);
       }
+
+      await new Promise(r => setTimeout(r, 2000));
     }
 
     if (batchCount > 1) log(`  📊 分批平仓完成: ${batchCount}批`);
@@ -1262,12 +1348,76 @@ async function closeFundingPosition(pos) {
 
       log(`  ✅ 平仓成功! ${pos.symbol} 已收$${pos.earned.toFixed(2)} 手续费$${fee.toFixed(2)} 净$${netPnl.toFixed(2)}`);
       await notify(`📤 平仓 ${pos.symbol}\n已收: $${pos.earned.toFixed(2)} | 净利: $${netPnl.toFixed(2)}`);
+
+      // 平仓后对齐校验：确保两边都真的清零
+      try {
+        await new Promise(r => setTimeout(r, 1000));
+        const [lpCheck, spCheck] = await Promise.all([
+          longExObj.getFuturesPositions(),
+          shortExObj.getFuturesPositions()
+        ]);
+        const lRemain = lpCheck.find(p => (p.symbol||'').includes(pos.symbol));
+        const sRemain = spCheck.find(p => (p.symbol||'').includes(pos.symbol));
+        const lQty = lRemain ? Math.abs(+(lRemain.positionAmt || lRemain.total || lRemain.size || 0)) : 0;
+        const sQty = sRemain ? Math.abs(+(sRemain.positionAmt || sRemain.total || sRemain.size || 0)) : 0;
+        if (lQty > 0 || sQty > 0) {
+          log(`  🔧 平仓残留: ${pos.longEx}多${lQty} ${pos.shortEx}空${sQty}，清理中`);
+          for (let fix = 0; fix < 20; fix++) {
+            if (lQty > 0) {
+              try { await longExObj.futuresCloseLong(longSym, lQty); } catch(e) {}
+            }
+            if (sQty > 0) {
+              try { await shortExObj.futuresCloseShort(shortSym, sQty); } catch(e) {}
+            }
+            await new Promise(r => setTimeout(r, 1500));
+            const [lc2, sc2] = await Promise.all([
+              longExObj.getFuturesPositions(),
+              shortExObj.getFuturesPositions()
+            ]);
+            const l2 = lc2.find(p => (p.symbol||'').includes(pos.symbol));
+            const s2 = sc2.find(p => (p.symbol||'').includes(pos.symbol));
+            const lq2 = l2 ? Math.abs(+(l2.positionAmt || l2.total || l2.size || 0)) : 0;
+            const sq2 = s2 ? Math.abs(+(s2.positionAmt || s2.total || s2.size || 0)) : 0;
+            if (lq2 === 0 && sq2 === 0) { log(`  ✅ 残留清理完毕`); break; }
+          }
+        }
+      } catch (e) { log(`  ⚠️ 平仓对齐检查失败: ${e.message}`); }
+
     } else {
-      log(`  ⚠️ 平仓部分失败: 多${closeLOk} 空${closeSOk}`);
-      // 标记仓位异常，巡检会捕获
-      pos.closeError = { longOk: closeLOk, shortOk: closeSOk, time: new Date().toISOString() };
-      saveState();
-      await notify(`🚨 平仓部分失败 ${pos.symbol}\n多(${pos.longEx}): ${closeLOk ? '✅' : '❌'}\n空(${pos.shortEx}): ${closeSOk ? '✅' : '❌'}\n⚠️ 需要手动检查!`);
+      // 平仓失败也不放弃，继续尝试清理
+      log(`  ⚠️ 平仓部分失败: 多${closeLOk} 空${closeSOk}，继续清理`);
+      for (let fix = 0; fix < 20; fix++) {
+        await new Promise(r => setTimeout(r, 2000));
+        try {
+          const [lp3, sp3] = await Promise.all([
+            longExObj.getFuturesPositions(),
+            shortExObj.getFuturesPositions()
+          ]);
+          const l3 = lp3.find(p => (p.symbol||'').includes(pos.symbol));
+          const s3 = sp3.find(p => (p.symbol||'').includes(pos.symbol));
+          const lq3 = l3 ? Math.abs(+(l3.positionAmt || l3.total || l3.size || 0)) : 0;
+          const sq3 = s3 ? Math.abs(+(s3.positionAmt || s3.total || s3.size || 0)) : 0;
+          if (lq3 === 0 && sq3 === 0) {
+            // 两边都清了
+            const fee2 = pos.size * 2 * CONFIG.FEE_BPS / 10000;
+            const netPnl2 = pos.earned - fee2;
+            state.totalPnl += netPnl2;
+            state.dailyPnl += netPnl2;
+            state.realizedPnl += netPnl2;
+            if (netPnl2 > 0) state.wins++; else state.losses++;
+            state.positions = state.positions.filter(p => p.id !== pos.id);
+            saveState();
+            log(`  ✅ 清理成功! ${pos.symbol} 净$${netPnl2.toFixed(2)}`);
+            await notify(`📤 平仓 ${pos.symbol}（清理后）\n净利: $${netPnl2.toFixed(2)}`);
+            break;
+          }
+          if (lq3 > 0) await longExObj.futuresCloseLong(longSym, lq3).catch(()=>{});
+          if (sq3 > 0) await shortExObj.futuresCloseShort(shortSym, sq3).catch(()=>{});
+        } catch (e) {}
+        if (fix === 19) {
+          await notify(`🚨 平仓清理20次仍有残留 ${pos.symbol}\n⚠️ 需要手动检查!`);
+        }
+      }
     }
   } catch (e) {
     log(`  ❌ 平仓异常: ${e.message}`);
@@ -2059,7 +2209,7 @@ async function main() {
   setInterval(statusReport, 1800000);
 
   // 仓位qty对账 - 每2小时（引擎内部做，不依赖外部脚本）
-  setInterval(reconcilePositions, 7200000);
+  setInterval(reconcilePositions, 600000); // 10分钟对账
 
   // 等待频率缓存完成（避免用默认值8h导致误判）
   const waitForIntervals = () => new Promise(resolve => {
