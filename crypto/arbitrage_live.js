@@ -78,7 +78,7 @@ const CONFIG = {
 let isScanning = false;    // 防止 scanFundingRates 并发
 
 const openingSymbols = new Set(); // 防止 WS 和 REST 同时开同一个币
-const watchlist = new Map(); // 观察列表: symbol -> { lowEx, highEx, equiv8hSpread, settlementAligned, reason, addedAt }
+// watchlist 已移除，改用每轮全量重扫
 let state = {
   startTime: new Date().toISOString(),
   running: true,
@@ -435,9 +435,9 @@ async function scanFundingArbitrage() {
     const earlierNext = Math.min(...validTimes);
     if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
     const msToSettle = earlierNext - now;
-    if (msToSettle < 0 || msToSettle > 70 * 60 * 1000) continue; // 超过70分钟的跳过
-    // 连续窗口：结算前40-70分钟，覆盖1h/4h/8h所有结算频率
-    if (msToSettle < 40 * 60 * 1000) continue; // 太近了不开（<40min）
+    if (msToSettle < 0 || msToSettle > 60 * 60 * 1000) continue; // 超过60分钟的跳过
+    // 窗口：结算前30-60分钟
+    if (msToSettle < 30 * 60 * 1000) continue; // 太近了不开（<30min）
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 
@@ -646,9 +646,7 @@ async function executeFundingArbitrage(opp) {
   const priceDiffPct = Math.abs(lowBestAsk - highBestBid) / midPrice * 100;
   if (priceDiffPct > 1.0) {
     log(`  ⚠️ [Step2e] 两所价差${priceDiffPct.toFixed(2)}%超过1%，等价差缩小再开`);
-    // 记录等待状态，下次扫描时重试
-    state.pendingOpps = state.pendingOpps || {};
-    state.pendingOpps[symbol] = { lowEx, highEx, spread, priceDiff: priceDiffPct, time: Date.now() };
+    // 不记录，下轮扫描会重新检查
     return;
   }
 
@@ -1727,39 +1725,7 @@ async function main() {
     }
   });
 
-  // 实时价差监控：pendingOpps 里的币，价差缩小就立刻开仓
-  monitor.onPendingCheck = async (rates) => {
-    if (!state.pendingOpps || wsProcessing || state.paused) return;
-    for (const [symbol, pending] of Object.entries(state.pendingOpps)) {
-      const r = rates[symbol];
-      if (!r) continue;
-      const lowPrice = r[pending.lowEx + 'Price'];
-      const highPrice = r[pending.highEx + 'Price'];
-      if (!lowPrice || !highPrice) continue;
-      const mid = (lowPrice + highPrice) / 2;
-      const diffPct = Math.abs(lowPrice - highPrice) / mid * 100;
-      if (diffPct < 1.0) {
-        log(`✅ ${symbol} 价差缩小到 ${diffPct.toFixed(2)}%，触发开仓`);
-        delete state.pendingOpps[symbol];
-        wsProcessing = true;
-        try {
-          await handleFundingOpportunity({
-            symbol, lowEx: pending.lowEx, highEx: pending.highEx,
-            lowRate: r[pending.lowEx] || 0, highRate: r[pending.highEx] || 0,
-            spread: pending.spread,
-            equiv8hSpread: pending.spread,
-            annualized: 0, price: mid
-          });
-        } catch (e) {
-          log('❌ pending开仓异常: ' + e.message);
-        } finally { wsProcessing = false; }
-      }
-      // 超过1小时还没缩小，清掉
-      if (Date.now() - pending.time > 3600000) {
-        delete state.pendingOpps[symbol];
-      }
-    }
-  };
+  // pendingOpps 已移除，改用每5分钟全量重扫
 
   log('📡 WebSocket 实时费率监控已启动');
 
@@ -1922,7 +1888,7 @@ async function main() {
     } catch (e) {
       log('❌ 兜底费率扫描异常: ' + e.message);
     }
-  }, 120000); // 2分钟
+  }, 300000); // 5分钟，每轮全量重扫不跳过
 
   // 价差扫描 - 已暂停（主流币跨所价差极少超25bps，白烧API调用）
   // 费率套利是主策略，价差套利等有更好的检测方式再重启
