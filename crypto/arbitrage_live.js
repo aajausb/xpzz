@@ -78,6 +78,7 @@ const CONFIG = {
 let isScanning = false;    // 防止 scanFundingRates 并发
 
 const openingSymbols = new Set(); // 防止 WS 和 REST 同时开同一个币
+const watchlist = new Map(); // 观察列表: symbol -> { lowEx, highEx, equiv8hSpread, settlementAligned, reason, addedAt }
 let state = {
   startTime: new Date().toISOString(),
   running: true,
