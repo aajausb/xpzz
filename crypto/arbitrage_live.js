@@ -746,15 +746,15 @@ async function executeFundingArbitrage(opp) {
     log(`  ✅ 费率套利开仓成功! ${symbol} ${lowEx}多/${highEx}空 $${tradeSize} 手续费$${fee.toFixed(2)}`);
     await notify(`✅ 开仓 ${symbol}\n${lowEx}多 / ${highEx}空\n$${tradeSize} | 费率差${(spread*100).toFixed(3)}% | 年化${annualized.toFixed(0)}%`);
 
-    // 深度降级后立刻重试补仓（最多3次，每次间隔2秒等盘口恢复）
+    // 深度降级后持续补仓直到达标（每次间隔2秒等盘口恢复）
     const targetSize = getTradeSize(spread);
     if (tradeSize < targetSize) {
-      for (let retry = 0; retry < 3; retry++) {
+      for (let retry = 0; retry < 20; retry++) {
         await new Promise(r => setTimeout(r, 2000));
         const remaining = targetSize - position.size;
-        if (remaining < 500) break;
+        if (remaining < 100) break; // 差不到$100就算补满了
         
-        log(`  🔄 补仓尝试 ${retry+1}/3: 目标$${targetSize}，当前$${position.size}，还差$${remaining}`);
+        log(`  🔄 补仓: 目标$${targetSize}，当前$${position.size}，还差$${remaining}`);
         
         // 重新拉盘口
         const [lb2, hb2] = await Promise.all([
