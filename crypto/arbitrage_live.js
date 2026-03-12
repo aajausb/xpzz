@@ -1273,8 +1273,117 @@ async function closeFundingPosition(pos, urgent = false) {
 
   log(`📤 平仓 ${pos.symbol} ${pos.longEx}多/${pos.shortEx}空 数量${pos.qty}`);
 
-    // 平仓策略：直接市价下全量，查实际成交，没平完继续平
-    let closeLOk = false, closeSOk = false;
+    // 判断是否用限价单
+    const useLimit = !urgent;
+    if (useLimit) log(`  💰 使用限价单(Post-Only)平仓，省手续费`);
+    else log(`  ⚡ 紧急市价平仓`);
+
+    // 限价平仓逻辑
+    if (useLimit) {
+      const startTime = Date.now();
+      const LIMIT_TIMEOUT = 120000; // 120秒超时转市价
+      let longDone = false, shortDone = false;
+      let longOrderId = null, shortOrderId = null;
+      let longRemain = pos.qty, shortRemain = pos.qty;
+
+      while (Date.now() - startTime < LIMIT_TIMEOUT) {
+        // 拉盘口
+        const [longOB, shortOB] = await Promise.all([
+          getOrderbook(pos.longEx, longSym, 5),
+          getOrderbook(pos.shortEx, shortSym, 5)
+        ]);
+
+        // 平多=卖出=挂在买一价(bid1)，平空=买入=挂在卖一价(ask1)
+        const longPrice = longOB?.bids?.[0]?.price;
+        const shortPrice = shortOB?.asks?.[0]?.price;
+        if (!longPrice || !shortPrice) { await new Promise(r => setTimeout(r, 2000)); continue; }
+
+        // 撤旧单重挂
+        if (!longDone) {
+          if (longOrderId) {
+            try { await longExObj.futuresCancelOrder(longSym, longOrderId); } catch(e) {}
+            await new Promise(r => setTimeout(r, 300));
+            // 查已成交量
+            try {
+              const oInfo = await longExObj.futuresGetOrder(longSym, longOrderId);
+              const filled = +(oInfo?.executedQty || oInfo?.result?.list?.[0]?.cumExecQty || oInfo?.data?.baseVolume || 0);
+              if (filled > 0) longRemain = Math.max(0, longRemain - filled);
+            } catch(e) {}
+          }
+          if (longRemain > 0) {
+            try {
+              const r = await longExObj.futuresCloseLongLimit(longSym, longRemain, longPrice);
+              longOrderId = r?.orderId || r?.result?.orderId || r?.data?.orderId || null;
+            } catch(e) { log(`  ⚠️ 限价平多失败: ${e.message}`); }
+          } else { longDone = true; }
+        }
+
+        if (!shortDone) {
+          if (shortOrderId) {
+            try { await shortExObj.futuresCancelOrder(shortSym, shortOrderId); } catch(e) {}
+            await new Promise(r => setTimeout(r, 300));
+            try {
+              const oInfo = await shortExObj.futuresGetOrder(shortSym, shortOrderId);
+              const filled = +(oInfo?.executedQty || oInfo?.result?.list?.[0]?.cumExecQty || oInfo?.data?.baseVolume || 0);
+              if (filled > 0) shortRemain = Math.max(0, shortRemain - filled);
+            } catch(e) {}
+          }
+          if (shortRemain > 0) {
+            try {
+              const r = await shortExObj.futuresCloseShortLimit(shortSym, shortRemain, shortPrice);
+              shortOrderId = r?.orderId || r?.result?.orderId || r?.data?.orderId || null;
+            } catch(e) { log(`  ⚠️ 限价平空失败: ${e.message}`); }
+          } else { shortDone = true; }
+        }
+
+        // 检查是否全部成交
+        if (longDone && shortDone) break;
+
+        // 检查实际持仓
+        await new Promise(r => setTimeout(r, 5000));
+        try {
+          const [lp, sp] = await Promise.all([
+            longExObj.getFuturesPositions(),
+            shortExObj.getFuturesPositions()
+          ]);
+          const lq = lp.find(p => (p.symbol||'').includes(pos.symbol));
+          const sq = sp.find(p => (p.symbol||'').includes(pos.symbol));
+          const lRemain = lq ? Math.abs(+(lq.positionAmt || lq.total || lq.size || 0)) : 0;
+          const sRemain = sq ? Math.abs(+(sq.positionAmt || sq.total || sq.size || 0)) : 0;
+          if (lRemain === 0) longDone = true;
+          if (sRemain === 0) shortDone = true;
+          if (longDone && shortDone) break;
+          longRemain = lRemain;
+          shortRemain = sRemain;
+        } catch(e) {}
+
+        log(`  ⏳ 限价平仓等待中: 多${longDone?'完':'剩'+longRemain} 空${shortDone?'完':'剩'+shortRemain} ${Math.round((Date.now()-startTime)/1000)}s`);
+      }
+
+      // 超时：撤单转市价
+      if (!longDone || !shortDone) {
+        log(`  ⏰ 限价超时120秒，转市价`);
+        if (longOrderId && !longDone) try { await longExObj.futuresCancelOrder(longSym, longOrderId); } catch(e) {}
+        if (shortOrderId && !shortDone) try { await shortExObj.futuresCancelOrder(shortSym, shortOrderId); } catch(e) {}
+        await new Promise(r => setTimeout(r, 500));
+        // 查剩余
+        try {
+          const [lp2, sp2] = await Promise.all([longExObj.getFuturesPositions(), shortExObj.getFuturesPositions()]);
+          const lq2 = lp2.find(p => (p.symbol||'').includes(pos.symbol));
+          const sq2 = sp2.find(p => (p.symbol||'').includes(pos.symbol));
+          const lr = lq2 ? Math.abs(+(lq2.positionAmt || lq2.total || lq2.size || 0)) : 0;
+          const sr = sq2 ? Math.abs(+(sq2.positionAmt || sq2.total || sq2.size || 0)) : 0;
+          if (lr > 0) await longExObj.futuresCloseLong(longSym, lr);
+          if (sr > 0) await shortExObj.futuresCloseShort(shortSym, sr);
+        } catch(e) {}
+      }
+
+      // 限价平仓完成，走成功逻辑
+      closeLOk = true; closeSOk = true;
+    }
+
+    // 市价平仓逻辑（紧急模式 或 限价已处理完跳过）
+    if (urgent) {
     let batchCount = 0;
 
     while (batchCount < 20) {
@@ -1333,6 +1442,7 @@ async function closeFundingPosition(pos, urgent = false) {
     }
 
     if (batchCount > 1) log(`  📊 分批平仓完成: ${batchCount}批`);
+    } // end if (urgent)
 
     if (closeLOk && closeSOk) {
       const fee = pos.size * 2 * CONFIG.FEE_BPS / 10000;
@@ -1474,7 +1584,7 @@ async function checkMarginSafety() {
         if (statePos) {
           log('🚨 ' + risk.exchange + ' ' + risk.symbol + ' 距离强平仅 ' + risk.distPct.toFixed(1) + '%! 自动平仓');
           await notify('🚨 爆仓预警！' + '\n' + risk.exchange + ' ' + risk.symbol + '\n当前价: ' + risk.mark + '\n强平价: ' + risk.liq + '\n距离: ' + risk.distPct.toFixed(1) + '%\n🔴 自动平仓中（两边同时）');
-          try { await closeFundingPosition(statePos); } catch (e) { log('  ❌ 强平预防失败: ' + e.message); }
+          try { await closeFundingPosition(statePos, true); } catch (e) { log('  ❌ 强平预防失败: ' + e.message); }
         }
       } else if (risk.distPct <= 20) {
         if (!state._lastMarginWarn) state._lastMarginWarn = {};
@@ -2022,7 +2132,7 @@ async function main() {
             const pos = state.positions.find(p => p.symbol === sym);
             if (pos) {
               const otherEx = pos.longEx === 'binance' ? pos.shortEx : pos.longEx;
-              closeFundingPosition(pos).then(() => log(`✅ ${sym} 另一边已平`));
+              closeFundingPosition(pos, true).then(() => log(`✅ ${sym} 另一边已平`));
             }
           }
         } catch (e) {}
@@ -2055,7 +2165,7 @@ async function main() {
                 log(`🚨 Bybit 仓位归零! ${sym} 可能被强平`);
                 notify(`🚨 Bybit ${sym} 仓位归零!\n正在平另一边...`);
                 pos._closing = true;
-                closeFundingPosition(pos).then(() => log(`✅ ${sym} 另一边已平`));
+                closeFundingPosition(pos, true).then(() => log(`✅ ${sym} 另一边已平`));
               }
             }
           }
@@ -2096,7 +2206,7 @@ async function main() {
                 log(`🚨 Bitget 仓位归零! ${sym} 可能被强平`);
                 notify(`🚨 Bitget ${sym} 仓位归零!\n正在平另一边...`);
                 pos._closing = true;
-                closeFundingPosition(pos).then(() => log(`✅ ${sym} 另一边已平`));
+                closeFundingPosition(pos, true).then(() => log(`✅ ${sym} 另一边已平`));
               }
             }
           }
@@ -2139,7 +2249,7 @@ async function main() {
                 log(`🚨 OKX 仓位归零! ${sym} 可能被强平`);
                 notify(`🚨 OKX ${sym} 仓位归零!\n正在平另一边...`);
                 pos._closing = true;
-                closeFundingPosition(pos).then(() => log(`✅ ${sym} 另一边已平`));
+                closeFundingPosition(pos, true).then(() => log(`✅ ${sym} 另一边已平`));
               }
             }
           }

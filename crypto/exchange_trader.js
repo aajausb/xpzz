@@ -412,7 +412,7 @@ const bitget = {
     // 用 place-order 指定数量平仓（支持部分平仓）
     if (quantity) {
       return this.api('POST', '/api/v2/mix/order/place-order', null, {
-        symbol, productType: 'USDT-FUTURES', marginMode: 'crossed',
+        symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
         side: 'sell', tradeSide: 'close', orderType: 'market',
         size: String(quantity)
       });
@@ -427,7 +427,7 @@ const bitget = {
   async futuresCloseShort(symbol, quantity) {
     if (quantity) {
       return this.api('POST', '/api/v2/mix/order/place-order', null, {
-        symbol, productType: 'USDT-FUTURES', marginMode: 'crossed',
+        symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
         side: 'buy', tradeSide: 'close', orderType: 'market',
         size: String(quantity)
       });
