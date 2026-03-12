@@ -28,8 +28,8 @@
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.008408576,
-      "unrealizedPnl": 165.40905,
+      "currentSpread": 0.007223808000000001,
+      "unrealizedPnl": 132.03417,
       "spreadHistory": [
         {
           "time": 1773277288802,
@@ -99,7 +99,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773303085750,
+  "_lastEarnedCheck": 1773304885146,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
