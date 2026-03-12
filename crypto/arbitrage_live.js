@@ -2344,44 +2344,20 @@ async function main() {
           }
         } catch (e) {}
         
-        log(`🔄 [补仓检查] ${pos.symbol} $${pos.size} < 目标$${target}，触发补仓`);
+        const remaining = target - pos.size;
+        if (remaining < 100) continue; // 差不到$100算补满
+        log(`🔄 [补仓检查] ${pos.symbol} $${pos.size} < 目标$${target}，需补$${remaining}`);
         try {
-          const lowEx = {binance, bybit, bitget, okx}[pos.longEx];
-          const highEx = {binance, bybit, bitget, okx}[pos.shortEx];
-          const lowSym = pos.symbol + 'USDT';
-          const highSym = pos.symbol + 'USDT';
+          const lowExObj = getExchange(pos.longEx);
+          const highExObj = getExchange(pos.shortEx);
+          const lowFutSym = getFuturesSymbol(pos.symbol, pos.longEx);
+          const highFutSym = getFuturesSymbol(pos.symbol, pos.shortEx);
           
-          // 查实际持仓
-          const [lPos, sPos] = await Promise.all([
-            lowEx.getFuturesPositions(),
-            highEx.getFuturesPositions()
-          ]);
-          const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
-          const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
-          const lQty = lp ? Math.abs(+(lp.positionAmt || lp.total || lp.size || 0)) : 0;
-          const sQty = sp ? Math.abs(+(sp.positionAmt || sp.total || sp.size || 0)) : 0;
-          
-          // 补到对齐
-          if (lQty !== sQty) {
-            const diff = Math.abs(lQty - sQty);
-            if (lQty < sQty) {
-              log(`  补${pos.longEx}多 ${diff}`);
-              await lowEx.futuresLong(lowSym, diff);
-            } else {
-              log(`  补${pos.shortEx}空 ${diff}`);
-              await highEx.futuresShort(highSym, diff);
-            }
-          }
-          
-          // 更新 state
-          const maxQty = Math.max(lQty, sQty);
-          pos.qty = maxQty;
-          pos.size = maxQty * (pos.size / pos.qty || 1);
-          log(`  ✅ 补仓完成 qty=${maxQty}`);
-          saveState();
-        } catch (e) {
-          log(`  ❌ 补仓失败: ${e.message}`);
-        }
+          // 查深度
+          const [lb, hb] = await Promise.all([
+            getOrderbook(pos.longEx, lowFutSym, 10),
+            getOrderbook(pos.shortEx, highFutSym, 10)
+
       }
     }
   }, 30000);
