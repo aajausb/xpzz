@@ -1,0 +1,116 @@
+digraph ArbitrageFlow {
+  rankdir=TB;
+  bgcolor="#1a1a2e";
+  pad=0.5;
+  nodesep=0.4;
+  ranksep=0.6;
+  
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#333"];
+  edge [fontname="Helvetica", fontsize=9, color="#666666"];
+
+  // 触发源
+  subgraph cluster_trigger {
+    label="🔔 触发源"; labelloc=t; fontname="Helvetica Bold"; fontsize=13; fontcolor="#e0e0e0";
+    style="rounded,dashed"; color="#444"; bgcolor="#16213e";
+    ws [label="WebSocket\n实时推送", fillcolor="#0f3460", fontcolor="white"];
+    rest [label="REST扫描\n每2分钟", fillcolor="#0f3460", fontcolor="white"];
+  }
+
+  // Step 1
+  subgraph cluster_step1 {
+    label="📋 Step 1: 预过滤 (零API调用)"; labelloc=t; fontname="Helvetica Bold"; fontsize=13; fontcolor="#e0e0e0";
+    style="rounded"; color="#533483"; bgcolor="#1a1a40";
+    
+    s1_pause [label="暂停检查", fillcolor="#533483", fontcolor="white"];
+    s1_max [label="仓位上限\nMAX_POSITIONS", fillcolor="#533483", fontcolor="white"];
+    s1_window [label="结算窗口\n40-70分钟", fillcolor="#533483", fontcolor="white"];
+    s1_align [label="结算对齐\n≤30min / 30min-3h / >3h", fillcolor="#533483", fontcolor="white"];
+    s1_spread [label="费率门槛\n对齐≥0.3% 不对齐≥1.0%", fillcolor="#533483", fontcolor="white"];
+    s1_raw [label="原始费率差\n≥0.1%", fillcolor="#533483", fontcolor="white"];
+    s1_cool [label="冷却期", fillcolor="#533483", fontcolor="white"];
+    s1_dup [label="同币去重", fillcolor="#533483", fontcolor="white"];
+    s1_bal [label="余额预检\n≥仓位×1.2", fillcolor="#533483", fontcolor="white"];
+    
+    s1_pause -> s1_max -> s1_window -> s1_align -> s1_spread -> s1_raw -> s1_cool -> s1_dup -> s1_bal [color="#7c73a0"];
+  }
+
+  // Step 2
+  subgraph cluster_step2 {
+    label="🔍 Step 2: 验证 (需API调用)"; labelloc=t; fontname="Helvetica Bold"; fontsize=13; fontcolor="#e0e0e0";
+    style="rounded"; color="#e94560"; bgcolor="#1a1a40";
+    
+    s2a [label="Step 2a\n历史费率趋势\n5期≥60%正\n最近2期不连续反转", fillcolor="#e94560", fontcolor="white"];
+    s2b [label="Step 2b\n盘口深度\n两所orderbook", fillcolor="#c74b50", fontcolor="white"];
+    s2c [label="Step 2c\n仓位大小\n≥0.8%→$10k\n0.5-0.8%→$8k\n0.3-0.5%→$6k", fillcolor="#b83b5e", fontcolor="white"];
+    s2d [label="Step 2d\n深度检查\n不够→降级(最低$200)", fillcolor="#a0345a", fontcolor="white"];
+    s2e [label="Step 2e\n价差≤1% + 滑点≤10bps", fillcolor="#8b2e56", fontcolor="white"];
+    s2f [label="Step 2f\n数量计算\nalignQty精度对齐", fillcolor="#762852", fontcolor="white"];
+    
+    s2a -> s2b -> s2c -> s2d -> s2e -> s2f [color="#e07070"];
+  }
+
+  // Step 3
+  subgraph cluster_step3 {
+    label="🚀 Step 3: 执行"; labelloc=t; fontname="Helvetica Bold"; fontsize=13; fontcolor="#e0e0e0";
+    style="rounded"; color="#00b4d8"; bgcolor="#1a1a40";
+    
+    s3a [label="Step 3a\n余额划转\nensureFuturesBalance", fillcolor="#0077b6", fontcolor="white"];
+    s3b [label="Step 3b\n双边下单\nfuturesLong + futuresShort", fillcolor="#0096c7", fontcolor="white"];
+    s3c [label="Step 3c\n成交确认\nBinance NEW→等待FILLED", fillcolor="#00b4d8", fontcolor="white"];
+    s3d [label="Step 3d\n单腿保护\n一边没成→反向平仓", fillcolor="#48cae4", fontcolor="white"];
+    
+    s3a -> s3b -> s3c -> s3d [color="#60c0d8"];
+  }
+
+  // Step 4
+  subgraph cluster_step4 {
+    label="📈 Step 4: 补仓"; labelloc=t; fontname="Helvetica Bold"; fontsize=13; fontcolor="#e0e0e0";
+    style="rounded"; color="#06d6a0"; bgcolor="#1a1a40";
+    
+    s4a [label="差额计算\ntarget - current", fillcolor="#06d6a0", fontcolor="#1a1a2e"];
+    s4b [label="盘口重查\n2秒间隔", fillcolor="#1b9e77", fontcolor="white"];
+    s4c [label="价差检查\n>1%暂停", fillcolor="#2d8b6e", fontcolor="white"];
+    s4d [label="双边下单\n最多3次重试", fillcolor="#3e7865", fontcolor="white"];
+    
+    s4a -> s4b -> s4c -> s4d [color="#60d8a0"];
+  }
+
+  // 持仓管理
+  subgraph cluster_manage {
+    label="⚙️ 持仓管理"; labelloc=t; fontname="Helvetica Bold"; fontsize=13; fontcolor="#e0e0e0";
+    style="rounded"; color="#ffd166"; bgcolor="#1a1a40";
+    
+    m_check [label="每5分钟\n费率检查\nconsecutiveNeg计数", fillcolor="#ffd166", fontcolor="#1a1a2e"];
+    m_rebal [label="每1小时\nRebalance\n健康评分+加仓", fillcolor="#ef8354", fontcolor="white"];
+    m_close [label="连续2次倒贴\n→ 自动平仓", fillcolor="#e63946", fontcolor="white"];
+    
+    m_check -> m_close [label="≥2次", color="#e07070"];
+    m_check -> m_rebal [label="正常", style=dashed, color="#aaa"];
+  }
+
+  // 安全
+  subgraph cluster_safety {
+    label="🛡️ 安全守护"; labelloc=t; fontname="Helvetica Bold"; fontsize=13; fontcolor="#e0e0e0";
+    style="rounded"; color="#ff6b6b"; bgcolor="#1a1a40";
+    
+    sf_margin [label="每60秒\n保证金率\n≥90%自动平", fillcolor="#ff6b6b", fontcolor="white"];
+    sf_extreme [label="每30秒\n极端行情", fillcolor="#ee5a24", fontcolor="white"];
+    sf_liq [label="WS强平监听\n实时推送", fillcolor="#c0392b", fontcolor="white"];
+  }
+
+  // 连线
+  ws -> s1_pause [lhead=cluster_step1, label="  opp对象", color="#4488ff"];
+  rest -> s1_pause [lhead=cluster_step1, label="  opp对象", color="#4488ff"];
+  
+  s1_bal -> s2a [label="  通过✅", color="#06d6a0", fontcolor="#06d6a0"];
+  s2f -> s3a [label="  通过✅", color="#06d6a0", fontcolor="#06d6a0"];
+  s3d -> s4a [label="  深度降级时", color="#ffd166", fontcolor="#ffd166", style=dashed];
+  
+  // 拦截
+  reject [label="⏭️ 跳过\n(打日志+原因)", shape=octagon, fillcolor="#333", fontcolor="#ff6b6b", color="#ff6b6b"];
+  s1_bal -> reject [label="不通过", style=dashed, color="#ff6b6b", fontcolor="#ff6b6b"];
+  s2e -> reject [label="不通过", style=dashed, color="#ff6b6b", fontcolor="#ff6b6b"];
+  
+  success [label="✅ 开仓成功\n记录仓位+通知", shape=doubleoctagon, fillcolor="#06d6a0", fontcolor="#1a1a2e"];
+  s3d -> success [label="  两边成交✅", color="#06d6a0", fontcolor="#06d6a0"];
+}

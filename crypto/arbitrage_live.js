@@ -352,53 +352,46 @@ function coinsToLots(symbol, coins) {
   return Math.round(coins / info.ctVal);
 }
 
+// ============ Step 1: 预过滤（零API调用，纯内存检查）============
+function preFilter(symbol, lowEx, highEx, equiv8hSpread, settlementAligned) {
+  // 暂停
+  if (state.paused) return '暂停中';
+  // 仓位上限
+  if (state.positions.length >= CONFIG.MAX_POSITIONS) return '仓位已满';
+  // 同币去重
+  if (state.positions.some(p => p.symbol === symbol)) return '已有同币持仓';
+  // 冷却
+  const pairKey = `${symbol}_${lowEx}_${highEx}`;
+  if (state.lastTrade[pairKey] && Date.now() - state.lastTrade[pairKey] < CONFIG.COOLDOWN_SAME_PAIR) return '冷却中';
+  // 费率门槛
+  const minSpread = (settlementAligned !== false) ? CONFIG.MIN_FUNDING_SPREAD : 0.01;
+  if (equiv8hSpread < minSpread) return `费率差${(equiv8hSpread*100).toFixed(3)}%不足(需${(minSpread*100).toFixed(1)}%)`;
+  // 仓位大小
+  const tradeSize = getTradeSize(equiv8hSpread);
+  if (tradeSize === 0) return '费率差不够开仓';
+  // 余额
+  if ((state.balances[lowEx] || 0) < tradeSize * 1.2) return `${lowEx}余额不足`;
+  if ((state.balances[highEx] || 0) < tradeSize * 1.2) return `${highEx}余额不足`;
+  return null; // 通过
+}
+
 // ============ WebSocket 触发的快速开仓 ============
 async function handleFundingOpportunity(opp) {
-  const { symbol, lowEx, highEx, annualized, price } = opp;
-  // 用等效8小时费率差做判断（已经标准化过，跟开仓门槛直接对比）
+  const { symbol, lowEx, highEx, annualized } = opp;
   const spread = opp.equiv8hSpread || opp.spread;
   
-  // 冷却检查
-  const pairKey = `${symbol}_${lowEx}_${highEx}`;
-  if (state.lastTrade[pairKey] && Date.now() - state.lastTrade[pairKey] < CONFIG.COOLDOWN_SAME_PAIR) return;
-  
-  // 重复检查
-  if (state.positions.some(p => p.symbol === symbol && p.longEx === lowEx && p.shortEx === highEx)) return;
-  
-  // 仓位上限
-  const existingUsd = state.positions.filter(p => p.symbol === symbol).reduce((s, p) => s + p.size, 0);
-  if (existingUsd > 0) return; // 同币只允许一组仓位
-  
-  // 余额检查（用动态仓位大小）
-  const preTradeSize = getTradeSize(spread);
-  if (preTradeSize === 0) return;
-  if ((state.balances[lowEx] || 0) < preTradeSize * 1.2) return;
-  if ((state.balances[highEx] || 0) < preTradeSize * 1.2) return;
+  const reject = preFilter(symbol, lowEx, highEx, spread, opp.settlementAligned);
+  if (reject) return; // WS触发量大，静默跳过
   
   log(`⚡ [WS] 费率机会: ${symbol} ${lowEx}(${opp.lowRate.toFixed(4)}) → ${highEx}(${opp.highRate.toFixed(4)}) 差${(spread*100).toFixed(3)}% 年化${annualized.toFixed(0)}%`);
   
-  // 动态仓位大小
-  const tradeSize = getTradeSize(spread);
-  if (tradeSize === 0) return; // 费率差太小
-
-  // 用精度对齐计算数量
-  const midPrice = price || 1;
-  let qty = alignQty(symbol, lowEx, highEx, tradeSize / midPrice);
-  if (!qty || qty <= 0) {
-    // fallback
-    qty = Math.floor(tradeSize / midPrice);
-  }
-  if (qty <= 0) { log(`  ⚠️ 数量计算失败`); return; }
-  
-  // 传动态仓位大小给执行函数
-  await executeFundingArbitrage({ symbol, lowEx, highEx, lowRate: opp.lowRate, highRate: opp.highRate, spread, annualized, tradeSize });
+  await executeFundingArbitrage({ symbol, lowEx, highEx, lowRate: opp.lowRate, highRate: opp.highRate, spread, annualized, tradeSize: getTradeSize(spread), settlementAligned: opp.settlementAligned });
 }
 
 // ============ 费率套利扫描 ============
 async function scanFundingArbitrage() {
   if (state.paused) return;
   if (isScanning) { log('⏳ 上一轮扫描未完成，跳过'); return; }
-  if (state.positions.length >= CONFIG.MAX_POSITIONS) return;
   
   isScanning = true;
   try {
@@ -455,23 +448,9 @@ async function scanFundingArbitrage() {
     const rawSpread = highRate - lowRate;
     if (Math.abs(rawSpread) < 0.001) continue;
 
-    // 检查冷却
-    const pairKey = `${sym}_${lowEx}_${highEx}`;
-    if (state.lastTrade[pairKey] && Date.now() - state.lastTrade[pairKey] < CONFIG.COOLDOWN_SAME_PAIR) continue;
-
-    // 检查是否已有该币持仓（含同方向）
-    const existingPos = state.positions.filter(p => p.symbol === sym);
-    if (existingPos.length > 0) continue; // 同币只允许一组
-
-    // 检查是否已有同币同方向的仓位（防止重复开仓）
-    const hasSamePair = state.positions.some(p => p.symbol === sym && p.longEx === lowEx && p.shortEx === highEx);
-    if (hasSamePair) continue;
-
-    // 检查余额（用动态仓位大小）
-    const estSize = getTradeSize(equiv8hSpread);
-    if (estSize === 0) continue;
-    if (state.balances[lowEx] < estSize * 1.2) continue;
-    if (state.balances[highEx] < estSize * 1.2) continue;
+    // Step 1 预过滤（冷却/去重/余额，统一入口）
+    const reject = preFilter(sym, lowEx, highEx, equiv8hSpread, settlementAligned);
+    if (reject) continue;
 
     opportunities.push({
       symbol: sym,
@@ -589,20 +568,20 @@ async function executeFundingArbitrage(opp) {
   
   try {
 
-  log(`🔍 费率套利机会: ${symbol} ${lowEx}(${opp.lowRate.toFixed(4)}) → ${highEx}(${opp.highRate.toFixed(4)}) 差${(spread*100).toFixed(3)}% 年化${annualized.toFixed(0)}%`);
+  log(`🔍 [Step2] ${symbol} ${lowEx}多/${highEx}空 费率差${(spread*100).toFixed(3)}% 年化${annualized.toFixed(0)}%`);
 
-  // 0. 历史费率趋势检查（至少3/5期方向一致，不追单期冲高）
+  // Step 2a. 历史费率趋势检查
   try {
     const historyChecked = await checkFundingTrend(symbol, lowEx, highEx);
     if (!historyChecked) {
-      log(`  ⏭️ ${symbol} 历史费率趋势不稳，跳过`);
+      log(`  ⏭️ [Step2a] ${symbol} 历史费率趋势不稳，跳过`);
       return;
     }
   } catch (e) {
-    log(`  ⚠️ 费率趋势检查失败: ${e.message}，继续开仓`);
+    log(`  ⚠️ [Step2a] 趋势检查失败: ${e.message}，继续`);
   }
 
-  // 1. 检查合约盘口深度
+  // Step 2b. 检查合约盘口深度
   const lowFutSym = getFuturesSymbol(symbol, lowEx);
   const highFutSym = getFuturesSymbol(symbol, highEx);
   
@@ -624,20 +603,20 @@ async function executeFundingArbitrage(opp) {
       httpGet(`https://www.okx.com/api/v5/market/books?instId=${symbol}-USDT-SWAP&sz=10`).then(r => r?.data?.[0] ? { bids: r.data[0].bids.map(b=>({price:+b[0],qty:+b[1]})), asks: r.data[0].asks.map(a=>({price:+a[0],qty:+a[1]})) } : null)
     ]);
   } catch (e) {
-    log(`  ⚠️ 盘口获取失败: ${e.message}`);
+    log(`  ⚠️ [Step2b] 盘口获取失败: ${e.message}`);
     return;
   }
 
   if (!lowBook || !highBook) {
-    log(`  ⚠️ ${symbol} 盘口数据不完整，跳过`);
+    log(`  ⚠️ ${symbol} [Step2b] 盘口数据不完整，跳过`);
     return;
   }
 
-  // 2. 动态仓位大小（提前算，深度检查要用）
+  // Step 2c. 动态仓位大小（提前算，深度检查要用）
   let tradeSize = opp.tradeSize || getTradeSize(spread);
-  if (tradeSize === 0) { log(`  ⚠️ 费率差太小，不开仓`); return; }
+  if (tradeSize === 0) { log(`  ⚠️ [Step2c] 费率差太小`); return; }
 
-  // 3. 检查深度（用实际仓位大小）
+  // Step 2d. 检查深度（用实际仓位大小）
   const lowFill = calcDepthFill(lowBook.asks, tradeSize);
   const highFill = calcDepthFill(highBook.bids, tradeSize);
 
@@ -646,33 +625,33 @@ async function executeFundingArbitrage(opp) {
     const fillable = Math.min(lowFill.fillableUsd, highFill.fillableUsd);
     const adjusted = Math.floor(fillable / 100) * 100; // 向下取整到百
     if (adjusted >= 200) {
-      log(`  ⚠️ 深度不足(低$${lowFill.fillableUsd.toFixed(0)}/高$${highFill.fillableUsd.toFixed(0)})，降级到$${adjusted}`);
+      log(`  ⚠️ [Step2d] 深度不足(低$${lowFill.fillableUsd.toFixed(0)}/高$${highFill.fillableUsd.toFixed(0)})，降级到$${adjusted}`);
       tradeSize = adjusted;
     } else {
-      log(`  ⚠️ 深度不足: 低所$${lowFill.fillableUsd.toFixed(0)} 高所$${highFill.fillableUsd.toFixed(0)}，最低$200也不够，跳过`);
+      log(`  ⚠️ [Step2d] 深度不足: 低所$${lowFill.fillableUsd.toFixed(0)} 高所$${highFill.fillableUsd.toFixed(0)}，最低$200也不够，跳过`);
       return;
     }
   }
 
   if (lowFill.slippageBps > CONFIG.MAX_SLIPPAGE_BPS || highFill.slippageBps > CONFIG.MAX_SLIPPAGE_BPS) {
-    log(`  ⚠️ 滑点过大: 低所${lowFill.slippageBps}bps 高所${highFill.slippageBps}bps`);
+    log(`  ⚠️ [Step2e] 滑点过大: 低所${lowFill.slippageBps}bps 高所${highFill.slippageBps}bps`);
     return;
   }
 
-  // 4. 两所价差检查（控制开仓滑点成本）
+  // Step 2e. [Step2e] 两所价差检查（控制开仓滑点成本）
   const lowBestAsk = lowBook.asks[0].price;
   const highBestBid = highBook.bids[0].price;
   const midPrice = (lowBestAsk + highBestBid) / 2;
   const priceDiffPct = Math.abs(lowBestAsk - highBestBid) / midPrice * 100;
   if (priceDiffPct > 1.0) {
-    log(`  ⚠️ 两所价差${priceDiffPct.toFixed(2)}%超过1%，等价差缩小再开`);
+    log(`  ⚠️ [Step2e] 两所价差${priceDiffPct.toFixed(2)}%超过1%，等价差缩小再开`);
     // 记录等待状态，下次扫描时重试
     state.pendingOpps = state.pendingOpps || {};
     state.pendingOpps[symbol] = { lowEx, highEx, spread, priceDiff: priceDiffPct, time: Date.now() };
     return;
   }
 
-  // 5. 计算数量（精度对齐）
+  // Step 2f. 计算数量（精度对齐）
   
   let qty = alignQty(symbol, lowEx, highEx, tradeSize / midPrice);
   
@@ -682,27 +661,27 @@ async function executeFundingArbitrage(opp) {
   }
 
   if (qty <= 0) {
-    log(`  ⚠️ 数量太小: ${qty}`);
+    log(`  ⚠️ [Step2f] 数量太小: ${qty}`);
     return;
   }
 
   log(`  📊 深度OK: 价格~$${midPrice.toFixed(4)} 数量${qty} 仓位$${tradeSize} 滑点${lowFill.slippageBps}/${highFill.slippageBps}bps`);
 
-  // 3.5. 确保合约账户有余额（自动划转）
+  // Step 3a. 确保合约账户有余额（自动划转）
   const [lowReady, highReady] = await Promise.all([
     ensureFuturesBalance(lowEx, tradeSize * 1.2),
     ensureFuturesBalance(highEx, tradeSize * 1.2)
   ]);
   if (!lowReady || !highReady) {
-    log(`  ⚠️ 合约余额不足且划转失败: ${lowEx}=${lowReady} ${highEx}=${highReady}`);
+    log(`  ⚠️ [Step3a] 合约余额不足且划转失败: ${lowEx}=${lowReady} ${highEx}=${highReady}`);
     return;
   }
 
-  // 4. 同时下单: 低费率所做多 + 高费率所做空
+  // Step 3b. 同时下单: 低费率所做多 + 高费率所做空
   // OKX 用张数下单，其他用币数
   const longQty = lowEx === 'okx' ? coinsToLots(symbol, qty) : qty;
   const shortQty = highEx === 'okx' ? coinsToLots(symbol, qty) : qty;
-  log(`  🚀 下单: ${lowEx}做多 + ${highEx}做空 ${symbol} x${qty}${lowEx === 'okx' || highEx === 'okx' ? ` (OKX张数: ${lowEx === 'okx' ? longQty : shortQty})` : ''}`);
+  log(`  🚀 [Step3b] 下单: ${lowEx}做多 + ${highEx}做空 ${symbol} x${qty}${lowEx === 'okx' || highEx === 'okx' ? ` (OKX张数: ${lowEx === 'okx' ? longQty : shortQty})` : ''}`);
 
   let longResult, shortResult;
   try {
@@ -1406,7 +1385,7 @@ async function rebalancePositions() {
       const priceDiff = Math.abs(buyPrice - sellPrice) / Math.min(buyPrice, sellPrice);
       
       if (priceDiff > 0.01) {
-        log(`  ⚠️ [加仓] ${pos.symbol} 两所价差${(priceDiff*100).toFixed(2)}% > 1%，跳过`);
+        log(`  ⚠️ [加仓] ${pos.symbol} [Step2e] 两所价差${(priceDiff*100).toFixed(2)}% > 1%，跳过`);
         continue;
       }
       
@@ -1417,7 +1396,7 @@ async function rebalancePositions() {
       const lowFill = calcDepthFill(lowOB.asks, addSize);
       const highFill = calcDepthFill(highOB.bids, addSize);
       if (lowFill.slippageBps > 30 || highFill.slippageBps > 30) {
-        log(`  ⚠️ [加仓] ${pos.symbol} 滑点过大: ${lowFill.slippageBps}/${highFill.slippageBps}bps，跳过`);
+        log(`  ⚠️ [加仓] ${pos.symbol} [Step2e] 滑点过大: ${lowFill.slippageBps}/${highFill.slippageBps}bps，跳过`);
         continue;
       }
     } catch (e) {

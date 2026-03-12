@@ -23,13 +23,13 @@
       "entryTime": "2026-03-11T19:16:28.966Z",
       "spread": 0.0035557199999999996,
       "annualized": 389.35133999999994,
-      "earned": 7.161125169999999,
+      "earned": 6.375403989999999,
       "totalFee": 20,
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.0096592,
-      "unrealizedPnl": 215.08329,
+      "currentSpread": 0.007032543999999999,
+      "unrealizedPnl": -16.60047,
       "spreadHistory": [
         {
           "time": 1773273688532,
@@ -50,7 +50,7 @@
   ],
   "balances": {
     "binance": 5318.59740409,
-    "bybit": 5907.88325186,
+    "bybit": 5907.09753068,
     "bitget": 2712.294829171703,
     "okx": 6.743723247e-7
   },
@@ -98,7 +98,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773283925479,
+  "_lastEarnedCheck": 1773284717030,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
