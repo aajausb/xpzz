@@ -518,6 +518,64 @@ async function scanFundingArbitrage() {
   }
 }
 
+// ============ 历史费率趋势检查 ============
+async function checkFundingTrend(symbol, lowEx, highEx) {
+  // 拉两所最近5期历史费率，检查趋势稳定性
+  const sym = symbol + 'USDT';
+  
+  const fetchHistory = async (ex) => {
+    if (ex === 'binance') {
+      const data = await httpGet(`https://fapi.binance.com/fapi/v1/fundingRate?symbol=${sym}&limit=5`);
+      return (data || []).map(r => ({ time: r.fundingTime, rate: +r.fundingRate }));
+    } else if (ex === 'bybit') {
+      const data = await httpGet(`https://api.bybit.com/v5/market/funding/history?category=linear&symbol=${sym}&limit=5`);
+      return (data?.result?.list || []).map(r => ({ time: +r.fundingRateTimestamp, rate: +r.fundingRate })).reverse();
+    } else if (ex === 'bitget') {
+      const data = await httpGet(`https://api.bitget.com/api/v2/mix/market/history-fund-rate?symbol=${sym}&productType=USDT-FUTURES&pageSize=5`);
+      return (data?.data || []).map(r => ({ time: +r.fundingTime, rate: +r.fundingRate })).reverse();
+    }
+    return [];
+  };
+
+  const [lowHistory, highHistory] = await Promise.all([fetchHistory(lowEx), fetchHistory(highEx)]);
+  
+  if (lowHistory.length < 3 || highHistory.length < 3) {
+    log(`  📊 趋势检查: ${symbol} 历史数据不足(${lowEx}:${lowHistory.length} ${highEx}:${highHistory.length})，放行`);
+    return true; // 数据不足不拦
+  }
+
+  // 匹配时间最近的，计算每期费率差 (high - low，正=我们赚)
+  const spreads = [];
+  for (const h of highHistory) {
+    let closest = null, minDiff = Infinity;
+    for (const l of lowHistory) {
+      const diff = Math.abs(h.time - l.time);
+      if (diff < minDiff) { minDiff = diff; closest = l; }
+    }
+    if (closest && minDiff < 8 * 3600000) { // 8小时内匹配
+      spreads.push(h.rate - closest.rate);
+    }
+  }
+
+  if (spreads.length < 3) {
+    log(`  📊 趋势检查: ${symbol} 匹配期数不足(${spreads.length})，放行`);
+    return true;
+  }
+
+  const positive = spreads.filter(s => s > 0).length;
+  const total = spreads.length;
+  
+  // 检查是否有连续2期反转（最近的2期）
+  const lastTwo = spreads.slice(-2);
+  const consecutiveNeg = lastTwo.every(s => s <= 0);
+
+  const pass = positive >= Math.ceil(total * 0.6) && !consecutiveNeg; // 至少60%正 且 最近2期没连续反转
+  
+  log(`  📊 趋势检查: ${symbol} ${lowEx}/${highEx} 最近${total}期 正:${positive} 负:${total-positive} 最近2期连续反转:${consecutiveNeg} → ${pass ? '✅通过' : '❌不通过'}`);
+  
+  return pass;
+}
+
 // ============ 执行费率套利 ============
 async function executeFundingArbitrage(opp) {
   const { symbol, lowEx, highEx, spread, annualized } = opp;
@@ -532,6 +590,17 @@ async function executeFundingArbitrage(opp) {
   try {
 
   log(`🔍 费率套利机会: ${symbol} ${lowEx}(${opp.lowRate.toFixed(4)}) → ${highEx}(${opp.highRate.toFixed(4)}) 差${(spread*100).toFixed(3)}% 年化${annualized.toFixed(0)}%`);
+
+  // 0. 历史费率趋势检查（至少3/5期方向一致，不追单期冲高）
+  try {
+    const historyChecked = await checkFundingTrend(symbol, lowEx, highEx);
+    if (!historyChecked) {
+      log(`  ⏭️ ${symbol} 历史费率趋势不稳，跳过`);
+      return;
+    }
+  } catch (e) {
+    log(`  ⚠️ 费率趋势检查失败: ${e.message}，继续开仓`);
+  }
 
   // 1. 检查合约盘口深度
   const lowFutSym = getFuturesSymbol(symbol, lowEx);

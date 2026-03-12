@@ -275,7 +275,7 @@ const bybit = {
   },
 
   async getFuturesPositions(symbol) {
-    const params = { category: 'linear' };
+    const params = { category: 'linear', settleCoin: 'USDT' };
     if (symbol) params.symbol = symbol;
     const res = await this.api('GET', '/v5/position/list', params);
     if (res.retCode !== 0) return { error: res.retMsg };
