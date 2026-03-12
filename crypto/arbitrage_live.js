@@ -703,6 +703,10 @@ async function executeFundingArbitrage(opp) {
   const shortQty = highEx === 'okx' ? coinsToLots(symbol, qty) : qty;
   log(`  🚀 [Step3b] 下单: ${lowEx}做多 + ${highEx}做空 ${symbol} x${qty}${lowEx === 'okx' || highEx === 'okx' ? ` (OKX张数: ${lowEx === 'okx' ? longQty : shortQty})` : ''}`);
 
+  // 杠杆限额检查
+  if (lowEx === 'binance') await ensureBinanceLeverage(lowFutSym, tradeSize);
+  if (highEx === 'binance') await ensureBinanceLeverage(highFutSym, tradeSize);
+
   let longResult, shortResult;
   try {
     [longResult, shortResult] = await Promise.all([
@@ -1162,6 +1166,47 @@ async function executeSpreadArbitrage(symbol, lowEx, highEx, lowPrice, highPrice
 }
 
 // ============ 辅助函数 ============
+// Binance 杠杆限额检查+自动降杠杆
+async function ensureBinanceLeverage(symbol, neededNotional) {
+  try {
+    const pos = await binance.getFuturesPositions();
+    const p = pos.find(x => (x.symbol || '').includes(symbol.replace('USDT', '')));
+    const currentNotional = Math.abs(+(p?.notional || 0));
+    const maxNotional = +(p?.maxNotionalValue || 0);
+    const leverage = +(p?.leverage || 20);
+    
+    if (maxNotional > 0 && currentNotional + neededNotional > maxNotional * 0.95) {
+      // 需要降杠杆
+      const newLev = Math.max(5, Math.floor(leverage / 2));
+      log(`  ⚙️ ${symbol} BN杠杆${leverage}x限额$${maxNotional}不够，降到${newLev}x`);
+      const r = await bnSignedPost('/fapi/v1/leverage', { symbol, leverage: newLev });
+      if (r?.leverage) {
+        log(`  ✅ 杠杆已降到${r.leverage}x，限额$${r.maxNotionalValue}`);
+      } else {
+        log(`  ⚠️ 降杠杆失败: ${JSON.stringify(r)}`);
+      }
+    }
+  } catch (e) { log(`  ⚠️ 杠杆检查失败: ${e.message}`); }
+}
+
+// Binance签名POST
+async function bnSignedPost(path, params) {
+  const crypto = require('crypto');
+  const https = require('https');
+  params.timestamp = Date.now();
+  params.recvWindow = 5000;
+  const qs = Object.entries(params).map(([k, v]) => k + '=' + v).join('&');
+  const sig = crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(qs).digest('hex');
+  const body = qs + '&signature=' + sig;
+  return new Promise((resolve, reject) => {
+    const req = https.request({ hostname: 'fapi.binance.com', path, method: 'POST', headers: { 'X-MBX-APIKEY': process.env.BINANCE_API_KEY, 'Content-Type': 'application/x-www-form-urlencoded' } }, res => {
+      let d = ''; res.on('data', c => d += c); res.on('end', () => { try { resolve(JSON.parse(d)); } catch { resolve(d); } });
+    });
+    req.on('error', reject);
+    req.write(body); req.end();
+  });
+}
+
 function checkOrderSuccess(result, exchange) {
   if (!result) return false;
   switch (exchange) {
@@ -1274,7 +1319,7 @@ async function checkFundingPositions() {
 
 const closingSymbols = new Set(); // 防止同币并发平仓
 
-async function closeFundingPosition(pos, urgent = false) {
+async function closeFundingPosition(pos, urgent = false, dangerousEx = null) {
   if (closingSymbols.has(pos.symbol)) {
     log(`⏳ ${pos.symbol} 正在平仓中，跳过`);
     return;
@@ -1635,7 +1680,7 @@ async function checkMarginSafety() {
         if (statePos) {
           log('🚨 ' + risk.exchange + ' ' + risk.symbol + ' 距离强平仅 ' + risk.distPct.toFixed(1) + '%! 自动平仓');
           await notify('🚨 爆仓预警！' + '\n' + risk.exchange + ' ' + risk.symbol + '\n当前价: ' + risk.mark + '\n强平价: ' + risk.liq + '\n距离: ' + risk.distPct.toFixed(1) + '%\n🔴 自动平仓中（两边同时）');
-          try { await closeFundingPosition(statePos, true); } catch (e) { log('  ❌ 强平预防失败: ' + e.message); }
+          try { await closeFundingPosition(statePos, true, risk.exchange); } catch (e) { log('  ❌ 强平预防失败: ' + e.message); }
         }
       } else if (risk.distPct <= 20) {
         if (!state._lastMarginWarn) state._lastMarginWarn = {};
@@ -2378,6 +2423,10 @@ async function main() {
           
           const addLongQty = pos.longEx === 'okx' ? coinsToLots(pos.symbol, addQty) : addQty;
           const addShortQty = pos.shortEx === 'okx' ? coinsToLots(pos.symbol, addQty) : addQty;
+          
+          // 杠杆限额检查
+          if (pos.longEx === 'binance') await ensureBinanceLeverage(lowFutSym, addSize);
+          if (pos.shortEx === 'binance') await ensureBinanceLeverage(highFutSym, addSize);
           
           // 双边下单
           const [lr, sr] = await Promise.all([
