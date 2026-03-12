@@ -302,9 +302,9 @@ async function fetchFundingRates() {
 // ============ 动态仓位大小 ============
 function getTradeSize(spread) {
   // 动态仓位：高费率重仓，低费率轻仓
-  if (spread >= 0.008) return 7000;  // ≥0.8% → $7000 极品
-  if (spread >= 0.005) return 5000;  // 0.5%-0.8% → $5000
-  if (spread >= 0.003) return 3000;  // 0.3%-0.5% → $3000
+  if (spread >= 0.008) return 10000; // ≥0.8% → $10000 极品
+  if (spread >= 0.005) return 8000;  // 0.5%-0.8% → $8000
+  if (spread >= 0.003) return 6000;  // 0.3%-0.5% → $6000
   return 0;                           // <0.3% → 不开
 }
 
