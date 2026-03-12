@@ -2,12 +2,12 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -85.55616293999998,
+  "totalPnl": -97.55616293999998,
   "realizedPnl": -664.135299292341,
   "unrealizedPnl": 0,
-  "dailyPnl": -11.8,
+  "dailyPnl": -23.8,
   "dailyPnlDate": "2026-03-12",
-  "trades": 34,
+  "trades": 35,
   "wins": 3,
   "losses": 17,
   "positions": [
@@ -23,18 +23,14 @@
       "entryTime": "2026-03-11T19:16:28.966Z",
       "spread": 0.0035557199999999996,
       "annualized": 389.35133999999994,
-      "earned": 40.205502339999995,
+      "earned": 39.13288651,
       "totalFee": 20,
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.006208256,
-      "unrealizedPnl": 136.69113,
+      "currentSpread": 0.005299455999999999,
+      "unrealizedPnl": 166.18521,
       "spreadHistory": [
-        {
-          "time": 1773283529253,
-          "spread": 0.010514335999999999
-        },
         {
           "time": 1773288316728,
           "spread": 0.008422624
@@ -42,6 +38,10 @@
         {
           "time": 1773306685192,
           "spread": 0.007425088000000001
+        },
+        {
+          "time": 1773314879414,
+          "spread": 0.005299455999999999
         }
       ],
       "consecutiveNeg": 0,
@@ -59,19 +59,55 @@
       "entryTime": "2026-03-12T10:04:06.537Z",
       "spread": 0.02672556,
       "annualized": 2926.44882,
-      "earned": 0,
+      "earned": 3.27615109,
       "totalFee": 2.8,
       "settlementAligned": true,
       "longOrderId": "ff051bbb-13b7-4ae6-95bf-fcc658f2f479",
       "shortOrderId": "1415929610322452481",
-      "currentSpread": 0.0007760177777777776,
-      "unrealizedPnl": 87.94735977316002
+      "currentSpread": -0.0009165688888888889,
+      "unrealizedPnl": 30.15529977315998,
+      "spreadHistory": [
+        {
+          "time": 1773314879414,
+          "spread": -0.0009165688888888889
+        }
+      ],
+      "consecutiveNeg": 1,
+      "health": "ok"
+    },
+    {
+      "id": "mmnd010w",
+      "symbol": "RIVER",
+      "type": "funding",
+      "longEx": "bitget",
+      "shortEx": "bybit",
+      "size": 6000,
+      "qty": 330,
+      "entryPrice": 18.0855,
+      "entryTime": "2026-03-12T11:02:59.888Z",
+      "spread": 0.00405406,
+      "annualized": 443.91957,
+      "earned": 0,
+      "totalFee": 12,
+      "settlementAligned": true,
+      "longOrderId": "1415944430258102273",
+      "shortOrderId": "83c3d359-4e05-4469-a1e3-0caa6e664dcd",
+      "currentSpread": 0.002178,
+      "unrealizedPnl": 4.791899998890001,
+      "spreadHistory": [
+        {
+          "time": 1773314879414,
+          "spread": 0.002178
+        }
+      ],
+      "consecutiveNeg": 0,
+      "health": "ok"
     }
   ],
   "balances": {
     "binance": 4242.37484178,
-    "bybit": 5882.2132096,
-    "bitget": 3871.942659969271,
+    "bybit": 5888.66317232,
+    "bitget": 3860.834662979271,
     "okx": 6.743723247e-7
   },
   "lastTrade": {
@@ -115,12 +151,13 @@
     "ACE_bybit_binance": 1773228277613,
     "RONIN_bybit_binance": 1773240847136,
     "LYN_binance_bitget": 1773298801750,
-    "LYN_bybit_bitget": 1773309846537
+    "LYN_bybit_bitget": 1773309846537,
+    "RIVER_bitget_bybit": 1773313379888
   },
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773313079343,
+  "_lastEarnedCheck": 1773314879343,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
