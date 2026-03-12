@@ -1288,8 +1288,32 @@ async function closeFundingPosition(pos, urgent = false) {
 
   log(`📤 平仓 ${pos.symbol} ${pos.longEx}多/${pos.shortEx}空 数量${pos.qty}`);
 
-    // 判断是否用限价单
-    const useLimit = !urgent;
+    // 判断是否用限价单：≤13%强平距离直接市价，>13%用限价
+    let forceMarket = urgent;
+    if (!forceMarket) {
+      try {
+        const [lPos, sPos] = await Promise.all([
+          longExObj.getFuturesPositions(),
+          shortExObj.getFuturesPositions()
+        ]);
+        const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
+        const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
+        const checkLiqDist = (p) => {
+          if (!p) return 999;
+          const mark = +(p.markPrice || p.lastPrice || 0);
+          const liq = +(p.liquidationPrice || p.liqPrice || 0);
+          if (!mark || !liq || liq === 0) return 999;
+          return Math.abs((liq - mark) / mark) * 100;
+        };
+        const longDist = checkLiqDist(lp);
+        const shortDist = checkLiqDist(sp);
+        if (longDist <= 13 || shortDist <= 13) {
+          forceMarket = true;
+          log(`  🚨 强平距离过近(多${longDist.toFixed(1)}%/空${shortDist.toFixed(1)}%)，强制市价`);
+        }
+      } catch(e) { log(`  ⚠️ 强平距离检查失败: ${e.message}`); }
+    }
+    const useLimit = !forceMarket;
     if (useLimit) log(`  💰 使用限价单(Post-Only)平仓，省手续费`);
     else log(`  ⚡ 紧急市价平仓`);
 
@@ -1378,19 +1402,29 @@ async function closeFundingPosition(pos, urgent = false) {
       // 超时：撤单转市价
       if (!longDone || !shortDone) {
         log(`  ⏰ 限价超时120秒，转市价`);
-        if (longOrderId && !longDone) try { await longExObj.futuresCancelOrder(longSym, longOrderId); } catch(e) {}
-        if (shortOrderId && !shortDone) try { await shortExObj.futuresCancelOrder(shortSym, shortOrderId); } catch(e) {}
+        if (longOrderId && !longDone) try { await longExObj.futuresCancelOrder(longSym, longOrderId); } catch(e) { log(`  ⚠️ 撤多单失败: ${e.message}`); }
+        if (shortOrderId && !shortDone) try { await shortExObj.futuresCancelOrder(shortSym, shortOrderId); } catch(e) { log(`  ⚠️ 撤空单失败: ${e.message}`); }
         await new Promise(r => setTimeout(r, 500));
-        // 查剩余
-        try {
-          const [lp2, sp2] = await Promise.all([longExObj.getFuturesPositions(), shortExObj.getFuturesPositions()]);
-          const lq2 = lp2.find(p => (p.symbol||'').includes(pos.symbol));
-          const sq2 = sp2.find(p => (p.symbol||'').includes(pos.symbol));
-          const lr = lq2 ? Math.abs(+(lq2.positionAmt || lq2.total || lq2.size || 0)) : 0;
-          const sr = sq2 ? Math.abs(+(sq2.positionAmt || sq2.total || sq2.size || 0)) : 0;
-          if (lr > 0) await longExObj.futuresCloseLong(longSym, lr);
-          if (sr > 0) await shortExObj.futuresCloseShort(shortSym, sr);
-        } catch(e) {}
+        // 查剩余并市价平，重试3次
+        for (let mRetry = 0; mRetry < 3; mRetry++) {
+          try {
+            const [lp2, sp2] = await Promise.all([longExObj.getFuturesPositions(), shortExObj.getFuturesPositions()]);
+            const lq2 = lp2.find(p => (p.symbol||'').includes(pos.symbol));
+            const sq2 = sp2.find(p => (p.symbol||'').includes(pos.symbol));
+            const lr = lq2 ? Math.abs(+(lq2.positionAmt || lq2.total || lq2.size || 0)) : 0;
+            const sr = sq2 ? Math.abs(+(sq2.positionAmt || sq2.total || sq2.size || 0)) : 0;
+            if (lr === 0 && sr === 0) { log(`  ✅ 超时转市价: 两边已清`); break; }
+            if (lr > 0) {
+              try { await longExObj.futuresCloseLong(longSym, lr); log(`  ✅ 超时市价平多 ${lr}`); }
+              catch(e) { log(`  ❌ 超时市价平多失败(${mRetry+1}/3): ${e.message}`); }
+            }
+            if (sr > 0) {
+              try { await shortExObj.futuresCloseShort(shortSym, sr); log(`  ✅ 超时市价平空 ${sr}`); }
+              catch(e) { log(`  ❌ 超时市价平空失败(${mRetry+1}/3): ${e.message}`); }
+            }
+            if (mRetry < 2) await new Promise(r => setTimeout(r, 2000));
+          } catch(e) { log(`  ❌ 超时转市价查仓失败(${mRetry+1}/3): ${e.message}`); }
+        }
       }
 
       // 限价平仓完成，走成功逻辑
@@ -1489,10 +1523,12 @@ async function closeFundingPosition(pos, urgent = false) {
           log(`  🔧 平仓残留: ${pos.longEx}多${lQty} ${pos.shortEx}空${sQty}，清理中`);
           for (let fix = 0; fix < 20; fix++) {
             if (lQty > 0) {
-              try { await longExObj.futuresCloseLong(longSym, lQty); } catch(e) {}
+              try { await longExObj.futuresCloseLong(longSym, lQty); log(`  ✅ 残留清理: 多${lQty}`); }
+              catch(e) { log(`  ❌ 残留清理多失败(${fix+1}/20): ${e.message}`); }
             }
             if (sQty > 0) {
-              try { await shortExObj.futuresCloseShort(shortSym, sQty); } catch(e) {}
+              try { await shortExObj.futuresCloseShort(shortSym, sQty); log(`  ✅ 残留清理: 空${sQty}`); }
+              catch(e) { log(`  ❌ 残留清理空失败(${fix+1}/20): ${e.message}`); }
             }
             await new Promise(r => setTimeout(r, 1500));
             const [lc2, sc2] = await Promise.all([
@@ -1536,8 +1572,8 @@ async function closeFundingPosition(pos, urgent = false) {
             await notify(`📤 平仓 ${pos.symbol}（清理后）\n净利: $${netPnl2.toFixed(2)}`);
             break;
           }
-          if (lq3 > 0) await longExObj.futuresCloseLong(longSym, lq3).catch(()=>{});
-          if (sq3 > 0) await shortExObj.futuresCloseShort(shortSym, sq3).catch(()=>{});
+          if (lq3 > 0) { try { await longExObj.futuresCloseLong(longSym, lq3); log(`  ✅ 清理多${lq3}`); } catch(e) { log(`  ❌ 清理多失败(${fix+1}/20): ${e.message}`); } }
+          if (sq3 > 0) { try { await shortExObj.futuresCloseShort(shortSym, sq3); log(`  ✅ 清理空${sq3}`); } catch(e) { log(`  ❌ 清理空失败(${fix+1}/20): ${e.message}`); } }
         } catch (e) {}
         if (fix === 19) {
           await notify(`🚨 平仓清理20次仍有残留 ${pos.symbol}\n⚠️ 需要手动检查!`);
