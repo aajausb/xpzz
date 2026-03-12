@@ -28,8 +28,8 @@
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.009419264,
-      "unrealizedPnl": 353.62785,
+      "currentSpread": 0.008989344,
+      "unrealizedPnl": 383.89809,
       "spreadHistory": [
         {
           "time": 1773318479575,
@@ -64,8 +64,8 @@
       "settlementAligned": true,
       "longOrderId": "1415944430258102273",
       "shortOrderId": "83c3d359-4e05-4469-a1e3-0caa6e664dcd",
-      "currentSpread": 0.0015625733333333332,
-      "unrealizedPnl": -11.708100001109983,
+      "currentSpread": 0.0015347333333333333,
+      "unrealizedPnl": -5.108100001110017,
       "spreadHistory": [
         {
           "time": 1773318479575,
@@ -100,8 +100,8 @@
       "settlementAligned": true,
       "longOrderId": 856087314,
       "shortOrderId": "b0986004-68e0-4064-955e-aae0da4d030f",
-      "currentSpread": 0.013162,
-      "unrealizedPnl": -266.63099544,
+      "currentSpread": 0.008008399999999999,
+      "unrealizedPnl": -1396.57664544,
       "spreadHistory": [
         {
           "time": 1773324987155,
@@ -117,7 +117,7 @@
     }
   ],
   "balances": {
-    "binance": 4293.80165571,
+    "binance": 4163.99067171,
     "bybit": 5238.33108157,
     "bitget": 4564.1646484192715,
     "okx": 6.743723247e-7
@@ -170,7 +170,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773335974547,
+  "_lastEarnedCheck": 1773337774547,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
