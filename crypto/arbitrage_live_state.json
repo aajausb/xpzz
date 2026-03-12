@@ -23,13 +23,13 @@
       "entryTime": "2026-03-11T19:16:28.966Z",
       "spread": 0.0035557199999999996,
       "annualized": 389.35133999999994,
-      "earned": 42.22042766,
+      "earned": 61.121713899999996,
       "totalFee": 20,
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.006496383999999999,
-      "unrealizedPnl": 285.71385,
+      "currentSpread": 0.007642464,
+      "unrealizedPnl": 332.67153,
       "spreadHistory": [
         {
           "time": 1773314879414,
@@ -59,13 +59,13 @@
       "entryTime": "2026-03-12T11:02:59.888Z",
       "spread": 0.00405406,
       "annualized": 443.91957,
-      "earned": 7.76254247,
+      "earned": 11.29068213,
       "totalFee": 12,
       "settlementAligned": true,
       "longOrderId": "1415944430258102273",
       "shortOrderId": "83c3d359-4e05-4469-a1e3-0caa6e664dcd",
-      "currentSpread": 0.0007866399999999999,
-      "unrealizedPnl": -3.788100001110003,
+      "currentSpread": 0.00148172,
+      "unrealizedPnl": -8.078100001109988,
       "spreadHistory": [
         {
           "time": 1773314879414,
@@ -95,13 +95,13 @@
       "entryTime": "2026-03-12T13:16:27.979Z",
       "spread": 0.01660424,
       "annualized": 1818.16428,
-      "earned": 8.72289208,
+      "earned": 29.238130480000002,
       "totalFee": 12.4,
       "settlementAligned": true,
       "longOrderId": 856087314,
       "shortOrderId": "b0986004-68e0-4064-955e-aae0da4d030f",
-      "currentSpread": 0.015170159999999999,
-      "unrealizedPnl": 718.55841456,
+      "currentSpread": 0.017076,
+      "unrealizedPnl": 201.90183456,
       "spreadHistory": [
         {
           "time": 1773324987155,
@@ -113,9 +113,9 @@
     }
   ],
   "balances": {
-    "binance": 4243.34045614,
-    "bybit": 5232.62484887,
-    "bitget": 4564.467352799272,
+    "binance": 4284.48869635,
+    "bybit": 5234.72397734,
+    "bitget": 4564.1646484192715,
     "okx": 6.743723247e-7
   },
   "lastTrade": {
@@ -166,7 +166,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773330323793,
+  "_lastEarnedCheck": 1773332375611,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
