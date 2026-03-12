@@ -2317,7 +2317,7 @@ async function main() {
   // 余额更新 - 每10分钟
   setInterval(updateBalances, 600000);
 
-  // 补仓检查 - 每30秒，确保未满仓位继续补（价差≤1%时）
+  // 补仓检查 - 每5秒，确保未满仓位继续补（价差≤1%时）
   setInterval(async () => {
     for (const pos of state.positions) {
       const target = getTradeSize(pos.spread || 0.003);
@@ -2357,10 +2357,116 @@ async function main() {
           const [lb, hb] = await Promise.all([
             getOrderbook(pos.longEx, lowFutSym, 10),
             getOrderbook(pos.shortEx, highFutSym, 10)
-
+          ]);
+          if (!lb?.asks?.length || !hb?.bids?.length) { log(`  🔄 补仓: 盘口不可用`); continue; }
+          
+          // 价差检查
+          const addMid = (lb.asks[0].price + hb.bids[0].price) / 2;
+          const priceDiff = Math.abs(lb.asks[0].price - hb.bids[0].price) / addMid * 100;
+          if (priceDiff > 1.0) { log(`  🔄 补仓: 价差${priceDiff.toFixed(2)}%>1%，暂停`); continue; }
+          
+          // 计算可补量
+          const fillable = Math.min(
+            calcDepthFill(lb.asks, remaining).fillableUsd,
+            calcDepthFill(hb.bids, remaining).fillableUsd
+          );
+          const addSize = Math.min(Math.floor(fillable / 100) * 100, remaining);
+          if (addSize < 200) { log(`  🔄 补仓: 深度只够$${fillable.toFixed(0)}，不足$200`); continue; }
+          
+          const addQty = alignQty(pos.symbol, pos.longEx, pos.shortEx, addSize / addMid) || Math.floor(addSize / addMid);
+          if (addQty <= 0) continue;
+          
+          const addLongQty = pos.longEx === 'okx' ? coinsToLots(pos.symbol, addQty) : addQty;
+          const addShortQty = pos.shortEx === 'okx' ? coinsToLots(pos.symbol, addQty) : addQty;
+          
+          // 双边下单
+          const [lr, sr] = await Promise.all([
+            lowExObj.futuresLong(lowFutSym, addLongQty),
+            highExObj.futuresShort(highFutSym, addShortQty)
+          ]);
+          
+          let lrOk = checkOrderSuccess(lr, pos.longEx);
+          let srOk = checkOrderSuccess(sr, pos.shortEx);
+          if (!lrOk && pos.longEx === 'binance' && lr?.status === 'NEW' && lr?.orderId) lrOk = await waitForBinanceFill(lr.orderId, lowFutSym);
+          if (!srOk && pos.shortEx === 'binance' && sr?.status === 'NEW' && sr?.orderId) srOk = await waitForBinanceFill(sr.orderId, highFutSym);
+          
+          if (lrOk && srOk) {
+            pos.size += addSize;
+            pos.qty += addQty;
+            const addFee = addSize * 2 * CONFIG.FEE_BPS / 10000;
+            pos.totalFee = (pos.totalFee || 0) + addFee;
+            state.totalPnl -= addFee;
+            state.dailyPnl -= addFee;
+            saveState();
+            log(`  ✅ 补仓成功! +$${addSize}，总$${pos.size}（目标$${target}）`);
+            await notify(`📥 补仓 ${pos.symbol} +$${addSize}（总$${pos.size}，目标$${target}）`);
+          } else if (lrOk && !srOk) {
+            log(`  ⚠️ 补仓单腿: ${pos.longEx}多OK ${pos.shortEx}空失败，重试空头`);
+            for (let fix = 0; fix < 10; fix++) {
+              await new Promise(r => setTimeout(r, 2000));
+              try {
+                const fixR = await highExObj.futuresShort(highFutSym, addShortQty);
+                let fixOk = checkOrderSuccess(fixR, pos.shortEx);
+                if (!fixOk && pos.shortEx === 'binance' && fixR?.status === 'NEW' && fixR?.orderId) fixOk = await waitForBinanceFill(fixR.orderId, highFutSym);
+                if (fixOk) {
+                  pos.size += addSize;
+                  pos.qty += addQty;
+                  const addFee = addSize * 2 * CONFIG.FEE_BPS / 10000;
+                  pos.totalFee = (pos.totalFee || 0) + addFee;
+                  state.totalPnl -= addFee;
+                  state.dailyPnl -= addFee;
+                  saveState();
+                  log(`  ✅ 空头补救成功! +$${addSize}，总$${pos.size}`);
+                  break;
+                }
+              } catch(e) { log(`  ❌ 空头补救第${fix+1}次失败: ${e.message}`); }
+            }
+          } else if (!lrOk && srOk) {
+            log(`  ⚠️ 补仓单腿: ${pos.shortEx}空OK ${pos.longEx}多失败，重试多头`);
+            for (let fix = 0; fix < 10; fix++) {
+              await new Promise(r => setTimeout(r, 2000));
+              try {
+                const fixR = await lowExObj.futuresLong(lowFutSym, addLongQty);
+                let fixOk = checkOrderSuccess(fixR, pos.longEx);
+                if (!fixOk && pos.longEx === 'binance' && fixR?.status === 'NEW' && fixR?.orderId) fixOk = await waitForBinanceFill(fixR.orderId, lowFutSym);
+                if (fixOk) {
+                  pos.size += addSize;
+                  pos.qty += addQty;
+                  const addFee = addSize * 2 * CONFIG.FEE_BPS / 10000;
+                  pos.totalFee = (pos.totalFee || 0) + addFee;
+                  state.totalPnl -= addFee;
+                  state.dailyPnl -= addFee;
+                  saveState();
+                  log(`  ✅ 多头补救成功! +$${addSize}，总$${pos.size}`);
+                  break;
+                }
+              } catch(e) { log(`  ❌ 多头补救第${fix+1}次失败: ${e.message}`); }
+            }
+          } else {
+            log(`  ❌ 补仓两边都失败`);
+          }
+          
+          // 补仓后对齐校验
+          try {
+            const [lPos, sPos] = await Promise.all([lowExObj.getFuturesPositions(), highExObj.getFuturesPositions()]);
+            const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
+            const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
+            const lQty = lp ? Math.abs(+(lp.positionAmt || lp.total || lp.size || 0)) : 0;
+            const sQty = sp ? Math.abs(+(sp.positionAmt || sp.total || sp.size || 0)) : 0;
+            if (lQty > 0 && sQty > 0 && Math.abs(lQty - sQty) / Math.max(lQty, sQty) > 0.01) {
+              const diff = Math.abs(lQty - sQty);
+              log(`  🔧 补仓后不对齐: 多${lQty} 空${sQty}，差${diff}，补少的`);
+              if (lQty < sQty) await lowExObj.futuresLong(lowFutSym, diff);
+              else await highExObj.futuresShort(highFutSym, diff);
+            }
+          } catch(e) { log(`  ⚠️ 补仓对齐检查失败: ${e.message}`); }
+          
+        } catch (e) {
+          log(`  ❌ 补仓失败: ${e.message}`);
+        }
       }
     }
-  }, 30000);
+  }, 5000);
 
   // 保证金安全监控 - 每60秒，≤10%距强平自动平仓，≤20%通知
   setInterval(checkMarginSafety, CONFIG.MARGIN_CHECK_INTERVAL);
