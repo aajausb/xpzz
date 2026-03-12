@@ -2,7 +2,7 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -67.75616294,
+  "totalPnl": -73.75616294,
   "realizedPnl": -664.135299292341,
   "unrealizedPnl": 0,
   "dailyPnl": 0,
@@ -17,24 +17,20 @@
       "type": "funding",
       "longEx": "binance",
       "shortEx": "bybit",
-      "size": 7000,
-      "qty": 26837,
+      "size": 10000,
+      "qty": 38808,
       "entryPrice": 0.259975,
       "entryTime": "2026-03-11T19:16:28.966Z",
       "spread": 0.0035557199999999996,
       "annualized": 389.35133999999994,
       "earned": 7.161125169999999,
-      "totalFee": 14,
+      "totalFee": 20,
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.009983071999999999,
-      "unrealizedPnl": 317.66726,
+      "currentSpread": 0.0096592,
+      "unrealizedPnl": 215.08329,
       "spreadHistory": [
-        {
-          "time": 1773270088797,
-          "spread": 0.009171584
-        },
         {
           "time": 1773273688532,
           "spread": 0.0023455680000000006
@@ -42,6 +38,10 @@
         {
           "time": 1773277288802,
           "spread": 0.01658416
+        },
+        {
+          "time": 1773283529253,
+          "spread": 0.010514335999999999
         }
       ],
       "consecutiveNeg": 0,
@@ -49,8 +49,8 @@
     }
   ],
   "balances": {
-    "binance": 5320.09379266,
-    "bybit": 5909.53713338,
+    "binance": 5318.59740409,
+    "bybit": 5907.88325186,
     "bitget": 2712.294829171703,
     "okx": 6.743723247e-7
   },
@@ -98,7 +98,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773281729207,
+  "_lastEarnedCheck": 1773283925479,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
