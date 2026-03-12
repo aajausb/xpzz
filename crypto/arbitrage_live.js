@@ -370,9 +370,10 @@ function preFilter(symbol, lowEx, highEx, equiv8hSpread, settlementAligned) {
   // 仓位大小
   const tradeSize = getTradeSize(equiv8hSpread);
   if (tradeSize === 0) return '费率差不够开仓';
-  // 余额
-  if ((state.balances[lowEx] || 0) < tradeSize * 1.2) return `${lowEx}余额不足`;
-  if ((state.balances[highEx] || 0) < tradeSize * 1.2) return `${highEx}余额不足`;
+  // 余额（全仓10x杠杆，保证金=仓位/10，留50%余量）
+  const marginNeeded = tradeSize / 10 * 1.5;
+  if ((state.balances[lowEx] || 0) < marginNeeded) return `${lowEx}余额不足(需$${Math.round(marginNeeded)})`;
+  if ((state.balances[highEx] || 0) < marginNeeded) return `${highEx}余额不足(需$${Math.round(marginNeeded)})`;
   return null; // 通过
 }
 
@@ -668,8 +669,8 @@ async function executeFundingArbitrage(opp) {
 
   // Step 3a. 确保合约账户有余额（自动划转）
   const [lowReady, highReady] = await Promise.all([
-    ensureFuturesBalance(lowEx, tradeSize * 1.2),
-    ensureFuturesBalance(highEx, tradeSize * 1.2)
+    ensureFuturesBalance(lowEx, tradeSize / 10 * 1.5),
+    ensureFuturesBalance(highEx, tradeSize / 10 * 1.5)
   ]);
   if (!lowReady || !highReady) {
     log(`  ⚠️ [Step3a] 合约余额不足且划转失败: ${lowEx}=${lowReady} ${highEx}=${highReady}`);
