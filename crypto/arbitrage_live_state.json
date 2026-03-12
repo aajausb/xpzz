@@ -2,14 +2,14 @@
   "startTime": "2026-03-10T15:05:42.547Z",
   "running": true,
   "paused": false,
-  "totalPnl": -97.55616293999998,
-  "realizedPnl": -664.135299292341,
+  "totalPnl": -120.96674861999998,
+  "realizedPnl": -687.545884972341,
   "unrealizedPnl": 0,
-  "dailyPnl": -23.8,
+  "dailyPnl": -47.21058568,
   "dailyPnlDate": "2026-03-12",
   "trades": 35,
   "wins": 3,
-  "losses": 17,
+  "losses": 18,
   "positions": [
     {
       "id": "mmmf6sva",
@@ -28,8 +28,8 @@
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.005913952000000001,
-      "unrealizedPnl": 178.60377,
+      "currentSpread": 0.006559392,
+      "unrealizedPnl": 178.21569,
       "spreadHistory": [
         {
           "time": 1773306685192,
@@ -48,38 +48,6 @@
       "health": "healthy"
     },
     {
-      "id": "mmnawao9",
-      "symbol": "LYN",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "bitget",
-      "size": 10000,
-      "qty": 62142,
-      "entryPrice": 0.16081,
-      "entryTime": "2026-03-12T10:04:06.537Z",
-      "spread": 0.02672556,
-      "annualized": 2926.44882,
-      "earned": -3.4105856800000005,
-      "totalFee": 2.8,
-      "settlementAligned": true,
-      "longOrderId": "ff051bbb-13b7-4ae6-95bf-fcc658f2f479",
-      "shortOrderId": "1415929610322452481",
-      "currentSpread": -0.0019084444444444444,
-      "unrealizedPnl": 104.10427977316021,
-      "spreadHistory": [
-        {
-          "time": 1773314879414,
-          "spread": -0.0009165688888888889
-        },
-        {
-          "time": 1773318479575,
-          "spread": -0.0019084444444444444
-        }
-      ],
-      "consecutiveNeg": 2,
-      "health": "bad"
-    },
-    {
       "id": "mmnd010w",
       "symbol": "RIVER",
       "type": "funding",
@@ -96,8 +64,8 @@
       "settlementAligned": true,
       "longOrderId": "1415944430258102273",
       "shortOrderId": "83c3d359-4e05-4469-a1e3-0caa6e664dcd",
-      "currentSpread": 0.00134784,
-      "unrealizedPnl": -2.798100001110001,
+      "currentSpread": 0.0012181733333333335,
+      "unrealizedPnl": -1.1481000011099987,
       "spreadHistory": [
         {
           "time": 1773314879414,
@@ -114,8 +82,8 @@
   ],
   "balances": {
     "binance": 4262.71453223,
-    "bybit": 3891.95185119,
-    "bitget": 5853.093041729271,
+    "bybit": 5258.31513583,
+    "bitget": 4564.467352799272,
     "okx": 6.743723247e-7
   },
   "lastTrade": {
@@ -165,7 +133,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773318479342,
+  "_lastEarnedCheck": 1773320279342,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
@@ -176,6 +144,6 @@
     }
   },
   "_lastMarginWarn": {
-    "liq_warn_bitget_LYN": 1773317639386
+    "liq_warn_bitget_LYN": 1773318659392
   }
 }
