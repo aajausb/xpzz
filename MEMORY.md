@@ -165,6 +165,13 @@
   - **正确顺序：先建新key → 更新配置 → 测试通过 → 再删旧key**
   - 涉及正在使用的通道/key/配置，必须保证备用通道活着再动手
   - 跑步哥断联后只能找豆包，豆包让他kill套利进程，越搞越乱
+- **豆包清空了.env(2026-03-13 09:03)**：跑步哥找豆包操作，结果.env被清空，所有交易所API Key丢失
+  - 加密备份解不开（WALLET_ENCRYPTION_KEY找到了但解密失败）
+  - 需要重新去四所生成API Key
+- **OpenRouter配置关键**：api字段必须是 `openai-completions`，不是 `anthropic-messages`
+  - 页面保存会覆盖服务器配置，两边要一致
+- **VectorEngine vs OpenRouter**：VE加价2.4倍，OR约官方1/3价，OR比VE便宜约7倍
+  - 跑步哥在VE花了¥4000，同量OR约¥570
 - **Node.js 内存泄漏**：arbitrage_sim.js 不限制会吃满2GB+，必须加 `--max-old-space-size=256`
 - **说"全部通过/没bug"前必须用真实数据验证** — ICX大机会被拦但我说"系统正常"，跑步哥批评
 - **Bug hunt 要模拟实际扫描场景，不能只看代码结构** — 用实际数据跑一遍才算验证
