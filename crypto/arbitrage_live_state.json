@@ -2,14 +2,14 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -115.60000000000001,
-  "realizedPnl": -703.545884972341,
+  "totalPnl": -152.54574664,
+  "realizedPnl": -740.491631612341,
   "unrealizedPnl": 0,
-  "dailyPnl": -115.60000000000001,
+  "dailyPnl": -152.54574664,
   "dailyPnlDate": "2026-03-13",
   "trades": 6,
   "wins": 3,
-  "losses": 19,
+  "losses": 21,
   "positions": [
     {
       "id": "mmojtgek",
@@ -29,7 +29,7 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 669.922698595896,
+      "unrealizedPnl": 621.549534595896,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -46,90 +46,14 @@
         {
           "time": 1773409532291,
           "spread": 0
+        },
+        {
+          "time": 1773413446925,
+          "spread": 0
         }
       ],
       "consecutiveNeg": 0,
       "health": "ok"
-    },
-    {
-      "id": "mmojzw0o",
-      "symbol": "LYN",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bybit",
-      "size": 9900,
-      "qty": 34404,
-      "entryPrice": 0.287375,
-      "entryTime": "2026-03-13T07:06:36.888Z",
-      "spread": 0.0142412,
-      "annualized": 1559.4114,
-      "earned": 4.256886360000006,
-      "totalFee": 19.799999999999997,
-      "settlementAligned": true,
-      "longOrderId": 902169584,
-      "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
-      "currentSpread": -0.016494719999999997,
-      "unrealizedPnl": -284.04533,
-      "spreadHistory": [
-        {
-          "time": 1773391143735,
-          "spread": 0.004858240000000001
-        },
-        {
-          "time": 1773394743674,
-          "spread": 0.006208480000000001
-        },
-        {
-          "time": 1773400642647,
-          "spread": -0.00480488
-        },
-        {
-          "time": 1773409532292,
-          "spread": -0.03823648
-        }
-      ],
-      "consecutiveNeg": 2,
-      "health": "weak"
-    },
-    {
-      "id": "mmolwopn",
-      "symbol": "PIXEL",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bitget",
-      "size": 9900,
-      "qty": 687665,
-      "entryPrice": 0.015712499999999997,
-      "entryTime": "2026-03-13T08:00:06.683Z",
-      "spread": 0.006725019999999999,
-      "annualized": 736.38969,
-      "earned": -1.6026329999999973,
-      "totalFee": 19.8,
-      "settlementAligned": true,
-      "longOrderId": 2986866253,
-      "shortOrderId": "1416260792486600707",
-      "currentSpread": -0.000538773333333333,
-      "unrealizedPnl": 1011.070784577095,
-      "spreadHistory": [
-        {
-          "time": 1773391143735,
-          "spread": -0.0017840399999999995
-        },
-        {
-          "time": 1773394743674,
-          "spread": 0.0003948133333333328
-        },
-        {
-          "time": 1773400642647,
-          "spread": 0.00025744
-        },
-        {
-          "time": 1773409532292,
-          "spread": -0.0009278133333333336
-        }
-      ],
-      "consecutiveNeg": 1,
-      "health": "weak"
     },
     {
       "id": "mmou3330",
@@ -148,12 +72,16 @@
       "settlementAligned": true,
       "longOrderId": "608e4765-a546-40c8-bd43-521650732d99",
       "shortOrderId": "1416318404032864258",
-      "currentSpread": 0.0004394533333333331,
-      "unrealizedPnl": -8.708800002380002,
+      "currentSpread": -0.00004989333333333309,
+      "unrealizedPnl": -4.598800002380017,
       "spreadHistory": [
         {
           "time": 1773409532292,
           "spread": 0.0005413466666666667
+        },
+        {
+          "time": 1773413446926,
+          "spread": 0.0000244666666666665
         }
       ],
       "consecutiveNeg": 0,
@@ -176,15 +104,19 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": -0.0013226533333333332,
-      "unrealizedPnl": 367.826129390102,
+      "currentSpread": -0.0006798133333333345,
+      "unrealizedPnl": 295.549329390102,
       "spreadHistory": [
         {
           "time": 1773409532292,
           "spread": -0.0015407333333333322
+        },
+        {
+          "time": 1773413446926,
+          "spread": -0.0007933066666666669
         }
       ],
-      "consecutiveNeg": 1,
+      "consecutiveNeg": 2,
       "health": "weak"
     }
   ],
@@ -245,7 +177,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773411646894,
+  "_lastEarnedCheck": 1773413446894,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902
