@@ -416,29 +416,45 @@ const bitget = {
   async futuresCloseLong(symbol, quantity) {
     // 用 place-order 指定数量平仓（支持部分平仓）
     if (quantity) {
-      return this.api('POST', '/api/v2/mix/order/place-order', null, {
+      const res = await this.api('POST', '/api/v2/mix/order/place-order', null, {
         symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
         side: 'sell', tradeSide: 'close', orderType: 'market',
         size: String(quantity), holdSide: 'long'
       });
+      // place-order 失败时 fallback 到 close-positions
+      if (res?.code && res.code !== '00000') {
+        console.log(`[BG] place-order平多失败(${res.code}: ${res.msg})，fallback close-positions`);
+        return this.api('POST', '/api/v2/mix/order/close-positions', null, {
+          symbol, productType: 'USDT-FUTURES', holdSide: 'long', marginCoin: 'USDT'
+        });
+      }
+      return res;
     }
     // 不传数量则全平
     return this.api('POST', '/api/v2/mix/order/close-positions', null, {
-      symbol, productType: 'USDT-FUTURES', holdSide: 'long'
+      symbol, productType: 'USDT-FUTURES', holdSide: 'long', marginCoin: 'USDT'
     });
   },
 
   // 合约平空
   async futuresCloseShort(symbol, quantity) {
     if (quantity) {
-      return this.api('POST', '/api/v2/mix/order/place-order', null, {
+      const res = await this.api('POST', '/api/v2/mix/order/place-order', null, {
         symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
         side: 'buy', tradeSide: 'close', orderType: 'market',
         size: String(quantity), holdSide: 'short'
       });
+      // place-order 失败时 fallback 到 close-positions
+      if (res?.code && res.code !== '00000') {
+        console.log(`[BG] place-order平空失败(${res.code}: ${res.msg})，fallback close-positions`);
+        return this.api('POST', '/api/v2/mix/order/close-positions', null, {
+          symbol, productType: 'USDT-FUTURES', holdSide: 'short', marginCoin: 'USDT'
+        });
+      }
+      return res;
     }
     return this.api('POST', '/api/v2/mix/order/close-positions', null, {
-      symbol, productType: 'USDT-FUTURES', holdSide: 'short'
+      symbol, productType: 'USDT-FUTURES', holdSide: 'short', marginCoin: 'USDT'
     });
   },
 
