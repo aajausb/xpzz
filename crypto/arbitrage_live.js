@@ -691,14 +691,28 @@ async function executeFundingArbitrage(opp) {
     return;
   }
 
-  // Step 2e. [Step2e] 两所价差检查（控制开仓滑点成本）
+  // Step 2e. 两边成交均价差检查（控制开仓隐形成本）
+  // 买入均价 vs 卖出均价，差越小越好
+  const buyAvg = lowFill.avgPrice;   // 多方（低费率所）买入均价
+  const sellAvg = highFill.avgPrice; // 空方（高费率所）卖出均价
+  if (buyAvg > 0 && sellAvg > 0) {
+    const avgDiffPct = (buyAvg - sellAvg) / sellAvg * 100; // 买贵卖便宜=正值=亏损
+    if (avgDiffPct > 0.3) {
+      log(`  ⚠️ [Step2e] 两边均价差${avgDiffPct.toFixed(3)}%超过0.3%（买$${buyAvg.toFixed(6)}/卖$${sellAvg.toFixed(6)}），滑点成本太高，跳过`);
+      return;
+    }
+    if (avgDiffPct > 0.15) {
+      log(`  ⚠ [Step2e] 均价差${avgDiffPct.toFixed(3)}%偏高（0.15-0.3%），继续但注意`);
+    }
+  }
+
+  // 两所盘口最优价差检查（备用）
   const lowBestAsk = lowBook.asks[0].price;
   const highBestBid = highBook.bids[0].price;
   const midPrice = (lowBestAsk + highBestBid) / 2;
   const priceDiffPct = Math.abs(lowBestAsk - highBestBid) / midPrice * 100;
   if (priceDiffPct > 1.0) {
     log(`  ⚠️ [Step2e] 两所价差${priceDiffPct.toFixed(2)}%超过1%，等价差缩小再开`);
-    // 不记录，下轮扫描会重新检查
     return;
   }
 
@@ -895,7 +909,18 @@ async function executeFundingArbitrage(opp) {
         
         const addMid = (lb2.asks[0].price + hb2.bids[0].price) / 2;
         
-        // 补仓价差检查（>1%不补）
+        // 补仓均价差检查（跟开仓一样，>0.3%不补）
+        const addBuyFill = calcDepthFill(lb2.asks, addSize);
+        const addSellFill = calcDepthFill(hb2.bids, addSize);
+        if (addBuyFill.avgPrice > 0 && addSellFill.avgPrice > 0) {
+          const addAvgDiff = (addBuyFill.avgPrice - addSellFill.avgPrice) / addSellFill.avgPrice * 100;
+          if (addAvgDiff > 0.3) {
+            log(`  🔄 补仓: 均价差${addAvgDiff.toFixed(3)}%>0.3%，滑点太高暂停`);
+            break;
+          }
+        }
+        
+        // 补仓盘口价差检查（兜底）
         const addPriceDiff = Math.abs(lb2.asks[0].price - hb2.bids[0].price) / addMid * 100;
         if (addPriceDiff > 1.0) { log(`  🔄 补仓: 价差${addPriceDiff.toFixed(2)}%>1%，暂停补仓`); break; }
         
@@ -2014,6 +2039,15 @@ async function rebalancePositions() {
         log(`  ⚠️ [加仓] ${pos.symbol} [Step2e] 滑点过大: ${lowFill.slippageBps}/${highFill.slippageBps}bps，跳过`);
         continue;
       }
+      
+      // 加仓均价差检查（>0.3%不加）
+      if (lowFill.avgPrice > 0 && highFill.avgPrice > 0) {
+        const addAvgDiffPct = (lowFill.avgPrice - highFill.avgPrice) / highFill.avgPrice * 100;
+        if (addAvgDiffPct > 0.3) {
+          log(`  ⚠️ [加仓] ${pos.symbol} 均价差${addAvgDiffPct.toFixed(3)}%>0.3%，跳过`);
+          continue;
+        }
+      }
     } catch (e) {
       log(`  ⚠️ [加仓] ${pos.symbol} 深度检查异常: ${e.message}`);
       continue;
@@ -2532,8 +2566,7 @@ async function main() {
         } catch (e) {}
         
         const remaining = target - pos.size;
-        if (remaining < 100) continue; // 差不到$100算补满
-        log(`🔄 [补仓检查] ${pos.symbol} $${pos.size} < 目标$${target}，需补$${remaining}`);
+        if (remaining < 200) continue; // 差不到$200就不补了（最小补仓单位$200）
         try {
           const lowExObj = getExchange(pos.longEx);
           const highExObj = getExchange(pos.shortEx);
