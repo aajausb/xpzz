@@ -2,14 +2,14 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -184.17246161999998,
-  "realizedPnl": -759.718346592341,
+  "totalPnl": -184.51725441999997,
+  "realizedPnl": -760.0631393923411,
   "unrealizedPnl": 0,
-  "dailyPnl": -184.17246161999998,
+  "dailyPnl": -184.51725441999997,
   "dailyPnlDate": "2026-03-13",
   "trades": 8,
   "wins": 3,
-  "losses": 23,
+  "losses": 24,
   "positions": [
     {
       "id": "mmojtgek",
@@ -29,12 +29,8 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 535.168884595896,
+      "unrealizedPnl": 521.347980595896,
       "spreadHistory": [
-        {
-          "time": 1773417047174,
-          "spread": 0
-        },
         {
           "time": 1773424190241,
           "spread": 0
@@ -49,6 +45,10 @@
         },
         {
           "time": 1773434990184,
+          "spread": 0
+        },
+        {
+          "time": 1773438590107,
           "spread": 0
         }
       ],
@@ -72,13 +72,9 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": -0.0002581599999999992,
-      "unrealizedPnl": 873.763729390102,
+      "currentSpread": -0.0002765999999999995,
+      "unrealizedPnl": 839.883979390102,
       "spreadHistory": [
-        {
-          "time": 1773417047175,
-          "spread": 0.0001991733333333324
-        },
         {
           "time": 1773424190241,
           "spread": 0.001105013333333335
@@ -94,56 +90,20 @@
         {
           "time": 1773434990184,
           "spread": -0.0002642000000000003
+        },
+        {
+          "time": 1773438590108,
+          "spread": -0.0002828399999999995
         }
       ],
-      "consecutiveNeg": 1,
+      "consecutiveNeg": 2,
       "health": "ok"
-    },
-    {
-      "id": "mmp5wl4g",
-      "symbol": "LYN",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bitget",
-      "size": 200,
-      "qty": 699,
-      "entryPrice": 0.28608500000000003,
-      "entryTime": "2026-03-13T17:19:54.352Z",
-      "spread": 0.05302668000000001,
-      "annualized": 5806.421460000001,
-      "earned": 0.05520719999999946,
-      "totalFee": 0.4,
-      "settlementAligned": true,
-      "longOrderId": 921834708,
-      "shortOrderId": "1416401669385232385",
-      "currentSpread": -0.0060165511111111136,
-      "unrealizedPnl": -32.936340000132,
-      "spreadHistory": [
-        {
-          "time": 1773424190241,
-          "spread": -0.001803733333333332
-        },
-        {
-          "time": 1773427790114,
-          "spread": -0.0009692800000000014
-        },
-        {
-          "time": 1773431390105,
-          "spread": -0.0009487466666666666
-        },
-        {
-          "time": 1773434990184,
-          "spread": 0.0023027377777777797
-        }
-      ],
-      "consecutiveNeg": 0,
-      "health": "weak"
     }
   ],
   "balances": {
-    "binance": 5420.887647,
+    "binance": 5450.48293081,
     "bybit": 2964.76033526,
-    "bitget": 4945.183015398931,
+    "bitget": 4914.988476338931,
     "okx": 0
   },
   "lastTrade": {
@@ -198,7 +158,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773436790083,
+  "_lastEarnedCheck": 1773438590083,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
