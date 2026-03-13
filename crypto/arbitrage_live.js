@@ -532,8 +532,8 @@ async function scanFundingArbitrage() {
     if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
     const msToSettle = earlierNext - now;
     if (msToSettle < 0 || msToSettle > 60 * 60 * 1000) continue; // 超过60分钟的跳过
-    // 窗口：结算前30-60分钟
-    if (msToSettle < 30 * 60 * 1000) continue; // 太近了不开（<30min）
+    // 窗口：结算前10-60分钟
+    if (msToSettle < 10 * 60 * 1000) continue; // 太近了不开（<10min）
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 
@@ -741,8 +741,8 @@ async function executeFundingArbitrage(opp) {
   const sellAvg = highFill.avgPrice; // 空方（高费率所）卖出均价
   if (buyAvg > 0 && sellAvg > 0) {
     const avgDiffPct = (buyAvg - sellAvg) / sellAvg * 100; // 买贵卖便宜=正值=亏损
-    if (avgDiffPct > 0.3) {
-      log(`  ⚠️ [Step2e] 两边均价差${avgDiffPct.toFixed(3)}%超过0.3%（买$${buyAvg.toFixed(6)}/卖$${sellAvg.toFixed(6)}），滑点成本太高，跳过`);
+    if (avgDiffPct > 0.5) {
+      log(`  ⚠️ [Step2e] 两边均价差${avgDiffPct.toFixed(3)}%超过0.5%（买$${buyAvg.toFixed(6)}/卖$${sellAvg.toFixed(6)}），滑点成本太高，跳过`);
       return;
     }
     if (avgDiffPct > 0.15) {
