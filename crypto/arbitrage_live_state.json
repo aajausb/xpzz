@@ -28,13 +28,9 @@
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.010186816000000001,
+      "currentSpread": 0.010623456,
       "unrealizedPnl": 442.88625,
       "spreadHistory": [
-        {
-          "time": 1773358788875,
-          "spread": 0.006550015999999999
-        },
         {
           "time": 1773362388267,
           "spread": 0.011798432
@@ -42,6 +38,10 @@
         {
           "time": 1773365992172,
           "spread": 0.018291648
+        },
+        {
+          "time": 1773375575815,
+          "spread": 0.011228064
         }
       ],
       "consecutiveNeg": 0,
@@ -64,13 +64,9 @@
       "settlementAligned": true,
       "longOrderId": "1415944430258102273",
       "shortOrderId": "83c3d359-4e05-4469-a1e3-0caa6e664dcd",
-      "currentSpread": 0.0003143066666666667,
+      "currentSpread": -0.00006330666666666663,
       "unrealizedPnl": -5.108100001109989,
       "spreadHistory": [
-        {
-          "time": 1773358788875,
-          "spread": 0.00082372
-        },
         {
           "time": 1773362388267,
           "spread": 0.0005113600000000001
@@ -78,9 +74,13 @@
         {
           "time": 1773365992172,
           "spread": 0.0003013333333333333
+        },
+        {
+          "time": 1773375575815,
+          "spread": -0.000244
         }
       ],
-      "consecutiveNeg": 0,
+      "consecutiveNeg": 1,
       "health": "weak"
     },
     {
@@ -100,13 +100,9 @@
       "settlementAligned": true,
       "longOrderId": 856087314,
       "shortOrderId": "b0986004-68e0-4064-955e-aae0da4d030f",
-      "currentSpread": 0.0066592000000000005,
+      "currentSpread": 0.00216016,
       "unrealizedPnl": -2373.29627544,
       "spreadHistory": [
-        {
-          "time": 1773358788875,
-          "spread": 0.00547648
-        },
         {
           "time": 1773362388267,
           "spread": 0.0034007200000000003
@@ -114,10 +110,14 @@
         {
           "time": 1773365992172,
           "spread": 0.00272992
+        },
+        {
+          "time": 1773375575815,
+          "spread": 0.00133544
         }
       ],
       "consecutiveNeg": 0,
-      "health": "healthy"
+      "health": "weak"
     }
   ],
   "balances": {
@@ -174,7 +174,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773373775285,
+  "_lastEarnedCheck": 1773375575289,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
