@@ -168,8 +168,11 @@
 - **豆包清空了.env(2026-03-13 09:03)**：跑步哥找豆包操作，结果.env被清空，所有交易所API Key丢失
   - 加密备份解不开（WALLET_ENCRYPTION_KEY找到了但解密失败）
   - 需要重新去四所生成API Key
-- **OpenRouter配置关键**：api字段必须是 `openai-completions`，不是 `anthropic-messages`
-  - 页面保存会覆盖服务器配置，两边要一致
+- **OpenRouter配置关键（最终方案）**：用 `anthropic` provider + `anthropic-messages` 协议 + OpenRouter baseUrl
+  - 页面不允许改 provider 名字，只能用 anthropic
+  - OpenRouter 支持 anthropic-messages 协议，直接用就行
+  - **以后换 key 只改 api_key，其他不动**
+  - 页面保存会覆盖服务器配置，不要两边同时改
 - **VectorEngine vs OpenRouter**：VE加价2.4倍，OR约官方1/3价，OR比VE便宜约7倍
   - 跑步哥在VE花了¥4000，同量OR约¥570
 - **Node.js 内存泄漏**：arbitrage_sim.js 不限制会吃满2GB+，必须加 `--max-old-space-size=256`
