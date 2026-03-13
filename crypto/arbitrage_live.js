@@ -180,6 +180,27 @@ async function notify(msg) {
   try { await updateDashboard(); } catch(e) {}
 }
 
+// 引擎自动写记忆日志（重要事件记录到 memory/ 目录）
+// 用异步写避免阻塞交易主线程
+function writeMemoryLog(event) {
+  try {
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10); // YYYY-MM-DD
+    const timeStr = now.toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
+    const memDir = '/root/.openclaw/workspace/memory';
+    const memFile = `${memDir}/${dateStr}.md`;
+    
+    const line = `- [${timeStr}] 🤖引擎: ${event}\n`;
+    
+    // 异步追加，不阻塞事件循环
+    if (!fs.existsSync(memFile)) {
+      fs.writeFile(memFile, `# ${dateStr} Daily Log\n\n## 套利引擎自动记录\n${line}`, () => {});
+    } else {
+      fs.appendFile(memFile, line, () => {});
+    }
+  } catch (e) { /* 记忆写入失败不影响引擎运行 */ }
+}
+
 async function updateDashboard() {
   try {
     // 统一走 HTTP handler 刷新看板，避免多份代码不一致
@@ -795,6 +816,7 @@ async function executeFundingArbitrage(opp) {
     log(`  ✅ 费率套利开仓成功! ${symbol} ${lowEx}多/${highEx}空 $${tradeSize} 手续费$${fee.toFixed(2)}`);
     const notifyTargetSize = getTradeSize(spread);
     await notify(`✅ 开仓 ${symbol}\n${lowEx}多 / ${highEx}空\n$${tradeSize}（目标$${notifyTargetSize}）| 费率差${(spread*100).toFixed(3)}% | 年化${annualized.toFixed(0)}%`);
+    writeMemoryLog(`开仓 ${symbol} ${lowEx}多/${highEx}空 $${tradeSize} 费率差${(spread*100).toFixed(3)}%`);
 
     // 首单对齐校验：确认两边实际成交量一致
     try {
@@ -1372,6 +1394,7 @@ async function closeFundingPosition(pos, urgent = false, dangerousEx = null) {
         if (longDist <= 13 || shortDist <= 13) {
           forceMarket = true;
           log(`  🚨 强平距离过近(多${longDist.toFixed(1)}%/空${shortDist.toFixed(1)}%)，强制市价`);
+          writeMemoryLog(`⚠️ ${pos.symbol} 强平距离过近 多${longDist.toFixed(1)}%/空${shortDist.toFixed(1)}% 强制市价平仓`);
         }
       } catch(e) { log(`  ⚠️ 强平距离检查失败: ${e.message}`); }
     }
@@ -1662,6 +1685,7 @@ async function closeFundingPosition(pos, urgent = false, dangerousEx = null) {
 
       log(`  ✅ 平仓成功! ${pos.symbol} 已收$${pos.earned.toFixed(2)} 手续费$${fee.toFixed(2)} 净$${netPnl.toFixed(2)}`);
       await notify(`📤 平仓 ${pos.symbol}\n已收: $${pos.earned.toFixed(2)} | 净利: $${netPnl.toFixed(2)}`);
+      writeMemoryLog(`平仓 ${pos.symbol} 净利$${netPnl.toFixed(2)} 总PnL$${state.totalPnl.toFixed(2)}`);
 
       // 平仓后对齐校验：确保两边都真的清零
       try {
@@ -2249,6 +2273,7 @@ async function reconcilePositions() {
 // ============ 主循环 ============
 async function main() {
   log('🚀 实盘套利引擎启动');
+  writeMemoryLog('引擎启动');
   loadState();
 
   // 启动时立即对账（防止 state qty 与交易所不一致）

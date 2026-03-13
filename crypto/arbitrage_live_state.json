@@ -2,19 +2,60 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": 0,
+  "totalPnl": -31.799999999999997,
   "realizedPnl": -687.545884972341,
   "unrealizedPnl": 0,
-  "dailyPnl": 0,
+  "dailyPnl": -31.799999999999997,
   "dailyPnlDate": "2026-03-13",
-  "trades": 0,
+  "trades": 2,
   "wins": 3,
   "losses": 18,
-  "positions": [],
+  "positions": [
+    {
+      "id": "mmojtgek",
+      "symbol": "JCT",
+      "type": "funding",
+      "longEx": "bitget",
+      "shortEx": "binance",
+      "size": 6000,
+      "qty": 3455226,
+      "entryPrice": 0.0017365,
+      "entryTime": "2026-03-13T07:01:36.716Z",
+      "spread": 0.004090079999999999,
+      "annualized": 447.8637599999999,
+      "earned": 0,
+      "totalFee": 12,
+      "settlementAligned": true,
+      "longOrderId": "1416246070622167043",
+      "shortOrderId": 252593795,
+      "currentSpread": 0.0022995466666666667,
+      "unrealizedPnl": -0.391145404104
+    },
+    {
+      "id": "mmojzw0o",
+      "symbol": "LYN",
+      "type": "funding",
+      "longEx": "binance",
+      "shortEx": "bybit",
+      "size": 9900,
+      "qty": 34404,
+      "entryPrice": 0.287375,
+      "entryTime": "2026-03-13T07:06:36.888Z",
+      "spread": 0.0142412,
+      "annualized": 1559.4114,
+      "earned": 0,
+      "totalFee": 19.799999999999997,
+      "settlementAligned": true,
+      "longOrderId": 902169584,
+      "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
+      "currentSpread": 0.00670568,
+      "unrealizedPnl": 57.58639
+    }
+  ],
   "balances": {
-    "binance": 6053.570895530001,
-    "bybit": 3082.63022498,
-    "bitget": 4666.0240775192715,
+    "binance": 6045.62727685,
+    "bybit": 3077.18623467,
+    "bitget": 4669.925257618931,
     "okx": 0
   },
   "lastTrade": {
@@ -60,12 +101,13 @@
     "LYN_binance_bitget": 1773298801750,
     "LYN_bybit_bitget": 1773309846537,
     "RIVER_bitget_bybit": 1773313379888,
-    "LYN_binance_bybit": 1773321387980
+    "LYN_binance_bybit": 1773385596888,
+    "JCT_bitget_binance": 1773385296716
   },
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773384996441,
+  "_lastEarnedCheck": 1773386574602,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392
   }
