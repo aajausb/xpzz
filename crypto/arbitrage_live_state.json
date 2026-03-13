@@ -29,7 +29,7 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 497.161398595896,
+      "unrealizedPnl": 590.452500595896,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -59,13 +59,13 @@
       "entryTime": "2026-03-13T07:06:36.888Z",
       "spread": 0.0142412,
       "annualized": 1559.4114,
-      "earned": 32.03224394,
+      "earned": 20.322156340000003,
       "totalFee": 19.799999999999997,
       "settlementAligned": true,
       "longOrderId": 902169584,
       "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
-      "currentSpread": -0.01090288,
-      "unrealizedPnl": -258.93041,
+      "currentSpread": -0.03955472,
+      "unrealizedPnl": -390.35369,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -100,8 +100,8 @@
       "settlementAligned": true,
       "longOrderId": 2986866253,
       "shortOrderId": "1416260792486600707",
-      "currentSpread": -0.0010216133333333334,
-      "unrealizedPnl": 1044.766369577095,
+      "currentSpread": -0.0009181333333333333,
+      "unrealizedPnl": 1064.708654577095,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -136,7 +136,7 @@
       "settlementAligned": true,
       "longOrderId": "608e4765-a546-40c8-bd43-521650732d99",
       "shortOrderId": "1416318404032864258",
-      "currentSpread": 0.0006979333333333332,
+      "currentSpread": 0.0005134000000000001,
       "unrealizedPnl": 0.8811999976200013
     },
     {
@@ -156,13 +156,13 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.0005008266666666669,
-      "unrealizedPnl": 92.722559390102
+      "currentSpread": -0.0009093066666666661,
+      "unrealizedPnl": 218.755229390102
     }
   ],
   "balances": {
-    "binance": 5274.59115229,
-    "bybit": 4592.52903662,
+    "binance": 5296.6254918,
+    "bybit": 4558.78460951,
     "bitget": 3876.882351518931,
     "okx": 0
   },
@@ -217,7 +217,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773405932929,
+  "_lastEarnedCheck": 1773407732262,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392
   }
