@@ -532,8 +532,20 @@ async function scanFundingArbitrage() {
     if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
     const msToSettle = earlierNext - now;
     if (msToSettle < 0 || msToSettle > 60 * 60 * 1000) continue; // 超过60分钟的跳过
-    // 窗口：结算前15-60分钟（结算后15分钟内费率不稳，不开仓）
-    if (msToSettle < 15 * 60 * 1000) continue; // 太近了不开（<15min）
+    // 窗口：结算前15-60分钟
+    if (msToSettle < 3 * 60 * 1000) continue; // 结算前3分钟内不开
+
+    // 结算后冷静期：刚结算完15分钟内费率不稳，不开仓
+    // 用结算间隔推算上次结算时间: lastSettle = nextSettle - interval
+    const coolLowInterval = monitor.fundingIntervals[sym]?.[lowEx] || 8;
+    const coolHighInterval = monitor.fundingIntervals[sym]?.[highEx] || 8;
+    const minIntervalMs = Math.min(coolLowInterval, coolHighInterval) * 60 * 60 * 1000;
+    const lastSettleTime = earlierNext - minIntervalMs;
+    const msSinceLastSettle = now - lastSettleTime;
+    if (msSinceLastSettle < 15 * 60 * 1000) {
+      log(`  ⏳ ${sym} 刚结算${Math.round(msSinceLastSettle/60000)}分钟，冷静期跳过`);
+      continue;
+    }
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 

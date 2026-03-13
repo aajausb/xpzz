@@ -29,7 +29,7 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 590.452500595896,
+      "unrealizedPnl": 597.362952595896,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -42,10 +42,14 @@
         {
           "time": 1773400642647,
           "spread": 0.00011012000000000001
+        },
+        {
+          "time": 1773409532291,
+          "spread": 0
         }
       ],
       "consecutiveNeg": 0,
-      "health": "weak"
+      "health": "ok"
     },
     {
       "id": "mmojzw0o",
@@ -64,8 +68,8 @@
       "settlementAligned": true,
       "longOrderId": 902169584,
       "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
-      "currentSpread": -0.03955472,
-      "unrealizedPnl": -390.35369,
+      "currentSpread": -0.017186800000000002,
+      "unrealizedPnl": -320.51357,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -78,10 +82,14 @@
         {
           "time": 1773400642647,
           "spread": -0.00480488
+        },
+        {
+          "time": 1773409532292,
+          "spread": -0.03823648
         }
       ],
-      "consecutiveNeg": 1,
-      "health": "ok"
+      "consecutiveNeg": 2,
+      "health": "weak"
     },
     {
       "id": "mmolwopn",
@@ -100,8 +108,8 @@
       "settlementAligned": true,
       "longOrderId": 2986866253,
       "shortOrderId": "1416260792486600707",
-      "currentSpread": -0.0009181333333333333,
-      "unrealizedPnl": 1064.708654577095,
+      "currentSpread": -0.0008542000000000003,
+      "unrealizedPnl": 1028.950074577095,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -114,10 +122,14 @@
         {
           "time": 1773400642647,
           "spread": 0.00025744
+        },
+        {
+          "time": 1773409532292,
+          "spread": -0.0009278133333333336
         }
       ],
-      "consecutiveNeg": 0,
-      "health": "ok"
+      "consecutiveNeg": 1,
+      "health": "weak"
     },
     {
       "id": "mmou3330",
@@ -136,8 +148,16 @@
       "settlementAligned": true,
       "longOrderId": "608e4765-a546-40c8-bd43-521650732d99",
       "shortOrderId": "1416318404032864258",
-      "currentSpread": 0.0005134000000000001,
-      "unrealizedPnl": 0.8811999976200013
+      "currentSpread": 0.00064972,
+      "unrealizedPnl": -7.3388000023799975,
+      "spreadHistory": [
+        {
+          "time": 1773409532292,
+          "spread": 0.0005413466666666667
+        }
+      ],
+      "consecutiveNeg": 0,
+      "health": "ok"
     },
     {
       "id": "mmouikc8",
@@ -156,8 +176,16 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": -0.0009093066666666661,
-      "unrealizedPnl": 218.755229390102
+      "currentSpread": -0.001845120000000001,
+      "unrealizedPnl": 341.625789390102,
+      "spreadHistory": [
+        {
+          "time": 1773409532292,
+          "spread": -0.0015407333333333322
+        }
+      ],
+      "consecutiveNeg": 1,
+      "health": "weak"
     }
   ],
   "balances": {
@@ -217,7 +245,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773407732262,
+  "_lastEarnedCheck": 1773409847509,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392
   }
