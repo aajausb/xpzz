@@ -2,12 +2,12 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -184.51725441999997,
+  "totalPnl": -187.91725441999998,
   "realizedPnl": -760.0631393923411,
   "unrealizedPnl": 0,
-  "dailyPnl": -184.51725441999997,
+  "dailyPnl": -187.91725441999998,
   "dailyPnlDate": "2026-03-13",
-  "trades": 8,
+  "trades": 9,
   "wins": 3,
   "losses": 24,
   "positions": [
@@ -29,7 +29,7 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 521.347980595896,
+      "unrealizedPnl": 504.071850595896,
       "spreadHistory": [
         {
           "time": 1773424190241,
@@ -72,8 +72,8 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": -0.0002765999999999995,
-      "unrealizedPnl": 839.883979390102,
+      "currentSpread": -0.00018898666666666725,
+      "unrealizedPnl": 877.377569390102,
       "spreadHistory": [
         {
           "time": 1773424190241,
@@ -98,12 +98,32 @@
       ],
       "consecutiveNeg": 2,
       "health": "ok"
+    },
+    {
+      "id": "mmpfzh6j",
+      "symbol": "LYN",
+      "type": "funding",
+      "longEx": "binance",
+      "shortEx": "bitget",
+      "size": 1700,
+      "qty": 5250,
+      "entryPrice": 0.323625,
+      "entryTime": "2026-03-13T22:02:05.371Z",
+      "spread": 0.10650612,
+      "annualized": 11662.42014,
+      "earned": 0,
+      "totalFee": 3.4,
+      "settlementAligned": true,
+      "longOrderId": 933623125,
+      "shortOrderId": "1416472683204976642",
+      "currentSpread": -0.0022196800000000017,
+      "unrealizedPnl": 9.542549982
     }
   ],
   "balances": {
-    "binance": 5450.48293081,
+    "binance": 5449.63329037,
     "bybit": 2964.76033526,
-    "bitget": 4914.988476338931,
+    "bitget": 4913.968450808931,
     "okx": 0
   },
   "lastTrade": {
@@ -146,7 +166,7 @@
     "COMP_bybit_binance": 1773218047474,
     "ACE_bybit_binance": 1773228277613,
     "RONIN_bybit_binance": 1773240847136,
-    "LYN_binance_bitget": 1773422394352,
+    "LYN_binance_bitget": 1773439325371,
     "LYN_bybit_bitget": 1773309846537,
     "RIVER_bitget_bybit": 1773313379888,
     "LYN_binance_bybit": 1773385596888,
@@ -158,7 +178,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773438590083,
+  "_lastEarnedCheck": 1773440390084,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
