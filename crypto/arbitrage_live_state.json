@@ -28,8 +28,8 @@
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
-      "currentSpread": 0.00016716,
-      "unrealizedPnl": 448.788234595896,
+      "currentSpread": 0.000066,
+      "unrealizedPnl": 431.512104595896,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -38,10 +38,14 @@
         {
           "time": 1773394743674,
           "spread": 0.0006096266666666667
+        },
+        {
+          "time": 1773400642647,
+          "spread": 0.00011012000000000001
         }
       ],
       "consecutiveNeg": 0,
-      "health": "ok"
+      "health": "weak"
     },
     {
       "id": "mmojzw0o",
@@ -55,13 +59,13 @@
       "entryTime": "2026-03-13T07:06:36.888Z",
       "spread": 0.0142412,
       "annualized": 1559.4114,
-      "earned": 19.90440515,
+      "earned": 27.06854049,
       "totalFee": 19.799999999999997,
       "settlementAligned": true,
       "longOrderId": 902169584,
       "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
-      "currentSpread": 0.0056383200000000005,
-      "unrealizedPnl": -56.63489,
+      "currentSpread": -0.00438912,
+      "unrealizedPnl": -252.73769,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -70,10 +74,14 @@
         {
           "time": 1773394743674,
           "spread": 0.006208480000000001
+        },
+        {
+          "time": 1773400642647,
+          "spread": -0.00480488
         }
       ],
-      "consecutiveNeg": 0,
-      "health": "healthy"
+      "consecutiveNeg": 1,
+      "health": "ok"
     },
     {
       "id": "mmolwopn",
@@ -92,8 +100,8 @@
       "settlementAligned": true,
       "longOrderId": 2986866253,
       "shortOrderId": "1416260792486600707",
-      "currentSpread": 0.00044165333333333334,
-      "unrealizedPnl": -69.938595422905,
+      "currentSpread": 0.00018735999999999983,
+      "unrealizedPnl": 62.093084577095,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -102,6 +110,10 @@
         {
           "time": 1773394743674,
           "spread": 0.0003948133333333328
+        },
+        {
+          "time": 1773400642647,
+          "spread": 0.00025744
         }
       ],
       "consecutiveNeg": 0,
@@ -109,8 +121,8 @@
     }
   ],
   "balances": {
-    "binance": 5243.86674055,
-    "bybit": 4577.72832333,
+    "binance": 5250.90561523,
+    "bybit": 4577.85358399,
     "bitget": 3923.349737368931,
     "okx": 0
   },
@@ -164,7 +176,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773398842420,
+  "_lastEarnedCheck": 1773401008755,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392
   }

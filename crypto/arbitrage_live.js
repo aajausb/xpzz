@@ -2880,6 +2880,7 @@ function startDashboardServer() {
   server.on('error', (e) => {
     log('⚠️ 看板服务启动失败: ' + e.message);
   });
+
 }
 
 main().catch(e => {
