@@ -532,8 +532,8 @@ async function scanFundingArbitrage() {
     if (earlierNext === Infinity) continue; // 没有结算时间数据，跳过
     const msToSettle = earlierNext - now;
     if (msToSettle < 0 || msToSettle > 60 * 60 * 1000) continue; // 超过60分钟的跳过
-    // 窗口：结算前10-60分钟
-    if (msToSettle < 10 * 60 * 1000) continue; // 太近了不开（<10min）
+    // 窗口：结算前15-60分钟（结算后15分钟内费率不稳，不开仓）
+    if (msToSettle < 15 * 60 * 1000) continue; // 太近了不开（<15min）
     const hourlySpread = highHourly - lowHourly;
     const equiv8hSpread = hourlySpread * 8; // 等效8小时费率差
 
@@ -1468,6 +1468,7 @@ async function closeFundingPosition(pos, urgent = false, dangerousEx = null) {
       } catch(e) { log(`  ⚠️ 强平距离检查失败: ${e.message}`); }
     }
     const useLimit = !forceMarket;
+    let closeLOk = false, closeSOk = false;
     if (useLimit) log(`  💰 使用限价单(Post-Only)平仓，省手续费`);
     else log(`  ⚡ 紧急市价平仓`);
 

@@ -2,12 +2,12 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -95.6,
+  "totalPnl": -115.60000000000001,
   "realizedPnl": -703.545884972341,
   "unrealizedPnl": 0,
-  "dailyPnl": -95.6,
+  "dailyPnl": -115.60000000000001,
   "dailyPnlDate": "2026-03-13",
-  "trades": 5,
+  "trades": 6,
   "wins": 3,
   "losses": 19,
   "positions": [
@@ -23,13 +23,13 @@
       "entryTime": "2026-03-13T07:01:36.716Z",
       "spread": 0.004090079999999999,
       "annualized": 447.8637599999999,
-      "earned": 8.26022592,
+      "earned": 8.26039868,
       "totalFee": 12,
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 345.131454595896,
+      "unrealizedPnl": 462.609138595896,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -59,13 +59,13 @@
       "entryTime": "2026-03-13T07:06:36.888Z",
       "spread": 0.0142412,
       "annualized": 1559.4114,
-      "earned": 27.06854049,
+      "earned": 32.03224394,
       "totalFee": 19.799999999999997,
       "settlementAligned": true,
       "longOrderId": 902169584,
       "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
-      "currentSpread": 0.00465016,
-      "unrealizedPnl": -514.55213,
+      "currentSpread": -0.01661712,
+      "unrealizedPnl": -487.02893,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -95,13 +95,13 @@
       "entryTime": "2026-03-13T08:00:06.683Z",
       "spread": 0.006725019999999999,
       "annualized": 736.38969,
-      "earned": 0,
+      "earned": -1.6026329999999973,
       "totalFee": 19.8,
       "settlementAligned": true,
       "longOrderId": 2986866253,
       "shortOrderId": "1416260792486600707",
-      "currentSpread": -0.00015862666666666687,
-      "unrealizedPnl": 453.374469577095,
+      "currentSpread": -0.00059944,
+      "unrealizedPnl": 948.493269577095,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -131,19 +131,39 @@
       "entryTime": "2026-03-13T11:49:02.173Z",
       "spread": 0.00477172,
       "annualized": 522.50334,
-      "earned": 0,
+      "earned": 7.628601789999999,
       "totalFee": 12,
       "settlementAligned": true,
       "longOrderId": "608e4765-a546-40c8-bd43-521650732d99",
       "shortOrderId": "1416318404032864258",
-      "currentSpread": 0.001642586666666667,
-      "unrealizedPnl": -5.968800002380007
+      "currentSpread": 0.0013271066666666667,
+      "unrealizedPnl": 6.361199997619963
+    },
+    {
+      "id": "mmouikc8",
+      "symbol": "KITE",
+      "type": "funding",
+      "longEx": "binance",
+      "shortEx": "bitget",
+      "size": 10000,
+      "qty": 45173,
+      "entryPrice": 0.24562,
+      "entryTime": "2026-03-13T12:01:04.376Z",
+      "spread": 0.0114041,
+      "annualized": 1248.7489500000001,
+      "earned": 0,
+      "totalFee": 20,
+      "settlementAligned": true,
+      "longOrderId": 1129923166,
+      "shortOrderId": "1416321432450375681",
+      "currentSpread": 0.00222092,
+      "unrealizedPnl": 220.562149390102
     }
   ],
   "balances": {
-    "binance": 5250.90561523,
-    "bybit": 4574.55280902,
-    "bitget": 3919.7590492489308,
+    "binance": 5274.59115229,
+    "bybit": 4592.52903662,
+    "bitget": 3876.882351518931,
     "okx": 0
   },
   "lastTrade": {
@@ -191,13 +211,13 @@
     "RIVER_bitget_bybit": 1773313379888,
     "LYN_binance_bybit": 1773385596888,
     "JCT_bitget_binance": 1773385296716,
-    "KITE_binance_bitget": 1773390302400,
+    "KITE_binance_bitget": 1773403264376,
     "TRUMP_bybit_bitget": 1773402542173
   },
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773402542488,
+  "_lastEarnedCheck": 1773404375582,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392
   }
