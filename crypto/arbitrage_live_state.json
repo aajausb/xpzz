@@ -23,13 +23,13 @@
       "entryTime": "2026-03-13T07:01:36.716Z",
       "spread": 0.004090079999999999,
       "annualized": 447.8637599999999,
-      "earned": 8.26039868,
+      "earned": 8.26057144,
       "totalFee": 12,
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 593.907726595896,
+      "unrealizedPnl": 611.183856595896,
       "spreadHistory": [
         {
           "time": 1773394743674,
@@ -67,13 +67,13 @@
       "entryTime": "2026-03-13T11:49:02.173Z",
       "spread": 0.00477172,
       "annualized": 522.50334,
-      "earned": 7.628601789999999,
+      "earned": 4.773285019999999,
       "totalFee": 12,
       "settlementAligned": true,
       "longOrderId": "608e4765-a546-40c8-bd43-521650732d99",
       "shortOrderId": "1416318404032864258",
-      "currentSpread": -0.0006742666666666668,
-      "unrealizedPnl": -8.708800002379917,
+      "currentSpread": -0.0008106666666666667,
+      "unrealizedPnl": -11.448800002379926,
       "spreadHistory": [
         {
           "time": 1773409532292,
@@ -103,13 +103,13 @@
       "entryTime": "2026-03-13T12:01:04.376Z",
       "spread": 0.0114041,
       "annualized": 1248.7489500000001,
-      "earned": 0,
+      "earned": 2.639939990000002,
       "totalFee": 20,
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.0002831599999999999,
-      "unrealizedPnl": 485.727659390102,
+      "currentSpread": 0.0018010133333333327,
+      "unrealizedPnl": 532.707579390102,
       "spreadHistory": [
         {
           "time": 1773409532292,
@@ -129,9 +129,9 @@
     }
   ],
   "balances": {
-    "binance": 5249.50747259,
-    "bybit": 3821.50892787,
-    "bitget": 3876.882351518931,
+    "binance": 5359.94341138,
+    "bybit": 3825.37849311,
+    "bitget": 3735.741911258931,
     "okx": 0
   },
   "lastTrade": {
@@ -185,7 +185,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773417046895,
+  "_lastEarnedCheck": 1773418846895,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902
