@@ -145,6 +145,15 @@ function loadState() {
       const saved = JSON.parse(fs.readFileSync(CONFIG.STATE_FILE, 'utf8'));
       // 恢复仓位和PnL
       state = { ...state, ...saved, running: true, paused: saved.paused || false };
+      // 类型校验：防止 state 文件被外部修改导致类型错乱
+      if (!Array.isArray(state.positions)) state.positions = [];
+      if (typeof state.trades !== 'number' || isNaN(state.trades)) state.trades = 0;
+      if (typeof state.totalPnl !== 'number' || isNaN(state.totalPnl)) state.totalPnl = 0;
+      if (typeof state.dailyPnl !== 'number' || isNaN(state.dailyPnl)) state.dailyPnl = 0;
+      if (typeof state.realizedPnl !== 'number' || isNaN(state.realizedPnl)) state.realizedPnl = 0;
+      if (typeof state.wins !== 'number') state.wins = 0;
+      if (typeof state.losses !== 'number') state.losses = 0;
+      if (typeof state.errors !== 'number') state.errors = 0;
       log(`📂 恢复状态: ${state.positions.length}个仓位, PnL $${state.totalPnl.toFixed(2)}`);
     }
   } catch (e) {
@@ -803,7 +812,7 @@ async function executeFundingArbitrage(opp) {
         if (pctDiff > 1) {
           log(`  🔧 首单对齐: ${lowEx}多${realLQ} ${highEx}空${realSQ} 偏差${pctDiff.toFixed(1)}%`);
           if (realLQ < realSQ) {
-            for (let fix = 0; ; fix++) {
+            for (let fix = 0; fix < 50; fix++) {
               try {
                 const fq = lowEx === 'okx' ? coinsToLots(symbol, realSQ - realLQ) : (realSQ - realLQ);
                 const fr = await lowExObj.futuresLong(lowFutSym, fq);
@@ -813,9 +822,10 @@ async function executeFundingArbitrage(opp) {
               } catch (e) {}
               await new Promise(r => setTimeout(r, 2000));
               if (fix % 10 === 9) await notify(`⚠️ ${symbol} 首单对齐补多头已重试${fix+1}次`);
+              if (fix === 49) { log(`  🚨 首单对齐补多头50次失败，放弃`); await notify(`🚨 ${symbol} 首单对齐补多头50次失败！需手动检查`); }
             }
           } else {
-            for (let fix = 0; ; fix++) {
+            for (let fix = 0; fix < 50; fix++) {
               try {
                 const fq = highEx === 'okx' ? coinsToLots(symbol, realLQ - realSQ) : (realLQ - realSQ);
                 const fr = await highExObj.futuresShort(highFutSym, fq);
@@ -825,6 +835,7 @@ async function executeFundingArbitrage(opp) {
               } catch (e) {}
               await new Promise(r => setTimeout(r, 2000));
               if (fix % 10 === 9) await notify(`⚠️ ${symbol} 首单对齐补空头已重试${fix+1}次`);
+              if (fix === 49) { log(`  🚨 首单对齐补空头50次失败，放弃`); await notify(`🚨 ${symbol} 首单对齐补空头50次失败！需手动检查`); }
             }
           }
         }
@@ -895,7 +906,7 @@ async function executeFundingArbitrage(opp) {
           } else if (lr2Ok && !sr2Ok) {
             // 多头开了空头没开 → 一直补空头直到成功
             log(`  ⚠️ 补仓单腿: ${lowEx}多OK ${highEx}空失败，持续重试空头`);
-            for (let fix = 0; ; fix++) {
+            for (let fix = 0; fix < 50; fix++) {
               await new Promise(r => setTimeout(r, 2000));
               try {
                 const fixR = await highExObj.futuresShort(highFutSym, addShortQty);
@@ -913,13 +924,14 @@ async function executeFundingArbitrage(opp) {
                   break;
                 }
               } catch (e) { log(`  ⚠️ 空头重试${fix+1}失败: ${e.message}`); }
-              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 空头已重试${fix+1}次仍未成功，持续重试中`);
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 空头已重试${fix+1}次仍未成功，继续重试`);
+              if (fix === 49) { log(`  🚨 补仓空头50次失败，放弃`); await notify(`🚨 ${symbol} 补仓空头50次失败！有裸敞口需手动处理`); }
             }
             break;
           } else if (!lr2Ok && sr2Ok) {
             // 空头开了多头没开 → 补多头
             log(`  ⚠️ 补仓单腿: ${highEx}空OK ${lowEx}多失败，重试多头`);
-            for (let fix = 0; ; fix++) {
+            for (let fix = 0; fix < 50; fix++) {
               await new Promise(r => setTimeout(r, 2000));
               try {
                 const fixR = await lowExObj.futuresLong(lowFutSym, addLongQty);
@@ -937,7 +949,8 @@ async function executeFundingArbitrage(opp) {
                   break;
                 }
               } catch (e) { log(`  ⚠️ 多头重试${fix+1}失败: ${e.message}`); }
-              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 多头已重试${fix+1}次仍未成功，持续重试中`);
+              if (fix % 10 === 9) await notify(`⚠️ ${symbol} 多头已重试${fix+1}次仍未成功，继续重试`);
+              if (fix === 49) { log(`  🚨 补仓多头50次失败，放弃`); await notify(`🚨 ${symbol} 补仓多头50次失败！有裸敞口需手动处理`); }
             }
             break;
           }
@@ -968,7 +981,7 @@ async function executeFundingArbitrage(opp) {
             // 多头少，补多头
             const fixQty = realShortQty - realLongQty;
             log(`  🔧 补${lowEx}多头 ${fixQty}`);
-            for (let fix = 0; ; fix++) {
+            for (let fix = 0; fix < 50; fix++) {
               try {
                 const fixLongQty = lowEx === 'okx' ? coinsToLots(symbol, fixQty) : fixQty;
                 const fixR = await lowExObj.futuresLong(lowFutSym, fixLongQty);
@@ -978,12 +991,13 @@ async function executeFundingArbitrage(opp) {
               } catch (e) {}
               await new Promise(r => setTimeout(r, 2000));
               if (fix % 10 === 9) await notify(`⚠️ ${symbol} 对齐补多头已重试${fix+1}次`);
+              if (fix === 49) { log(`  🚨 对齐补多头50次失败，放弃`); await notify(`🚨 ${symbol} 对齐补多头50次失败！需手动检查`); }
             }
           } else {
             // 空头少，补空头
             const fixQty = realLongQty - realShortQty;
             log(`  🔧 补${highEx}空头 ${fixQty}`);
-            for (let fix = 0; ; fix++) {
+            for (let fix = 0; fix < 50; fix++) {
               try {
                 const fixShortQty = highEx === 'okx' ? coinsToLots(symbol, fixQty) : fixQty;
                 const fixR = await highExObj.futuresShort(highFutSym, fixShortQty);
@@ -993,6 +1007,7 @@ async function executeFundingArbitrage(opp) {
               } catch (e) {}
               await new Promise(r => setTimeout(r, 2000));
               if (fix % 10 === 9) await notify(`⚠️ ${symbol} 对齐补空头已重试${fix+1}次`);
+              if (fix === 49) { log(`  🚨 对齐补空头50次失败，放弃`); await notify(`🚨 ${symbol} 对齐补空头50次失败！需手动检查`); }
             }
           }
           // 更新state中的qty为实际值
@@ -1170,7 +1185,8 @@ async function executeSpreadArbitrage(symbol, lowEx, highEx, lowPrice, highPrice
 // Binance 杠杆限额检查+自动降杠杆
 async function ensureBinanceLeverage(symbol, neededNotional) {
   try {
-    const pos = await binance.getFuturesPositions();
+    const posRaw = await binance.getFuturesPositions();
+    const pos = Array.isArray(posRaw) ? posRaw : [];
     const p = pos.find(x => (x.symbol || '').includes(symbol.replace('USDT', '')));
     const currentNotional = Math.abs(+(p?.notional || 0));
     const maxNotional = +(p?.maxNotionalValue || 0);
@@ -1731,15 +1747,16 @@ async function closeFundingPosition(pos, urgent = false, dangerousEx = null) {
 // ============ 保证金安全监控（每60秒） ============
 async function checkMarginSafety() {
   try {
-    const [bnPos, byPos, bgPos] = await Promise.all([
+    const [bnPosRaw, byPos, bgPos] = await Promise.all([
       binance.getFuturesPositions().catch(() => []),
       bybit.api('GET', '/v5/position/list', { category: 'linear', settleCoin: 'USDT' }).catch(() => ({})),
       bitget.api('GET', '/api/v2/mix/position/all-position', { productType: 'USDT-FUTURES' }).catch(() => ({}))
     ]);
+    const bnPos = Array.isArray(bnPosRaw) ? bnPosRaw : [];
 
     const positionRisks = [];
 
-    for (const p of (bnPos || []).filter(x => +x.positionAmt !== 0)) {
+    for (const p of bnPos.filter(x => +x.positionAmt !== 0)) {
       const liq = +p.liquidationPrice, mark = +p.markPrice;
       if (liq > 0 && mark > 0) {
         const isShort = +p.positionAmt < 0;
@@ -2185,11 +2202,12 @@ async function statusReport() {
 // ============ 仓位qty对账（引擎内部，每2小时）============
 async function reconcilePositions() {
   try {
-    const [bnPos, byRes, bgRes] = await Promise.all([
+    const [bnPosRaw2, byRes, bgRes] = await Promise.all([
       binance.getFuturesPositions().catch(() => []),
       bybit.api('GET', '/v5/position/list', { category: 'linear', settleCoin: 'USDT' }).catch(() => ({})),
       bitget.api('GET', '/api/v2/mix/position/all-position', { productType: 'USDT-FUTURES' }).catch(() => ({}))
     ]);
+    const bnPos = Array.isArray(bnPosRaw2) ? bnPosRaw2 : [];
     const byPos = byRes.result?.list?.filter(x => +x.size > 0) || [];
     const bgPos = bgRes.data?.filter(x => +x.total > 0) || [];
     
