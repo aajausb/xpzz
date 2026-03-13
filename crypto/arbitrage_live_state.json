@@ -28,8 +28,16 @@
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
-      "currentSpread": 0.00145016,
-      "unrealizedPnl": 455.698686595896
+      "currentSpread": 0.0010296666666666668,
+      "unrealizedPnl": 631.915212595896,
+      "spreadHistory": [
+        {
+          "time": 1773391143735,
+          "spread": 0.00126972
+        }
+      ],
+      "consecutiveNeg": 0,
+      "health": "ok"
     },
     {
       "id": "mmojzw0o",
@@ -48,8 +56,16 @@
       "settlementAligned": true,
       "longOrderId": 902169584,
       "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
-      "currentSpread": 0.00444936,
-      "unrealizedPnl": -380.72057
+      "currentSpread": 0.0054313600000000005,
+      "unrealizedPnl": 129.83479,
+      "spreadHistory": [
+        {
+          "time": 1773391143735,
+          "spread": 0.004858240000000001
+        }
+      ],
+      "consecutiveNeg": 0,
+      "health": "healthy"
     },
     {
       "id": "mmolwopn",
@@ -68,8 +84,16 @@
       "settlementAligned": true,
       "longOrderId": 2986866253,
       "shortOrderId": "1416260792486600707",
-      "currentSpread": -0.0031755599999999996,
-      "unrealizedPnl": -129.077785422905
+      "currentSpread": 0.0006853466666666662,
+      "unrealizedPnl": 379.794314577095,
+      "spreadHistory": [
+        {
+          "time": 1773391143735,
+          "spread": -0.0017840399999999995
+        }
+      ],
+      "consecutiveNeg": 1,
+      "health": "ok"
     },
     {
       "id": "mmomsqtc",
@@ -88,8 +112,16 @@
       "settlementAligned": true,
       "longOrderId": 1125764869,
       "shortOrderId": "1416267065982590981",
-      "currentSpread": -0.0014738933333333336,
-      "unrealizedPnl": -6.4745706669
+      "currentSpread": -0.0010257999999999992,
+      "unrealizedPnl": -376.0549806669,
+      "spreadHistory": [
+        {
+          "time": 1773391143735,
+          "spread": -0.0013818
+        }
+      ],
+      "consecutiveNeg": 1,
+      "health": "ok"
     }
   ],
   "balances": {
@@ -148,7 +180,7 @@
   "errors": 28,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773389343639,
+  "_lastEarnedCheck": 1773391143640,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392
   }
