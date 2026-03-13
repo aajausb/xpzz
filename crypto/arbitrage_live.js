@@ -32,6 +32,8 @@ const CONFIG = {
   // 交易参数
   TRADE_SIZE_USD: 100,        // 单笔金额 $100
   MAX_POSITIONS: 20,          // 最大持仓数上限
+  MAX_TOTAL_EXPOSURE: 40000,  // 总敞口上限 $40,000（所有仓位size之和，10x杠杆=保证金$4000）
+  MAX_MARGIN_USAGE_PCT: 30,   // 总保证金使用率上限 30%（保证金/权益，保守）
   MAX_POSITION_PER_COIN: 500, // 单币最大敞口 $500
   MIN_SPREAD_TO_KEEP: 0.0002, // 低于0.02%费率差的仓位考虑平掉
   REBALANCE_INTERVAL: 3600000,// 每小时重新评估仓位
@@ -73,6 +75,39 @@ const CONFIG = {
   TG_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
   TG_CHAT_ID: '877233818'
 };
+
+// ============ 启动风控校验（防止关键参数被误删）============
+(function verifyRiskControls() {
+  const required = {
+    MAX_POSITIONS: { min: 1, max: 50, desc: '最大仓位数' },
+    MAX_TOTAL_EXPOSURE: { min: 1000, max: 200000, desc: '总敞口上限' },
+    MAX_MARGIN_USAGE_PCT: { min: 10, max: 80, desc: '保证金使用率上限%' },
+    MIN_FUNDING_SPREAD: { min: 0.001, max: 0.05, desc: '最小开仓费率差' },
+    MARGIN_WARN_RATIO: { min: 0.05, max: 0.5, desc: '保证金预警线' },
+    MARGIN_CLOSE_RATIO: { min: 0.03, max: 0.3, desc: '保证金平仓线' },
+    MARGIN_EMERGENCY_RATIO: { min: 0.02, max: 0.2, desc: '保证金紧急线' },
+    DAILY_LOSS_LIMIT: { min: 10, max: 5000, desc: '每日亏损上限' },
+    FEE_BPS: { min: 1, max: 50, desc: '手续费BPS' },
+  };
+  const missing = [];
+  const invalid = [];
+  for (const [key, rule] of Object.entries(required)) {
+    if (CONFIG[key] === undefined || CONFIG[key] === null) {
+      missing.push(`${key} (${rule.desc})`);
+    } else if (CONFIG[key] < rule.min || CONFIG[key] > rule.max) {
+      invalid.push(`${key}=${CONFIG[key]} 超出范围[${rule.min}-${rule.max}] (${rule.desc})`);
+    }
+  }
+  if (missing.length > 0) {
+    console.error(`🚨 启动失败！缺少关键风控参数:\n  ${missing.join('\n  ')}`);
+    process.exit(1);
+  }
+  if (invalid.length > 0) {
+    console.error(`⚠️ 风控参数异常:\n  ${invalid.join('\n  ')}`);
+    // 不退出，但打印警告
+  }
+  console.log(`✅ 风控校验通过: ${Object.keys(required).length}项参数全部存在且合理`);
+})();
 
 // ============ 全局状态 ============
 let isScanning = false;    // 防止 scanFundingRates 并发
@@ -410,6 +445,15 @@ function preFilter(symbol, lowEx, highEx, equiv8hSpread, settlementAligned) {
   if (state.paused) return '暂停中';
   // 仓位上限
   if (state.positions.length >= CONFIG.MAX_POSITIONS) return '仓位已满';
+  // 总敞口上限
+  const totalExposure = state.positions.reduce((sum, p) => sum + p.size, 0);
+  if (totalExposure >= CONFIG.MAX_TOTAL_EXPOSURE) return `总敞口$${totalExposure}已达上限$${CONFIG.MAX_TOTAL_EXPOSURE}`;
+  // 总保证金使用率（保证金/总权益）
+  const totalMargin = state.positions.reduce((sum, p) => sum + p.size / 10, 0);
+  const totalEquity = Object.values(state.balances).reduce((sum, b) => sum + b, 0);
+  if (totalEquity > 0 && (totalMargin / totalEquity * 100) >= CONFIG.MAX_MARGIN_USAGE_PCT) {
+    return `保证金使用率${(totalMargin/totalEquity*100).toFixed(1)}%已达上限${CONFIG.MAX_MARGIN_USAGE_PCT}%`;
+  }
   // 同币去重
   if (state.positions.some(p => p.symbol === symbol)) return '已有同币持仓';
   // 冷却

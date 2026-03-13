@@ -419,7 +419,7 @@ const bitget = {
       return this.api('POST', '/api/v2/mix/order/place-order', null, {
         symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
         side: 'sell', tradeSide: 'close', orderType: 'market',
-        size: String(quantity)
+        size: String(quantity), holdSide: 'long'
       });
     }
     // 不传数量则全平
@@ -434,7 +434,7 @@ const bitget = {
       return this.api('POST', '/api/v2/mix/order/place-order', null, {
         symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
         side: 'buy', tradeSide: 'close', orderType: 'market',
-        size: String(quantity)
+        size: String(quantity), holdSide: 'short'
       });
     }
     return this.api('POST', '/api/v2/mix/order/close-positions', null, {
@@ -447,7 +447,7 @@ const bitget = {
     return this.api('POST', '/api/v2/mix/order/place-order', null, {
       symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
       side: 'sell', tradeSide: 'close', orderType: 'limit', price: String(price),
-      size: String(quantity), force: 'post_only'
+      size: String(quantity), force: 'post_only', holdSide: 'long'
     });
   },
 
@@ -456,7 +456,7 @@ const bitget = {
     return this.api('POST', '/api/v2/mix/order/place-order', null, {
       symbol, productType: 'USDT-FUTURES', marginMode: 'crossed', marginCoin: 'USDT',
       side: 'buy', tradeSide: 'close', orderType: 'limit', price: String(price),
-      size: String(quantity), force: 'post_only'
+      size: String(quantity), force: 'post_only', holdSide: 'short'
     });
   },
 
