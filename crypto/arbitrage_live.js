@@ -1923,43 +1923,48 @@ async function rebalancePositions() {
     const hourlySpread = rawSpread / avgInterval;
     const equiv8h = hourlySpread * 8;
     
-    // 记录历史费率（最近3次）
+    // 记录历史费率（最近5次）
     if (!pos.spreadHistory) pos.spreadHistory = [];
     pos.spreadHistory.push({ time: Date.now(), spread: equiv8h });
-    if (pos.spreadHistory.length > 3) pos.spreadHistory.shift();
+    if (pos.spreadHistory.length > 5) pos.spreadHistory.shift();
     
-    // 连续倒贴计数（回正就重置）
+    // 连续倒贴计数（回正就重置，仅供参考）
     if (equiv8h < 0) {
       pos.consecutiveNeg = (pos.consecutiveNeg || 0) + 1;
     } else {
       pos.consecutiveNeg = 0;
     }
     
-    // 健康度评分
+    // 健康度评分（基于最近10次平均费率差）
     const recent = pos.spreadHistory;
     const avgSpread = recent.reduce((s, r) => s + r.spread, 0) / recent.length;
-    const allDecreasing = recent.length >= 3 && recent[2].spread < recent[1].spread && recent[1].spread < recent[0].spread;
+    const allDecreasing = recent.length >= 3 && recent[recent.length-1].spread < recent[recent.length-2].spread && recent[recent.length-2].spread < recent[recent.length-3].spread;
     
     if (avgSpread >= 0.003) {
       pos.health = 'healthy';     // 健康：平均费率差 ≥ 0.3%
-    } else if (avgSpread >= 0 && !allDecreasing) {
-      pos.health = 'ok';          // 一般：还在赚，没连续下降
-    } else if (avgSpread >= 0 && allDecreasing) {
-      pos.health = 'weak';        // 亚健康：连续3次下降，标记可替换
-    } else if (pos.consecutiveNeg >= 2) {
-      pos.health = 'bad';         // 不健康：连续2次倒贴
+    } else if (avgSpread >= 0) {
+      pos.health = 'ok';          // 一般：平均还在赚
+    } else if (avgSpread < 0 && recent.length >= 5) {
+      pos.health = 'bad';         // 不健康：5次平均费率差为负，趋势确认反转
+    } else if (avgSpread < 0) {
+      pos.health = 'weak';        // 亚健康：平均为负但样本不足5次，观察中
     } else {
       pos.health = 'ok';
     }
     
     pos.currentSpread = equiv8h;
+    if (recent.length >= 3) {
+      log(`  📊 ${pos.symbol} 费率差${(equiv8h*100).toFixed(3)}% 最近${recent.length}次平均${(avgSpread*100).toFixed(3)}% 健康:${pos.health}`);
+    }
   }
   
-  // 2. 自动平仓：连续3次倒贴的仓位
+  // 2. 自动平仓：最近10次平均费率差为负的仓位
   for (const pos of state.positions) {
     if (pos.health === 'bad') {
-      log(`🔴 [调仓] ${pos.symbol} 连续2次倒贴，自动平仓`);
-      await notify(`🔴 ${pos.symbol} 连续2次费率倒贴\n正在平仓释放资金...`);
+      const recent = pos.spreadHistory || [];
+      const avg = recent.reduce((s, r) => s + r.spread, 0) / recent.length;
+      log(`🔴 [调仓] ${pos.symbol} 最近${recent.length}次平均费率差${(avg*100).toFixed(3)}%为负，趋势反转，自动平仓`);
+      await notify(`🔴 ${pos.symbol} 最近${recent.length}次平均费率差为负(${(avg*100).toFixed(3)}%)\n趋势反转，正在平仓...`);
       try {
         await closeFundingPosition(pos);
       } catch (e) {
