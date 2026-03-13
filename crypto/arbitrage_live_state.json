@@ -2,12 +2,12 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -152.54574664,
+  "totalPnl": -152.94574664,
   "realizedPnl": -740.491631612341,
   "unrealizedPnl": 0,
-  "dailyPnl": -152.54574664,
+  "dailyPnl": -152.94574664,
   "dailyPnlDate": "2026-03-13",
-  "trades": 6,
+  "trades": 7,
   "wins": 3,
   "losses": 21,
   "positions": [
@@ -28,8 +28,8 @@
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
-      "currentSpread": 0.00001578666666666667,
-      "unrealizedPnl": 804.676512595896,
+      "currentSpread": 0,
+      "unrealizedPnl": 576.631596595896,
       "spreadHistory": [
         {
           "time": 1773394743674,
@@ -72,8 +72,8 @@
       "settlementAligned": true,
       "longOrderId": "608e4765-a546-40c8-bd43-521650732d99",
       "shortOrderId": "1416318404032864258",
-      "currentSpread": -0.0008122,
-      "unrealizedPnl": -10.078800002380035,
+      "currentSpread": -0.00069004,
+      "unrealizedPnl": -14.188800002379935,
       "spreadHistory": [
         {
           "time": 1773409532292,
@@ -108,8 +108,8 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": -0.0009300666666666665,
-      "unrealizedPnl": 545.356019390102,
+      "currentSpread": 0.0005826533333333333,
+      "unrealizedPnl": 538.128339390102,
       "spreadHistory": [
         {
           "time": 1773409532292,
@@ -126,12 +126,32 @@
       ],
       "consecutiveNeg": 0,
       "health": "weak"
+    },
+    {
+      "id": "mmp5wl4g",
+      "symbol": "LYN",
+      "type": "funding",
+      "longEx": "binance",
+      "shortEx": "bitget",
+      "size": 200,
+      "qty": 699,
+      "entryPrice": 0.28608500000000003,
+      "entryTime": "2026-03-13T17:19:54.352Z",
+      "spread": 0.05302668000000001,
+      "annualized": 5806.421460000001,
+      "earned": 0,
+      "totalFee": 0.4,
+      "settlementAligned": true,
+      "longOrderId": 921834708,
+      "shortOrderId": "1416401669385232385",
+      "currentSpread": -0.006314773333333332,
+      "unrealizedPnl": -0.411870000132
     }
   ],
   "balances": {
-    "binance": 5359.94341138,
+    "binance": 5359.8434103,
     "bybit": 3825.37849311,
-    "bitget": 4634.816380338931,
+    "bitget": 4634.696335158931,
     "okx": 0
   },
   "lastTrade": {
@@ -174,7 +194,7 @@
     "COMP_bybit_binance": 1773218047474,
     "ACE_bybit_binance": 1773228277613,
     "RONIN_bybit_binance": 1773240847136,
-    "LYN_binance_bitget": 1773298801750,
+    "LYN_binance_bitget": 1773422394352,
     "LYN_bybit_bitget": 1773309846537,
     "RIVER_bitget_bybit": 1773313379888,
     "LYN_binance_bybit": 1773385596888,
@@ -185,7 +205,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773420590848,
+  "_lastEarnedCheck": 1773422390078,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902
