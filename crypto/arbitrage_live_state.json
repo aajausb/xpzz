@@ -28,8 +28,8 @@
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
-      "currentSpread": 0.0010296666666666668,
-      "unrealizedPnl": 631.915212595896,
+      "currentSpread": 0.0006320266666666666,
+      "unrealizedPnl": 538.624110595896,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -51,13 +51,13 @@
       "entryTime": "2026-03-13T07:06:36.888Z",
       "spread": 0.0142412,
       "annualized": 1559.4114,
-      "earned": 5.26517745,
+      "earned": 11.885538239999999,
       "totalFee": 19.799999999999997,
       "settlementAligned": true,
       "longOrderId": 902169584,
       "shortOrderId": "e3c128af-f20d-4b1a-aad2-27ed4f22dc54",
-      "currentSpread": 0.0054313600000000005,
-      "unrealizedPnl": 129.83479,
+      "currentSpread": 0.0059599200000000005,
+      "unrealizedPnl": -408.24377,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -84,8 +84,8 @@
       "settlementAligned": true,
       "longOrderId": 2986866253,
       "shortOrderId": "1416260792486600707",
-      "currentSpread": 0.0006853466666666662,
-      "unrealizedPnl": 379.794314577095,
+      "currentSpread": 0.0004232266666666674,
+      "unrealizedPnl": -53.434635422905,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -112,8 +112,8 @@
       "settlementAligned": true,
       "longOrderId": 1125764869,
       "shortOrderId": "1416267065982590981",
-      "currentSpread": -0.0010257999999999992,
-      "unrealizedPnl": -376.0549806669,
+      "currentSpread": -0.0005100533333333342,
+      "unrealizedPnl": -505.5302706669,
       "spreadHistory": [
         {
           "time": 1773391143735,
@@ -125,8 +125,8 @@
     }
   ],
   "balances": {
-    "binance": 6049.92011818,
-    "bybit": 3077.31066103,
+    "binance": 6056.41807384,
+    "bybit": 3077.43306616,
     "bitget": 4658.3517454989305,
     "okx": 0
   },
@@ -180,7 +180,7 @@
   "errors": 28,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773391143640,
+  "_lastEarnedCheck": 1773392943639,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392
   }
