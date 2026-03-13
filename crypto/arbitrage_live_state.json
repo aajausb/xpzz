@@ -2,14 +2,14 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -160.17246162,
-  "realizedPnl": -747.718346592341,
+  "totalPnl": -184.17246161999998,
+  "realizedPnl": -759.718346592341,
   "unrealizedPnl": 0,
-  "dailyPnl": -160.17246162,
+  "dailyPnl": -184.17246161999998,
   "dailyPnlDate": "2026-03-13",
-  "trades": 7,
+  "trades": 8,
   "wins": 3,
-  "losses": 22,
+  "losses": 23,
   "positions": [
     {
       "id": "mmojtgek",
@@ -29,12 +29,8 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 562.810692595896,
+      "unrealizedPnl": 545.534562595896,
       "spreadHistory": [
-        {
-          "time": 1773409532291,
-          "spread": 0
-        },
         {
           "time": 1773413446925,
           "spread": 0
@@ -49,6 +45,10 @@
         },
         {
           "time": 1773427790113,
+          "spread": 0
+        },
+        {
+          "time": 1773431390105,
           "spread": 0
         }
       ],
@@ -72,13 +72,9 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.0006456666666666659,
-      "unrealizedPnl": 800.131739390102,
+      "currentSpread": 0.0000860933333333332,
+      "unrealizedPnl": 785.224649390102,
       "spreadHistory": [
-        {
-          "time": 1773409532292,
-          "spread": -0.0015407333333333322
-        },
         {
           "time": 1773413446926,
           "spread": -0.0007933066666666669
@@ -94,6 +90,10 @@
         {
           "time": 1773427790114,
           "spread": 0.0012758533333333336
+        },
+        {
+          "time": 1773431390105,
+          "spread": 0.00025857333333333354
         }
       ],
       "consecutiveNeg": 0,
@@ -116,8 +116,8 @@
       "settlementAligned": true,
       "longOrderId": 921834708,
       "shortOrderId": "1416401669385232385",
-      "currentSpread": 0.0013207288888888878,
-      "unrealizedPnl": -12.015270000132,
+      "currentSpread": -0.0008287466666666669,
+      "unrealizedPnl": -25.540920000132,
       "spreadHistory": [
         {
           "time": 1773424190241,
@@ -126,16 +126,20 @@
         {
           "time": 1773427790114,
           "spread": -0.0009692800000000014
+        },
+        {
+          "time": 1773431390105,
+          "spread": -0.0009487466666666666
         }
       ],
-      "consecutiveNeg": 2,
+      "consecutiveNeg": 3,
       "health": "weak"
     }
   ],
   "balances": {
     "binance": 5365.08952762,
-    "bybit": 2975.50897911,
-    "bitget": 5452.948047168931,
+    "bybit": 2975.55541736,
+    "bitget": 5008.6958094089305,
     "okx": 0
   },
   "lastTrade": {
@@ -184,14 +188,16 @@
     "LYN_binance_bybit": 1773385596888,
     "JCT_bitget_binance": 1773385296716,
     "KITE_binance_bitget": 1773403264376,
-    "TRUMP_bybit_bitget": 1773402542173
+    "TRUMP_bybit_bitget": 1773402542173,
+    "SIREN_bybit_bitget": 1773430790492
   },
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773429590080,
+  "_lastEarnedCheck": 1773431390080,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
-    "liq_warn_binance_KITE": 1773411826902
+    "liq_warn_binance_KITE": 1773411826902,
+    "liq_warn_bitget_SIREN": 1773431390136
   }
 }
