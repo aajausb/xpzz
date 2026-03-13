@@ -29,12 +29,8 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 504.071850595896,
+      "unrealizedPnl": 524.803206595896,
       "spreadHistory": [
-        {
-          "time": 1773424190241,
-          "spread": 0
-        },
         {
           "time": 1773427790113,
           "spread": 0
@@ -49,6 +45,10 @@
         },
         {
           "time": 1773438590107,
+          "spread": 0
+        },
+        {
+          "time": 1773442190104,
           "spread": 0
         }
       ],
@@ -72,13 +72,9 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": -0.00018898666666666725,
-      "unrealizedPnl": 877.377569390102,
+      "currentSpread": -0.000016386666666666494,
+      "unrealizedPnl": 842.142629390102,
       "spreadHistory": [
-        {
-          "time": 1773424190241,
-          "spread": 0.001105013333333335
-        },
         {
           "time": 1773427790114,
           "spread": 0.0012758533333333336
@@ -94,9 +90,13 @@
         {
           "time": 1773438590108,
           "spread": -0.0002828399999999995
+        },
+        {
+          "time": 1773442190104,
+          "spread": -0.00008097333333333355
         }
       ],
-      "consecutiveNeg": 2,
+      "consecutiveNeg": 3,
       "health": "ok"
     },
     {
@@ -116,8 +116,16 @@
       "settlementAligned": true,
       "longOrderId": 933623125,
       "shortOrderId": "1416472683204976642",
-      "currentSpread": -0.0022196800000000017,
-      "unrealizedPnl": 9.542549982
+      "currentSpread": -0.0030639288888888883,
+      "unrealizedPnl": 2.455049982,
+      "spreadHistory": [
+        {
+          "time": 1773442190104,
+          "spread": -0.003923679999999997
+        }
+      ],
+      "consecutiveNeg": 1,
+      "health": "weak"
     }
   ],
   "balances": {
@@ -178,7 +186,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773440390084,
+  "_lastEarnedCheck": 1773442190083,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
