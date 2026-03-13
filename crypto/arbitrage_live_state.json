@@ -5,8 +5,8 @@
   "totalPnl": -133.36674861999998,
   "realizedPnl": -687.545884972341,
   "unrealizedPnl": 0,
-  "dailyPnl": -59.61058567999999,
-  "dailyPnlDate": "2026-03-12",
+  "dailyPnl": 0,
+  "dailyPnlDate": "2026-03-13",
   "trades": 36,
   "wins": 3,
   "losses": 18,
@@ -28,7 +28,7 @@
       "settlementAligned": true,
       "longOrderId": 1111987056,
       "shortOrderId": "f2a7d703-521d-4bfc-8081-c495ce65faeb",
-      "currentSpread": 0.008344608,
+      "currentSpread": 0.010452512,
       "unrealizedPnl": 442.88625,
       "spreadHistory": [
         {
@@ -64,7 +64,7 @@
       "settlementAligned": true,
       "longOrderId": "1415944430258102273",
       "shortOrderId": "83c3d359-4e05-4469-a1e3-0caa6e664dcd",
-      "currentSpread": 0.0007633066666666667,
+      "currentSpread": 0.00061404,
       "unrealizedPnl": -5.108100001109989,
       "spreadHistory": [
         {
@@ -100,7 +100,7 @@
       "settlementAligned": true,
       "longOrderId": 856087314,
       "shortOrderId": "b0986004-68e0-4064-955e-aae0da4d030f",
-      "currentSpread": 0.0038996,
+      "currentSpread": 0,
       "unrealizedPnl": -2373.29627544,
       "spreadHistory": [
         {
@@ -174,7 +174,7 @@
   "errors": 27,
   "consecutiveErrors": 0,
   "lastError": "Assignment to constant variable.",
-  "_lastEarnedCheck": 1773358788147,
+  "_lastEarnedCheck": 1773360588148,
   "pendingOpps": {
     "PIXEL": {
       "lowEx": "bybit",
