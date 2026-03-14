@@ -191,6 +191,15 @@
 - **历史费率趋势检查(2026-03-12)**: 开仓前查两所5期历史，≥60%正+最近2期不连续反转才开
 - **扫描频率5分钟**: 从2分钟改为5分钟全量重扫，不维护watchlist
 - **扫描窗口30-60分钟**: 从40-70分钟改为30-60分钟
+- **三链DEX交易模块完成(2026-03-14 23:48)**: `crypto/meme/dex_trader.js`
+  - 三链统一OKX聚合器路由，500+DEX流动性源
+  - Solana: OKX返回的tx.data是**base58编码**（不是base64），bs58.decode才能解析
+  - Solana: OKX合约要求wSOL ATA有余额，自动wrap/unwrap对用户透明
+  - EVM: approve的to是token合约地址（不是dexContractAddress），execSync需要maxBuffer 10MB
+  - 统一接口: `buy(chain, token, amount)` / `sell(chain, token, amount)`
+  - 6/6全通: Solana/BSC/Base 买入+卖出
+- **套利系统全部清退(2026-03-14 22:55)**: 四所API Key删除, systemd停用, 文件移到.trash
+- **OKX OnchainOS是核心数据源**: onchainos CLI走V6 API，V5已废弃(code 50050)
 - **土狗系统复活(2026-03-14)**: 跑步哥决定重启土狗，$100起步目标10-100倍
   - 方向：庄家跟踪+情绪监控+新币筛选三重验证
   - 研究文件: crypto/research/meme_research.md

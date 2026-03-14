@@ -28,105 +28,58 @@ const NATIVE = {
   base: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 };
 
-// ============ Solana (Raydium) ============
+// ============ Solana (OKX聚合器) ============
+// OKX Solana tx.data是base58编码的带空签名VersionedTransaction
+// 需要bs58.decode → VersionedTransaction.deserialize → sign → send
 
 async function solanaBuy(tokenAddress, amountLamports, slippageBps = 300) {
-  const w = getWallets();
-  const kp = Keypair.fromSecretKey(w.solana.secretKey);
-  const conn = new Connection(HELIUS_RPC, 'confirmed');
-  
-  // 1. 报价
-  const quoteRes = await fetch(
-    `https://transaction-v1.raydium.io/compute/swap-base-in?inputMint=${NATIVE.solana}&outputMint=${tokenAddress}&amount=${amountLamports}&slippageBps=${slippageBps}&txVersion=V0`
-  );
-  const quote = await quoteRes.json();
-  if (!quote.success) throw new Error(`报价失败: ${JSON.stringify(quote)}`);
-  
-  // 2. 获取priority fee
-  const feeRes = await fetch(`https://transaction-v1.raydium.io/compute/priority-fee`);
-  const feeData = await feeRes.json();
-  const priorityFee = String(feeData?.data?.h || '1000000'); // 默认1M micro-lamports
-  
-  // 3. 构建交易
-  const swapRes = await fetch('https://transaction-v1.raydium.io/transaction/swap-base-in', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      computeUnitPriceMicroLamports: priorityFee,
-      swapResponse: quote,
-      txVersion: 'V0',
-      wallet: w.solana.address,
-      wrapSol: true,
-      unwrapSol: false
-    })
-  });
-  const swapData = await swapRes.json();
-  if (!swapData.success) throw new Error(`Swap构建失败: ${JSON.stringify(swapData)}`);
-  
-  // 4. 签名发送
-  const txBuf = Buffer.from(swapData.data[0].transaction, 'base64');
-  const tx = VersionedTransaction.deserialize(new Uint8Array(txBuf));
-  tx.sign([kp]);
-  
-  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
-  
-  // 5. 轮询确认
-  for (let i = 0; i < 30; i++) {
-    await sleep(1000);
-    const status = await conn.getSignatureStatus(sig);
-    if (status?.value?.confirmationStatus === 'confirmed' || status?.value?.confirmationStatus === 'finalized') {
-      if (status.value.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
-      return { chain: 'solana', action: 'buy', txHash: sig, success: true };
-    }
-  }
-  return { chain: 'solana', action: 'buy', txHash: sig, success: false, note: '超时未确认' };
+  return solanaSwap(NATIVE.solana, tokenAddress, amountLamports, 'buy', slippageBps);
 }
 
 async function solanaSell(tokenAddress, amountRaw, slippageBps = 300) {
+  return solanaSwap(tokenAddress, NATIVE.solana, amountRaw, 'sell', slippageBps);
+}
+
+async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300) {
   const w = getWallets();
   const kp = Keypair.fromSecretKey(w.solana.secretKey);
   const conn = new Connection(HELIUS_RPC, 'confirmed');
+  const slippage = (slippageBps / 100).toString();
   
-  const quoteRes = await fetch(
-    `https://transaction-v1.raydium.io/compute/swap-base-in?inputMint=${tokenAddress}&outputMint=${NATIVE.solana}&amount=${amountRaw}&slippageBps=${slippageBps}&txVersion=V0`
-  );
-  const quote = await quoteRes.json();
-  if (!quote.success) throw new Error(`报价失败: ${JSON.stringify(quote)}`);
+  // 0. OKX合约要求wSOL ATA有余额，自动wrap（用户无感知）
+  if (fromToken === NATIVE.solana) {
+    await ensureWsolBalance(conn, kp, parseInt(amount));
+  }
   
-  const feeRes = await fetch(`https://transaction-v1.raydium.io/compute/priority-fee`);
-  const feeData = await feeRes.json();
-  const priorityFee = String(feeData?.data?.h || '1000000');
+  // 1. 获取swap交易数据
+  const cmd = `onchainos swap swap --chain solana --from ${fromToken} --to ${toToken} --amount ${amount} --wallet ${w.solana.address} --slippage ${slippage}`;
+  const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 15000, maxBuffer: 10*1024*1024 }).toString());
+  if (!result.ok) throw new Error(result.error);
   
-  const swapRes = await fetch('https://transaction-v1.raydium.io/transaction/swap-base-in', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      computeUnitPriceMicroLamports: priorityFee,
-      swapResponse: quote,
-      txVersion: 'V0',
-      wallet: w.solana.address,
-      wrapSol: false,
-      unwrapSol: true
-    })
-  });
-  const swapData = await swapRes.json();
-  if (!swapData.success) throw new Error(`Swap构建失败: ${JSON.stringify(swapData)}`);
-  
-  const txBuf = Buffer.from(swapData.data[0].transaction, 'base64');
-  const tx = VersionedTransaction.deserialize(new Uint8Array(txBuf));
+  // 2. OKX返回base58编码的带空签名VersionedTransaction
+  const decoded = bs58.decode(result.data[0].tx.data);
+  const tx = VersionedTransaction.deserialize(decoded);
   tx.sign([kp]);
   
+  // 3. 发送
   const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
   
+  // 4. 轮询确认
   for (let i = 0; i < 30; i++) {
-    await sleep(1000);
+    await sleep(1500);
     const status = await conn.getSignatureStatus(sig);
-    if (status?.value?.confirmationStatus === 'confirmed' || status?.value?.confirmationStatus === 'finalized') {
+    if (status?.value) {
       if (status.value.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
-      return { chain: 'solana', action: 'sell', txHash: sig, success: true };
+      if (status.value.confirmationStatus === 'confirmed' || status.value.confirmationStatus === 'finalized') {
+        // 卖出后自动unwrap wSOL→SOL
+        if (toToken === NATIVE.solana) {
+          try { await unwrapWsol(conn, kp); } catch(e) { /* 忽略unwrap失败 */ }
+        }
+        return { chain: 'solana', action, txHash: sig, success: true };
+      }
     }
   }
-  return { chain: 'solana', action: 'sell', txHash: sig, success: false, note: '超时未确认' };
+  return { chain: 'solana', action, txHash: sig, success: false, note: '超时未确认' };
 }
 
 // ============ EVM (OKX聚合器) ============
@@ -170,7 +123,6 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
     const approveCmd = `onchainos swap approve --chain ${chainName} --token ${tokenAddress} --amount ${amountRaw}`;
     const ar = JSON.parse(execSync(approveCmd, { env: OKX_ENV, timeout: 10000 }).toString());
     if (ar.ok && ar.data?.[0]?.data && ar.data[0].data !== '0x') {
-      // approve的to是token合约地址，data里包含spender(DEX)和amount
       const approveTx = await wallet.sendTransaction({
         to: tokenAddress,
         data: ar.data[0].data,
@@ -179,9 +131,10 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
         gasLimit: BigInt(ar.data[0].gasLimit || '100000')
       });
       await approveTx.wait();
-      console.log(`  Approve ✅ ${chainName}`);
+      // 等2秒让nonce更新，避免swap nonce冲突
+      await sleep(2000);
     }
-  } catch(e) { console.log(`  Approve skip: ${e.message?.slice(0,60)}`); }
+  } catch(e) { /* 已approved或不需要 */ }
   
   // 2. Swap
   const cmd = `onchainos swap swap --chain ${chainName} --from ${tokenAddress} --to ${NATIVE[chain]} --amount ${amountRaw} --wallet ${w.evm.address} --slippage ${slippage}`;
@@ -218,6 +171,63 @@ async function sell(chain, tokenAddress, amountRaw) {
   } else {
     return evmSell(chain, tokenAddress, amountRaw);
   }
+}
+
+// ============ 辅助函数 ============
+
+async function ensureWsolBalance(conn, kp, lamportsNeeded) {
+  const { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createSyncNativeInstruction, NATIVE_MINT } = require('@solana/spl-token');
+  const { SystemProgram, Transaction } = require('@solana/web3.js');
+  
+  const owner = kp.publicKey;
+  const wsolAta = await getAssociatedTokenAddress(NATIVE_MINT, owner);
+  
+  // 检查wSOL ATA是否存在
+  const info = await conn.getAccountInfo(wsolAta);
+  let currentBalance = 0;
+  if (info) {
+    const bal = await conn.getTokenAccountBalance(wsolAta);
+    currentBalance = parseInt(bal.value.amount);
+  }
+  
+  if (currentBalance >= lamportsNeeded) return; // 够了
+  
+  const needed = lamportsNeeded - currentBalance;
+  const tx = new Transaction();
+  
+  if (!info) {
+    tx.add(createAssociatedTokenAccountInstruction(owner, wsolAta, owner, NATIVE_MINT));
+  }
+  tx.add(
+    SystemProgram.transfer({ fromPubkey: owner, toPubkey: wsolAta, lamports: needed }),
+    createSyncNativeInstruction(wsolAta)
+  );
+  
+  tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
+  tx.feePayer = owner;
+  tx.sign(kp);
+  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true });
+  await conn.confirmTransaction(sig, 'confirmed');
+}
+
+async function unwrapWsol(conn, kp) {
+  const { getAssociatedTokenAddress, createCloseAccountInstruction, NATIVE_MINT } = require('@solana/spl-token');
+  const { Transaction } = require('@solana/web3.js');
+  
+  const owner = kp.publicKey;
+  const wsolAta = await getAssociatedTokenAddress(NATIVE_MINT, owner);
+  const info = await conn.getAccountInfo(wsolAta);
+  if (!info) return;
+  
+  // close wSOL ATA → SOL自动回到钱包
+  const tx = new Transaction().add(
+    createCloseAccountInstruction(wsolAta, owner, owner)
+  );
+  tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
+  tx.feePayer = owner;
+  tx.sign(kp);
+  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true });
+  await conn.confirmTransaction(sig, 'confirmed');
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

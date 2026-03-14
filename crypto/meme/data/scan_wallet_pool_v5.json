@@ -15620,6 +15620,10 @@
         "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
           "symbol": "JUNO",
           "netTokens": 592798
+        },
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "netTokens": 3
         }
       },
       "profitByMint": {
@@ -15628,6 +15632,12 @@
           "buys": 16,
           "sells": 0,
           "netTokens": 592798
+        },
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 3
         }
       },
       "chain": "base",
@@ -16372,6 +16382,60 @@
         }
       },
       "firstSeen": "2026-03-14T15:19:10.181Z"
+    },
+    "0xa385f5924c5c4013dbd92b5c8781e1947783eb6e": {
+      "holdings": {
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "netTokens": 9859606
+        }
+      },
+      "profitByMint": {
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "buys": 135,
+          "sells": 364,
+          "netTokens": 9859606
+        }
+      },
+      "chain": "bsc",
+      "firstSeen": "2026-03-14T15:50:19.661Z"
+    },
+    "0x02443be3f335af2b5dbcf1cb074e5e5731d3be8a": {
+      "holdings": {
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "netTokens": 348
+        }
+      },
+      "profitByMint": {
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 348
+        }
+      },
+      "chain": "bsc",
+      "firstSeen": "2026-03-14T15:50:19.661Z"
+    },
+    "0xca68a8516d85a432a05287fbaaea8122b07980eb": {
+      "holdings": {
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "netTokens": 36
+        }
+      },
+      "profitByMint": {
+        "0x9de61558250431b3eb16f14652e35b031bc4355e": {
+          "symbol": "MOONDOGE",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 36
+        }
+      },
+      "chain": "bsc",
+      "firstSeen": "2026-03-14T15:50:19.661Z"
     }
   },
   "analyzed": [
