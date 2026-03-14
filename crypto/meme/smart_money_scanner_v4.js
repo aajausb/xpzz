@@ -31,16 +31,33 @@ const HELIUS_KEY_2 = process.env.HELIUS_API_KEY_2 || '824cb27b-0794-45ed-aa1c-07
 const HELIUS_PARSE_URL = `https://api.helius.xyz/v0/transactions/?api-key=${HELIUS_KEY_2}`;
 
 // ============ THRESHOLDS ============
-const MIN_FDV = 1_000_000;          // $1M
-const MIN_VOL_24H = 100_000;        // $100k
-const MAX_AGE_DAYS = 30;
-const MIN_PROFIT_PER_COIN = 2000;   // 单币盈利≥$2000
-const FINAL_MIN_COINS = 10;         // 至少10个币盈利
+const MIN_FDV = 500_000;             // $500k（降低以覆盖更多币）
+const MIN_VOL_24H = 50_000;         // $50k
+const MAX_AGE_DAYS = 90; // 90天，30天内币太少
+const MIN_PROFIT_PER_COIN = 500;    // 单币盈利≥$500（降低以覆盖小市值币）
+const FINAL_MIN_COINS = 3;          // 至少3个币盈利（降低门槛，先积累）
 const FINAL_MIN_AVG_PROFIT = 2000;  // 单币均利≥$2k
 const FINAL_MIN_WIN_RATE = 0.6;     // 胜率≥60%
 const SCAN_INTERVAL_MS = 60 * 1000; // 1分钟（Helius不限流，加快扫描）
 const GECKO_DELAY_MS = 2000;        // GeckoTerminal请求间隔
 const HELIUS_DELAY_MS = 200;        // Helius请求间隔（10万/天额度充裕）
+
+// SOL价格缓存（每10分钟更新一次）
+let cachedSolPrice = 88;
+let solPriceUpdatedAt = 0;
+async function getSolPrice() {
+  if (Date.now() - solPriceUpdatedAt < 10 * 60 * 1000) return cachedSolPrice;
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+    const d = await r.json();
+    if (d.solana?.usd) {
+      cachedSolPrice = d.solana.usd;
+      solPriceUpdatedAt = Date.now();
+      log('INFO', `SOL价格更新: $${cachedSolPrice}`);
+    }
+  } catch {}
+  return cachedSolPrice;
+}
 
 // ============ Logger ============
 function log(level, msg) {
@@ -95,14 +112,24 @@ async function discoverCoins() {
   }
 
   // === 数据源1: DexScreener搜索 ===
-  const queries = ['pump solana', 'meme solana', 'ai solana', 'war solana', 'dog solana', 'agent solana',
-    'cat solana', 'frog solana', 'trump solana', 'fight solana', 'moon solana', 'degen solana',
-    'pepe solana', 'bonk solana', 'chad solana', 'dragon solana', 'ninja solana',
-    'smith solana', 'sos solana', 'drone solana', 'shape solana', 'lobster solana',
-    'punch solana', 'cash solana', 'gold solana', 'baby solana', 'king solana',
-    'ape solana', 'bear solana', 'bull solana', 'fox solana', 'wolf solana',
-    'bird solana', 'fish solana', 'panda solana', 'tiger solana', 'lion solana',
-    'whale solana', 'shark solana', 'monkey solana', 'rabbit solana', 'rocket solana'];
+  // 80+叙事关键词全覆盖（DexScreener不限流）
+  const queries = [
+    'trump', 'elon', 'doge', 'shib', 'pepe', 'wojak', 'chad', 'based',
+    'ape', 'monkey', 'cat', 'dog', 'frog', 'bird', 'fish', 'bear', 'bull',
+    'moon', 'rocket', 'diamond', 'gem', 'gold', 'silver',
+    'ai', 'gpt', 'agent', 'bot', 'neural', 'quantum', 'cyber',
+    'war', 'fight', 'punch', 'kill', 'dead', 'doom', 'chaos',
+    'baby', 'mini', 'mega', 'super', 'ultra', 'hyper', 'turbo',
+    'cash', 'money', 'rich', 'king', 'queen', 'lord', 'god',
+    'meme', 'joke', 'lol', 'kek', 'cope', 'seethe',
+    'sol', 'eth', 'btc', 'bnb', 'avax',
+    'punk', 'pixel', 'nft', 'art', 'game',
+    'china', 'japan', 'korea',
+    'whale', 'shark', 'dragon', 'phoenix', 'wolf', 'lion', 'tiger',
+    'ninja', 'samurai', 'pirate', 'wizard', 'knight',
+    'pump solana', 'meme solana', 'ai solana', 'degen solana',
+    'smith', 'sos', 'drone', 'shape', 'lobster', 'runner', 'afk', 'birb',
+  ];
   for (const q of queries) {
     try {
       const r = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(q)}`);
@@ -159,16 +186,20 @@ async function discoverCoins() {
     }
   } catch {}
 
-  // === 数据源4: CoinGecko预存数据 ===
-  try {
-    const cgFile = path.join(DATA_DIR, 'coingecko_pumpfun.json');
-    const cgCoins = loadJSON(cgFile, []);
-    for (const c of cgCoins) {
-      if (c.mint && c.mc >= MIN_FDV) {
-        addCoin(c.symbol, c.mint, '', c.mc, 0, 0);
+  // === 数据源4: 预存数据（CoinGecko + DexScreener批量） ===
+  for (const file of ['coingecko_pumpfun.json', 'dexscreener_coins.json']) {
+    try {
+      const f = path.join(DATA_DIR, file);
+      const coins = loadJSON(f, []);
+      for (const c of coins) {
+        const mint = c.mint || c.address;
+        const mc = c.mc || c.fdv || c.market_cap || 0;
+        if (mint && mc >= MIN_FDV) {
+          addCoin(c.symbol, mint, c.pool || '', mc, c.vol || 0, c.ageD || 0);
+        }
       }
-    }
-  } catch {}
+    } catch {}
+  }
 
   saveJSON(CANDIDATES_FILE, candidates);
   // 按mint去重scanned
@@ -184,8 +215,9 @@ async function scanCoin(coin) {
   const mint = coin.mint;
   if (!mint) {
     log('WARN', `  ${coin.symbol}: 没有mint地址，跳过`);
-    return [];
+    return { winners: [], associations: {} };
   }
+  const solPrice = await getSolPrice();
   const SOL_MINT = 'So11111111111111111111111111111111111111112';
 
   // 用Helius Address Transactions API拿SWAP交易
@@ -260,7 +292,7 @@ async function scanCoin(coin) {
       const isBuy = tokenReceived > tokenSent && (solSpent > 0 || isSwap);
       
       const solNet = solSpent - solReceived;
-      const solUsd = solNet * 170;
+      const solUsd = solNet * solPrice;
       
       if (!makers.has(addr)) makers.set(addr, { buys: 0, sells: 0, buyVol: 0, sellVol: 0, transfersIn: 0 });
       const rec = makers.get(addr);
@@ -303,9 +335,61 @@ async function scanCoin(coin) {
     }
   }
 
+  // === 关联分析：找分仓链（A买入→transfer给B→B卖出）===
+  const links = []; // { from, to, amount, txSig }
+  for (const tx of allTxs) {
+    const transfers = tx.tokenTransfers || [];
+    const isSwap = tx.type === 'SWAP' || tx.source === 'PUMP_AMM' || tx.source === 'JUPITER' || tx.source === 'RAYDIUM';
+    if (isSwap) continue; // 只看TRANSFER类型
+    
+    for (const tt of transfers) {
+      if (tt.mint !== mint) continue;
+      if (!tt.fromUserAccount || !tt.toUserAccount) continue;
+      if (tt.fromUserAccount === tt.toUserAccount) continue;
+      if ((tt.tokenAmount || 0) <= 0) continue;
+      
+      links.push({
+        from: tt.fromUserAccount,
+        to: tt.toUserAccount,
+        amount: tt.tokenAmount,
+        feePayer: tx.feePayer, // 发起人
+        time: tx.timestamp,
+      });
+    }
+  }
+  
+  // 构建关联图：如果A transfer给B，且B之后卖出了，A和B可能是同一实体
+  const associations = new Map(); // addr → Set of related addrs
+  for (const link of links) {
+    const receiver = link.to;
+    const sender = link.from;
+    const payer = link.feePayer;
+    
+    // 如果接收者有卖出记录，关联发送者/付费者
+    const receiverData = makers.get(receiver);
+    if (receiverData && receiverData.sells > 0) {
+      // 关联 feePayer ↔ receiver
+      if (payer && payer !== receiver) {
+        if (!associations.has(payer)) associations.set(payer, new Set());
+        if (!associations.has(receiver)) associations.set(receiver, new Set());
+        associations.get(payer).add(receiver);
+        associations.get(receiver).add(payer);
+      }
+      // 也关联 sender ↔ receiver（token account层面）
+      if (sender && sender !== receiver) {
+        if (!associations.has(sender)) associations.set(sender, new Set());
+        if (!associations.has(receiver)) associations.set(receiver, new Set());
+        associations.get(sender).add(receiver);
+        associations.get(receiver).add(sender);
+      }
+    }
+  }
+
   const transferSellCount = winners.filter(w => w.pattern === 'transfer_sell').length;
-  log('INFO', `  ${coin.symbol}: ${makers.size} 地址, ${winners.length} 盈利>$${MIN_PROFIT_PER_COIN} (其中${transferSellCount}个转入卖出模式)`);
-  return winners;
+  const linkCount = associations.size > 0 ? [...associations.values()].reduce((a, s) => a + s.size, 0) / 2 : 0;
+  log('INFO', `  ${coin.symbol}: ${makers.size} 地址, ${winners.length} 盈利>$${MIN_PROFIT_PER_COIN} (${transferSellCount}转入卖出, ${Math.round(linkCount)}关联对)`);
+  
+  return { winners, associations: Object.fromEntries([...associations].map(([k, v]) => [k, [...v]])) };
 }
 
 // ============ Step 3: Bot detection ============
@@ -365,19 +449,65 @@ async function isBot(address) {
   }
 }
 
-// ============ Step 4: Evaluate & promote ============
+// ============ Step 4: Evaluate & promote (含关联合并) ============
 async function evaluateWalletPool() {
-  const pool = loadJSON(WALLET_POOL_FILE, { wallets: {} });
+  const pool = loadJSON(WALLET_POOL_FILE, { wallets: {}, associations: {} });
   const smartWallets = loadJSON(WALLETS_FILE, { wallets: [], lastScan: null });
 
   const existingAddrs = new Set(smartWallets.wallets.map(w => w.address));
+  const existingEntities = new Set(smartWallets.wallets.map(w => w.entityId).filter(Boolean));
   let promoted = 0;
 
-  for (const [addr, data] of Object.entries(pool.wallets)) {
-    if (existingAddrs.has(addr)) continue;
+  // === 构建关联实体（Union-Find）===
+  const parent = {};
+  function find(x) { return parent[x] ? (parent[x] = find(parent[x])) : x; }
+  function union(a, b) { parent[find(a)] = find(b); }
+  
+  for (const [addr, related] of Object.entries(pool.associations || {})) {
+    for (const r of related) {
+      union(addr, r);
+    }
+  }
+  
+  // 按实体分组
+  const entities = new Map(); // rootAddr → [addr1, addr2, ...]
+  for (const addr of Object.keys(pool.wallets)) {
+    const root = find(addr);
+    if (!entities.has(root)) entities.set(root, []);
+    entities.get(root).push(addr);
+  }
+  
+  log('INFO', `实体分析: ${entities.size} 个实体 (${Object.keys(pool.wallets).length} 个地址)`);
+  const multiAddrEntities = [...entities.values()].filter(e => e.length > 1);
+  if (multiAddrEntities.length > 0) {
+    log('INFO', `  多地址实体: ${multiAddrEntities.length} 个 (最大: ${Math.max(...multiAddrEntities.map(e => e.length))}地址)`);
+  }
 
-    const coins = Object.keys(data.coins);
-    const profits = Object.values(data.coins).map(c => c.profit);
+  // === 评估每个实体 ===
+  for (const [root, addrs] of entities) {
+    // 如果实体已被评估过，跳过
+    const entityId = addrs.sort().join('+').slice(0, 80);
+    if (existingEntities.has(entityId)) continue;
+    if (addrs.some(a => existingAddrs.has(a))) continue;
+
+    // 合并所有地址的币种数据
+    const mergedCoins = {};
+    for (const addr of addrs) {
+      const data = pool.wallets[addr];
+      if (!data?.coins) continue;
+      for (const [symbol, coinData] of Object.entries(data.coins)) {
+        if (!mergedCoins[symbol]) {
+          mergedCoins[symbol] = { profit: 0, buys: 0, sells: 0, transfersIn: 0 };
+        }
+        mergedCoins[symbol].profit += coinData.profit;
+        mergedCoins[symbol].buys += coinData.buys || 0;
+        mergedCoins[symbol].sells += coinData.sells || 0;
+        mergedCoins[symbol].transfersIn += coinData.transfersIn || 0;
+      }
+    }
+
+    const coins = Object.keys(mergedCoins);
+    const profits = Object.values(mergedCoins).map(c => c.profit);
     const winningCoins = profits.filter(p => p > 0).length;
     const totalCoins = coins.length;
     const winRate = totalCoins > 0 ? winningCoins / totalCoins : 0;
@@ -388,33 +518,40 @@ async function evaluateWalletPool() {
     if (avgProfit < FINAL_MIN_AVG_PROFIT) continue;
     if (winRate < FINAL_MIN_WIN_RATE) continue;
 
-    // Bot check
-    log('INFO', `评估 ${addr.slice(0, 16)}... coins:${totalCoins} winRate:${(winRate * 100).toFixed(0)}% avgProfit:$${avgProfit.toFixed(0)}`);
-    const botCheck = await isBot(addr);
+    // Bot check (查主地址)
+    const mainAddr = addrs[0]; // 用第一个地址做bot检查
+    log('INFO', `评估实体 ${mainAddr.slice(0, 16)}... (${addrs.length}地址) coins:${totalCoins} winRate:${(winRate * 100).toFixed(0)}% avgProfit:$${avgProfit.toFixed(0)}`);
+    const botCheck = await isBot(mainAddr);
     await new Promise(r => setTimeout(r, 500));
 
     if (botCheck.isBot) {
       log('INFO', `  ❌ Bot: ${botCheck.reason}`);
-      pool.wallets[addr].isBot = true;
+      pool.wallets[mainAddr].isBot = true;
       continue;
     }
 
     // Promote!
-    log('INFO', `  ✅ 聪明钱入库! ${coins.join(',')} winRate:${(winRate * 100).toFixed(0)}% avgProfit:$${avgProfit.toFixed(0)}`);
+    const totalProfit = profits.reduce((a, b) => a + b, 0);
+    log('INFO', `  ✅ 聪明钱入库! ${addrs.length}地址, ${coins.join(',')} winRate:${(winRate * 100).toFixed(0)}% avgProfit:$${avgProfit.toFixed(0)} total:$${totalProfit.toFixed(0)}`);
     smartWallets.wallets.push({
-      address: addr,
+      address: mainAddr,
+      relatedAddresses: addrs.length > 1 ? addrs : undefined,
+      entityId,
       chain: 'solana',
-      label: `sm_v4_${coins.length}coins`,
-      totalProfit: profits.reduce((a, b) => a + b, 0),
+      label: addrs.length > 1 
+        ? `sm_v4_entity_${addrs.length}addr_${coins.length}coins` 
+        : `sm_v4_${coins.length}coins`,
+      totalProfit: Math.round(totalProfit),
       avgProfit: Math.round(avgProfit),
       winRate: Math.round(winRate * 100),
       coins,
-      coinsDetail: data.coins,
+      coinsDetail: mergedCoins,
       source: 'scanner_v4',
       addedAt: new Date().toISOString(),
     });
     promoted++;
-    existingAddrs.add(addr);
+    for (const a of addrs) existingAddrs.add(a);
+    existingEntities.add(entityId);
   }
 
   if (promoted > 0) {
@@ -441,7 +578,7 @@ async function main() {
       // Step 1: Discover
       const candidates = await discoverCoins();
       const scannedSet = new Set(candidates.scanned || []);
-      const pending = candidates.coins.filter(c => !scannedSet.has(c.pool));
+      const pending = candidates.coins.filter(c => c.mint && !scannedSet.has(c.mint));
 
       if (pending.length === 0) {
         log('INFO', '无待扫描币，等待下一轮发现...');
@@ -453,10 +590,15 @@ async function main() {
       const toScan = pending.slice(0, 5);
       const pool = loadJSON(WALLET_POOL_FILE, { wallets: {} });
 
+      // 关联表：addr → Set of related addrs
+      if (!pool.associations) pool.associations = {};
+      
       for (const coin of toScan) {
-        const winners = await scanCoin(coin);
+        const result = await scanCoin(coin);
+        const winners = result.winners || result; // 兼容
+        const assoc = result.associations || {};
 
-        for (const w of winners) {
+        for (const w of (Array.isArray(winners) ? winners : [])) {
           if (!pool.wallets[w.address]) {
             pool.wallets[w.address] = { coins: {}, firstSeen: new Date().toISOString() };
           }
@@ -464,8 +606,18 @@ async function main() {
             profit: w.profit,
             buys: w.buys,
             sells: w.sells,
+            transfersIn: w.transfersIn || 0,
+            pattern: w.pattern || 'normal',
             pool: coin.pool,
           };
+        }
+        
+        // 合并关联关系
+        for (const [addr, related] of Object.entries(assoc)) {
+          if (!pool.associations[addr]) pool.associations[addr] = [];
+          for (const r of related) {
+            if (!pool.associations[addr].includes(r)) pool.associations[addr].push(r);
+          }
         }
 
         // Mark as scanned (by mint)
