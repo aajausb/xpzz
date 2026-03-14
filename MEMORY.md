@@ -203,4 +203,10 @@
   - 脚本：seed_finder.js(自动找种子) + wallet_miner.js(挖钱包)
 - **涉及具体原因先查数据再回答** — LYN事件：说"扫描漏了"实际是价差1.88%超限
 - **不同交易所同一币结算频率可能不同** — ICX: BN 1h结算 / BY 8h结算
+- **币安Web3 Skills Hub是meme研究金矿**(2026-03-14)：
+  - GitHub `binance/binance-skills-hub`，免费无需API Key
+  - Address PnL Rank API 一个请求同时拿到聪明钱钱包+种子币
+  - 比DexScreener/GMGN/GeckoTerminal强一万倍
+  - 支持 Solana(CT_501) / BSC(56) / Base(8453)
+  - 首次拉取：100个顶级钱包 + 160个种子币
 - **新session启动后不能只看文件记忆** — 关键状态（引擎是否在跑、有无持仓、余额）必须查实际API/systemctl验证，文件可能是过期的

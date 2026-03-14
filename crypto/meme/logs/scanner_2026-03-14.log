@@ -1870,3 +1870,167 @@
 [2026-03-14T09:58:20.234Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
 [2026-03-14T09:58:31.547Z] [INFO]   无交易数据，跳过
 [2026-03-14T09:58:31.547Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:00:11.902Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:00:11.903Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:00:11.992Z] [INFO] SOL价格: $86.84
+[2026-03-14T10:00:52.061Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:00:58.139Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:01:04.222Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:01:04.223Z] [INFO] 发现 79 个币 (甜蜜区$1M-$50M: 49个, 丢弃>$500M)
+[2026-03-14T10:01:05.769Z] [INFO] 跳过 [SOLANA] Sheep ($0.8M): no_kline_22h_old_small
+[2026-03-14T10:01:07.578Z] [INFO] 跳过 [SOLANA] SMITH ($0.7M): no_kline_8h_old_small
+[2026-03-14T10:01:09.270Z] [INFO] 跳过 [SOLANA] GROKIUS ($0.6M): no_kline_551h_old_small
+[2026-03-14T10:01:09.274Z] [INFO] 钱包池: 406 个, 待分析: 304
+[2026-03-14T10:01:09.274Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:01:19.774Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:01:19.775Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:03:08.934Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:03:08.934Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:03:09.020Z] [INFO] SOL价格: $86.84
+[2026-03-14T10:03:53.968Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:04:00.105Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:04:06.171Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:04:06.172Z] [INFO] 发现 87 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:04:08.178Z] [INFO] ✓ [BASE] ODAI ($6.6M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T10:04:08.178Z] [INFO] 查买家: [BASE] ODAI ($6.6M) mint:0x0086cff0c1e5d1
+[2026-03-14T10:04:20.598Z] [INFO]   EVM base: 2388 transfer events
+[2026-03-14T10:04:20.603Z] [INFO]   ODAI: 20 个活跃买家
+[2026-03-14T10:04:22.984Z] [INFO] ✓ [BASE] CLAWNCH ($5.1M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T10:04:22.984Z] [INFO] 查买家: [BASE] CLAWNCH ($5.1M) mint:0xa1f72459dfa10b
+[2026-03-14T10:04:34.889Z] [INFO]   EVM base: 2967 transfer events
+[2026-03-14T10:04:34.894Z] [INFO]   CLAWNCH: 20 个活跃买家
+[2026-03-14T10:04:37.115Z] [INFO] ✓ [BASE] MOLT ($3.9M) 慢涨6x (30天, 最大单日7.2x) [slow_pump]
+[2026-03-14T10:04:37.116Z] [INFO] 查买家: [BASE] MOLT ($3.9M) mint:0xb695559b26bb2c
+[2026-03-14T10:04:51.154Z] [INFO]   EVM base: 7180 transfer events
+[2026-03-14T10:04:51.166Z] [INFO]   MOLT: 20 个活跃买家
+[2026-03-14T10:04:51.171Z] [INFO] 钱包池: 460 个, 待分析: 358
+[2026-03-14T10:04:51.172Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:05:03.253Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:05:03.254Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:06:50.902Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:06:50.902Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:06:50.990Z] [INFO] SOL价格: $86.87
+[2026-03-14T10:07:32.773Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:07:38.942Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:07:45.008Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:07:45.015Z] [INFO] 发现 87 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:07:46.629Z] [INFO] ✓ [BASE] BOTCOIN ($3.6M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T10:07:46.630Z] [INFO] 查买家: [BASE] BOTCOIN ($3.6M) mint:0xa6018779773408
+[2026-03-14T10:07:59.455Z] [INFO]   EVM base: 5591 transfer events
+[2026-03-14T10:07:59.465Z] [INFO]   BOTCOIN: 20 个活跃买家
+[2026-03-14T10:08:01.883Z] [INFO] 跳过 [BASE] ROBOTMONEY ($1.6M): close_only_1.9x
+[2026-03-14T10:08:03.511Z] [INFO] ✓ [BASE] JUNO ($1.5M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T10:08:03.511Z] [INFO] 查买家: [BASE] JUNO ($1.5M) mint:0x4e6c9f48f73e54
+[2026-03-14T10:08:15.722Z] [INFO]   EVM base: 2363 transfer events
+[2026-03-14T10:08:15.725Z] [INFO]   JUNO: 20 个活跃买家
+[2026-03-14T10:08:15.731Z] [INFO] 钱包池: 497 个, 待分析: 395
+[2026-03-14T10:08:15.731Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:08:27.349Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:08:27.349Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:10:12.402Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:10:12.402Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:10:12.489Z] [INFO] SOL价格: $86.88
+[2026-03-14T10:10:55.241Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:11:01.381Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:11:07.797Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:11:07.798Z] [INFO] 发现 88 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:11:09.345Z] [INFO] ✓ [BASE] SAIRI ($1.3M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T10:11:09.345Z] [INFO] 查买家: [BASE] SAIRI ($1.3M) mint:0xde61878b0b21ce
+[2026-03-14T10:11:19.989Z] [INFO]   EVM base: 1102 transfer events
+[2026-03-14T10:11:19.991Z] [INFO]   SAIRI: 20 个活跃买家
+[2026-03-14T10:11:22.375Z] [INFO] 跳过 [BSC] Wojak ($0.6M): spike_123x_in_1day
+[2026-03-14T10:11:23.906Z] [INFO] 跳过 [SOLANA] WhiteHouse ($0.6M): no_kline_209h_old_small
+[2026-03-14T10:11:23.909Z] [INFO] 钱包池: 516 个, 待分析: 414
+[2026-03-14T10:11:23.909Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:11:34.815Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:11:34.815Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:12:51.652Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:12:51.653Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:12:51.744Z] [INFO] SOL价格: $86.87
+[2026-03-14T10:13:34.326Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:13:40.480Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:13:46.555Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:13:46.556Z] [INFO] 发现 88 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:13:48.172Z] [INFO] 跳过 [BASE] LITCOIN ($0.6M): no_kline_422h_old_small
+[2026-03-14T10:13:49.874Z] [INFO] 跳过 [BSC] AGENT ($0.6M): no_kline_244h_old_small
+[2026-03-14T10:13:51.461Z] [INFO] 跳过 [SOLANA] Jellybean ($0.6M): no_kline_736h_old_small
+[2026-03-14T10:13:51.465Z] [INFO] 钱包池: 516 个, 待分析: 414
+[2026-03-14T10:13:51.465Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:14:01.632Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:14:01.632Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:15:43.654Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:15:43.654Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:15:43.737Z] [INFO] SOL价格: $86.83
+[2026-03-14T10:16:25.534Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:16:31.682Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:16:37.749Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:16:37.750Z] [INFO] 发现 89 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:16:39.297Z] [INFO] 跳过 [BSC] MemeClaw ($0.6M): no_kline_1h_old_small
+[2026-03-14T10:16:40.833Z] [INFO] 跳过 [SOLANA] abcdefg ($0.5M): no_kline_174h_old_small
+[2026-03-14T10:16:42.869Z] [INFO] 跳过 [BSC] OpenClaw ($0.5M): no_kline_22h_old_small
+[2026-03-14T10:16:42.872Z] [INFO] 钱包池: 516 个, 待分析: 414
+[2026-03-14T10:16:42.872Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:16:53.130Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:16:53.131Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:18:25.152Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:18:25.152Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:18:25.240Z] [INFO] SOL价格: $86.82
+[2026-03-14T10:19:07.305Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:19:13.444Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:19:19.492Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:19:19.493Z] [INFO] 发现 89 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:19:21.344Z] [INFO] 跳过 [SOLANA] JEW ($0.5M): no_kline_85h_old_small
+[2026-03-14T10:19:22.879Z] [INFO] 跳过 [BSC] frogs ($0.5M): no_kline_7h_old_small
+[2026-03-14T10:19:22.882Z] [INFO] 钱包池: 516 个, 待分析: 414
+[2026-03-14T10:19:22.882Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:19:33.989Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:19:33.989Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:21:08.653Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:21:08.654Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:21:08.742Z] [INFO] SOL价格: $86.81
+[2026-03-14T10:21:50.516Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:21:56.653Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:22:02.979Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:22:02.980Z] [INFO] 发现 90 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:22:04.828Z] [INFO] ✓ [BASE] GHST ($106.3M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T10:22:04.828Z] [INFO] 查买家: [BASE] GHST ($106.3M) mint:0xac780b6e4ee505
+[2026-03-14T10:22:13.852Z] [INFO]   EVM base: 8 transfer events
+[2026-03-14T10:22:13.853Z] [INFO]   GHST: 2 个活跃买家
+[2026-03-14T10:22:13.859Z] [INFO] 钱包池: 517 个, 待分析: 415
+[2026-03-14T10:22:13.859Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:22:26.133Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:22:26.133Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:23:49.158Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:23:49.159Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:23:49.244Z] [INFO] SOL价格: $86.8
+[2026-03-14T10:24:32.324Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:24:38.471Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:24:44.527Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:24:44.529Z] [INFO] 发现 90 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:24:44.535Z] [INFO] 钱包池: 517 个, 待分析: 415
+[2026-03-14T10:24:44.535Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:24:55.663Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:24:55.663Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:26:20.403Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:26:20.403Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:26:20.488Z] [INFO] SOL价格: $86.8
+[2026-03-14T10:27:05.408Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:27:11.552Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:27:17.613Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:27:17.614Z] [INFO] 发现 91 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:27:19.338Z] [INFO] 跳过 [SOLANA] RUNNER ($0.5M): no_kline_0h_old_small
+[2026-03-14T10:27:19.341Z] [INFO] 钱包池: 517 个, 待分析: 415
+[2026-03-14T10:27:19.341Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:27:30.529Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:27:30.529Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...
+[2026-03-14T10:28:52.905Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T10:28:52.905Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T10:28:52.998Z] [INFO] SOL价格: $86.78
+[2026-03-14T10:29:35.768Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T10:29:41.841Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T10:29:47.904Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T10:29:47.905Z] [INFO] 发现 91 个币 (甜蜜区$1M-$50M: 56个, 丢弃>$500M)
+[2026-03-14T10:29:47.912Z] [INFO] 钱包池: 517 个, 待分析: 415
+[2026-03-14T10:29:47.912Z] [INFO] 分析钱包: [BSC] 0xb710fb9806258fdc2a...
+[2026-03-14T10:29:59.435Z] [INFO]   无交易数据，跳过
+[2026-03-14T10:29:59.435Z] [INFO] 分析钱包: [BSC] 0x238a35880837970208...

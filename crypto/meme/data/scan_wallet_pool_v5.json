@@ -7306,6 +7306,10 @@
         "0x6907a5986c4950bdaf2f81828ec0737ce787519f": {
           "symbol": "ZAMA",
           "netTokens": 0
+        },
+        "0xac780b6e4ee50585df265c7766cc2bed51e43fb8": {
+          "symbol": "GHST",
+          "netTokens": 165220
         }
       },
       "profitByMint": {
@@ -7314,6 +7318,12 @@
           "buys": 2,
           "sells": 0,
           "netTokens": 0
+        },
+        "0xac780b6e4ee50585df265c7766cc2bed51e43fb8": {
+          "symbol": "GHST",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 165220
         }
       },
       "chain": "bsc",
@@ -8853,6 +8863,22 @@
         "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07": {
           "symbol": "CLAWD",
           "netTokens": 896101495
+        },
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 394153765
+        },
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 366006595
+        },
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 850396991
+        },
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 408296352
         }
       },
       "profitByMint": {
@@ -8867,6 +8893,30 @@
           "buys": 512,
           "sells": 301,
           "netTokens": 896101495
+        },
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 508,
+          "sells": 445,
+          "netTokens": 394153765
+        },
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 942,
+          "sells": 830,
+          "netTokens": 366006595
+        },
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 592,
+          "sells": 524,
+          "netTokens": 850396991
+        },
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 258,
+          "sells": 262,
+          "netTokens": 408296352
         }
       },
       "chain": "base",
@@ -9219,6 +9269,10 @@
         "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07": {
           "symbol": "CLAWD",
           "netTokens": 57069426
+        },
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 116432750
         }
       },
       "profitByMint": {
@@ -9227,6 +9281,12 @@
           "buys": 14,
           "sells": 1,
           "netTokens": 57069426
+        },
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 26,
+          "sells": 23,
+          "netTokens": 116432750
         }
       },
       "chain": "base",
@@ -9339,6 +9399,10 @@
         "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07": {
           "symbol": "CLAWD",
           "netTokens": 19381183
+        },
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 17808066
         }
       },
       "profitByMint": {
@@ -9347,6 +9411,12 @@
           "buys": 2,
           "sells": 0,
           "netTokens": 19381183
+        },
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 17808066
         }
       },
       "chain": "base",
@@ -9860,6 +9930,10 @@
         "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07": {
           "symbol": "FELIX",
           "netTokens": 51121576
+        },
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 194154375
         }
       },
       "profitByMint": {
@@ -9868,6 +9942,12 @@
           "buys": 4,
           "sells": 0,
           "netTokens": 51121576
+        },
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 11,
+          "sells": 0,
+          "netTokens": 194154375
         }
       },
       "chain": "base",
@@ -9986,6 +10066,10 @@
         "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07": {
           "symbol": "FELIX",
           "netTokens": 9589102
+        },
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 4703069
         }
       },
       "profitByMint": {
@@ -9994,6 +10078,12 @@
           "buys": 3,
           "sells": 0,
           "netTokens": 9589102
+        },
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 4703069
         }
       },
       "chain": "base",
@@ -11796,6 +11886,10 @@
         "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e": {
           "symbol": "OSO",
           "netTokens": 46016335
+        },
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 32516769
         }
       },
       "profitByMint": {
@@ -11804,6 +11898,12 @@
           "buys": 2,
           "sells": 0,
           "netTokens": 46016335
+        },
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 32516769
         }
       },
       "chain": "base",
@@ -12802,6 +12902,2014 @@
         }
       },
       "firstSeen": "2026-03-14T09:55:02.839Z"
+    },
+    "0xcdb2e93ebcb90757d4ae6cda369995b5b24d388d": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 197753330
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 197753330
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0xae3f5f96ff418888b4e3fe41a0fabbba9eed9670": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 164568149
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 4,
+          "sells": 1,
+          "netTokens": 164568149
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0xbfd332523b05777b6e1e77bd09a862361b6431be": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 114156576
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 114156576
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x7731c6fbe420b7698540c22cfccba9be3f4ddfc7": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 90664113
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 90664113
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x77530de7b1d2f26ec07a09568caa07cd2da406f7": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 88244591
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 88244591
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x220f8de4ee6d5a1ff84261c0d11006f44f411ecf": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 61602771
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 61602771
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x19e9e1990dd8106f91866457b494a63a7b911fc7": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 42234451
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 6,
+          "sells": 0,
+          "netTokens": 42234451
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x24e5951aadc849b564f6ca6a7c624acf13047102": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 26590502
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 26590502
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0xfe20189fc9358f9243ddf5b6e158d4d23c0b86ed": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 25014796
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 25014796
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x2386491b64a37da61b94fe0139bcf829300c473d": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 24885212
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 24885212
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0xee28a7eaf877f846ccdd30123e0c555dcc7faef0": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 23406554
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 23406554
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x33bfd2470ae9e0cddf5b5c5a8e231f6481556c02": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 21569224
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 8,
+          "sells": 0,
+          "netTokens": 21569224
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x6c061911e7c3e30c55ebb79d55828e876b44003b": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 14299935
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 14299935
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0xd95677f6b9cc860b6fd54dc6554236a78e6ec8da": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 12048247
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 12048247
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x2316e51b93bf20cf157e3befda05eacab184e431": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 11177420
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 9,
+          "sells": 0,
+          "netTokens": 11177420
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0xb7fd00a38db2480bca8e62bb702371061058509c": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 8647562
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 8647562
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x7d4b6b55141f6b13c888f3af79dc6862f07748a6": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 8375794
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 8375794
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x519a0a9a4f2146cd7eb29aaeaaf22ba92429fc92": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 6440800
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 6440800
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x14926224168492cdc06461713b3011cd25d8c901": {
+      "holdings": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "netTokens": 6046868
+        }
+      },
+      "profitByMint": {
+        "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
+          "symbol": "ODAI",
+          "buys": 29,
+          "sells": 0,
+          "netTokens": 6046868
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:20.603Z"
+    },
+    "0x07da9c5d35028f578dfac5be6e5aaa8a835704f6": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 424031573
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 173,
+          "sells": 202,
+          "netTokens": 424031573
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x7ef91c1ce9dfe2812d947e05fdddaa1c07108be4": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 53542886
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 53542886
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0xd369f5bab78ff512a55e9f06732eed9b28347c65": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 39997130
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 39997130
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x05e21a27e7b78997000349e64dd7262bd9d4c6b8": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 35241263
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 36,
+          "sells": 0,
+          "netTokens": 35241263
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x137a48f028be804425428cdd1591675a583235e0": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 26355384
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 26355384
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x8db50600219d828a57c666ad055e9e41cdbbe40f": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 24145906
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 169,
+          "sells": 195,
+          "netTokens": 24145906
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x9eadc119e4547b9f5078b205b1fd9ed6c133fbde": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 20300198
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 6,
+          "sells": 0,
+          "netTokens": 20300198
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0xac7499364fd973c78bc8d81fbea563a93e7d11c9": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 15945754
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 15945754
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x274cc3156c32c1743f7926df1e5d473684dff791": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 14983608
+        },
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 12505756
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 14983608
+        },
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 12505756
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x88538812e41b89689f5e23871ef5d5ce2be0f987": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 14751755
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 6,
+          "sells": 0,
+          "netTokens": 14751755
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x74c6001f4dfa7f76edf75fbac6528c428cf29252": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 4199681
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 4199681
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x85def423aa19239cae527963fb131a14e5cb4bba": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 3635282
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 3635282
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x70f9a39a53097ee38e0aa0eca83773e79d5c6ead": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 3190950
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 3190950
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0xb1c3db530b9ba75466134363b345967f4041f049": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 2688693
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 2688693
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0x4aff1288eee7f87975c5d4fb10f07ce419687a72": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 2503730
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 2503730
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0xb16395a423162b2577a91d40171aaf28a214719f": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 2472837
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 26,
+          "sells": 18,
+          "netTokens": 2472837
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0xa2582ea1f039c4770d438d1d00cde5123956396e": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 2219650
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 6,
+          "sells": 0,
+          "netTokens": 2219650
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0xe56a1c457b2ea6bb60da7354e79542e9adb1bafd": {
+      "holdings": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "netTokens": 1950539
+        }
+      },
+      "profitByMint": {
+        "0xa1f72459dfa10bad200ac160ecd78c6b77a747be": {
+          "symbol": "CLAWNCH",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 1950539
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:34.894Z"
+    },
+    "0xd717f2d7b3cc48c5d77658bc88fc8f587484407f": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 245930210
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 245930210
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x9df6354d9a21082635b025a92da1983672c4b44d": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 162705536
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 162705536
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0xe4a0045c0ed4e703c56c5bbffab3ee0e58cad112": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 105537033
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 105537033
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x68b1675ed9dba46271eb95d7919e15612a7ff2ef": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 105302342
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 105302342
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0xecc41ea41592b4f8563454b27c62263443c7095c": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 50265216
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 50265216
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x174debea52ecad85daa976ce41770840d7520e68": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 42793902
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 42793902
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x332dcb860e2ca32016eb133200c0f05d31d856dc": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 22777804
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 22777804
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x327facc561234ebd02c933a4d4486fab6585c566": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 22072988
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 6,
+          "sells": 0,
+          "netTokens": 22072988
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x05e60f413f1e0f7189fd8eaef9a485b204b3ea0e": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 20529307
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 20529307
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x21105ef6805c52178a49af8f4de458434689ffb9": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 19999999
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 3,
+          "sells": 2,
+          "netTokens": 19999999
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0xaf64f47f6b27c8d69ae2950c71bb4899387e0139": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 19926887
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 7,
+          "sells": 7,
+          "netTokens": 19926887
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x55c23ff8058699d6ca8f67e0a6d90a599f009c8e": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 15157751
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 15,
+          "sells": 4,
+          "netTokens": 15157751
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x85fb468a5e65a537c5ac767776599708a3d41046": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 14746562
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 480,
+          "sells": 551,
+          "netTokens": 14746562
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0xd52a20159c1ddccbb1f48f53d931ced601e638c9": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 14243223
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 3,
+          "sells": 1,
+          "netTokens": 14243223
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x852ae1da9ec34848c0b1531e0a6c4e0c141c30f5": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 14122879
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 171,
+          "sells": 255,
+          "netTokens": 14122879
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x45ce6222bac62fdcdc37e70560270c5948d5661d": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 13072431
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 13072431
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0x7fb69c0c44a292078f5b8777700ca0f161a54748": {
+      "holdings": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "netTokens": 12747308
+        }
+      },
+      "profitByMint": {
+        "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
+          "symbol": "MOLT",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 12747308
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:04:51.166Z"
+    },
+    "0xb0ae8aaaa3ac7c38de9f89f1e027b4c44a560602": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 762992313
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 8,
+          "sells": 0,
+          "netTokens": 762992313
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xcf5f2d541eeb0fb4ca35f1973de5f2b02dfc3716": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 537719032
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 17,
+          "sells": 45,
+          "netTokens": 537719032
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xce3d7fe74550c84ebb77e43f0c7221f3e1bcc784": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 484449774
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 5,
+          "sells": 1,
+          "netTokens": 484449774
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x41554bdd7b646c7adf33d8609904c27d11747f93": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 201276054
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 201276054
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x2aeeb8e73d561939dfca111b50d77d19fb28b004": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 170881159
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 170881159
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x7d1f7c2ad3719ea2036047b7bd31226de7b6216d": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 132256962
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 132256962
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xa673e962941e0f87ce557989cbc7901560d349d6": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 104666666
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 104666666
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x731a615d6c512e642f2d4204502b7a9ce5298b64": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 84662527
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 84662527
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x4f80d6f0352149e0eff7d631650adebcca6cddf9": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 74690090
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 74690090
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x076056384028b4f9db21522cd603c5976111cc3a": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 65079125
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 65079125
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xe7830459675025b7535f47e5a146c0417b226a84": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 54210183
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 54210183
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xec6863d803daf59dfe3cad9fa1da51b2cc2c5247": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 52051942
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 4,
+          "sells": 1,
+          "netTokens": 52051942
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xda25cf8dedd08fc1f33ccecc507e14380ee92e55": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 41617837
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 1,
+          "netTokens": 41617837
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x659d2daaad03485217de5d5cf6d24859781c3933": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 41177057
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 41177057
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x92bff72e6c943a1348aedf15d68e758e811dec64": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 39045289
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 39045289
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x8f7d7d5dba5252fd73a10d8eabdd78d0fbc703b0": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 20289437
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 20289437
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x4ff1d40fb7b56665bf95d8d8e3a5320de46709a1": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 17817101
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 17817101
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x41e5ca51469631e96944a7be34a6875540c1fb80": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 17375023
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 17375023
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0x0f5369bd99d47896fd34a599b2ef4998ada2255d": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 15951952
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 4,
+          "sells": 2,
+          "netTokens": 15951952
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xc6a266bd7fb9a69932b4e0bf23e6921242a7c8ea": {
+      "holdings": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "netTokens": 15698289
+        }
+      },
+      "profitByMint": {
+        "0xa601877977340862ca67f816eb079958e5bd0ba3": {
+          "symbol": "BOTCOIN",
+          "buys": 4,
+          "sells": 1,
+          "netTokens": 15698289
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:07:59.466Z"
+    },
+    "0xe7d52b84e48bc10057b83350a4745bd69706e026": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 529647464
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 529647464
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x0712fabf212f06856036f7371d31f0689f825595": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 499636805
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 499636805
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0xf2aafffa10eeb133b6bda8b40aba2b5068c7d633": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 192640323
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 8,
+          "sells": 3,
+          "netTokens": 192640323
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0xe751d56c31dc1b16595a2cdfc94388687e26a674": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 185308769
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 185308769
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0xfc42939cbb374a79add437f2a9a805ff000476ab": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 107994929
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 107994929
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x6f320f066d41e8896da5baee732ab7d8a6b4f62f": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 93691486
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 93,
+          "sells": 109,
+          "netTokens": 93691486
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x84d2513cb5386b5cb270bfb4f9e2f8dfe70fa45e": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 76338251
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 82,
+          "sells": 89,
+          "netTokens": 76338251
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0xc880b406d7fea7eec6e2a64e6709c31ca0f5cee8": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 63810626
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 63810626
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x55a1438b4b666c4359909ac902c41be09c3b821a": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 41758858
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 41758858
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0xcd763667cd74543bd05c19386347441d3d3f6392": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 30177863
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 3,
+          "sells": 1,
+          "netTokens": 30177863
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x7c4239e9f001149264d11ad4bf2aeb9ba3d1001e": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 21882350
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 1,
+          "netTokens": 21882350
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x8b1ecbd94f9a37f2c87da0b9e32a9939feb900ff": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 17906398
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 17906398
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x05d15a4cbe199eb0afc3c27c71512b935b057d0f": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 7996489
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 7996489
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x2cffed5d56eb6a17662756ca0fdf350e732c9818": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 4686380
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 4686380
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x449f7257022271c0090b952691f76ab392be6a34": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 4568490
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 4568490
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x999425d38c264eaaea589ff7ee894cc30a1b00e8": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 1000000
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 1000000
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x5aafc1f252d544f744d17a4e734afd6efc47ede4": {
+      "holdings": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "netTokens": 592798
+        }
+      },
+      "profitByMint": {
+        "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
+          "symbol": "JUNO",
+          "buys": 16,
+          "sells": 0,
+          "netTokens": 592798
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:08:15.725Z"
+    },
+    "0x7ac06132222c3d3210c40943533285372d5913c8": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 340341866
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 340341866
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xf83b9883dae7068c6072861877815c245a752e7f": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 76091568
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 76091568
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x573e9a4f4452b1a3cf84c26ffbe06d620c86828e": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 64239451
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 4,
+          "sells": 2,
+          "netTokens": 64239451
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x8285672a488217b1952f762969c10b24085f1b8c": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 52479052
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 52479052
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xd07a952a2bc37fc2eacf37837df8d1f82dead713": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 50000000
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 50000000
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x188ff41da75f5e24c3ea3a3eda23fbae53dd47d6": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 49599491
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 8,
+          "sells": 0,
+          "netTokens": 49599491
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xa0557ba5f97aa13a93e2fb774e41e35982325288": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 37512590
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 4,
+          "sells": 5,
+          "netTokens": 37512590
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xfcda19539087896faf6798f913ff959747d02763": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 36979885
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 36979885
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x9a5c25afeb5350dfe3521b3e7de5909b388feba5": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 23089724
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 8,
+          "sells": 5,
+          "netTokens": 23089724
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xebac659e01ae595108d862920f77847a99c43270": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 22606123
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 22606123
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xeb28ca072ceb57ece28e686174c2cc577870f2d7": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 22014099
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 82,
+          "sells": 88,
+          "netTokens": 22014099
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xe2ceb91cf2fee0df00418175d2e5a0984f25973e": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 14250872
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 4,
+          "sells": 1,
+          "netTokens": 14250872
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xf3622742b1e446d92e45e22923ef11c2fcd55d68": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 10403643
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 159,
+          "sells": 0,
+          "netTokens": 10403643
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xfa906be8cb03ad5a348786b09c2c0b59b570672e": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 8786492
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 8786492
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xabbcfd3201337245a7f18df8ce490471a6b97748": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 7104387
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 7104387
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x7bf022b0a231cdda4e94e7028a631f7841695e42": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 3443225
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 3443225
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x97f458fa7ed4478e3c1d252376f638c01d88c37e": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 3167711
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 3167711
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0xb217a9fd012dcef7014d2fd987ba938abf78db30": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 3069943
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 3069943
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x2199b5623eec8408f73e2a697f6ac0b3770d5f41": {
+      "holdings": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "netTokens": 2367360
+        }
+      },
+      "profitByMint": {
+        "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
+          "symbol": "SAIRI",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 2367360
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:11:19.991Z"
+    },
+    "0x55adb1447661952531352ab340931bcffa1b0790": {
+      "holdings": {
+        "0xac780b6e4ee50585df265c7766cc2bed51e43fb8": {
+          "symbol": "GHST",
+          "netTokens": 18716923
+        }
+      },
+      "profitByMint": {
+        "0xac780b6e4ee50585df265c7766cc2bed51e43fb8": {
+          "symbol": "GHST",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 18716923
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T10:22:13.853Z"
     }
   },
   "analyzed": [
