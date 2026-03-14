@@ -25443,7 +25443,25 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:06.340Z"
+      "firstSeen": "2026-03-14T21:28:06.340Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 2,
+        "totalTokens": 1,
+        "profitableTokens": 1,
+        "totalProfitUsd": 147118,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 147118,
+            "buys": 0,
+            "sells": 370,
+            "spentSol": 0,
+            "receivedSol": 1684.2346765140014
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:00:08.649Z"
+      }
     },
     "CtZXb4Kg1y7ymPyTdXSTjtPTbwW8SvQFUmVcmWftuCri": {
       "holdings": {
@@ -25462,7 +25480,25 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:11.749Z"
+      "firstSeen": "2026-03-14T21:28:11.749Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 1,
+        "totalTokens": 1,
+        "profitableTokens": 1,
+        "totalProfitUsd": 135490,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 135490,
+            "buys": 0,
+            "sells": 301,
+            "spentSol": 0,
+            "receivedSol": 1551.4685382659998
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:02:24.674Z"
+      }
     },
     "5LHkaUSyapavmgcW3a3KPHMvpEmZJjipURkc7QY9zrE7": {
       "holdings": {
@@ -25481,7 +25517,177 @@
           "transfersIn": 1
         }
       },
-      "firstSeen": "2026-03-14T21:28:16.994Z"
+      "firstSeen": "2026-03-14T21:28:16.994Z",
+      "analysis": {
+        "txCount": 961,
+        "timeSpanDays": 114,
+        "totalTokens": 29,
+        "profitableTokens": 3,
+        "totalProfitUsd": 21536,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 42137,
+            "buys": 1,
+            "sells": 105,
+            "spentSol": 0,
+            "receivedSol": 482.4994085019999
+          },
+          {
+            "mint": "7Hw9K6tkG2wzeRv5LU7adiQDcnjgGGRA2UgPWbgAY5gr",
+            "profitUsd": 403,
+            "buys": 1,
+            "sells": 3,
+            "spentSol": 19.287058952000002,
+            "receivedSol": 23.897645846000003
+          },
+          {
+            "mint": "7MbfyGvtWJDDhHoY6nismhY3LLRcvEJPtUpjrVCayyHj",
+            "profitUsd": 13,
+            "buys": 1,
+            "sells": 2,
+            "spentSol": 15.336688952,
+            "receivedSol": 15.486690632
+          },
+          {
+            "mint": "DFCDGzUo95cHH3c6S11kxCaXwsYv6t53sQ1xUuqRt72g",
+            "profitUsd": -14,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.15877374800000002,
+            "receivedSol": 0
+          },
+          {
+            "mint": "E5RyoeXtwGS7JB7XYzEKPdLPh9JxJQTYZpS8Gr8hy8Pz",
+            "profitUsd": -20,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.232768668,
+            "receivedSol": 0
+          },
+          {
+            "mint": "6hkUi7DMqSopNU1vmxQHf1sA2skmQGwFgUpKsL5mWZ6f",
+            "profitUsd": -24,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.2743685619999999,
+            "receivedSol": 0
+          },
+          {
+            "mint": "LkW6Lk37bdvX4j3pmwRKDEu8LgZuBuRY1V8cgRyESrR",
+            "profitUsd": -42,
+            "buys": 3,
+            "sells": 2,
+            "spentSol": 0.49121701599999995,
+            "receivedSol": 0.009956394
+          },
+          {
+            "mint": "9dMB8vfuHpV7rK5GLNeB47tQEtpgaSpG3q3NYthr9Wn6",
+            "profitUsd": -49,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.5573486219999999,
+            "receivedSol": 0
+          },
+          {
+            "mint": "Bk1ekdFMYSie8FwXnWDutemTnwu5yEKQFHC4QYEVm5qp",
+            "profitUsd": -51,
+            "buys": 1,
+            "sells": 2,
+            "spentSol": 0.7265956219999999,
+            "receivedSol": 0.140890338
+          },
+          {
+            "mint": "CGTKNjw3KZ4vdo1i7Qs5PWprMYqQGPXy8nJj649n7h69",
+            "profitUsd": -55,
+            "buys": 4,
+            "sells": 4,
+            "spentSol": 5.145292072,
+            "receivedSol": 4.518621594
+          },
+          {
+            "mint": "EjamcKN1PixSzm3GiFgUaqCFXBMy3F51JKmbUqNF99S",
+            "profitUsd": -74,
+            "buys": 3,
+            "sells": 3,
+            "spentSol": 0.8556075,
+            "receivedSol": 0.010266792
+          },
+          {
+            "mint": "4CEAUsNYvZzAEHfFr2KdthotfxT7L7B83SiwizJtRr3q",
+            "profitUsd": -83,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.9484366399999999,
+            "receivedSol": 0
+          },
+          {
+            "mint": "6a1m9wVwJ6v9fKtFng9sBnDW78idGQrQWuRqSSHHMxbL",
+            "profitUsd": -108,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 5.705398424,
+            "receivedSol": 4.472758348
+          },
+          {
+            "mint": "FbADnvq86v6iA7PBziDEV1JBUbNBeYwiARqyLmpXmgPq",
+            "profitUsd": -109,
+            "buys": 1,
+            "sells": 8,
+            "spentSol": 119.006883286,
+            "receivedSol": 117.75537702399998
+          },
+          {
+            "mint": "4daQJJBzDZubnphZgfR1i44skANeXAi41jhsF9Qt39Ed",
+            "profitUsd": -110,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 1.2627229199999999,
+            "receivedSol": 0
+          },
+          {
+            "mint": "B28TLLvDzQAix7wLfArQTydmbXoge5aT63fGTrsvaKWE",
+            "profitUsd": -113,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 1.295512714,
+            "receivedSol": 0
+          },
+          {
+            "mint": "9ThxSkUitSTLxt5iKs2aT1oueQUz86mMi29QxmMdQto",
+            "profitUsd": -127,
+            "buys": 1,
+            "sells": 2,
+            "spentSol": 5.773688036,
+            "receivedSol": 4.314728712
+          },
+          {
+            "mint": "4AAg4kXxcQdGehm9JssEcgVcUYQpy4SmuSuWg7urU7Xy",
+            "profitUsd": -165,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 1.887867928,
+            "receivedSol": 0
+          },
+          {
+            "mint": "GLHJF4G3nTG4xAS1mAktGgtUWJQ2a7zABTYZz5yRMjrS",
+            "profitUsd": -238,
+            "buys": 1,
+            "sells": 3,
+            "spentSol": 41.24148458599999,
+            "receivedSol": 38.518742328
+          },
+          {
+            "mint": "6btQswYZNDs3g9rn76zvDMcsmMJNYrcQQ6g6VcAYwLoq",
+            "profitUsd": -310,
+            "buys": 3,
+            "sells": 2,
+            "spentSol": 3.554281278,
+            "receivedSol": 0.00570472
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:02:36.230Z"
+      }
     },
     "3iZXgMzqUuPFRP3Z8FqjSkf5JibeN4UoSKaYYZuHiVhc": {
       "holdings": {
@@ -25500,7 +25706,177 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:21.496Z"
+      "firstSeen": "2026-03-14T21:28:21.496Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 91,
+        "totalTokens": 21,
+        "profitableTokens": 3,
+        "totalProfitUsd": 156356,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 166665,
+            "buys": 1,
+            "sells": 405,
+            "spentSol": 0,
+            "receivedSol": 1908.456142897999
+          },
+          {
+            "mint": "8tk9vsF1VNsD38KEDKkNj9M5gvdiNDCeCN1ykkQzZFkL",
+            "profitUsd": 59,
+            "buys": 1,
+            "sells": 3,
+            "spentSol": 7.263937792,
+            "receivedSol": 7.939082994
+          },
+          {
+            "mint": "BXCZxGtSc17N5gYAmoeFHN2nphKp2VrUvJVgRze63quX",
+            "profitUsd": 10,
+            "buys": 1,
+            "sells": 2,
+            "spentSol": 3.853573296,
+            "receivedSol": 3.964240106
+          },
+          {
+            "mint": "LkW6Lk37bdvX4j3pmwRKDEu8LgZuBuRY1V8cgRyESrR",
+            "profitUsd": 0,
+            "buys": 3,
+            "sells": 2,
+            "spentSol": 0.01015712,
+            "receivedSol": 0.008453992
+          },
+          {
+            "mint": "6btQswYZNDs3g9rn76zvDMcsmMJNYrcQQ6g6VcAYwLoq",
+            "profitUsd": 0,
+            "buys": 2,
+            "sells": 2,
+            "spentSol": 0.00467856,
+            "receivedSol": 0.004667272
+          },
+          {
+            "mint": "Ag6ytkqhJPF2paQ5mBaQ7E8qqHwJATATFGhjWFqrQh8C",
+            "profitUsd": -18,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.20456479,
+            "receivedSol": 0
+          },
+          {
+            "mint": "GEyYzoHpk8Rr3BmmQncTqQH8nXebA3GKYwvjFM7t7VLk",
+            "profitUsd": -25,
+            "buys": 1,
+            "sells": 2,
+            "spentSol": 0.37394058399999996,
+            "receivedSol": 0.08473847400000001
+          },
+          {
+            "mint": "9dMB8vfuHpV7rK5GLNeB47tQEtpgaSpG3q3NYthr9Wn6",
+            "profitUsd": -44,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.500008982,
+            "receivedSol": 0
+          },
+          {
+            "mint": "3acnH1Hj7wij3psMbMzbR35nomxo6NFvamqbyZDyBtKm",
+            "profitUsd": -57,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.652235492,
+            "receivedSol": 0
+          },
+          {
+            "mint": "EzcTih5Jvc3Hr2qubECdF5ZFAT5cSUv6jZ4M8VM5uvUD",
+            "profitUsd": -63,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 0.7223257639999999,
+            "receivedSol": 0
+          },
+          {
+            "mint": "Hp5qKVocKdGBotXiXzWAmfMFLML6woSi9bEHn5qCFz4p",
+            "profitUsd": -98,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 1.1278613659999999,
+            "receivedSol": 0
+          },
+          {
+            "mint": "B4Zb4ZxHaQL1FM8372UBSH8dUPE5HYzvTkznp4ij2yVH",
+            "profitUsd": -163,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 1.863749462,
+            "receivedSol": 0
+          },
+          {
+            "mint": "72caMtV1M44j5stPphyG9bKUVtWMFBWgdJjjgXgQvAiL",
+            "profitUsd": -333,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 3.813083936,
+            "receivedSol": 0
+          },
+          {
+            "mint": "dNjCtbxb2M3gbqh8XMU4V4fMoNCjiXebZvwDoWCezUU",
+            "profitUsd": -404,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 5.250323716,
+            "receivedSol": 0.625974032
+          },
+          {
+            "mint": "6hP5SS7p43TUKxjh6LZPbZBy2b18sW4xVvuNchcGExci",
+            "profitUsd": -438,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 5.009833772,
+            "receivedSol": 0
+          },
+          {
+            "mint": "D9N2RBG2ieerLTYw16Z9t6TkptM7Nd4JhZNJ18xQ43oZ",
+            "profitUsd": -471,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 5.396372736,
+            "receivedSol": 0
+          },
+          {
+            "mint": "AwVw18RoKWVuWStQtsmZ4bpgkggqYcRPS2TsCAuqANw7",
+            "profitUsd": -603,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 6.901457828,
+            "receivedSol": 0
+          },
+          {
+            "mint": "CGTKNjw3KZ4vdo1i7Qs5PWprMYqQGPXy8nJj649n7h69",
+            "profitUsd": -667,
+            "buys": 4,
+            "sells": 1,
+            "spentSol": 10.851273987999999,
+            "receivedSol": 3.219247122
+          },
+          {
+            "mint": "3bCqbPS473GT7FdWQNvary2caxzQsRCEfeBeRRZpqtx1",
+            "profitUsd": -700,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 8.011811396,
+            "receivedSol": 0
+          },
+          {
+            "mint": "4a3EMFw6Gxf4sAwXJF6Z8AcW4QdFQEG9Ynxv2smMskJE",
+            "profitUsd": -3118,
+            "buys": 3,
+            "sells": 9,
+            "spentSol": 60.0111964,
+            "receivedSol": 24.3041436
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:02:58.340Z"
+      }
     },
     "DZpRUJC4grJ8nmRxssPbzRoqgA1TDWpL6RVxawtRpYS9": {
       "holdings": {
@@ -25519,7 +25895,25 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:25.743Z"
+      "firstSeen": "2026-03-14T21:28:25.743Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 2,
+        "totalTokens": 1,
+        "profitableTokens": 1,
+        "totalProfitUsd": 185621,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 185621,
+            "buys": 0,
+            "sells": 420,
+            "spentSol": 0,
+            "receivedSol": 2125.514062912
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:05:11.711Z"
+      }
     },
     "DWQsACm4crHGJEvZ2pDojX4Zif83dNgHRtugUyCoaqFU": {
       "holdings": {
@@ -25538,7 +25932,25 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:30.318Z"
+      "firstSeen": "2026-03-14T21:28:30.318Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 0,
+        "totalTokens": 1,
+        "profitableTokens": 1,
+        "totalProfitUsd": 26484,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 26484,
+            "buys": 0,
+            "sells": 48,
+            "spentSol": 0,
+            "receivedSol": 303.268837976
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:05:34.223Z"
+      }
     },
     "9nGHadp8CXDP96giVG8Gic2uw4ujAsezkmiVPVAhzJNo": {
       "holdings": {
@@ -25557,7 +25969,25 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:35.276Z"
+      "firstSeen": "2026-03-14T21:28:35.276Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 2,
+        "totalTokens": 1,
+        "profitableTokens": 1,
+        "totalProfitUsd": 196712,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 196712,
+            "buys": 0,
+            "sells": 433,
+            "spentSol": 0,
+            "receivedSol": 2252.5157375600006
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:05:54.969Z"
+      }
     },
     "2eEhzg5Mi8PbbHqPanQRdmYAC5z6ovpfRq2xaj3WtQeE": {
       "holdings": {
@@ -25576,7 +26006,33 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:40.165Z"
+      "firstSeen": "2026-03-14T21:28:40.165Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 2,
+        "totalTokens": 2,
+        "profitableTokens": 1,
+        "totalProfitUsd": 214860,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 214897,
+            "buys": 0,
+            "sells": 563,
+            "spentSol": 0,
+            "receivedSol": 2460.7492908600025
+          },
+          {
+            "mint": "9ypsRRXdq37xJaQGgseb2aYtn2aLdVpdxoEDgrpX5cno",
+            "profitUsd": -37,
+            "buys": 1,
+            "sells": 1,
+            "spentSol": 0.42291968399999996,
+            "receivedSol": 0
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:08:13.110Z"
+      }
     },
     "6hLB3rkkRk7bz4ePtKDjkyJgCFGYpS6xoGL9szzjKGvg": {
       "holdings": {
@@ -25595,7 +26051,33 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:45.648Z"
+      "firstSeen": "2026-03-14T21:28:45.648Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 1,
+        "totalTokens": 2,
+        "profitableTokens": 1,
+        "totalProfitUsd": 99326,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 100073,
+            "buys": 0,
+            "sells": 228,
+            "spentSol": 0,
+            "receivedSol": 1145.916880326
+          },
+          {
+            "mint": "EzcTih5Jvc3Hr2qubECdF5ZFAT5cSUv6jZ4M8VM5uvUD",
+            "profitUsd": -747,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 8.550633123999999,
+            "receivedSol": 0
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:08:34.995Z"
+      }
     },
     "9sDDvfya38o4bDu6u9gGzvvxjSJLwu5TKtEFwwSxMqPy": {
       "holdings": {
@@ -25614,7 +26096,25 @@
           "transfersIn": 0
         }
       },
-      "firstSeen": "2026-03-14T21:28:53.346Z"
+      "firstSeen": "2026-03-14T21:28:53.346Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 1,
+        "totalTokens": 1,
+        "profitableTokens": 1,
+        "totalProfitUsd": 67101,
+        "tokens": [
+          {
+            "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+            "profitUsd": 67101,
+            "buys": 0,
+            "sells": 160,
+            "spentSol": 0,
+            "receivedSol": 768.3610985140001
+          }
+        ],
+        "analyzedAt": "2026-03-14T23:08:55.002Z"
+      }
     },
     "4BVVB7cmCcB75UUCQuk3Nf4s6UmNzZwLMGrJ7ABBRZbG": {
       "holdings": {
@@ -26845,6 +27345,40 @@
     "DcKho7sGpeFGqzW9eStE33D52BQGkxHbkmQL3S8RfmpA",
     "5AkRZ4n21sojWK8roxq3CHHbcUw6fSukLHCZPDEvhrEv",
     "HsJvLLABh4kfAyrESFc75sg9Jz4d9Q6PZMCLWUQYSB9a",
-    "3iatAucJ6HtyjT9bsrqXytTgVpb8zZmARuUxbdB8KNW3"
+    "3iatAucJ6HtyjT9bsrqXytTgVpb8zZmARuUxbdB8KNW3",
+    "4pLRGxQs5GuBrJ1Ro1Uagp52RSuhiPEphKhQFRfqnUfw",
+    "CtZXb4Kg1y7ymPyTdXSTjtPTbwW8SvQFUmVcmWftuCri",
+    "5LHkaUSyapavmgcW3a3KPHMvpEmZJjipURkc7QY9zrE7",
+    "3iZXgMzqUuPFRP3Z8FqjSkf5JibeN4UoSKaYYZuHiVhc",
+    "DZpRUJC4grJ8nmRxssPbzRoqgA1TDWpL6RVxawtRpYS9",
+    "DWQsACm4crHGJEvZ2pDojX4Zif83dNgHRtugUyCoaqFU",
+    "9nGHadp8CXDP96giVG8Gic2uw4ujAsezkmiVPVAhzJNo",
+    "2eEhzg5Mi8PbbHqPanQRdmYAC5z6ovpfRq2xaj3WtQeE",
+    "6hLB3rkkRk7bz4ePtKDjkyJgCFGYpS6xoGL9szzjKGvg",
+    "9sDDvfya38o4bDu6u9gGzvvxjSJLwu5TKtEFwwSxMqPy",
+    "4BVVB7cmCcB75UUCQuk3Nf4s6UmNzZwLMGrJ7ABBRZbG",
+    "CHqF91Lt6ugs3uymaRZN5Zkw5wd2Fhzh47sFKEVHQeiN",
+    "CYgi5SRWjVP4Qse5ZTaxKRZh3ReNQEhzLKaTzbwvhndu",
+    "AtVbJzzUUoGdxgKLeKMgE1UXfiGkDS4627frwkommv2Z",
+    "24sy9CJeMg4hvbTwmtkyxT7V9dzPA1Tp1TgndHuEDpxD",
+    "HbVbtviAyzxv2d3sckcrRiNmH8cvSXYEBSV4x2HgN56e",
+    "AFtfxLWwWnfYVUyBgWMXdi3rvbVU59mYfmCJvf1FCo2",
+    "aZHv1PYieT8FpkeSkRuB6cWbpW2RHqdtFiJ3tVg5yjn",
+    "9BH3GoGXX9Fq2hv4FisyvB7K2UxdoW79wHUN43haWsHh",
+    "0xa6bb9815687072c9682b918a318816d1f4f91337",
+    "0xa6ec607fa2b05fde840009d3a1f70cda13cde982",
+    "0x22e484ecaaa970be6330a3214a71ff136c64fb78",
+    "0x7c5874a11b4dd3aba411fa8b942ae90d1d662705",
+    "0xab782bc7d4a2b306825de5a7730034f8f63ee1bc",
+    "0xc13b72a92397717c01a47e1e67aa6594dbbc2088",
+    "0x8d4a5b65892018171e41036e474f2a8cfe2af7be",
+    "0xb4807865a786e9e9e26e6a9610f2078e7fc507fb",
+    "0x85fc606d2e4bdfaa5eba92f79dc5616e77b3afc9",
+    "0x039ac6fbcebf02b54259bc690e13540693d9eb8d",
+    "0x1bc0e3b77972ba5090e0e2428543ce01df5ad2ec",
+    "0xb4d5afe8ee0ebbd09a098cf39849af5ffc0156ab",
+    "0xfec3a995588a4bc72bed6a47f6c3a61946030001",
+    "0xf430e6efcaf0bc8e849713830e51c6b2fdb47317",
+    "0x65fb138b779f53cbe24fa065efe1bfe4b00a8d3a"
   ]
 }
