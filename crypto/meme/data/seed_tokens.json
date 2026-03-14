@@ -226,7 +226,51 @@
       "ageDays": 47,
       "source": "auto",
       "addedAt": "2026-03-14T09:20:00Z"
+    },
+    {
+      "name": "KellyClaude",
+      "symbol": "KellyClaude",
+      "chain": "base",
+      "mint": "0x50D2280441372486BeecdD328c1854743EBaCb07",
+      "multiplier": 569,
+      "mc": 5471016,
+      "ageDays": 42,
+      "source": "auto_r2",
+      "addedAt": "2026-03-14T09:40:00Z"
+    },
+    {
+      "name": "Kokopi Koalas",
+      "symbol": "KOKOP",
+      "chain": "solana",
+      "mint": "ENcwYGVhRsEqKpH4SzRH4mcYSGc9Cb6s4WJGS9ojpump",
+      "multiplier": 42,
+      "mc": 1160242,
+      "ageDays": 4,
+      "source": "auto_r2",
+      "addedAt": "2026-03-14T09:40:00Z"
+    },
+    {
+      "name": "Takeover.fun",
+      "symbol": "TAKEOVER",
+      "chain": "base",
+      "mint": "0x716F8E756f9277F8c9949926141C2666B86B5809",
+      "multiplier": 141,
+      "mc": 429856,
+      "ageDays": 17,
+      "source": "auto_r2",
+      "addedAt": "2026-03-14T09:40:00Z"
+    },
+    {
+      "name": "Autism Coin",
+      "symbol": "AUTISM",
+      "chain": "solana",
+      "mint": "8jiVXftnn2ZG6bugK7HAH5j2G3D6TpsG521gqsWwpump",
+      "multiplier": 219,
+      "mc": 309697,
+      "ageDays": 18,
+      "source": "auto_r2",
+      "addedAt": "2026-03-14T09:40:00Z"
     }
   ],
-  "lastScan": "2026-03-14T09:20:00Z"
+  "lastScan": "2026-03-14T09:40:00Z"
 }

@@ -424,6 +424,24 @@
       "addedAt": "2026-03-14T09:13:13.152Z"
     },
     {
+      "symbol": "WMTX",
+      "mint": "0xdbb5cf12408a3ac17d668037ce289f9ea75439d7",
+      "fdv": 5120550.61161429,
+      "vol": 34586978.6556001,
+      "ageD": 46,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:31:12.860Z"
+    },
+    {
+      "symbol": "NOOK",
+      "mint": "0xb233bdffd437e60fa451f62c6c09d3804d285ba3",
+      "fdv": 2139276.821,
+      "vol": 255818.284669235,
+      "ageD": 17,
+      "chain": "base",
+      "addedAt": "2026-03-14T09:53:01.197Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -638,6 +656,60 @@
       "ageD": 0,
       "chain": "bsc",
       "addedAt": "2026-03-14T09:21:21.060Z"
+    },
+    {
+      "symbol": "龙虾",
+      "mint": "0x63dc9e10e8b6834a4faeb5c702960575fabcfb9e",
+      "fdv": 143933338.2,
+      "vol": 520527217.261019,
+      "ageD": 1,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:31:12.860Z"
+    },
+    {
+      "symbol": "龙虾",
+      "mint": "0xbe796a46c9e1d0e4666795777f5cfb1ba4ebc7f1",
+      "fdv": 75916743.06,
+      "vol": 305729291.110484,
+      "ageD": 0,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:31:12.860Z"
+    },
+    {
+      "symbol": "UP",
+      "mint": "0x3d0d461a32b06c4df1f060324e0a89c2dc735ae5",
+      "fdv": 168643628.637659,
+      "vol": 146183038.009299,
+      "ageD": 0,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:31:12.860Z"
+    },
+    {
+      "symbol": "OpenClaw",
+      "mint": "0xd6adadef902d0cb18685c788d272855a5caaffff",
+      "fdv": 520799.9359,
+      "vol": 84819735.8206643,
+      "ageD": 1,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:31:12.860Z"
+    },
+    {
+      "symbol": "KITE",
+      "mint": "0x4749be5fc7f1eaf01dd63100be7dc64b059e789f",
+      "fdv": 64121978.42,
+      "vol": 40267084.1070636,
+      "ageD": 0,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:31:12.860Z"
+    },
+    {
+      "symbol": "LMTS",
+      "mint": "0x9eadbe35f3ee3bf3e28180070c429298a1b02f93",
+      "fdv": 152007216.258323,
+      "vol": 1085723.27377161,
+      "ageD": 1,
+      "chain": "base",
+      "addedAt": "2026-03-14T09:53:01.197Z"
     }
   ],
   "scanned": [
@@ -682,6 +754,27 @@
     "0xe683a48df543d68ed96d53dd1fda73ccbd144444",
     "0xe683A48Df543D68ed96d53Dd1fDa73ccbd144444",
     "kMKX8hBaj3BTRBbeYix9c16EieBP5dih8DTSSwCpump",
-    "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump"
+    "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump",
+    "0x3d0d461a32b06c4df1f060324e0a89c2dc735ae5",
+    "0x63dc9e10e8b6834a4faeb5c702960575fabcfb9e",
+    "0xbe796a46c9e1d0e4666795777f5cfb1ba4ebc7f1",
+    "0x4749be5fc7f1eaf01dd63100be7dc64b059e789f",
+    "0xdbb5cf12408a3ac17d668037ce289f9ea75439d7",
+    "DogeP1Hzndj6KMyB2DggL6ghrVwpC4VvPAJAuNis9KWQ",
+    "4HhWcsfjaWYKJtjaxd4EyGSAL4Ky8C3DvqAWPHnrpump",
+    "A2whouM6aJvqLdmzaLSBqAyGboGBBAxFyW98apxpnwUg",
+    "0xF74548802f4c700315F019FdE17178b392EE4444",
+    "0xf74548802f4c700315f019fde17178b392ee4444",
+    "D9g3NFv4qCeDFbj35DxB4aa53oDudfUtbv6S8Umdpump",
+    "8G5ayEsJF4Q7FEWEGeF4jtnUWZBEKCqhySTFQf9Ppump",
+    "6vwcC6G7SxkdDZ3XMWiVjfBkPnL3XHiJG2fVSwPJUTJC",
+    "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e",
+    "0x6d8d8df799279e761a4f49edc319b3bd50f14444",
+    "0x9eadbe35f3ee3bf3e28180070c429298a1b02f93",
+    "0xb233bdffd437e60fa451f62c6c09d3804d285ba3",
+    "9e1wtawpbkrJGq3vLbPGBvpQFLfsPFtjai4D9eo9pump",
+    "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3",
+    "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump",
+    "E93JuGQcHiXZ9upFZWELgvu5QsC9DD1qzkcGhJrpump"
   ]
 }
