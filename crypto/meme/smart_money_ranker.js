@@ -12,6 +12,7 @@
  */
 
 const { execSync } = require('child_process');
+const { ethers } = require('ethers');
 const fs = require('fs');
 const path = require('path');
 
@@ -38,14 +39,22 @@ async function collectSignals() {
   
   for (const chain of CHAINS) {
     let signals;
-    try {
-      const cmd = `onchainos market signal-list ${chain} --wallet-type "1"`;
-      const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 30000, maxBuffer: 10*1024*1024 }).toString());
-      signals = result.data || [];
-    } catch (e) {
-      console.log(`  ${chain} 获取失败`);
-      continue;
+    for (let retry = 0; retry < 3; retry++) {
+      try {
+        const cmd = `onchainos market signal-list ${chain} --wallet-type "1"`;
+        const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 60000, maxBuffer: 10*1024*1024 }).toString());
+        signals = result.data || [];
+        break;
+      } catch (e) {
+        if (retry < 2) {
+          console.log(`  ${chain} 第${retry+1}次失败，5秒后重试...`);
+          await new Promise(r => setTimeout(r, 5000));
+        } else {
+          console.log(`  ${chain} 3次均失败: ${e.message?.slice(0,60)}`);
+        }
+      }
     }
+    if (!signals) continue;
     
     for (const s of signals) {
       const token = s.token;
@@ -161,6 +170,40 @@ async function updatePriceAndRank() {
     }
   }
   
+  // ============ 过滤合约地址 ============
+  
+  console.log('🔍 过滤合约地址...');
+  
+  const contractCache = loadJSON(path.join(DATA_DIR, 'contract_cache.json'), {});
+  const bscProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
+  const baseProvider = new ethers.JsonRpcProvider('https://mainnet.base.org');
+  
+  let contractCount = 0;
+  const evmWallets = Object.entries(signalHistory.wallets)
+    .filter(([addr]) => addr.startsWith('0x'))
+    .map(([addr]) => addr);
+  
+  for (const addr of evmWallets) {
+    if (contractCache[addr] !== undefined) {
+      if (contractCache[addr]) contractCount++;
+      continue;
+    }
+    try {
+      const chain = signalHistory.wallets[addr].chains.includes('base') ? 'base' : 'bsc';
+      const provider = chain === 'base' ? baseProvider : bscProvider;
+      const code = await provider.getCode(addr);
+      contractCache[addr] = code !== '0x';
+      if (contractCache[addr]) contractCount++;
+      await sleep(100);
+    } catch(e) {
+      // 查不到先当EOA
+      contractCache[addr] = false;
+    }
+  }
+  
+  saveJSON(path.join(DATA_DIR, 'contract_cache.json'), contractCache);
+  console.log(`  EVM钱包${evmWallets.length}个, 合约${contractCount}个(已过滤)`);
+  
   // ============ 计算钱包排名 ============
   
   console.log('📊 计算排名...');
@@ -169,6 +212,15 @@ async function updatePriceAndRank() {
   
   for (const [addr, wData] of Object.entries(signalHistory.wallets)) {
     if (wData.tokens.length < 2) continue; // 至少参与2个token才有意义
+    
+    // 过滤合约地址（EVM链）
+    if (addr.startsWith('0x') && contractCache[addr]) continue;
+    
+    // 过滤可疑钱包：如果只参与了sold=100%的token（可能是被钓鱼空投的）
+    const allSold100 = wData.tokens.every(t => {
+      return t.soldPercent >= 99;
+    });
+    if (allSold100 && wData.tokens.length <= 3) continue; // sold全满+token少=可疑
     
     let wins = 0;
     let losses = 0;

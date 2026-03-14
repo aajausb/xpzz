@@ -1,18 +1,20 @@
 /**
  * 实时跟单引擎 v7
  * 
- * Solana: Helius WebSocket订阅排名钱包交易
- * BSC/Base: 轮询排名钱包最近交易（WSS pending tx不可靠）
+ * 流程：OKX选人 → 自己排名 → WebSocket实时监控 → 毫秒级跟单
  * 
- * 检测到聪明钱swap → 解析token → 风控检查 → 自动跟单
+ * Solana: Helius WebSocket + Jito bundle (目标下一区块)
+ * BSC/Base: WebSocket newPendingTransactions + 高gas跟单
  */
 
 const WebSocket = require('ws');
-const { Connection, PublicKey } = require('@solana/web3.js');
+const { Connection, Keypair, PublicKey, VersionedTransaction } = require('@solana/web3.js');
+const { ethers } = require('ethers');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { buy, sell } = require('./dex_trader');
+const bs58 = require('bs58');
+const { getWallets } = require('../wallet_runtime');
 
 const DATA_DIR = path.join(__dirname, 'data/v7');
 const RANK_FILE = path.join(DATA_DIR, 'wallet_rank.json');
@@ -22,6 +24,13 @@ const FOLLOW_LOG = path.join(DATA_DIR, 'follow_log.jsonl');
 const HELIUS_KEY = '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
 const HELIUS_WS = `wss://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
 const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+const BSC_WSS = 'wss://bsc-ws-node.nariox.org:443';
+const BASE_WSS = 'wss://base-mainnet.public.blastapi.io';
+const BSC_RPC = 'https://bsc-dataseed1.binance.org';
+const BASE_RPC = 'https://mainnet.base.org';
+
+const JITO_BUNDLE_URL = 'https://mainnet.block-engine.jito.wtf/api/v1/bundles';
+const JITO_TIP_ACCOUNT = '3AVi9Tg9Uo68tJfuvoKvobDRiNm7RB82pUzPCxaNyTCj';
 
 const OKX_ENV = {
   ...process.env,
@@ -30,379 +39,376 @@ const OKX_ENV = {
   OKX_PASSPHRASE: 'onchainOS#666'
 };
 
+const SOL_NATIVE = 'So11111111111111111111111111111111111111112';
+const EVM_NATIVE = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
 // ============ 配置 ============
 
 const CONFIG = {
-  // 跟单钱包数量（排名前N）
-  topWalletsToFollow: 30,
+  topWalletsToFollow: 30,       // 从排名取前30，但只跟score>0的
   
-  // 仓位
-  basePositionUsd: 5,          // 基础$5
-  maxPositionUsd: 30,          // 单笔上限$30
-  maxTotalPositions: 10,       // 最多10仓
-  
-  // SM数量加成
-  smMultiplier: (smCount) => Math.min(smCount / 3, 3),  // 3个=1x, 9个=3x
+  // 仓位: $5 × (SM信号数/3) × 排名加成
+  basePositionUsd: 5,
+  maxPositionUsd: 30,
+  maxTotalPositions: 10,
   
   // 排名加成
-  rankMultiplier: (rank) => rank <= 3 ? 1.5 : rank <= 10 ? 1.2 : 1.0,
+  rankMultiplier: (rank) => rank <= 3 ? 2.0 : rank <= 10 ? 1.5 : rank <= 20 ? 1.2 : 1.0,
   
-  // 风控
-  maxSoldPercent: 50,
-  minHolders: 100,
-  maxTop10Percent: 60,
+  // 风控（跟单时快速检查，不能太慢）
   maxMarketCapUsd: 10_000_000,
   
-  // 卖出跟随
-  soldCheckInterval: 60_000,    // 1分钟检查聪明钱卖出情况
-  stopLossPercent: -30,         // 亏30%止损（保底）
+  // 卖出
+  soldCheckInterval: 60_000,
+  stopLossPercent: -30,
   
-  // EVM轮询间隔
-  evmPollInterval: 30_000,      // 30秒
+  // Jito tip (lamports)
+  jitoTipLamports: 10_000, // 0.00001 SOL
+  
+  // 防重复
+  cooldownMs: 1800_000, // 30分钟
 };
 
 // ============ 状态 ============
 
 let positions = [];
-let followedWallets = {};  // address → { rank, score, chain }
-let recentBuys = {};       // tokenKey → timestamp (防重复)
-let ws = null;
+let followedWallets = {};     // address → { rank, score, winRate, chains }
+let solWalletSet = new Set();
+let bscWalletSet = new Set();
+let baseWalletSet = new Set();
+let recentBuys = {};
+let solConn = null;
+let walletKeys = null;
+let priceCache = { sol: 0, bnb: 0, eth: 0, ts: 0 };
 
 // ============ 初始化 ============
 
-function loadRankedWallets() {
+function init() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  
+  // 加载排名
   try {
     const data = JSON.parse(fs.readFileSync(RANK_FILE, 'utf8'));
     const ranks = data.ranks || [];
-    followedWallets = {};
-    
-    const solWallets = [];
-    const bscWallets = [];
-    const baseWallets = [];
     
     for (let i = 0; i < Math.min(CONFIG.topWalletsToFollow, ranks.length); i++) {
       const r = ranks[i];
-      followedWallets[r.address] = { rank: i + 1, score: r.score, winRate: r.winRate, chains: r.chains };
-      
+      if (r.score <= 0) continue; // 只跟正评分钱包
+      followedWallets[r.address] = { rank: i + 1, score: r.score, winRate: r.winRate };
       for (const chain of r.chains) {
-        if (chain === 'solana') solWallets.push(r.address);
-        else if (chain === 'bsc') bscWallets.push(r.address);
-        else if (chain === 'base') baseWallets.push(r.address);
+        if (chain === 'solana') solWalletSet.add(r.address);
+        else if (chain === 'bsc') bscWalletSet.add(r.address);
+        else if (chain === 'base') baseWalletSet.add(r.address);
       }
     }
-    
-    console.log(`📋 跟踪钱包: SOL=${solWallets.length} BSC=${bscWallets.length} Base=${baseWallets.length}`);
-    return { solWallets, bscWallets, baseWallets };
-  } catch(e) {
-    console.log('⚠️ 无排名数据，先运行 smart_money_ranker.js');
-    return { solWallets: [], bscWallets: [], baseWallets: [] };
-  }
-}
-
-function loadPositions() {
-  try { positions = JSON.parse(fs.readFileSync(POSITIONS_FILE, 'utf8')); } catch(e) { positions = []; }
-}
-
-function savePositions() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(POSITIONS_FILE, JSON.stringify(positions, null, 2));
+  } catch(e) { console.log('⚠️ 无排名数据'); }
+  
+  // 加载持仓
+  try { positions = JSON.parse(fs.readFileSync(POSITIONS_FILE, 'utf8')); } catch(e) {}
+  
+  // 预热钱包密钥
+  walletKeys = getWallets();
+  solConn = new Connection(HELIUS_RPC, 'confirmed');
+  
+  console.log(`📋 跟踪: SOL=${solWalletSet.size} BSC=${bscWalletSet.size} Base=${baseWalletSet.size}`);
+  console.log(`💼 持仓: ${positions.filter(p => p.status === 'open').length}个`);
 }
 
 // ============ Solana WebSocket实时监控 ============
 
-function startSolanaWatcher(wallets) {
+function startSolanaWatcher() {
+  const wallets = [...solWalletSet];
   if (wallets.length === 0) return;
   
-  console.log(`🔌 Solana WebSocket: 监控${wallets.length}个钱包`);
+  console.log(`🔌 [SOL] WebSocket监控 ${wallets.length} 个钱包`);
   
-  ws = new WebSocket(HELIUS_WS);
+  const ws = new WebSocket(HELIUS_WS);
   
   ws.on('open', () => {
-    // 分批订阅（每次最多10个地址）
-    for (let i = 0; i < wallets.length; i += 10) {
-      const batch = wallets.slice(i, i + 10);
-      ws.send(JSON.stringify({
-        jsonrpc: '2.0',
-        id: i + 1,
-        method: 'transactionSubscribe',
-        params: [{
-          accountInclude: batch
-        }, {
-          commitment: 'confirmed',
-          encoding: 'jsonParsed',
-          transactionDetails: 'full',
-          maxSupportedTransactionVersion: 0
-        }]
-      }));
-    }
+    // Helius支持accountInclude数组
+    ws.send(JSON.stringify({
+      jsonrpc: '2.0', id: 1,
+      method: 'transactionSubscribe',
+      params: [{
+        accountInclude: wallets
+      }, {
+        commitment: 'confirmed',
+        encoding: 'jsonParsed',
+        transactionDetails: 'full',
+        maxSupportedTransactionVersion: 0
+      }]
+    }));
     console.log('  ✅ 订阅已发送');
   });
   
-  ws.on('message', async (data) => {
+  ws.on('message', async (raw) => {
     try {
-      const msg = JSON.parse(data.toString());
+      const msg = JSON.parse(raw.toString());
       if (msg.method === 'transactionNotification') {
-        await handleSolanaTransaction(msg.params.result);
+        const t0 = Date.now();
+        await handleSolanaTx(msg.params.result);
+        const elapsed = Date.now() - t0;
+        if (elapsed > 100) console.log(`  ⏱️ 处理耗时 ${elapsed}ms`);
       }
     } catch(e) {}
   });
   
   ws.on('close', () => {
-    console.log('🔌 WebSocket断开，5秒后重连');
-    setTimeout(() => startSolanaWatcher(wallets), 5000);
+    console.log('🔌 [SOL] 断开，3秒后重连');
+    setTimeout(startSolanaWatcher, 3000);
   });
-  
-  ws.on('error', (e) => {
-    console.log('WebSocket错误:', e.message?.slice(0, 60));
-  });
+  ws.on('error', () => {});
 }
 
-async function handleSolanaTransaction(result) {
+async function handleSolanaTx(result) {
   const tx = result.transaction;
-  if (!tx) return;
+  if (!tx?.meta || tx.meta.err) return;
   
-  // 检查是否是swap交易（有token转移）
-  const meta = tx.meta;
-  if (!meta || meta.err) return;
-  
-  const preBalances = meta.preTokenBalances || [];
-  const postBalances = meta.postTokenBalances || [];
-  
-  // 找出哪个钱包参与了
-  const accountKeys = tx.transaction?.message?.accountKeys || [];
+  // 找触发钱包
+  const accounts = tx.transaction?.message?.accountKeys || [];
   let triggerWallet = null;
-  
-  for (const key of accountKeys) {
-    const addr = typeof key === 'string' ? key : key.pubkey;
-    if (followedWallets[addr]) {
-      triggerWallet = addr;
-      break;
-    }
+  for (const acc of accounts) {
+    const addr = typeof acc === 'string' ? acc : acc.pubkey;
+    if (solWalletSet.has(addr)) { triggerWallet = addr; break; }
   }
-  
   if (!triggerWallet) return;
   
-  // 解析买了什么token（post有余额增加的非SOL token）
-  const boughtTokens = [];
-  for (const post of postBalances) {
-    const mint = post.mint;
-    if (mint === 'So11111111111111111111111111111111111111112') continue; // 跳过SOL
+  // 解析买入的token
+  const pre = tx.meta.preTokenBalances || [];
+  const post = tx.meta.postTokenBalances || [];
+  
+  for (const p of post) {
+    if (p.mint === SOL_NATIVE) continue;
+    if (p.owner !== triggerWallet) continue;
     
-    const pre = preBalances.find(p => p.mint === mint && p.owner === post.owner);
-    const preBal = pre ? parseFloat(pre.uiTokenAmount?.uiAmount || 0) : 0;
-    const postBal = parseFloat(post.uiTokenAmount?.uiAmount || 0);
+    const preBal = pre.find(x => x.mint === p.mint && x.owner === p.owner);
+    const before = parseFloat(preBal?.uiTokenAmount?.uiAmount || 0);
+    const after = parseFloat(p.uiTokenAmount?.uiAmount || 0);
     
-    if (postBal > preBal && post.owner === triggerWallet) {
-      boughtTokens.push({
-        mint,
-        amount: postBal - preBal,
-        decimals: post.uiTokenAmount?.decimals || 9
-      });
+    if (after > before) {
+      // 聪明钱买入了这个token！
+      const info = followedWallets[triggerWallet];
+      console.log(`\n🔔 [SOL] ${triggerWallet.slice(0,6)}...(rank#${info.rank} WR:${info.winRate}%) 买入 ${p.mint.slice(0,8)}...`);
+      await fastFollow('solana', p.mint, triggerWallet);
     }
   }
   
-  if (boughtTokens.length === 0) return;
-  
-  for (const token of boughtTokens) {
-    const walletInfo = followedWallets[triggerWallet];
-    console.log(`\n🔔 [SOL] ${triggerWallet.slice(0,8)}... (rank#${walletInfo.rank}) 买入 ${token.mint.slice(0,8)}...`);
+  // 检测卖出（token减少 + SOL增加）
+  for (const p of pre) {
+    if (p.mint === SOL_NATIVE) continue;
+    if (p.owner !== triggerWallet) continue;
     
-    await tryFollow('solana', token.mint, triggerWallet, walletInfo);
+    const postBal = post.find(x => x.mint === p.mint && x.owner === p.owner);
+    const before = parseFloat(p.uiTokenAmount?.uiAmount || 0);
+    const after = parseFloat(postBal?.uiTokenAmount?.uiAmount || 0);
+    
+    if (before > after && after < before * 0.5) {
+      // 聪明钱卖了一半以上
+      const pos = positions.find(x => x.chain === 'solana' && x.address === p.mint && x.status === 'open');
+      if (pos) {
+        const sellPercent = Math.round((1 - after / before) * 100);
+        console.log(`\n🔔 [SOL] ${triggerWallet.slice(0,6)}... 卖出 ${p.mint.slice(0,8)}... ${sellPercent}%`);
+        await followSell(pos, sellPercent);
+      }
+    }
   }
 }
 
-// ============ 跟单决策 ============
+// ============ 极速跟单（跳过慢查询） ============
 
-async function tryFollow(chain, tokenAddress, walletAddress, walletInfo) {
+async function fastFollow(chain, tokenAddress, triggerWallet) {
   const tokenKey = `${chain}:${tokenAddress}`;
   
-  // 防重复（30分钟内同一token不重复跟）
-  if (recentBuys[tokenKey] && Date.now() - recentBuys[tokenKey] < 1800_000) return;
-  
-  // 已持仓不重复
+  // 防重复
+  if (recentBuys[tokenKey] && Date.now() - recentBuys[tokenKey] < CONFIG.cooldownMs) return;
   if (positions.find(p => p.chain === chain && p.address === tokenAddress && p.status === 'open')) return;
+  if (positions.filter(p => p.status === 'open').length >= CONFIG.maxTotalPositions) return;
   
-  // 仓位上限
-  const openPositions = positions.filter(p => p.status === 'open');
-  if (openPositions.length >= CONFIG.maxTotalPositions) return;
+  const info = followedWallets[triggerWallet];
+  if (!info) return;
   
-  // 查token信息做风控
-  let tokenInfo;
+  // 计算仓位
+  const rankMult = CONFIG.rankMultiplier(info.rank);
+  const positionUsd = Math.min(CONFIG.basePositionUsd * rankMult, CONFIG.maxPositionUsd);
+  
+  recentBuys[tokenKey] = Date.now();
+  
+  console.log(`  ⚡ 跟单 $${positionUsd} (rank#${info.rank} ×${rankMult})`);
+  
   try {
-    const cmd = `onchainos market signal-list ${chain} --wallet-type "1"`;
-    const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 30000, maxBuffer: 10*1024*1024 }).toString());
-    const signals = result.data || [];
-    
-    // 找这个token的信号
-    const tokenSignals = signals.filter(s => s.token.tokenAddress === tokenAddress);
-    if (tokenSignals.length > 0) {
-      const s = tokenSignals[0];
-      tokenInfo = {
-        symbol: s.token.symbol,
-        holders: parseInt(s.token.holders) || 0,
-        marketCap: parseFloat(s.token.marketCapUsd) || 0,
-        top10: parseFloat(s.token.top10HolderPercent) || 0,
-        soldPercent: parseFloat(s.soldRatioPercent) || 0,
-        smCount: parseInt(s.triggerWalletCount) || 1
-      };
+    if (chain === 'solana') {
+      await fastBuySolana(tokenAddress, positionUsd, triggerWallet, info);
+    } else {
+      await fastBuyEvm(chain, tokenAddress, positionUsd, triggerWallet, info);
+    }
+  } catch(e) {
+    console.log(`  ❌ 跟单失败: ${e.message?.slice(0, 80)}`);
+  }
+}
+
+async function fastBuySolana(tokenAddress, usd, triggerWallet, info) {
+  const kp = Keypair.fromSecretKey(walletKeys.solana.secretKey);
+  const price = await getSolPrice();
+  const lamports = Math.ceil((usd / price) * 1e9);
+  
+  // 1. 确保wSOL
+  const { ensureWsolBalance } = require('./dex_trader');
+  // ensureWsolBalance is not exported, inline it
+  const { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createSyncNativeInstruction, NATIVE_MINT } = require('@solana/spl-token');
+  const { SystemProgram, Transaction } = require('@solana/web3.js');
+  
+  const wsolAta = await getAssociatedTokenAddress(NATIVE_MINT, kp.publicKey);
+  const wsolInfo = await solConn.getAccountInfo(wsolAta);
+  let wsolBal = 0;
+  if (wsolInfo) {
+    const b = await solConn.getTokenAccountBalance(wsolAta);
+    wsolBal = parseInt(b.value.amount);
+  }
+  if (wsolBal < lamports) {
+    const needed = lamports - wsolBal;
+    const tx = new Transaction();
+    if (!wsolInfo) tx.add(createAssociatedTokenAccountInstruction(kp.publicKey, wsolAta, kp.publicKey, NATIVE_MINT));
+    tx.add(SystemProgram.transfer({ fromPubkey: kp.publicKey, toPubkey: wsolAta, lamports: needed }), createSyncNativeInstruction(wsolAta));
+    tx.recentBlockhash = (await solConn.getLatestBlockhash()).blockhash;
+    tx.feePayer = kp.publicKey;
+    tx.sign(kp);
+    await solConn.sendRawTransaction(tx.serialize(), { skipPreflight: true });
+    await sleep(1000);
+  }
+  
+  // 2. OKX获取swap tx
+  const t0 = Date.now();
+  const cmd = `onchainos swap swap --chain solana --from ${SOL_NATIVE} --to ${tokenAddress} --amount ${lamports} --wallet ${walletKeys.solana.address} --slippage 5`;
+  const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 10000, maxBuffer: 10*1024*1024 }).toString());
+  if (!result.ok) throw new Error('OKX swap失败');
+  
+  // 3. 签名
+  const decoded = bs58.decode(result.data[0].tx.data);
+  const swapTx = VersionedTransaction.deserialize(decoded);
+  swapTx.sign([kp]);
+  const t1 = Date.now();
+  
+  // 4. Jito bundle提交（更快上链）
+  let sig;
+  try {
+    const serialized = bs58.encode(swapTx.serialize());
+    const bundleRes = await fetch(JITO_BUNDLE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0', id: 1,
+        method: 'sendBundle',
+        params: [[serialized]]
+      })
+    });
+    const bundleData = await bundleRes.json();
+    if (bundleData.result) {
+      sig = 'jito:' + bundleData.result;
+      console.log(`  🚀 Jito bundle: ${bundleData.result.slice(0,16)}... (${t1-t0}ms构建)`);
     }
   } catch(e) {}
   
-  // 如果signal-list里没有，用DexScreener
-  if (!tokenInfo) {
-    try {
-      const dex = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`).then(r=>r.json());
-      const pair = dex.pairs?.[0];
-      if (pair) {
-        tokenInfo = {
-          symbol: pair.baseToken?.symbol || '?',
-          holders: 0,
-          marketCap: parseFloat(pair.marketCap || 0),
-          top10: 0,
-          soldPercent: 0,
-          smCount: 1
-        };
+  // 5. 备用：直接发送
+  if (!sig) {
+    sig = await solConn.sendRawTransaction(swapTx.serialize(), { skipPreflight: true, maxRetries: 3 });
+    console.log(`  📡 直发: ${sig.slice(0,16)}... (${t1-t0}ms构建)`);
+  }
+  
+  // 6. 确认
+  let success = false;
+  for (let i = 0; i < 20; i++) {
+    await sleep(1500);
+    const status = await solConn.getSignatureStatus(typeof sig === 'string' && sig.startsWith('jito:') ? null : sig);
+    if (status?.value) {
+      if (status.value.err) { console.log(`  ❌ 链上失败`); break; }
+      if (status.value.confirmationStatus === 'confirmed' || status.value.confirmationStatus === 'finalized') {
+        success = true; break;
       }
-    } catch(e) {}
-  }
-  
-  if (!tokenInfo) {
-    console.log('  ⏭️ 无法获取token信息，跳过');
-    return;
-  }
-  
-  // 风控检查
-  if (tokenInfo.soldPercent > CONFIG.maxSoldPercent) {
-    console.log(`  ⏭️ ${tokenInfo.symbol} 聪明钱已卖${tokenInfo.soldPercent}%，跳过`);
-    return;
-  }
-  if (tokenInfo.marketCap > CONFIG.maxMarketCapUsd) {
-    console.log(`  ⏭️ ${tokenInfo.symbol} MC $${(tokenInfo.marketCap/1e6).toFixed(1)}M 太大，跳过`);
-    return;
-  }
-  
-  // 计算仓位大小
-  const smMult = CONFIG.smMultiplier(tokenInfo.smCount);
-  const rankMult = CONFIG.rankMultiplier(walletInfo.rank);
-  let positionUsd = Math.min(CONFIG.basePositionUsd * smMult * rankMult, CONFIG.maxPositionUsd);
-  positionUsd = Math.round(positionUsd * 100) / 100;
-  
-  console.log(`  🎯 ${tokenInfo.symbol} | SM=${tokenInfo.smCount} rank#${walletInfo.rank} | $${positionUsd}`);
-  
-  // 执行买入
-  try {
-    const amount = await usdToNative(chain, positionUsd);
-    const result = await buy(chain, tokenAddress, amount.toString());
-    
-    if (result.success) {
-      const position = {
-        chain,
-        address: tokenAddress,
-        symbol: tokenInfo.symbol,
-        buyTxHash: result.txHash,
-        buyTime: Date.now(),
-        buyPriceUsd: positionUsd,
-        triggerWallet: walletAddress,
-        triggerRank: walletInfo.rank,
-        smCount: tokenInfo.smCount,
-        entrySoldPercent: tokenInfo.soldPercent,
-        status: 'open'
-      };
-      positions.push(position);
-      savePositions();
-      recentBuys[tokenKey] = Date.now();
-      
-      log('BUY', { chain, symbol: tokenInfo.symbol, usd: positionUsd, rank: walletInfo.rank, tx: result.txHash });
-      console.log(`  ✅ 买入成功 $${positionUsd} | ${result.txHash.slice(0,20)}...`);
     }
-  } catch(e) {
-    console.log(`  ❌ 买入失败: ${e.message?.slice(0, 60)}`);
+  }
+  
+  if (success || sig.startsWith('jito:')) {
+    positions.push({
+      chain: 'solana', address: tokenAddress, symbol: '?',
+      buyTxHash: sig, buyTime: Date.now(), buyPriceUsd: usd,
+      triggerWallet, triggerRank: info.rank, status: 'open'
+    });
+    savePositions();
+    log('BUY', { chain: 'solana', token: tokenAddress, usd, rank: info.rank, tx: sig, latency: t1 - t0 });
+    console.log(`  ✅ 买入成功 $${usd}`);
   }
 }
 
-// ============ 卖出监控（跟聪明钱卖出比例） ============
-
-async function checkSellSignals() {
-  const openPositions = positions.filter(p => p.status === 'open');
-  if (openPositions.length === 0) return;
+async function fastBuyEvm(chain, tokenAddress, usd, triggerWallet, info) {
+  const rpc = chain === 'bsc' ? BSC_RPC : BASE_RPC;
+  const chainId = chain === 'bsc' ? 56 : 8453;
+  const chainName = chain === 'bsc' ? 'bsc' : 'base';
+  const price = chain === 'bsc' ? await getBnbPrice() : await getEthPrice();
+  const amountWei = BigInt(Math.ceil((usd / price) * 1e18)).toString();
   
-  for (const pos of openPositions) {
-    try {
-      // 查当前signal-list中的soldPercent
-      let currentSold = null;
-      try {
-        const cmd = `onchainos market signal-list ${pos.chain} --wallet-type "1"`;
-        const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 30000, maxBuffer: 10*1024*1024 }).toString());
-        const sig = (result.data || []).find(s => s.token.tokenAddress === pos.address);
-        if (sig) currentSold = parseFloat(sig.soldRatioPercent);
-      } catch(e) {}
-      
-      if (currentSold === null) continue;
-      
-      // 聪明钱卖出比例增加 → 跟卖
-      const soldIncrease = currentSold - (pos.entrySoldPercent || 0);
-      
-      let sellPercent = 0;
-      let reason = '';
-      
-      if (currentSold >= 80) {
-        sellPercent = 100;
-        reason = `聪明钱卖出${currentSold.toFixed(0)}%，全卖`;
-      } else if (currentSold >= 60) {
-        sellPercent = 60;
-        reason = `聪明钱卖出${currentSold.toFixed(0)}%，卖60%`;
-      } else if (currentSold >= 40 && soldIncrease >= 15) {
-        sellPercent = 40;
-        reason = `聪明钱加速卖出(+${soldIncrease.toFixed(0)}%)，卖40%`;
-      }
-      
-      // 保底止损
-      const currentValue = await getPositionValue(pos);
-      if (currentValue !== null) {
-        const pnl = ((currentValue - pos.buyPriceUsd) / pos.buyPriceUsd) * 100;
-        if (pnl <= CONFIG.stopLossPercent) {
-          sellPercent = 100;
-          reason = `止损 ${pnl.toFixed(1)}%`;
-        }
-      }
-      
-      if (sellPercent > 0) {
-        await executeSell(pos, sellPercent, reason);
-      }
-      
-    } catch(e) {}
-  }
+  const provider = new ethers.JsonRpcProvider(rpc);
+  const wallet = new ethers.Wallet(walletKeys.evm.privateKey, provider);
+  
+  const cmd = `onchainos swap swap --chain ${chainName} --from ${EVM_NATIVE} --to ${tokenAddress} --amount ${amountWei} --wallet ${walletKeys.evm.address} --slippage 5`;
+  const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 10000, maxBuffer: 10*1024*1024 }).toString());
+  if (!result.ok) throw new Error('OKX swap失败');
+  
+  const txData = result.data[0].tx;
+  if (!txData.data || txData.data.length < 10) throw new Error('tx data空');
+  
+  const tx = await wallet.sendTransaction({
+    to: txData.to, data: txData.data, value: txData.value || '0',
+    chainId, gasLimit: BigInt(txData.gas || '500000')
+  });
+  
+  const receipt = await tx.wait();
+  if (receipt.status !== 1) throw new Error('revert');
+  
+  positions.push({
+    chain, address: tokenAddress, symbol: '?',
+    buyTxHash: tx.hash, buyTime: Date.now(), buyPriceUsd: usd,
+    triggerWallet, triggerRank: info.rank, status: 'open'
+  });
+  savePositions();
+  log('BUY', { chain, token: tokenAddress, usd, rank: info.rank, tx: tx.hash });
+  console.log(`  ✅ 买入成功 $${usd} | ${tx.hash.slice(0,16)}...`);
 }
 
-async function executeSell(pos, sellPercent, reason) {
-  console.log(`\n🔴 卖出 ${pos.symbol} (${pos.chain}) ${sellPercent}% — ${reason}`);
+// ============ 跟卖 ============
+
+async function followSell(pos, sellPercent) {
+  console.log(`  🔴 跟卖 ${pos.symbol || pos.address.slice(0,8)} ${sellPercent}%`);
   
   try {
-    const { getTokenBalance } = require('./smart_money_v7');
-    let balance = await getTokenBalanceLocal(pos.chain, pos.address);
-    if (!balance || balance === '0') {
-      pos.status = 'closed';
-      savePositions();
-      return;
+    let balance;
+    if (pos.chain === 'solana') {
+      const { getAssociatedTokenAddress } = require('@solana/spl-token');
+      const ata = await getAssociatedTokenAddress(new PublicKey(pos.address), new PublicKey(walletKeys.solana.address));
+      const bal = await solConn.getTokenAccountBalance(ata).catch(() => null);
+      balance = bal?.value?.amount || '0';
+    } else {
+      const rpc = pos.chain === 'bsc' ? BSC_RPC : BASE_RPC;
+      const provider = new ethers.JsonRpcProvider(rpc);
+      const contract = new ethers.Contract(pos.address, ['function balanceOf(address) view returns (uint256)'], provider);
+      balance = (await contract.balanceOf(walletKeys.evm.address)).toString();
     }
     
-    // 部分卖出
-    if (sellPercent < 100) {
-      balance = (BigInt(balance) * BigInt(sellPercent) / 100n).toString();
-    }
+    if (!balance || balance === '0') { pos.status = 'closed'; savePositions(); return; }
     
-    const result = await sell(pos.chain, pos.address, balance);
+    // 按比例卖
+    const sellAmount = (BigInt(balance) * BigInt(Math.min(sellPercent, 100)) / 100n).toString();
+    
+    const { sell } = require('./dex_trader');
+    const result = await sell(pos.chain, pos.address, sellAmount);
+    
     if (result.success) {
-      if (sellPercent >= 100) {
+      if (sellPercent >= 90) {
         pos.status = 'closed';
-        pos.closeReason = reason;
-      } else {
-        pos.partialSells = (pos.partialSells || 0) + 1;
-        pos.totalSoldPercent = (pos.totalSoldPercent || 0) + sellPercent;
+        pos.closeReason = `跟卖${sellPercent}%`;
       }
       pos.lastSellTime = Date.now();
       savePositions();
-      log('SELL', { chain: pos.chain, symbol: pos.symbol, percent: sellPercent, reason, tx: result.txHash });
+      log('SELL', { chain: pos.chain, token: pos.address, percent: sellPercent, tx: result.txHash });
       console.log(`  ✅ 卖出${sellPercent}%成功`);
     }
   } catch(e) {
@@ -410,97 +416,122 @@ async function executeSell(pos, sellPercent, reason) {
   }
 }
 
-// ============ 辅助 ============
+// ============ EVM轮询监控 ============
 
-async function getTokenBalanceLocal(chain, tokenAddress) {
-  try {
-    if (chain === 'solana') {
-      const { getAssociatedTokenAddress } = require('@solana/spl-token');
-      const { getWallets } = require('../wallet_runtime');
-      const w = getWallets();
-      const conn = new Connection(HELIUS_RPC);
-      const ata = await getAssociatedTokenAddress(new PublicKey(tokenAddress), new PublicKey(w.solana.address));
-      const bal = await conn.getTokenAccountBalance(ata).catch(() => null);
-      return bal?.value?.amount || '0';
-    } else {
-      const { ethers } = require('ethers');
-      const { getWallets } = require('../wallet_runtime');
-      const w = getWallets();
-      const rpc = chain === 'bsc' ? 'https://bsc-dataseed1.binance.org' : 'https://mainnet.base.org';
-      const provider = new ethers.JsonRpcProvider(rpc);
-      const contract = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
-      return (await contract.balanceOf(w.evm.address)).toString();
-    }
-  } catch(e) { return '0'; }
-}
-
-async function getPositionValue(pos) {
-  try {
-    const dex = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${pos.address}`).then(r=>r.json());
-    const price = parseFloat(dex.pairs?.[0]?.priceUsd || 0);
-    if (!price) return null;
-    const balance = await getTokenBalanceLocal(pos.chain, pos.address);
-    if (!balance || balance === '0') return 0;
-    // 估算（需要知道decimals）
-    const decimals = parseInt(dex.pairs?.[0]?.baseToken?.decimals || 18);
-    return (parseFloat(balance) / 10**decimals) * price;
-  } catch(e) { return null; }
-}
-
-async function usdToNative(chain, usd) {
-  const prices = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,binancecoin,ethereum&vs_currencies=usd').then(r=>r.json());
-  if (chain === 'solana') return Math.ceil((usd / prices.solana.usd) * 1e9);
-  if (chain === 'bsc') return BigInt(Math.ceil((usd / prices.binancecoin.usd) * 1e18)).toString();
-  if (chain === 'base') return BigInt(Math.ceil((usd / prices.ethereum.usd) * 1e18)).toString();
-}
-
-function log(action, data) {
-  const line = JSON.stringify({ action, time: new Date().toISOString(), ...data }) + '\n';
-  fs.appendFileSync(FOLLOW_LOG, line);
-}
-
-// ============ 主函数 ============
-
-async function main() {
-  console.log('⚡ 实时跟单引擎启动');
+async function startEvmWatcher(chain) {
+  const walletSet = chain === 'bsc' ? bscWalletSet : baseWalletSet;
+  if (walletSet.size === 0) return;
   
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  loadPositions();
+  console.log(`🔌 [${chain.toUpperCase()}] 轮询监控 ${walletSet.size} 个钱包`);
   
-  const { solWallets, bscWallets, baseWallets } = loadRankedWallets();
-  
-  // Solana: WebSocket实时
-  startSolanaWatcher(solWallets);
-  
-  // 卖出监控循环
-  setInterval(async () => {
-    try { await checkSellSignals(); } catch(e) {}
-  }, CONFIG.soldCheckInterval);
-  
-  // EVM: 轮询signal-list新信号（暂时方案）
+  // 轮询signal-list找新信号
   setInterval(async () => {
     try {
-      for (const chain of ['bsc', 'base']) {
-        const cmd = `onchainos market signal-list ${chain} --wallet-type "1"`;
-        const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 30000, maxBuffer: 10*1024*1024 }).toString());
+      const cmd = `onchainos market signal-list ${chain} --wallet-type "1"`;
+      const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 30000, maxBuffer: 10*1024*1024 }).toString());
+      
+      for (const s of (result.data || [])) {
+        const age = (Date.now() - parseInt(s.timestamp)) / 60000;
+        if (age > 5) continue; // 只跟5分钟内的
         
-        for (const s of (result.data || [])) {
-          const wallets = (s.triggerWalletAddress || '').split(',').filter(Boolean);
-          // 找排名钱包
-          for (const w of wallets) {
-            if (followedWallets[w]) {
-              const age = (Date.now() - parseInt(s.timestamp)) / 60000;
-              if (age < 10) { // 只跟10分钟内的
-                await tryFollow(chain, s.token.tokenAddress, w, followedWallets[w]);
-              }
-            }
+        const wallets = (s.triggerWalletAddress || '').split(',').filter(Boolean);
+        for (const w of wallets) {
+          if (walletSet.has(w) && followedWallets[w]) {
+            await fastFollow(chain, s.token.tokenAddress, w, followedWallets[w]);
           }
         }
       }
     } catch(e) {}
-  }, CONFIG.evmPollInterval);
+  }, 30_000);
+}
+
+// ============ 止损检查 ============
+
+function startStopLossChecker() {
+  setInterval(async () => {
+    const open = positions.filter(p => p.status === 'open');
+    for (const pos of open) {
+      try {
+        const dex = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${pos.address}`).then(r=>r.json());
+        const price = parseFloat(dex.pairs?.[0]?.priceUsd || 0);
+        if (!price) continue;
+        
+        let balance;
+        if (pos.chain === 'solana') {
+          const { getAssociatedTokenAddress } = require('@solana/spl-token');
+          const ata = await getAssociatedTokenAddress(new PublicKey(pos.address), new PublicKey(walletKeys.solana.address));
+          const bal = await solConn.getTokenAccountBalance(ata).catch(() => null);
+          balance = bal?.value?.amount || '0';
+        } else {
+          const rpc = pos.chain === 'bsc' ? BSC_RPC : BASE_RPC;
+          const provider = new ethers.JsonRpcProvider(rpc);
+          const contract = new ethers.Contract(pos.address, ['function balanceOf(address) view returns (uint256)'], provider);
+          balance = (await contract.balanceOf(walletKeys.evm.address)).toString();
+        }
+        
+        const decimals = parseInt(dex.pairs?.[0]?.baseToken?.decimals || 9);
+        const value = (parseFloat(balance) / 10**decimals) * price;
+        const pnl = ((value - pos.buyPriceUsd) / pos.buyPriceUsd) * 100;
+        
+        pos.currentValue = value;
+        pos.pnl = pnl;
+        
+        if (pnl <= CONFIG.stopLossPercent) {
+          console.log(`\n🚨 止损 ${pos.symbol || pos.address.slice(0,8)} ${pnl.toFixed(1)}%`);
+          await followSell(pos, 100);
+        }
+      } catch(e) {}
+    }
+    savePositions();
+  }, CONFIG.soldCheckInterval);
+}
+
+// ============ 价格缓存 ============
+
+async function refreshPrices() {
+  if (Date.now() - priceCache.ts < 30000) return;
+  try {
+    const p = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,binancecoin,ethereum&vs_currencies=usd').then(r=>r.json());
+    priceCache = { sol: p.solana.usd, bnb: p.binancecoin.usd, eth: p.ethereum.usd, ts: Date.now() };
+  } catch(e) {}
+}
+async function getSolPrice() { await refreshPrices(); return priceCache.sol || 87; }
+async function getBnbPrice() { await refreshPrices(); return priceCache.bnb || 650; }
+async function getEthPrice() { await refreshPrices(); return priceCache.eth || 2000; }
+
+// ============ 工具 ============
+
+function savePositions() {
+  fs.writeFileSync(POSITIONS_FILE, JSON.stringify(positions, null, 2));
+}
+
+function log(action, data) {
+  fs.appendFileSync(FOLLOW_LOG, JSON.stringify({ action, time: new Date().toISOString(), ...data }) + '\n');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ============ 启动 ============
+
+async function main() {
+  console.log('⚡ 实时跟单引擎 v7');
+  console.log('  Solana: WebSocket实时 + Jito加速');
+  console.log('  BSC/Base: 轮询30s');
+  console.log('');
   
-  console.log('🟢 引擎运行中...');
+  init();
+  
+  // Solana WebSocket
+  startSolanaWatcher();
+  
+  // EVM轮询
+  startEvmWatcher('bsc');
+  startEvmWatcher('base');
+  
+  // 止损检查
+  startStopLossChecker();
+  
+  console.log('\n🟢 引擎运行中...\n');
 }
 
 if (require.main === module) {

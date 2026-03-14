@@ -559,6 +559,24 @@
       "addedAt": "2026-03-14T16:30:58.883Z"
     },
     {
+      "symbol": "SOS",
+      "mint": "Bppti26r6gVK8umuNNKArDAZerNm6GWQz8zxqRLn8u4Z",
+      "fdv": 1240549,
+      "vol": 2382216.99,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T17:03:31.055Z"
+    },
+    {
+      "symbol": "UGOR",
+      "mint": "UGoRwdj9SK78V6Pq9YMz9BvmNuJTLNqPZyS5WnGd8uW",
+      "fdv": 11922395.86,
+      "vol": 559093.581904539,
+      "ageD": 9,
+      "chain": "solana",
+      "addedAt": "2026-03-14T17:03:45.220Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -953,6 +971,15 @@
       "ageD": 0,
       "chain": "solana",
       "addedAt": "2026-03-14T16:47:59.894Z"
+    },
+    {
+      "symbol": "WARDOGS",
+      "mint": "D26ztC28zZf1QBhrY47NtvK7aeLfDvj41H5wgkUqpump",
+      "fdv": 501843,
+      "vol": 268158.98,
+      "ageD": 12,
+      "chain": "solana",
+      "addedAt": "2026-03-14T17:18:17.158Z"
     }
   ],
   "scanned": [
@@ -1055,6 +1082,9 @@
     "G9K6xToJafgVhWKZ8LVkyDfEn9q2t7Nh1RE9QD8Wpump",
     "0x9de61558250431b3eb16f14652e35b031bc4355e",
     "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3",
-    "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7"
+    "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7",
+    "UGoRwdj9SK78V6Pq9YMz9BvmNuJTLNqPZyS5WnGd8uW",
+    "Bppti26r6gVK8umuNNKArDAZerNm6GWQz8zxqRLn8u4Z",
+    "D26ztC28zZf1QBhrY47NtvK7aeLfDvj41H5wgkUqpump"
   ]
 }

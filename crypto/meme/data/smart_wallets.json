@@ -180,9 +180,105 @@
       ],
       "source": "scanner_v5",
       "addedAt": "2026-03-14T06:19:57.132Z"
+    },
+    {
+      "address": "83AjpG4oM9J87FNHkUZoNsaS91u9pursg4EnLvZdXWPq",
+      "chain": "solana",
+      "label": "sm_v5_7coins",
+      "totalProfit": 48683,
+      "avgProfit": 6955,
+      "winRate": 70,
+      "profitableCoins": 7,
+      "totalCoins": 10,
+      "txCount": 29,
+      "timeSpanDays": 11,
+      "topTokens": [
+        {
+          "mint": "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump",
+          "profitUsd": 20253,
+          "buys": 1,
+          "sells": 1,
+          "spentSol": 0,
+          "receivedSol": 232.5832714693188
+        },
+        {
+          "mint": "ACc3ZBq1c9h7pofwn2J8b8bvRHvqMFwynVg8neLZpump",
+          "profitUsd": 17879,
+          "buys": 4,
+          "sells": 2,
+          "spentSol": 0,
+          "receivedSol": 205.31604047041338
+        },
+        {
+          "mint": "E93JuGQcHiXZ9upFZWELgvu5QsC9DD1qzkcGhJrpump",
+          "profitUsd": 8793,
+          "buys": 1,
+          "sells": 1,
+          "spentSol": 0,
+          "receivedSol": 100.98126583860542
+        },
+        {
+          "mint": "HL8i2d74iFZQGkpZ1eBzJQWbkU6bBmRUVJgMF2b6pump",
+          "profitUsd": 832,
+          "buys": 1,
+          "sells": 1,
+          "spentSol": 0,
+          "receivedSol": 9.550838432933855
+        },
+        {
+          "mint": "HkBWJJiaUW5Kod4HpHWZiGD9PQVipmMiPDgiRPcNpump",
+          "profitUsd": 688,
+          "buys": 1,
+          "sells": 1,
+          "spentSol": 0,
+          "receivedSol": 7.897847977552136
+        },
+        {
+          "mint": "7CbUjrHf6mLkGzpm6R8KRqqEQPeRCqx9uiQaMsmDpump",
+          "profitUsd": 140,
+          "buys": 5,
+          "sells": 1,
+          "spentSol": 0,
+          "receivedSol": 1.6101039548644924
+        },
+        {
+          "mint": "5fDLwb6CKE66AnX9GDfW77UxHkWehSCi4HZKapLY5KwX",
+          "profitUsd": 98,
+          "buys": 1,
+          "sells": 1,
+          "spentSol": 0,
+          "receivedSol": 1.1211693615066605
+        },
+        {
+          "mint": "3B5wuUrMEi5yATD7on46hKfej3pfmd7t1RKgrsN3pump",
+          "profitUsd": 0,
+          "buys": 1,
+          "sells": 2,
+          "spentSol": 0,
+          "receivedSol": 0
+        },
+        {
+          "mint": "3B68AziQchuKHKdEi5Zke4xTtdR2Q7JP2qJ8vBvjpump",
+          "profitUsd": 0,
+          "buys": 1,
+          "sells": 0,
+          "spentSol": 0,
+          "receivedSol": 0
+        },
+        {
+          "mint": "EnTu4xYmd49b6drs6FwTodxcJW1sHFurbvueyk9Kpump",
+          "profitUsd": 0,
+          "buys": 1,
+          "sells": 0,
+          "spentSol": 0,
+          "receivedSol": 0
+        }
+      ],
+      "source": "scanner_v5",
+      "addedAt": "2026-03-14T17:09:24.923Z"
     }
   ],
-  "lastScan": "2026-03-14T06:19:57.132Z",
+  "lastScan": "2026-03-14T17:09:24.923Z",
   "scanMethod": "geckoterminal_trades_cross_analysis_v4",
   "stats": {
     "totalWallets": 6,
