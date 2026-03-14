@@ -179,30 +179,42 @@ async function updatePriceAndRank() {
   const baseProvider = new ethers.JsonRpcProvider('https://mainnet.base.org');
   
   let contractCount = 0;
-  const evmWallets = Object.entries(signalHistory.wallets)
-    .filter(([addr]) => addr.startsWith('0x'))
-    .map(([addr]) => addr);
+  let emptyCount = 0;
+  const evmWallets = Object.keys(signalHistory.wallets)
+    .filter(addr => addr.startsWith('0x'));
   
   for (const addr of evmWallets) {
-    if (contractCache[addr] !== undefined) {
-      if (contractCache[addr]) contractCount++;
+    const cached = contractCache[addr] || contractCache[addr.toLowerCase()];
+    if (cached !== undefined) {
+      if (cached === 'contract' || cached === true) contractCount++;
+      if (cached === 'empty') emptyCount++;
       continue;
     }
     try {
       const chain = signalHistory.wallets[addr].chains.includes('base') ? 'base' : 'bsc';
       const provider = chain === 'base' ? baseProvider : bscProvider;
-      const code = await provider.getCode(addr);
-      contractCache[addr] = code !== '0x';
-      if (contractCache[addr]) contractCount++;
+      const [code, txCount] = await Promise.all([
+        provider.getCode(addr),
+        provider.getTransactionCount(addr)
+      ]);
+      
+      if (code !== '0x') {
+        contractCache[addr] = 'contract';
+        contractCount++;
+      } else if (txCount === 0) {
+        contractCache[addr] = 'empty';
+        emptyCount++;
+      } else {
+        contractCache[addr] = 'ok';
+      }
       await sleep(100);
     } catch(e) {
-      // 查不到先当EOA
-      contractCache[addr] = false;
+      contractCache[addr] = 'unknown';
     }
   }
   
   saveJSON(path.join(DATA_DIR, 'contract_cache.json'), contractCache);
-  console.log(`  EVM钱包${evmWallets.length}个, 合约${contractCount}个(已过滤)`);
+  console.log(`  EVM钱包${evmWallets.length}个, 合约${contractCount}个, 空地址${emptyCount}个(均已过滤)`);
   
   // ============ 计算钱包排名 ============
   
@@ -213,8 +225,9 @@ async function updatePriceAndRank() {
   for (const [addr, wData] of Object.entries(signalHistory.wallets)) {
     if (wData.tokens.length < 2) continue; // 至少参与2个token才有意义
     
-    // 过滤合约地址（EVM链）
-    if (addr.startsWith('0x') && contractCache[addr]) continue;
+    // 过滤合约地址和空地址（EVM链）
+    const cacheVal = contractCache[addr] || contractCache[addr.toLowerCase()];
+    if (addr.startsWith('0x') && (cacheVal === 'contract' || cacheVal === true || cacheVal === 'empty')) continue;
     
     // 过滤可疑钱包：如果只参与了sold=100%的token（可能是被钓鱼空投的）
     const allSold100 = wData.tokens.every(t => {

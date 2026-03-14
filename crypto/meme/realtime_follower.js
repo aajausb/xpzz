@@ -18,6 +18,7 @@ const { getWallets } = require('../wallet_runtime');
 
 const DATA_DIR = path.join(__dirname, 'data/v7');
 const RANK_FILE = path.join(DATA_DIR, 'wallet_rank.json');
+const FOUND_FILE = path.join(DATA_DIR, 'found_smart_money.json');
 const POSITIONS_FILE = path.join(DATA_DIR, 'positions.json');
 const FOLLOW_LOG = path.join(DATA_DIR, 'follow_log.jsonl');
 
@@ -86,22 +87,43 @@ let priceCache = { sol: 0, bnb: 0, eth: 0, ts: 0 };
 function init() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   
-  // 加载排名
+  // 优先加载自建聪明钱（found_smart_money.json），fallback到旧排名
+  let loaded = false;
   try {
-    const data = JSON.parse(fs.readFileSync(RANK_FILE, 'utf8'));
-    const ranks = data.ranks || [];
+    const data = JSON.parse(fs.readFileSync(FOUND_FILE, 'utf8'));
+    const wallets = data.wallets || [];
     
-    for (let i = 0; i < Math.min(CONFIG.topWalletsToFollow, ranks.length); i++) {
-      const r = ranks[i];
-      if (r.score <= 0) continue; // 只跟正评分钱包
-      followedWallets[r.address] = { rank: i + 1, score: r.score, winRate: r.winRate };
-      for (const chain of r.chains) {
-        if (chain === 'solana') solWalletSet.add(r.address);
-        else if (chain === 'bsc') bscWalletSet.add(r.address);
-        else if (chain === 'base') baseWalletSet.add(r.address);
+    for (let i = 0; i < Math.min(CONFIG.topWalletsToFollow, wallets.length); i++) {
+      const w = wallets[i];
+      if (w.score <= 0) continue;
+      followedWallets[w.address] = { rank: i + 1, score: w.score, winRate: w.winRate, totalPnl: w.totalPnl };
+      for (const chain of w.chains) {
+        if (chain === 'solana') solWalletSet.add(w.address);
+        else if (chain === 'bsc') bscWalletSet.add(w.address);
+        else if (chain === 'base') baseWalletSet.add(w.address);
       }
     }
-  } catch(e) { console.log('⚠️ 无排名数据'); }
+    loaded = Object.keys(followedWallets).length > 0;
+    if (loaded) console.log('📊 数据源: 自建聪明钱(真实PnL验证)');
+  } catch(e) {}
+  
+  // fallback: 旧排名
+  if (!loaded) {
+    try {
+      const data = JSON.parse(fs.readFileSync(RANK_FILE, 'utf8'));
+      for (let i = 0; i < Math.min(CONFIG.topWalletsToFollow, (data.ranks||[]).length); i++) {
+        const r = data.ranks[i];
+        if (r.score <= 0) continue;
+        followedWallets[r.address] = { rank: i + 1, score: r.score, winRate: r.winRate };
+        for (const chain of r.chains) {
+          if (chain === 'solana') solWalletSet.add(r.address);
+          else if (chain === 'bsc') bscWalletSet.add(r.address);
+          else if (chain === 'base') baseWalletSet.add(r.address);
+        }
+      }
+      console.log('📊 数据源: OKX信号排名(fallback)');
+    } catch(e) { console.log('⚠️ 无排名数据'); }
+  }
   
   // 加载持仓
   try { positions = JSON.parse(fs.readFileSync(POSITIONS_FILE, 'utf8')); } catch(e) {}

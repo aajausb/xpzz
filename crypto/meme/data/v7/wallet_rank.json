@@ -1,29 +1,96 @@
 {
-  "updated": 1773508514713,
+  "updated": 1773509762793,
   "ranks": [
     {
-      "address": "0x9ffea936c96b7032f22255564d484d0888888888",
+      "address": "0xcde991ff0f20e4ab3896d2f11ab33ad4e0bdcf03",
       "chains": [
         "bsc"
       ],
-      "totalTokens": 3,
+      "totalTokens": 2,
       "trackedTokens": 2,
-      "wins": 2,
-      "losses": 0,
-      "winRate": 100,
-      "avgReturn": 32.1,
-      "score": 50.87,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 332.8,
+      "score": 263.72,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
-          "symbol": "小龙虾",
+          "symbol": "人生",
           "chain": "bsc",
-          "change": 52.890603262128266
+          "change": 670.0183715798306
         },
         {
-          "symbol": "WUKONG",
+          "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": 11.30493991265331
+          "change": -4.47212373066357
+        }
+      ]
+    },
+    {
+      "address": "0x0c64719cdaed5500e0ec82ab8c3280674ced8a05",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 288.1,
+      "score": 228.35,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "人生",
+          "chain": "bsc",
+          "change": 670.0183715798306
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
+      "address": "9ovjQQ9SRFNPiFn1be3JVLTabc3kjEvnoDrKThHSsjRv",
+      "chains": [
+        "solana"
+      ],
+      "totalTokens": 5,
+      "trackedTokens": 5,
+      "wins": 2,
+      "losses": 3,
+      "winRate": 40,
+      "avgReturn": 191.9,
+      "score": 198.38,
+      "firstSeen": 1773506911627,
+      "topPicks": [
+        {
+          "symbol": "Rosie",
+          "chain": "solana",
+          "change": 1072.4675863498535
+        },
+        {
+          "symbol": "TERAFAB",
+          "chain": "solana",
+          "change": 101.97536752769005
+        },
+        {
+          "symbol": "NORWOOD",
+          "chain": "solana",
+          "change": -45.34398205697774
+        },
+        {
+          "symbol": "AI",
+          "chain": "solana",
+          "change": -78.20672337114156
+        },
+        {
+          "symbol": "ZEZE",
+          "chain": "solana",
+          "change": -91.57332302783125
         }
       ]
     },
@@ -34,27 +101,27 @@
       ],
       "totalTokens": 7,
       "trackedTokens": 4,
-      "wins": 2,
-      "losses": 2,
-      "winRate": 50,
-      "avgReturn": 38.5,
-      "score": 44.7,
+      "wins": 1,
+      "losses": 3,
+      "winRate": 25,
+      "avgReturn": 240.9,
+      "score": 139.86,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "Rosie",
           "chain": "solana",
-          "change": 238.33933523112773
+          "change": 1072.4675863498535
         },
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "X COINS",
@@ -64,28 +131,157 @@
       ]
     },
     {
-      "address": "0x38d020947cde613e2fa85bf1c6f703c74ada5d0b",
+      "address": "7Lc3AxNXjeDrcD7Uv2p9aXwHgrU5BreefXgfwQQiNfXY",
       "chains": [
-        "base"
+        "solana"
+      ],
+      "totalTokens": 6,
+      "trackedTokens": 6,
+      "wins": 2,
+      "losses": 4,
+      "winRate": 33.3,
+      "avgReturn": 144.4,
+      "score": 135.14,
+      "firstSeen": 1773506911627,
+      "topPicks": [
+        {
+          "symbol": "Rosie",
+          "chain": "solana",
+          "change": 1072.4675863498535
+        },
+        {
+          "symbol": "TERAFAB",
+          "chain": "solana",
+          "change": 101.97536752769005
+        },
+        {
+          "symbol": "NORWOOD",
+          "chain": "solana",
+          "change": -45.34398205697774
+        },
+        {
+          "symbol": "AI",
+          "chain": "solana",
+          "change": -78.20672337114156
+        },
+        {
+          "symbol": "ZEZE",
+          "chain": "solana",
+          "change": -91.57332302783125
+        }
+      ]
+    },
+    {
+      "address": "0x9172522708770b2eac035c7a9a313aa4362d6bad",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 4,
+      "trackedTokens": 3,
+      "wins": 1,
+      "losses": 2,
+      "winRate": 33.3,
+      "avgReturn": 164.9,
+      "score": 109.96,
+      "firstSeen": 1773506911853,
+      "topPicks": [
+        {
+          "symbol": "人生",
+          "chain": "bsc",
+          "change": 670.0183715798306
+        },
+        {
+          "symbol": "波龙",
+          "chain": "bsc",
+          "change": -77.83415715079039
+        },
+        {
+          "symbol": "波龙",
+          "chain": "bsc",
+          "change": -97.37666089303639
+        }
+      ]
+    },
+    {
+      "address": "0x9fcdadd620518e2af33176fe4a086bbafa7837e1",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 1,
+      "losses": 2,
+      "winRate": 33.3,
+      "avgReturn": 163.9,
+      "score": 109.26,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "人生",
+          "chain": "bsc",
+          "change": 670.0183715798306
+        },
+        {
+          "symbol": "MOONDOGECOIN",
+          "chain": "bsc",
+          "change": -84.60505860322087
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
+      "address": "0x46072e45b1425766a6878c2730d3ce9c084d3733",
+      "chains": [
+        "bsc"
       ],
       "totalTokens": 2,
       "trackedTokens": 2,
       "wins": 2,
       "losses": 0,
       "winRate": 100,
-      "avgReturn": 27.5,
-      "score": 43.66,
-      "firstSeen": 1773508066758,
+      "avgReturn": 59.5,
+      "score": 94.36,
+      "firstSeen": 1773506911854,
       "topPicks": [
         {
-          "symbol": "JUNO",
-          "chain": "base",
-          "change": 43.81514278172194
+          "symbol": "TOM",
+          "chain": "bsc",
+          "change": 92.67627153258417
         },
         {
-          "symbol": "MOLT",
-          "chain": "base",
-          "change": 11.27481237422268
+          "symbol": "AI果蝇",
+          "chain": "bsc",
+          "change": 26.397463790818747
+        }
+      ]
+    },
+    {
+      "address": "0xecea32d3933b579e64843e66ff41209d6052a956",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 44.1,
+      "score": 34.95,
+      "firstSeen": 1773506911853,
+      "topPicks": [
+        {
+          "symbol": "TOM",
+          "chain": "bsc",
+          "change": 92.67627153258417
+        },
+        {
+          "symbol": "MOONDOGE",
+          "chain": "bsc",
+          "change": -4.47212373066357
         }
       ]
     },
@@ -100,64 +296,23 @@
       "losses": 0,
       "winRate": 100,
       "avgReturn": 21.5,
-      "score": 34.06,
+      "score": 34.08,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
           "symbol": "NOOK",
           "chain": "base",
-          "change": 26.099317162476193
+          "change": 23.98234998739617
         },
         {
           "symbol": "Molten",
           "chain": "base",
-          "change": 16.883300617804448
+          "change": 19.018414101426544
         }
       ]
     },
     {
-      "address": "9ovjQQ9SRFNPiFn1be3JVLTabc3kjEvnoDrKThHSsjRv",
-      "chains": [
-        "solana"
-      ],
-      "totalTokens": 5,
-      "trackedTokens": 5,
-      "wins": 2,
-      "losses": 3,
-      "winRate": 40,
-      "avgReturn": 32.2,
-      "score": 33.33,
-      "firstSeen": 1773506911627,
-      "topPicks": [
-        {
-          "symbol": "Rosie",
-          "chain": "solana",
-          "change": 238.33933523112773
-        },
-        {
-          "symbol": "TERAFAB",
-          "chain": "solana",
-          "change": 115.23008967740564
-        },
-        {
-          "symbol": "NORWOOD",
-          "chain": "solana",
-          "change": -39.27161044556941
-        },
-        {
-          "symbol": "AI",
-          "chain": "solana",
-          "change": -61.747743085404785
-        },
-        {
-          "symbol": "ZEZE",
-          "chain": "solana",
-          "change": -91.39426098040047
-        }
-      ]
-    },
-    {
-      "address": "0x537948624d4e8c4fa9cfcf8170906620d43b482c",
+      "address": "0x0b7cd8b4e9b4648595d338252b507c95f46a9dae",
       "chains": [
         "base"
       ],
@@ -166,50 +321,128 @@
       "wins": 2,
       "losses": 0,
       "winRate": 100,
-      "avgReturn": 18.7,
-      "score": 29.62,
+      "avgReturn": 20.2,
+      "score": 32,
+      "firstSeen": 1773508066759,
+      "topPicks": [
+        {
+          "symbol": "JUNO",
+          "chain": "base",
+          "change": 40.234492206838354
+        },
+        {
+          "symbol": "NOX",
+          "chain": "base",
+          "change": 0.14369912130168133
+        }
+      ]
+    },
+    {
+      "address": "0xbc1b1c1627b4cc0bb2bb5e28de8fdf241bbb3e18",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 2,
+      "losses": 0,
+      "winRate": 100,
+      "avgReturn": 18.9,
+      "score": 29.88,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "AI果蝇",
+          "chain": "bsc",
+          "change": 26.397463790818747
+        },
+        {
+          "symbol": "WUKONG",
+          "chain": "bsc",
+          "change": 11.30493991265331
+        }
+      ]
+    },
+    {
+      "address": "0x872340e9c05534e92104d81f5bd5a890765b6a99",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 2,
+      "losses": 0,
+      "winRate": 100,
+      "avgReturn": 12.1,
+      "score": 19.12,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
           "symbol": "NOOK",
           "chain": "base",
-          "change": 26.099317162476193
+          "change": 23.98234998739617
         },
         {
-          "symbol": "MOLT",
+          "symbol": "NOX",
           "chain": "base",
-          "change": 11.27481237422268
+          "change": 0.14369912130168133
         }
       ]
     },
     {
-      "address": "0xf3cc3accbc3df0384d689585bbafdad268003b12",
+      "address": "0x9ffea936c96b7032f22255564d484d0888888888",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 2,
+      "losses": 1,
+      "winRate": 66.7,
+      "avgReturn": 12.8,
+      "score": 17,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "小龙虾",
+          "chain": "bsc",
+          "change": 52.890603262128266
+        },
+        {
+          "symbol": "WUKONG",
+          "chain": "bsc",
+          "change": 11.30493991265331
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        }
+      ]
+    },
+    {
+      "address": "0x38d020947cde613e2fa85bf1c6f703c74ada5d0b",
       "chains": [
         "base"
       ],
-      "totalTokens": 5,
-      "trackedTokens": 3,
-      "wins": 3,
-      "losses": 0,
-      "winRate": 100,
-      "avgReturn": 14.3,
-      "score": 28.52,
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 20,
+      "score": 15.88,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
-          "symbol": "Molten",
+          "symbol": "JUNO",
           "chain": "base",
-          "change": 16.883300617804448
-        },
-        {
-          "symbol": "FELIX",
-          "chain": "base",
-          "change": 14.62661912882397
+          "change": 40.234492206838354
         },
         {
           "symbol": "MOLT",
           "chain": "base",
-          "change": 11.27481237422268
+          "change": -0.1456610823546663
         }
       ]
     },
@@ -220,38 +453,105 @@
         "base"
       ],
       "totalTokens": 7,
-      "trackedTokens": 5,
+      "trackedTokens": 7,
       "wins": 4,
-      "losses": 1,
-      "winRate": 80,
-      "avgReturn": 11.8,
-      "score": 24.5,
+      "losses": 3,
+      "winRate": 57.1,
+      "avgReturn": 8.6,
+      "score": 14.82,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "JUNO",
           "chain": "base",
-          "change": 43.81514278172194
+          "change": 40.234492206838354
         },
         {
           "symbol": "Molten",
           "chain": "base",
-          "change": 16.883300617804448
+          "change": 19.018414101426544
         },
         {
           "symbol": "哭哭马",
           "chain": "bsc",
-          "change": 4.537892863712707
+          "change": 3.9936861629979363
         },
         {
           "symbol": "Freedom of Money",
           "chain": "bsc",
-          "change": 0.8464619491418985
+          "change": 2.8392482726003965
         },
         {
-          "symbol": "我的刀盾",
+          "symbol": "龙虾",
           "chain": "bsc",
-          "change": -6.848054843171732
+          "change": -0.9611042648104693
+        }
+      ]
+    },
+    {
+      "address": "0xf3cc3accbc3df0384d689585bbafdad268003b12",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 5,
+      "trackedTokens": 3,
+      "wins": 2,
+      "losses": 1,
+      "winRate": 66.7,
+      "avgReturn": 10.9,
+      "score": 14.52,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "Molten",
+          "chain": "base",
+          "change": 19.018414101426544
+        },
+        {
+          "symbol": "FELIX",
+          "chain": "base",
+          "change": 13.808222315713525
+        },
+        {
+          "symbol": "MOLT",
+          "chain": "base",
+          "change": -0.1456610823546663
+        }
+      ]
+    },
+    {
+      "address": "0xb31bcbc718168fcf8b1aa99ac90c4ad98137e8f7",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 5,
+      "trackedTokens": 4,
+      "wins": 2,
+      "losses": 2,
+      "winRate": 50,
+      "avgReturn": 12.3,
+      "score": 14.25,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "STAKR",
+          "chain": "base",
+          "change": 63.97824260792292
+        },
+        {
+          "symbol": "Doppel",
+          "chain": "base",
+          "change": 13.49120781765134
+        },
+        {
+          "symbol": "cyb3rwr3n",
+          "chain": "base",
+          "change": -13.512263286004162
+        },
+        {
+          "symbol": "DONUT",
+          "chain": "base",
+          "change": -14.865207448385451
         }
       ]
     },
@@ -262,32 +562,223 @@
       ],
       "totalTokens": 8,
       "trackedTokens": 4,
-      "wins": 2,
-      "losses": 2,
-      "winRate": 50,
-      "avgReturn": 20.3,
-      "score": 23.57,
+      "wins": 1,
+      "losses": 3,
+      "winRate": 25,
+      "avgReturn": 22.6,
+      "score": 13.14,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "WARDOGS",
           "chain": "solana",
-          "change": 82.89416718695855
+          "change": 113.20537189346797
         },
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "Memehouse",
           "chain": "solana",
-          "change": -5.999957337250995
+          "change": -2.59255500031965
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
+        }
+      ]
+    },
+    {
+      "address": "0x6e89ec9db4342eb5df24f864eedda3eac14d8666",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 2,
+      "losses": 1,
+      "winRate": 66.7,
+      "avgReturn": 7.1,
+      "score": 9.52,
+      "firstSeen": 1773506911853,
+      "topPicks": [
+        {
+          "symbol": "我是未来",
+          "chain": "bsc",
+          "change": 18.555598072032996
+        },
+        {
+          "symbol": "MILADY",
+          "chain": "bsc",
+          "change": 4.956134992651621
+        },
+        {
+          "symbol": "我的刀盾",
+          "chain": "bsc",
+          "change": -2.0978893799212193
+        }
+      ]
+    },
+    {
+      "address": "0x537948624d4e8c4fa9cfcf8170906620d43b482c",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 11.9,
+      "score": 9.45,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "NOOK",
+          "chain": "base",
+          "change": 23.98234998739617
+        },
+        {
+          "symbol": "MOLT",
+          "chain": "base",
+          "change": -0.1456610823546663
+        }
+      ]
+    },
+    {
+      "address": "ALscTJDyAoBtRyJFr6J9h93DMY4DPh86cMwz6AaXdMaT",
+      "chains": [
+        "solana"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 10.4,
+      "score": 8.22,
+      "firstSeen": 1773506911627,
+      "topPicks": [
+        {
+          "symbol": "MERLIN",
+          "chain": "solana",
+          "change": 23.335016696188596
+        },
+        {
+          "symbol": "Memehouse",
+          "chain": "solana",
+          "change": -2.59255500031965
+        }
+      ]
+    },
+    {
+      "address": "0x3c8f6d1559d1e2e4f48d51b4bc5fdb5c783a8940",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 2,
+      "losses": 0,
+      "winRate": 100,
+      "avgReturn": 5,
+      "score": 7.96,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "ODAI",
+          "chain": "base",
+          "change": 9.895273999709998
+        },
+        {
+          "symbol": "NOX",
+          "chain": "base",
+          "change": 0.14369912130168133
+        }
+      ]
+    },
+    {
+      "address": "0xcc90cf56e5bd645974326111a86fd05da8ec2a2c",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 8,
+      "trackedTokens": 7,
+      "wins": 4,
+      "losses": 3,
+      "winRate": 57.1,
+      "avgReturn": 3.6,
+      "score": 6.12,
+      "firstSeen": 1773506911853,
+      "topPicks": [
+        {
+          "symbol": "我是未来",
+          "chain": "bsc",
+          "change": 18.555598072032996
+        },
+        {
+          "symbol": "AGENT",
+          "chain": "bsc",
+          "change": 5.168375114683451
+        },
+        {
+          "symbol": "哭哭马",
+          "chain": "bsc",
+          "change": 3.9936861629979363
+        },
+        {
+          "symbol": "Freedom of Money",
+          "chain": "bsc",
+          "change": 2.8392482726003965
+        },
+        {
+          "symbol": "龙虾",
+          "chain": "bsc",
+          "change": -0.9611042648104693
+        }
+      ]
+    },
+    {
+      "address": "0xae425b91728436762762489df07b7d74963c85d0",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 7,
+      "trackedTokens": 7,
+      "wins": 4,
+      "losses": 3,
+      "winRate": 57.1,
+      "avgReturn": 3.6,
+      "score": 6.12,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "我是未来",
+          "chain": "bsc",
+          "change": 18.555598072032996
+        },
+        {
+          "symbol": "AGENT",
+          "chain": "bsc",
+          "change": 5.168375114683451
+        },
+        {
+          "symbol": "哭哭马",
+          "chain": "bsc",
+          "change": 3.9936861629979363
+        },
+        {
+          "symbol": "Freedom of Money",
+          "chain": "bsc",
+          "change": 2.8392482726003965
+        },
+        {
+          "symbol": "龙虾",
+          "chain": "bsc",
+          "change": -0.9611042648104693
         }
       ]
     },
@@ -298,22 +789,48 @@
       ],
       "totalTokens": 6,
       "trackedTokens": 2,
-      "wins": 2,
-      "losses": 0,
-      "winRate": 100,
-      "avgReturn": 13,
-      "score": 20.53,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 6.8,
+      "score": 5.41,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
           "symbol": "FELIX",
           "chain": "base",
-          "change": 14.62661912882397
+          "change": 13.808222315713525
         },
         {
           "symbol": "MOLT",
           "chain": "base",
-          "change": 11.27481237422268
+          "change": -0.1456610823546663
+        }
+      ]
+    },
+    {
+      "address": "0xa42956220c136f6d8c5efb43480b1b8d28e317d7",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": 4.8,
+      "score": 3.79,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "STAKR",
+          "chain": "base",
+          "change": 63.97824260792292
+        },
+        {
+          "symbol": "WAFFLES",
+          "chain": "base",
+          "change": -54.414475543069955
         }
       ]
     },
@@ -323,188 +840,64 @@
         "bsc"
       ],
       "totalTokens": 4,
-      "trackedTokens": 2,
+      "trackedTokens": 3,
       "wins": 2,
-      "losses": 0,
-      "winRate": 100,
-      "avgReturn": 7.2,
-      "score": 11.35,
+      "losses": 1,
+      "winRate": 66.7,
+      "avgReturn": 2.5,
+      "score": 3.38,
       "firstSeen": 1773506911853,
       "topPicks": [
         {
           "symbol": "AGENT",
           "chain": "bsc",
-          "change": 9.320994931711974
+          "change": 5.168375114683451
         },
         {
           "symbol": "MILADY",
           "chain": "bsc",
-          "change": 5.006123423272518
+          "change": 4.956134992651621
+        },
+        {
+          "symbol": "Fight",
+          "chain": "bsc",
+          "change": -2.519284602892678
         }
       ]
     },
     {
-      "address": "7Lc3AxNXjeDrcD7Uv2p9aXwHgrU5BreefXgfwQQiNfXY",
-      "chains": [
-        "solana"
-      ],
-      "totalTokens": 6,
-      "trackedTokens": 6,
-      "wins": 2,
-      "losses": 4,
-      "winRate": 33.3,
-      "avgReturn": 11.3,
-      "score": 10.57,
-      "firstSeen": 1773506911627,
-      "topPicks": [
-        {
-          "symbol": "Rosie",
-          "chain": "solana",
-          "change": 238.33933523112773
-        },
-        {
-          "symbol": "TERAFAB",
-          "chain": "solana",
-          "change": 115.23008967740564
-        },
-        {
-          "symbol": "NORWOOD",
-          "chain": "solana",
-          "change": -39.27161044556941
-        },
-        {
-          "symbol": "AI",
-          "chain": "solana",
-          "change": -61.747743085404785
-        },
-        {
-          "symbol": "ZEZE",
-          "chain": "solana",
-          "change": -91.39426098040047
-        }
-      ]
-    },
-    {
-      "address": "0xcc90cf56e5bd645974326111a86fd05da8ec2a2c",
+      "address": "0x680bf9efe3d3d40ca28e4f028dfe2d99f985f969",
       "chains": [
         "bsc"
       ],
-      "totalTokens": 8,
+      "totalTokens": 5,
       "trackedTokens": 4,
-      "wins": 3,
-      "losses": 1,
-      "winRate": 75,
-      "avgReturn": 2,
-      "score": 3.42,
-      "firstSeen": 1773506911853,
-      "topPicks": [
-        {
-          "symbol": "AGENT",
-          "chain": "bsc",
-          "change": 9.320994931711974
-        },
-        {
-          "symbol": "哭哭马",
-          "chain": "bsc",
-          "change": 4.537892863712707
-        },
-        {
-          "symbol": "Freedom of Money",
-          "chain": "bsc",
-          "change": 0.8464619491418985
-        },
-        {
-          "symbol": "我的刀盾",
-          "chain": "bsc",
-          "change": -6.848054843171732
-        }
-      ]
-    },
-    {
-      "address": "0xae425b91728436762762489df07b7d74963c85d0",
-      "chains": [
-        "bsc"
-      ],
-      "totalTokens": 7,
-      "trackedTokens": 4,
-      "wins": 3,
-      "losses": 1,
-      "winRate": 75,
-      "avgReturn": 2,
-      "score": 3.42,
+      "wins": 1,
+      "losses": 3,
+      "winRate": 25,
+      "avgReturn": 2.7,
+      "score": 1.54,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
-          "symbol": "AGENT",
+          "symbol": "我是未来",
           "chain": "bsc",
-          "change": 9.320994931711974
+          "change": 18.555598072032996
         },
         {
-          "symbol": "哭哭马",
+          "symbol": "龙虾",
           "chain": "bsc",
-          "change": 4.537892863712707
+          "change": -0.9611042648104693
         },
         {
-          "symbol": "Freedom of Money",
+          "symbol": "Fight",
           "chain": "bsc",
-          "change": 0.8464619491418985
+          "change": -2.519284602892678
         },
         {
-          "symbol": "我的刀盾",
+          "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -6.848054843171732
-        }
-      ]
-    },
-    {
-      "address": "21xsLyMB5v9hryZFL6S2sk5GfKwRfWuisV9ucMYhNWML",
-      "chains": [
-        "solana"
-      ],
-      "totalTokens": 2,
-      "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": 2.2,
-      "score": 1.71,
-      "firstSeen": 1773506911627,
-      "topPicks": [
-        {
-          "symbol": "WENDYS",
-          "chain": "solana",
-          "change": 23.71628667215279
-        },
-        {
-          "symbol": "SMITH",
-          "chain": "solana",
-          "change": -19.399060656684767
-        }
-      ]
-    },
-    {
-      "address": "5ruPgyUP4Y7WbTBMeF1RMDcfrpY26DegMWVTbiFzobAP",
-      "chains": [
-        "solana"
-      ],
-      "totalTokens": 3,
-      "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": 2.2,
-      "score": 1.71,
-      "firstSeen": 1773506911627,
-      "topPicks": [
-        {
-          "symbol": "WENDYS",
-          "chain": "solana",
-          "change": 23.71628667215279
-        },
-        {
-          "symbol": "SMITH",
-          "chain": "solana",
-          "change": -19.399060656684767
+          "change": -4.47212373066357
         }
       ]
     },
@@ -518,24 +911,24 @@
       "wins": 0,
       "losses": 3,
       "winRate": 0,
-      "avgReturn": -52.6,
+      "avgReturn": -56.8,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "dbxbx",
           "chain": "solana",
-          "change": -42.019540239779495
+          "change": -54.59864063856453
         },
         {
           "symbol": "WHALE",
           "chain": "solana",
-          "change": -96.4746525385355
+          "change": -97.2863916139708
         }
       ]
     },
@@ -549,24 +942,24 @@
       "wins": 1,
       "losses": 2,
       "winRate": 33.3,
-      "avgReturn": -11,
+      "avgReturn": -0.9,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "WARDOGS",
           "chain": "solana",
-          "change": 82.89416718695855
+          "change": 113.20537189346797
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "WHALE",
           "chain": "solana",
-          "change": -96.4746525385355
+          "change": -97.2863916139708
         }
       ]
     },
@@ -577,22 +970,22 @@
       ],
       "totalTokens": 2,
       "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": -34.3,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -47,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "HORSES",
           "chain": "solana",
-          "change": 17.61244721622827
+          "change": -6.905944064051963
         },
         {
           "symbol": "FLOFLO",
           "chain": "solana",
-          "change": -86.15498279573806
+          "change": -87.06084516345729
         }
       ]
     },
@@ -606,34 +999,34 @@
       "wins": 3,
       "losses": 5,
       "winRate": 37.5,
-      "avgReturn": -7.6,
+      "avgReturn": -4.5,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "WARDOGS",
           "chain": "solana",
-          "change": 82.89416718695855
+          "change": 113.20537189346797
         },
         {
           "symbol": "TripleT",
           "chain": "solana",
-          "change": 10.428411228276923
+          "change": 13.404924492299838
         },
         {
           "symbol": "Life",
           "chain": "solana",
-          "change": 7.278403778202202
+          "change": 0.3626411156351229
         },
         {
           "symbol": "Distorted",
           "chain": "solana",
-          "change": -2.990784807544191
+          "change": -2.491843543999448
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         }
       ]
     },
@@ -642,50 +1035,81 @@
       "chains": [
         "solana"
       ],
-      "totalTokens": 7,
-      "trackedTokens": 2,
+      "totalTokens": 8,
+      "trackedTokens": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "winRate": 0,
-      "avgReturn": -43.4,
+      "avgReturn": -36.5,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
+          "symbol": "SMITH",
+          "chain": "solana",
+          "change": -18.59305456737125
+        },
+        {
           "symbol": "NORWOOD",
           "chain": "solana",
-          "change": -39.27161044556941
+          "change": -45.34398205697774
         },
         {
           "symbol": "01001000",
           "chain": "solana",
-          "change": -47.5668387476106
+          "change": -45.684243328451245
         }
       ]
     },
     {
-      "address": "ALscTJDyAoBtRyJFr6J9h93DMY4DPh86cMwz6AaXdMaT",
+      "address": "2Ft3YvLGQEDEJQ4Krh9jPrvkNYV2Lv5P3kDHqkeKUqfp",
       "chains": [
         "solana"
       ],
       "totalTokens": 3,
       "trackedTokens": 2,
-      "wins": 0,
-      "losses": 2,
-      "winRate": 0,
-      "avgReturn": -8.6,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": -6.9,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
-          "symbol": "Memehouse",
+          "symbol": "MERLIN",
           "chain": "solana",
-          "change": -5.999957337250995
+          "change": 23.335016696188596
         },
+        {
+          "symbol": "ROSE",
+          "chain": "solana",
+          "change": -37.0389829257238
+        }
+      ]
+    },
+    {
+      "address": "37TiV2MpnVgY6qJgDbGVkuKouKaab7UPpoXwtXKEuAfR",
+      "chains": [
+        "solana"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": -6.9,
+      "score": 0,
+      "firstSeen": 1773506911627,
+      "topPicks": [
         {
           "symbol": "MERLIN",
           "chain": "solana",
-          "change": -11.182279741831248
+          "change": 23.335016696188596
+        },
+        {
+          "symbol": "ROSE",
+          "chain": "solana",
+          "change": -37.0389829257238
         }
       ]
     },
@@ -699,19 +1123,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -33.5,
+      "avgReturn": -32.1,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "01001000",
           "chain": "solana",
-          "change": -47.5668387476106
+          "change": -45.684243328451245
         }
       ]
     },
@@ -725,29 +1149,29 @@
       "wins": 1,
       "losses": 3,
       "winRate": 25,
-      "avgReturn": -19.3,
+      "avgReturn": -28.3,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "TERAFAB",
           "chain": "solana",
-          "change": 115.23008967740564
+          "change": 101.97536752769005
         },
         {
           "symbol": "NORWOOD",
           "chain": "solana",
-          "change": -39.27161044556941
+          "change": -45.34398205697774
         },
         {
           "symbol": "AI",
           "chain": "solana",
-          "change": -61.747743085404785
+          "change": -78.20672337114156
         },
         {
           "symbol": "ZEZE",
           "chain": "solana",
-          "change": -91.39426098040047
+          "change": -91.57332302783125
         }
       ]
     },
@@ -758,32 +1182,32 @@
       ],
       "totalTokens": 10,
       "trackedTokens": 4,
-      "wins": 1,
-      "losses": 3,
-      "winRate": 25,
-      "avgReturn": -12.3,
+      "wins": 0,
+      "losses": 4,
+      "winRate": 0,
+      "avgReturn": -17.1,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "Memehouse",
           "chain": "solana",
-          "change": -5.999957337250995
+          "change": -2.59255500031965
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "01001000",
           "chain": "solana",
-          "change": -47.5668387476106
+          "change": -45.684243328451245
         }
       ]
     },
@@ -797,24 +1221,24 @@
       "wins": 0,
       "losses": 3,
       "winRate": 0,
-      "avgReturn": -25.2,
+      "avgReturn": -24.4,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "Memehouse",
           "chain": "solana",
-          "change": -5.999957337250995
+          "change": -2.59255500031965
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "$2",
           "chain": "solana",
-          "change": -50.3329489287033
+          "change": -51.880307773174074
         }
       ]
     },
@@ -825,37 +1249,37 @@
       ],
       "totalTokens": 8,
       "trackedTokens": 5,
-      "wins": 1,
-      "losses": 4,
-      "winRate": 20,
-      "avgReturn": -19.9,
+      "wins": 0,
+      "losses": 5,
+      "winRate": 0,
+      "avgReturn": -24,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "Memehouse",
           "chain": "solana",
-          "change": -5.999957337250995
+          "change": -2.59255500031965
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "01001000",
           "chain": "solana",
-          "change": -47.5668387476106
+          "change": -45.684243328451245
         },
         {
           "symbol": "$2",
           "chain": "solana",
-          "change": -50.3329489287033
+          "change": -51.880307773174074
         }
       ]
     },
@@ -866,37 +1290,37 @@
       ],
       "totalTokens": 12,
       "trackedTokens": 5,
-      "wins": 1,
-      "losses": 4,
-      "winRate": 20,
-      "avgReturn": -19.9,
+      "wins": 0,
+      "losses": 5,
+      "winRate": 0,
+      "avgReturn": -24,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "Memehouse",
           "chain": "solana",
-          "change": -5.999957337250995
+          "change": -2.59255500031965
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "01001000",
           "chain": "solana",
-          "change": -47.5668387476106
+          "change": -45.684243328451245
         },
         {
           "symbol": "$2",
           "chain": "solana",
-          "change": -50.3329489287033
+          "change": -51.880307773174074
         }
       ]
     },
@@ -910,24 +1334,24 @@
       "wins": 0,
       "losses": 3,
       "winRate": 0,
-      "avgReturn": -39.1,
+      "avgReturn": -38.7,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "01001000",
           "chain": "solana",
-          "change": -47.5668387476106
+          "change": -45.684243328451245
         },
         {
           "symbol": "$2",
           "chain": "solana",
-          "change": -50.3329489287033
+          "change": -51.880307773174074
         }
       ]
     },
@@ -941,24 +1365,24 @@
       "wins": 1,
       "losses": 2,
       "winRate": 33.3,
-      "avgReturn": -17.1,
+      "avgReturn": -21.2,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "Life",
           "chain": "solana",
-          "change": 7.278403778202202
+          "change": 0.3626411156351229
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "NORWOOD",
           "chain": "solana",
-          "change": -39.27161044556941
+          "change": -45.34398205697774
         }
       ]
     },
@@ -972,24 +1396,24 @@
       "wins": 0,
       "losses": 3,
       "winRate": 0,
-      "avgReturn": -39.1,
+      "avgReturn": -38.7,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
         },
         {
           "symbol": "01001000",
           "chain": "solana",
-          "change": -47.5668387476106
+          "change": -45.684243328451245
         },
         {
           "symbol": "$2",
           "chain": "solana",
-          "change": -50.3329489287033
+          "change": -51.880307773174074
         }
       ]
     },
@@ -1003,24 +1427,50 @@
       "wins": 1,
       "losses": 2,
       "winRate": 33.3,
-      "avgReturn": -6,
+      "avgReturn": -6.9,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "Life",
           "chain": "solana",
-          "change": 7.278403778202202
+          "change": 0.3626411156351229
         },
         {
           "symbol": "Memehouse",
           "chain": "solana",
-          "change": -5.999957337250995
+          "change": -2.59255500031965
         },
         {
           "symbol": "SMITH",
           "chain": "solana",
-          "change": -19.399060656684767
+          "change": -18.59305456737125
+        }
+      ]
+    },
+    {
+      "address": "21xsLyMB5v9hryZFL6S2sk5GfKwRfWuisV9ucMYhNWML",
+      "chains": [
+        "solana"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -10,
+      "score": 0,
+      "firstSeen": 1773506911627,
+      "topPicks": [
+        {
+          "symbol": "WENDYS",
+          "chain": "solana",
+          "change": -1.4842468137427312
+        },
+        {
+          "symbol": "SMITH",
+          "chain": "solana",
+          "change": -18.59305456737125
         }
       ]
     },
@@ -1034,7 +1484,7 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -91.5,
+      "avgReturn": -91.3,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
@@ -1046,7 +1496,33 @@
         {
           "symbol": "BOTTOM",
           "chain": "solana",
-          "change": -93.36956971502785
+          "change": -92.86542618384131
+        }
+      ]
+    },
+    {
+      "address": "5ruPgyUP4Y7WbTBMeF1RMDcfrpY26DegMWVTbiFzobAP",
+      "chains": [
+        "solana"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -10,
+      "score": 0,
+      "firstSeen": 1773506911627,
+      "topPicks": [
+        {
+          "symbol": "WENDYS",
+          "chain": "solana",
+          "change": -1.4842468137427312
+        },
+        {
+          "symbol": "SMITH",
+          "chain": "solana",
+          "change": -18.59305456737125
         }
       ]
     },
@@ -1057,32 +1533,32 @@
       ],
       "totalTokens": 6,
       "trackedTokens": 4,
-      "wins": 1,
-      "losses": 3,
-      "winRate": 25,
-      "avgReturn": -49.2,
+      "wins": 0,
+      "losses": 4,
+      "winRate": 0,
+      "avgReturn": -56.5,
       "score": 0,
       "firstSeen": 1773506911627,
       "topPicks": [
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "Slop",
           "chain": "solana",
-          "change": -35.36016495680836
+          "change": -39.52922514415743
         },
         {
           "symbol": "Limitless",
           "chain": "solana",
-          "change": -90.55284491092488
+          "change": -90.0955479115884
         },
         {
           "symbol": "Next",
           "chain": "solana",
-          "change": -94.72727821592753
+          "change": -94.80068647347618
         }
       ]
     },
@@ -1093,17 +1569,17 @@
       ],
       "totalTokens": 4,
       "trackedTokens": 3,
-      "wins": 1,
-      "losses": 2,
-      "winRate": 33.3,
-      "avgReturn": -52.2,
+      "wins": 0,
+      "losses": 3,
+      "winRate": 0,
+      "avgReturn": -60.4,
       "score": 0,
       "firstSeen": 1773506911628,
       "topPicks": [
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "Gojo",
@@ -1113,7 +1589,7 @@
         {
           "symbol": "Limitless",
           "chain": "solana",
-          "change": -90.55284491092488
+          "change": -90.0955479115884
         }
       ]
     },
@@ -1124,17 +1600,17 @@
       ],
       "totalTokens": 2,
       "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": -36,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -48.3,
       "score": 0,
       "firstSeen": 1773506911628,
       "topPicks": [
         {
           "symbol": "HORSES",
           "chain": "solana",
-          "change": 17.61244721622827
+          "change": -6.905944064051963
         },
         {
           "symbol": "Gojo",
@@ -1153,14 +1629,14 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -85.2,
+      "avgReturn": -84.8,
       "score": 0,
       "firstSeen": 1773506911628,
       "topPicks": [
         {
           "symbol": "SMORT",
           "chain": "solana",
-          "change": -80.623581185018
+          "change": -79.86341698092924
         },
         {
           "symbol": "Gojo",
@@ -1176,17 +1652,17 @@
       ],
       "totalTokens": 2,
       "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": -32.5,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -45.1,
       "score": 0,
       "firstSeen": 1773506911628,
       "topPicks": [
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "X COINS",
@@ -1202,22 +1678,22 @@
       ],
       "totalTokens": 3,
       "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": -33.4,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -45.8,
       "score": 0,
       "firstSeen": 1773506911628,
       "topPicks": [
         {
           "symbol": "WENDYS",
           "chain": "solana",
-          "change": 23.71628667215279
+          "change": -1.4842468137427312
         },
         {
           "symbol": "Limitless",
           "chain": "solana",
-          "change": -90.55284491092488
+          "change": -90.0955479115884
         }
       ]
     },
@@ -1227,28 +1703,28 @@
         "bsc"
       ],
       "totalTokens": 11,
-      "trackedTokens": 7,
+      "trackedTokens": 8,
       "wins": 0,
-      "losses": 7,
+      "losses": 8,
       "winRate": 0,
-      "avgReturn": -92.2,
+      "avgReturn": -92.8,
       "score": 0,
       "firstSeen": 1773506911853,
       "topPicks": [
         {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "元",
           "chain": "bsc",
-          "change": -83.89497147370105
+          "change": -85.01734602636067
         },
         {
           "symbol": "币安青蛙",
           "chain": "bsc",
-          "change": -92.15489516903038
+          "change": -92.42140860793597
         },
         {
           "symbol": "波龙",
@@ -1268,28 +1744,28 @@
         "bsc"
       ],
       "totalTokens": 11,
-      "trackedTokens": 7,
+      "trackedTokens": 8,
       "wins": 0,
-      "losses": 7,
+      "losses": 8,
       "winRate": 0,
-      "avgReturn": -92.2,
+      "avgReturn": -92.8,
       "score": 0,
       "firstSeen": 1773506911853,
       "topPicks": [
         {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "元",
           "chain": "bsc",
-          "change": -83.89497147370105
+          "change": -85.01734602636067
         },
         {
           "symbol": "币安青蛙",
           "chain": "bsc",
-          "change": -92.15489516903038
+          "change": -92.42140860793597
         },
         {
           "symbol": "波龙",
@@ -1313,19 +1789,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -88.6,
+      "avgReturn": -85.8,
       "score": 0,
       "firstSeen": 1773506911853,
       "topPicks": [
         {
           "symbol": "MoonCat",
           "chain": "bsc",
-          "change": -85.05475711472656
+          "change": -79.21905671128339
         },
         {
           "symbol": "币安青蛙",
           "chain": "bsc",
-          "change": -92.15489516903038
+          "change": -92.42140860793597
         }
       ]
     },
@@ -1335,49 +1811,28 @@
         "bsc"
       ],
       "totalTokens": 3,
-      "trackedTokens": 2,
+      "trackedTokens": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "winRate": 0,
-      "avgReturn": -60.6,
+      "avgReturn": -30.7,
       "score": 0,
       "firstSeen": 1773506911853,
       "topPicks": [
         {
+          "symbol": "Fight",
+          "chain": "bsc",
+          "change": -2.519284602892678
+        },
+        {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
         },
         {
           "symbol": "元",
           "chain": "bsc",
-          "change": -83.89497147370105
-        }
-      ]
-    },
-    {
-      "address": "0x6e89ec9db4342eb5df24f864eedda3eac14d8666",
-      "chains": [
-        "bsc"
-      ],
-      "totalTokens": 3,
-      "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": -0.9,
-      "score": 0,
-      "firstSeen": 1773506911853,
-      "topPicks": [
-        {
-          "symbol": "MILADY",
-          "chain": "bsc",
-          "change": 5.006123423272518
-        },
-        {
-          "symbol": "我的刀盾",
-          "chain": "bsc",
-          "change": -6.848054843171732
+          "change": -85.01734602636067
         }
       ]
     },
@@ -1387,14 +1842,19 @@
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 2,
+      "trackedTokens": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "winRate": 0,
-      "avgReturn": -97.9,
+      "avgReturn": -73.9,
       "score": 0,
       "firstSeen": 1773506911853,
       "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
         {
           "symbol": "天梯",
           "chain": "bsc",
@@ -1408,42 +1868,16 @@
       ]
     },
     {
-      "address": "0x9172522708770b2eac035c7a9a313aa4362d6bad",
-      "chains": [
-        "bsc"
-      ],
-      "totalTokens": 3,
-      "trackedTokens": 2,
-      "wins": 0,
-      "losses": 2,
-      "winRate": 0,
-      "avgReturn": -88.5,
-      "score": 0,
-      "firstSeen": 1773506911853,
-      "topPicks": [
-        {
-          "symbol": "波龙",
-          "chain": "bsc",
-          "change": -79.65175568414678
-        },
-        {
-          "symbol": "波龙",
-          "chain": "bsc",
-          "change": -97.37666089303639
-        }
-      ]
-    },
-    {
       "address": "0xd029a6eba27862c520001b85981432dd84465c4c",
       "chains": [
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 3,
+      "trackedTokens": 5,
       "wins": 2,
-      "losses": 1,
-      "winRate": 66.7,
-      "avgReturn": -11.8,
+      "losses": 3,
+      "winRate": 40,
+      "avgReturn": -20.1,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1458,9 +1892,102 @@
           "change": 11.30493991265331
         },
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "Punch",
+          "chain": "bsc",
+          "change": -39.03645378646841
+        },
+        {
           "symbol": "BSN",
           "chain": "bsc",
           "change": -99.72198307718091
+        }
+      ]
+    },
+    {
+      "address": "0x9cace25529d4d1682325ecd6a67a757ecfd1d9be",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 0,
+      "losses": 3,
+      "winRate": 0,
+      "avgReturn": -72.6,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "Punch",
+          "chain": "bsc",
+          "change": -39.03645378646841
+        },
+        {
+          "symbol": "元",
+          "chain": "bsc",
+          "change": -85.01734602636067
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
+      "address": "0xe92c26ddc8929a7c4360be4ccc0b99b7b4fbeb9b",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -32.5,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "Punch",
+          "chain": "bsc",
+          "change": -39.03645378646841
+        }
+      ]
+    },
+    {
+      "address": "0xe12a7999895c1b3c1589a8fa6db5cff39fd46cce",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -66.4,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "Punch",
+          "chain": "bsc",
+          "change": -39.03645378646841
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
         }
       ]
     },
@@ -1470,18 +1997,28 @@
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 2,
+      "trackedTokens": 4,
       "wins": 0,
-      "losses": 2,
+      "losses": 4,
       "winRate": 0,
-      "avgReturn": -97.6,
+      "avgReturn": -79.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
           "symbol": "MemeClaw",
           "chain": "bsc",
-          "change": -97.46864229932221
+          "change": -97.42605414472742
+        },
+        {
+          "symbol": "MemeClaw",
+          "chain": "bsc",
+          "change": -97.5714915797616
         },
         {
           "symbol": "天梯",
@@ -1496,11 +2033,11 @@
         "bsc"
       ],
       "totalTokens": 7,
-      "trackedTokens": 5,
+      "trackedTokens": 6,
       "wins": 1,
-      "losses": 4,
-      "winRate": 20,
-      "avgReturn": -75.7,
+      "losses": 5,
+      "winRate": 16.7,
+      "avgReturn": -67.4,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1508,6 +2045,11 @@
           "symbol": "WUKONG",
           "chain": "bsc",
           "change": 11.30493991265331
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
         },
         {
           "symbol": "波龙",
@@ -1522,12 +2064,7 @@
         {
           "symbol": "MemeClaw",
           "chain": "bsc",
-          "change": -97.46864229932221
-        },
-        {
-          "symbol": "天梯",
-          "chain": "bsc",
-          "change": -97.76657338463744
+          "change": -97.42605414472742
         }
       ]
     },
@@ -1537,11 +2074,11 @@
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 3,
+      "trackedTokens": 4,
       "wins": 1,
-      "losses": 2,
-      "winRate": 33.3,
-      "avgReturn": -41.5,
+      "losses": 3,
+      "winRate": 25,
+      "avgReturn": -37.2,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1551,9 +2088,14 @@
           "change": 52.890603262128266
         },
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "天梯",
@@ -1563,23 +2105,85 @@
       ]
     },
     {
+      "address": "0xdc07ddadd60141013e2c2b6d1acb04cd9d1d689a",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 4,
+      "trackedTokens": 3,
+      "wins": 0,
+      "losses": 3,
+      "winRate": 0,
+      "avgReturn": -73.8,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "MemeClaw",
+          "chain": "bsc",
+          "change": -97.5714915797616
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -97.76657338463744
+        }
+      ]
+    },
+    {
+      "address": "0x6699e6541c55a6e1c44793858d6ddad217583d78",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -61.7,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "MemeClaw",
+          "chain": "bsc",
+          "change": -97.42605414472742
+        }
+      ]
+    },
+    {
       "address": "0x2cd73f100bf38d986c950ad6a7d36d58c73d6886",
       "chains": [
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 4,
+      "trackedTokens": 5,
       "wins": 0,
-      "losses": 4,
+      "losses": 5,
       "winRate": 0,
-      "avgReturn": -93,
+      "avgReturn": -79.2,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "波龙",
@@ -1604,11 +2208,11 @@
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 4,
+      "trackedTokens": 5,
       "wins": 1,
-      "losses": 3,
-      "winRate": 25,
-      "avgReturn": -66.5,
+      "losses": 4,
+      "winRate": 20,
+      "avgReturn": -58,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1618,9 +2222,14 @@
           "change": 11.30493991265331
         },
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "天梯",
@@ -1640,11 +2249,11 @@
         "bsc"
       ],
       "totalTokens": 4,
-      "trackedTokens": 3,
+      "trackedTokens": 4,
       "wins": 2,
-      "losses": 1,
-      "winRate": 66.7,
-      "avgReturn": -5.2,
+      "losses": 2,
+      "winRate": 50,
+      "avgReturn": -9.9,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1659,9 +2268,14 @@
           "change": 11.30493991265331
         },
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         }
       ]
     },
@@ -1671,11 +2285,11 @@
         "bsc"
       ],
       "totalTokens": 7,
-      "trackedTokens": 6,
+      "trackedTokens": 7,
       "wins": 2,
-      "losses": 4,
-      "winRate": 33.3,
-      "avgReturn": -51.3,
+      "losses": 5,
+      "winRate": 28.6,
+      "avgReturn": -47.4,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1690,14 +2304,170 @@
           "change": 11.30493991265331
         },
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "波龙",
           "chain": "bsc",
           "change": -97.04869173005515
+        }
+      ]
+    },
+    {
+      "address": "0xba7f6610c538cba87395f995e74ba69114521f27",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -62.8,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "BSN",
+          "chain": "bsc",
+          "change": -99.72198307718091
+        }
+      ]
+    },
+    {
+      "address": "0x90849db5afdee8085cd9a9814991531a903d2be4",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -61.9,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -97.76657338463744
+        }
+      ]
+    },
+    {
+      "address": "0x261c2fbb29e99776795482a6de004ee3cc3ee504",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -61.9,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -97.76657338463744
+        }
+      ]
+    },
+    {
+      "address": "0xd38e1bc6ee966a11d5b2550063927731079d612e",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -61.9,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -97.76657338463744
+        }
+      ]
+    },
+    {
+      "address": "0x6390254ce318c7f57c1e8f243cfc72b3034dd737",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -61.9,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -97.76657338463744
+        }
+      ]
+    },
+    {
+      "address": "0x66ef7aedb139468ef75ba1eb97e1430ca28de29e",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -61.7,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
         },
         {
           "symbol": "波龙",
@@ -1707,16 +2477,42 @@
       ]
     },
     {
+      "address": "0x396425e40596dcbb59576fd606db27bdee77f933",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -59.8,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
       "address": "0xd7956b9ed49a95b1d3524bfe0da8625cc02aa1b1",
       "chains": [
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 4,
+      "trackedTokens": 5,
       "wins": 2,
-      "losses": 2,
-      "winRate": 50,
-      "avgReturn": -33.1,
+      "losses": 3,
+      "winRate": 40,
+      "avgReturn": -31.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1729,6 +2525,11 @@
           "symbol": "WUKONG",
           "chain": "bsc",
           "change": 11.30493991265331
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
         },
         {
           "symbol": "波龙",
@@ -1743,23 +2544,64 @@
       ]
     },
     {
+      "address": "0x27574268800a7cf72a750a13df8730c9dfe956b4",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 0,
+      "losses": 3,
+      "winRate": 0,
+      "avgReturn": -47,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "小安助手",
+          "chain": "bsc",
+          "change": -21.209041511463294
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
       "address": "0x71fc8104d5cab689c0c8a1eea668ed840e8143d5",
       "chains": [
         "bsc"
       ],
       "totalTokens": 4,
-      "trackedTokens": 2,
+      "trackedTokens": 4,
       "wins": 0,
-      "losses": 2,
+      "losses": 4,
       "winRate": 0,
-      "avgReturn": -64,
+      "avgReturn": -51.8,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
           "symbol": "Memehouse",
           "chain": "bsc",
-          "change": -50.91691818295976
+          "change": -50.80982894219438
+        },
+        {
+          "symbol": "川普",
+          "chain": "bsc",
+          "change": -53.496967289353655
         },
         {
           "symbol": "Memrush",
@@ -1774,18 +2616,23 @@
         "bsc"
       ],
       "totalTokens": 3,
-      "trackedTokens": 2,
+      "trackedTokens": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "winRate": 0,
-      "avgReturn": -59.5,
+      "avgReturn": -48.3,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "小安助手",
           "chain": "bsc",
-          "change": -21.284982951688423
+          "change": -21.209041511463294
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
         },
         {
           "symbol": "天梯",
@@ -1800,11 +2647,11 @@
         "bsc"
       ],
       "totalTokens": 5,
-      "trackedTokens": 4,
+      "trackedTokens": 5,
       "wins": 1,
-      "losses": 3,
-      "winRate": 25,
-      "avgReturn": -36.3,
+      "losses": 4,
+      "winRate": 20,
+      "avgReturn": -27.6,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1814,19 +2661,76 @@
           "change": 11.30493991265331
         },
         {
-          "symbol": "小安助手",
-          "chain": "bsc",
-          "change": -21.284982951688423
-        },
-        {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
+        },
+        {
+          "symbol": "小安助手",
+          "chain": "bsc",
+          "change": -21.209041511463294
+        },
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
         },
         {
           "symbol": "天梯",
           "chain": "bsc",
           "change": -97.76657338463744
+        }
+      ]
+    },
+    {
+      "address": "0x9e74cf67751a9b3d445ec297adbad5fb58bdbe6f",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -42.8,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "OPC",
+          "chain": "bsc",
+          "change": -59.66241790414356
+        }
+      ]
+    },
+    {
+      "address": "0xfe0e113120d81e8b3b816bafd27eba3932ec8cbf",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -51.9,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "天梯",
+          "chain": "bsc",
+          "change": -25.93572786343937
+        },
+        {
+          "symbol": "波龙",
+          "chain": "bsc",
+          "change": -77.83415715079039
         }
       ]
     },
@@ -1840,7 +2744,7 @@
       "wins": 1,
       "losses": 6,
       "winRate": 14.3,
-      "avgReturn": -79.4,
+      "avgReturn": -79.2,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -1852,7 +2756,7 @@
         {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "波龙",
@@ -1867,7 +2771,7 @@
         {
           "symbol": "MemeClaw",
           "chain": "bsc",
-          "change": -97.46864229932221
+          "change": -97.42605414472742
         }
       ]
     },
@@ -1881,14 +2785,14 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -96.2,
+      "avgReturn": -96,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "无主之币",
           "chain": "bsc",
-          "change": -92.61289121092531
+          "change": -92.24554571396854
         },
         {
           "symbol": "BSN",
@@ -1907,19 +2811,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -36.1,
+      "avgReturn": -36,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "小安助手",
           "chain": "bsc",
-          "change": -21.284982951688423
+          "change": -21.209041511463294
         },
         {
           "symbol": "Memehouse",
           "chain": "bsc",
-          "change": -50.91691818295976
+          "change": -50.80982894219438
         }
       ]
     },
@@ -1933,14 +2837,14 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -97.8,
+      "avgReturn": -97.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MemeClaw",
           "chain": "bsc",
-          "change": -97.46864229932221
+          "change": -97.42605414472742
         },
         {
           "symbol": "Elon musk",
@@ -1959,14 +2863,14 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -97.8,
+      "avgReturn": -97.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MemeClaw",
           "chain": "bsc",
-          "change": -97.46864229932221
+          "change": -97.42605414472742
         },
         {
           "symbol": "Elon musk",
@@ -1985,14 +2889,14 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -97.8,
+      "avgReturn": -97.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MemeClaw",
           "chain": "bsc",
-          "change": -97.46864229932221
+          "change": -97.42605414472742
         },
         {
           "symbol": "Elon musk",
@@ -2007,11 +2911,11 @@
         "bsc"
       ],
       "totalTokens": 9,
-      "trackedTokens": 7,
+      "trackedTokens": 9,
       "wins": 2,
-      "losses": 5,
-      "winRate": 28.6,
-      "avgReturn": -57.9,
+      "losses": 7,
+      "winRate": 22.2,
+      "avgReturn": -66.1,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -2028,17 +2932,17 @@
         {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
         },
         {
           "symbol": "波龙",
           "chain": "bsc",
           "change": -97.04869173005515
-        },
-        {
-          "symbol": "波龙",
-          "chain": "bsc",
-          "change": -97.37666089303639
         }
       ]
     },
@@ -2052,19 +2956,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -88.4,
+      "avgReturn": -89,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "元",
           "chain": "bsc",
-          "change": -83.89497147370105
+          "change": -85.01734602636067
         },
         {
           "symbol": "Meme Strategy",
           "chain": "bsc",
-          "change": -92.91318395411645
+          "change": -92.9605455737161
         }
       ]
     },
@@ -2078,19 +2982,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -60.6,
+      "avgReturn": -44.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
         },
         {
           "symbol": "元",
           "chain": "bsc",
-          "change": -83.89497147370105
+          "change": -85.01734602636067
         }
       ]
     },
@@ -2104,19 +3008,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -33.3,
+      "avgReturn": -30.9,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "我的刀盾",
           "chain": "bsc",
-          "change": -6.848054843171732
+          "change": -2.0978893799212193
         },
         {
           "symbol": "OPC",
           "chain": "bsc",
-          "change": -59.7690901454502
+          "change": -59.66241790414356
         }
       ]
     },
@@ -2130,19 +3034,45 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -29.7,
+      "avgReturn": -30.9,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "Fish",
           "chain": "bsc",
-          "change": -8.480496467593637
+          "change": -11.036969308941165
         },
         {
           "symbol": "Memehouse",
           "chain": "bsc",
-          "change": -50.91691818295976
+          "change": -50.80982894219438
+        }
+      ]
+    },
+    {
+      "address": "0xc20791b21acca72d837608c33f3fb037993ca356",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -86.5,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "MoonCat",
+          "chain": "bsc",
+          "change": -79.21905671128339
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
         }
       ]
     },
@@ -2152,23 +3082,54 @@
         "bsc"
       ],
       "totalTokens": 3,
-      "trackedTokens": 2,
+      "trackedTokens": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "winRate": 0,
-      "avgReturn": -61.2,
+      "avgReturn": -59.1,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
         },
         {
           "symbol": "MoonCat",
           "chain": "bsc",
-          "change": -85.05475711472656
+          "change": -79.21905671128339
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
+      "address": "0xc51cc340bf30d186947cec54dfb2f32f9de705dc",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -95.9,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        },
+        {
+          "symbol": "Elon musk",
+          "chain": "bsc",
+          "change": -98.05949730979835
         }
       ]
     },
@@ -2199,7 +3160,33 @@
       ]
     },
     {
-      "address": "0xe369226f48159e9192443bd41fe79d60696d8caf",
+      "address": "0x69cd2138e1de4f1db5dff86e0b12e1d5c0f4e316",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -49.1,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "MOONDOGE",
+          "chain": "bsc",
+          "change": -4.47212373066357
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
+      "address": "0x7453c2f26632c54a0bae8b67d572eb093785e513",
       "chains": [
         "bsc"
       ],
@@ -2208,19 +3195,76 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -61.9,
+      "avgReturn": -93.3,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "Meme Strategy",
+          "chain": "bsc",
+          "change": -92.9605455737161
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
+      "address": "0xe369226f48159e9192443bd41fe79d60696d8caf",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 0,
+      "losses": 3,
+      "winRate": 0,
+      "avgReturn": -61.5,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
         },
         {
           "symbol": "CLANK",
           "chain": "bsc",
           "change": -86.42805970485583
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
+        }
+      ]
+    },
+    {
+      "address": "0xe4c924b5a3d769214bf4c04818eba040c70bc311",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -52.5,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "导师",
+          "chain": "bsc",
+          "change": -11.3708151569477
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
         }
       ]
     },
@@ -2230,23 +3274,28 @@
         "bsc"
       ],
       "totalTokens": 3,
-      "trackedTokens": 2,
+      "trackedTokens": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "winRate": 0,
-      "avgReturn": -65,
+      "avgReturn": -63.5,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
         },
         {
           "symbol": "无主之币",
           "chain": "bsc",
-          "change": -92.61289121092531
+          "change": -92.24554571396854
+        },
+        {
+          "symbol": "FAFO",
+          "chain": "bsc",
+          "change": -93.7211149521641
         }
       ]
     },
@@ -2260,19 +3309,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -65.1,
+      "avgReturn": -48.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
         },
         {
           "symbol": "Meme Strategy",
           "chain": "bsc",
-          "change": -92.91318395411645
+          "change": -92.9605455737161
         }
       ]
     },
@@ -2286,19 +3335,19 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -22.1,
+      "avgReturn": -3.3,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "我的刀盾",
           "chain": "bsc",
-          "change": -6.848054843171732
+          "change": -2.0978893799212193
         },
         {
           "symbol": "MOONDOGE",
           "chain": "bsc",
-          "change": -37.30237025177467
+          "change": -4.47212373066357
         }
       ]
     },
@@ -2312,7 +3361,7 @@
       "wins": 0,
       "losses": 4,
       "winRate": 0,
-      "avgReturn": -85.1,
+      "avgReturn": -84.7,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
@@ -2324,7 +3373,7 @@
         {
           "symbol": "波龙",
           "chain": "bsc",
-          "change": -79.65175568414678
+          "change": -77.83415715079039
         },
         {
           "symbol": "CLANK",
@@ -2335,6 +3384,58 @@
           "symbol": "波龙",
           "chain": "bsc",
           "change": -97.37666089303639
+        }
+      ]
+    },
+    {
+      "address": "0x61e13b2adf64d838c93d18830b9777f4b5a6339c",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -47.4,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "Fight",
+          "chain": "bsc",
+          "change": -2.519284602892678
+        },
+        {
+          "symbol": "无主之币",
+          "chain": "bsc",
+          "change": -92.24554571396854
+        }
+      ]
+    },
+    {
+      "address": "0x183a3300f8939e39cafa6d5801a8a3fd73e4babb",
+      "chains": [
+        "bsc"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -45.9,
+      "score": 0,
+      "firstSeen": 1773506911854,
+      "topPicks": [
+        {
+          "symbol": "狐狸",
+          "chain": "bsc",
+          "change": -7.250815648948395
+        },
+        {
+          "symbol": "MOONDOGECOIN",
+          "chain": "bsc",
+          "change": -84.60505860322087
         }
       ]
     },
@@ -2374,14 +3475,14 @@
       "wins": 0,
       "losses": 3,
       "winRate": 0,
-      "avgReturn": -57.3,
+      "avgReturn": -58.2,
       "score": 0,
       "firstSeen": 1773506911854,
       "topPicks": [
         {
           "symbol": "Fish",
           "chain": "bsc",
-          "change": -8.480496467593637
+          "change": -11.036969308941165
         },
         {
           "symbol": "Memrush",
@@ -2422,28 +3523,90 @@
       ]
     },
     {
+      "address": "0xd06c3e5ade3d8f9c7539a1d1c247b29ba1f7a2af",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 4,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -40.6,
+      "score": 0,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "MOLT",
+          "chain": "base",
+          "change": -0.1456610823546663
+        },
+        {
+          "symbol": "BEAN",
+          "chain": "base",
+          "change": -80.98864494453194
+        }
+      ]
+    },
+    {
+      "address": "0x7f9148c38aebf08d5f3b0b5db1be101ba1486dca",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 1,
+      "losses": 2,
+      "winRate": 33.3,
+      "avgReturn": -29.3,
+      "score": 0,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "DUELSMD",
+          "chain": "base",
+          "change": 5.827908780377871
+        },
+        {
+          "symbol": "MAIAT",
+          "chain": "base",
+          "change": -37.136564476129166
+        },
+        {
+          "symbol": "GOCHU",
+          "chain": "base",
+          "change": -56.44428636923674
+        }
+      ]
+    },
+    {
       "address": "0xf8f67383ec0d902c72201413b659480616616d52",
       "chains": [
         "base"
       ],
       "totalTokens": 7,
-      "trackedTokens": 4,
+      "trackedTokens": 5,
       "wins": 1,
-      "losses": 3,
-      "winRate": 25,
-      "avgReturn": -27,
+      "losses": 4,
+      "winRate": 20,
+      "avgReturn": -28.6,
       "score": 0,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
           "symbol": "LUKSO",
           "chain": "base",
-          "change": 28.200593540584716
+          "change": 7.176785763909217
+        },
+        {
+          "symbol": "cyb3rwr3n",
+          "chain": "base",
+          "change": -13.512263286004162
         },
         {
           "symbol": "DONUT",
           "chain": "base",
-          "change": -14.82304668649922
+          "change": -14.865207448385451
         },
         {
           "symbol": "MAIAT",
@@ -2458,16 +3621,42 @@
       ]
     },
     {
+      "address": "0x66231a8b2c0b13a794a3c27bdf25ebb6012fe91b",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": -28.3,
+      "score": 0,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "LUKSO",
+          "chain": "base",
+          "change": 7.176785763909217
+        },
+        {
+          "symbol": "HOLO",
+          "chain": "base",
+          "change": -63.68697514290213
+        }
+      ]
+    },
+    {
       "address": "0xdf3ea901ca5be60e02fdea007525a656ab211bd2",
       "chains": [
         "base"
       ],
       "totalTokens": 12,
-      "trackedTokens": 6,
+      "trackedTokens": 7,
       "wins": 3,
-      "losses": 3,
-      "winRate": 50,
-      "avgReturn": -14.8,
+      "losses": 4,
+      "winRate": 42.9,
+      "avgReturn": -13.4,
       "score": 0,
       "firstSeen": 1773508066758,
       "topPicks": [
@@ -2477,24 +3666,24 @@
           "change": 17.63100836747984
         },
         {
-          "symbol": "MOLT",
-          "chain": "base",
-          "change": 11.27481237422268
-        },
-        {
           "symbol": "OIL",
           "chain": "base",
           "change": 1.175473469216646
         },
         {
-          "symbol": "Dave",
+          "symbol": "NOX",
           "chain": "base",
-          "change": -17.164921747773615
+          "change": 0.14369912130168133
         },
         {
-          "symbol": "Conway",
+          "symbol": "MOLT",
           "chain": "base",
-          "change": -27.458116314740412
+          "change": -0.1456610823546663
+        },
+        {
+          "symbol": "Dave",
+          "chain": "base",
+          "change": -10.550890734537044
         }
       ]
     },
@@ -2504,11 +3693,11 @@
         "base"
       ],
       "totalTokens": 8,
-      "trackedTokens": 5,
-      "wins": 2,
-      "losses": 3,
-      "winRate": 40,
-      "avgReturn": -12.6,
+      "trackedTokens": 6,
+      "wins": 1,
+      "losses": 5,
+      "winRate": 16.7,
+      "avgReturn": -15,
       "score": 0,
       "firstSeen": 1773508066758,
       "topPicks": [
@@ -2520,22 +3709,22 @@
         {
           "symbol": "MOLT",
           "chain": "base",
-          "change": 11.27481237422268
+          "change": -0.1456610823546663
         },
         {
           "symbol": "TOWNS",
           "chain": "base",
-          "change": -0.37867624330921384
+          "change": -0.996472381853253
         },
         {
           "symbol": "Dave",
           "chain": "base",
-          "change": -17.164921747773615
+          "change": -10.550890734537044
         },
         {
-          "symbol": "POLAR",
+          "symbol": "VANCE",
           "chain": "base",
-          "change": -74.51310891210787
+          "change": -21.4602757577122
         }
       ]
     },
@@ -2549,14 +3738,14 @@
       "wins": 0,
       "losses": 2,
       "winRate": 0,
-      "avgReturn": -42.9,
+      "avgReturn": -43.1,
       "score": 0,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
           "symbol": "Conway",
           "chain": "base",
-          "change": -27.458116314740412
+          "change": -27.76963523419424
         },
         {
           "symbol": "OpenVenice",
@@ -2566,28 +3755,28 @@
       ]
     },
     {
-      "address": "0xb31bcbc718168fcf8b1aa99ac90c4ad98137e8f7",
+      "address": "0x9d14b5f3fc5406d23211d653186a393b1bf75682",
       "chains": [
         "base"
       ],
-      "totalTokens": 5,
+      "totalTokens": 2,
       "trackedTokens": 2,
       "wins": 1,
       "losses": 1,
       "winRate": 50,
-      "avgReturn": -2.3,
+      "avgReturn": -8.5,
       "score": 0,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
-          "symbol": "Doppel",
+          "symbol": "STAKR",
           "chain": "base",
-          "change": 10.132163560481485
+          "change": 63.97824260792292
         },
         {
-          "symbol": "DONUT",
+          "symbol": "BEAN",
           "chain": "base",
-          "change": -14.82304668649922
+          "change": -80.98864494453194
         }
       ]
     },
@@ -2597,23 +3786,59 @@
         "base"
       ],
       "totalTokens": 3,
-      "trackedTokens": 2,
-      "wins": 1,
+      "trackedTokens": 3,
+      "wins": 2,
       "losses": 1,
-      "winRate": 50,
-      "avgReturn": -15.3,
+      "winRate": 66.7,
+      "avgReturn": -11.4,
       "score": 0,
       "firstSeen": 1773508066758,
       "topPicks": [
         {
           "symbol": "JUNO",
           "chain": "base",
-          "change": 43.81514278172194
+          "change": 40.234492206838354
+        },
+        {
+          "symbol": "NOX",
+          "chain": "base",
+          "change": 0.14369912130168133
         },
         {
           "symbol": "POLAR",
           "chain": "base",
           "change": -74.51310891210787
+        }
+      ]
+    },
+    {
+      "address": "0x981837fcc116557663d3a3692700f9b89739323f",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 3,
+      "trackedTokens": 3,
+      "wins": 1,
+      "losses": 2,
+      "winRate": 33.3,
+      "avgReturn": -31.7,
+      "score": 0,
+      "firstSeen": 1773508066758,
+      "topPicks": [
+        {
+          "symbol": "GITLAWB",
+          "chain": "base",
+          "change": 7.4715243270023475
+        },
+        {
+          "symbol": "VANCE",
+          "chain": "base",
+          "change": -21.4602757577122
+        },
+        {
+          "symbol": "BEAN",
+          "chain": "base",
+          "change": -80.98864494453194
         }
       ]
     },
@@ -2627,14 +3852,14 @@
       "wins": 1,
       "losses": 1,
       "winRate": 50,
-      "avgReturn": -25.3,
+      "avgReturn": -23.6,
       "score": 0,
       "firstSeen": 1773508066759,
       "topPicks": [
         {
           "symbol": "Doppel",
           "chain": "base",
-          "change": 10.132163560481485
+          "change": 13.49120781765134
         },
         {
           "symbol": "YARR",
@@ -2649,23 +3874,54 @@
         "base"
       ],
       "totalTokens": 3,
-      "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": -36.6,
+      "trackedTokens": 3,
+      "wins": 0,
+      "losses": 3,
+      "winRate": 0,
+      "avgReturn": -47,
       "score": 0,
       "firstSeen": 1773508066759,
       "topPicks": [
         {
           "symbol": "MOLT",
           "chain": "base",
-          "change": 11.27481237422268
+          "change": -0.1456610823546663
+        },
+        {
+          "symbol": "GOCHU",
+          "chain": "base",
+          "change": -56.44428636923674
         },
         {
           "symbol": "Auto",
           "chain": "base",
           "change": -84.42775635272893
+        }
+      ]
+    },
+    {
+      "address": "0x7c40aacb32fe250b6d7f1caea0af2f63ac526a7c",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -65.5,
+      "score": 0,
+      "firstSeen": 1773508066759,
+      "topPicks": [
+        {
+          "symbol": "GOCHU",
+          "chain": "base",
+          "change": -56.44428636923674
+        },
+        {
+          "symbol": "POLAR",
+          "chain": "base",
+          "change": -74.51310891210787
         }
       ]
     },
@@ -2676,22 +3932,48 @@
       ],
       "totalTokens": 3,
       "trackedTokens": 2,
-      "wins": 1,
-      "losses": 1,
-      "winRate": 50,
-      "avgReturn": -8.1,
+      "wins": 0,
+      "losses": 2,
+      "winRate": 0,
+      "avgReturn": -14,
       "score": 0,
       "firstSeen": 1773508066759,
       "topPicks": [
         {
           "symbol": "MOLT",
           "chain": "base",
-          "change": 11.27481237422268
+          "change": -0.1456610823546663
         },
         {
           "symbol": "Conway",
           "chain": "base",
-          "change": -27.458116314740412
+          "change": -27.76963523419424
+        }
+      ]
+    },
+    {
+      "address": "0xd9b5533af7a7bcb948a28dc86ac16384f5b798fa",
+      "chains": [
+        "base"
+      ],
+      "totalTokens": 2,
+      "trackedTokens": 2,
+      "wins": 1,
+      "losses": 1,
+      "winRate": 50,
+      "avgReturn": -11.7,
+      "score": 0,
+      "firstSeen": 1773508066759,
+      "topPicks": [
+        {
+          "symbol": "JUNO",
+          "chain": "base",
+          "change": 40.234492206838354
+        },
+        {
+          "symbol": "HOLO",
+          "chain": "base",
+          "change": -63.68697514290213
         }
       ]
     }
