@@ -36,13 +36,18 @@ let heliusIdx = 0;
 function nextHeliusKey() { return HELIUS_KEYS[heliusIdx++ % HELIUS_KEYS.length]; }
 
 const EVM_RPCS = {
-  bsc: process.env.BSC_RPC || 'https://bsc-mainnet.public.blastapi.io',
-  base: process.env.BASE_RPC || 'https://base-mainnet.public.blastapi.io',
+  bsc: process.env.BSC_RPC || 'https://1rpc.io/bnb',
+  base: process.env.BASE_RPC || 'https://1rpc.io/base',
 };
 
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 const SOL_MINT = 'So11111111111111111111111111111111111111112';
 const SOL_STABLES = new Set([SOL_MINT, 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'Es9vMFrzaCERmJfrF4H2fvD2EcfY6hVckvyCuuP1CETn']);
+
+// === 种子黑名单（手动标记：空投币、已确认的垃圾等） ===
+const SEED_BLACKLIST = new Set([
+  '0x7977bf3e7e0c954d12cdca3e013adaf57e0b06e0', // OPN: 空投币，筹码在项目方
+]);
 
 // === 种子币筛选标准（只用成熟通道） ===
 // 爆发通道已废弃：垃圾太多（刷量盘、断头铡、庄家盘），过滤成本高且早期买家不可信
@@ -121,7 +126,7 @@ async function fetchSeeds() {
         log('INFO', `  ${chain.name} ${rn}: ${tokens.length}`);
         for (const t of tokens) {
           const ca = (t.contractAddress || '').toLowerCase();
-          if (!ca) continue;
+          if (!ca || SEED_BLACKLIST.has(ca)) continue;
           const mc = parseFloat(t.marketCap || 0);
           const liq = parseFloat(t.liquidity || 0);
           const holders = parseInt(t.holders || 0);
@@ -226,7 +231,14 @@ async function fetchSeeds() {
       s.dexMainDex = dexId;
       s.isPumpfun = isPumpfun;
       
-      // 规则0: 流动性/MC < 1% → 市值虚高，直接踢（不管交易量多少）
+      // 规则0a: 实时流动性 < $10,000 → 死币，直接踢
+      if (totalLiq < 10000) {
+        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED(死币): Liq:$${totalLiq.toFixed(0)}`);
+        all.delete(s.contractAddress.toLowerCase());
+        poolKicked++;
+        continue;
+      }
+      // 规则0b: 流动性/MC < 1% → 市值虚高，直接踢（不管交易量多少）
       if (liqMcRatio < 0.01) {
         log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED(市值虚高): Liq/MC=${(liqMcRatio*100).toFixed(2)}% Liq:$${totalLiq.toFixed(0)} MC:$${mc.toFixed(0)}`);
         all.delete(s.contractAddress.toLowerCase());
@@ -415,9 +427,11 @@ async function mineEvm(seed) {
       body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }) });
     const curBlock = parseInt(br.result, 16);
     
-    // 查最近14天的Transfer事件
+    // 按种子币年龄查Transfer事件（最多60天）
     const blocksPerDay = seed.chain === 'BSC' ? 28800 : 43200;
-    const fromBlock = curBlock - blocksPerDay * 14;
+    const ageDays = seed.launchTime ? Math.ceil((Date.now() - seed.launchTime) / 86400000) + 2 : 100;
+    const lookbackDays = Math.min(ageDays, 100);
+    const fromBlock = curBlock - blocksPerDay * lookbackDays;
     const BATCH = 5000;
     let totalEvents = 0;
     
@@ -476,11 +490,14 @@ async function mineEvm(seed) {
 }
 
 async function mineAll(seeds) {
-  log('INFO', `\n⛏ Phase 2: 挖掘早期买家 (前${Math.min(seeds.length, 15)}个种子)...`);
+  // 只挖100天内发射的种子（老币交易太多挖不动）
+  const MAX_AGE_MS = 100 * 24 * 3600 * 1000;
+  const youngSeeds = seeds.filter(s => s.launchTime && (Date.now() - s.launchTime) < MAX_AGE_MS);
+  log('INFO', `\n⛏ Phase 2: 挖掘早期买家 (${youngSeeds.length}个45天内种子，跳过${seeds.length - youngSeeds.length}个老币)...`);
   await updatePrices();
   
   const seedBuyers = {};
-  const toProcess = seeds.slice(0, 15);
+  const toProcess = youngSeeds;
   
   for (const seed of toProcess) {
     try {

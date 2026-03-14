@@ -872,6 +872,24 @@
       "ageD": 3,
       "chain": "solana",
       "addedAt": "2026-03-14T12:21:25.870Z"
+    },
+    {
+      "symbol": "Life",
+      "mint": "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump",
+      "fdv": 589446.169459031,
+      "vol": 1617092.50738037,
+      "ageD": 5,
+      "chain": "solana",
+      "addedAt": "2026-03-14T13:05:47.263Z"
+    },
+    {
+      "symbol": "WTI",
+      "mint": "G2egjtmfDed6ji7qYqiCJHYC1KwiaCrZYHALKKipump",
+      "fdv": 520704,
+      "vol": 1726513.93,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T13:28:46.418Z"
     }
   ],
   "scanned": [
@@ -965,6 +983,8 @@
     "0x63d3001f2420a09fcae5822723167e857adf04ab",
     "ZkQspzBBnoko1jozmk7SyjtGjPCwYdiHcRjDSU31g8F",
     "qcdogbnRfbhadxEjAwRuBoMJXPPt7z2Csm8jjtbB1Po",
-    "88tLap8DhAQrkxws2jQxCvPd4AxKVi5GxciJzYCDDMSM"
+    "88tLap8DhAQrkxws2jQxCvPd4AxKVi5GxciJzYCDDMSM",
+    "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump",
+    "G2egjtmfDed6ji7qYqiCJHYC1KwiaCrZYHALKKipump"
   ]
 }
