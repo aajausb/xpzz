@@ -5,8 +5,8 @@
   "totalPnl": -223.91725441999998,
   "realizedPnl": -772.0631393923411,
   "unrealizedPnl": 0,
-  "dailyPnl": -223.91725441999998,
-  "dailyPnlDate": "2026-03-13",
+  "dailyPnl": 0,
+  "dailyPnlDate": "2026-03-14",
   "trades": 11,
   "wins": 3,
   "losses": 25,
@@ -29,7 +29,7 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 538.624110595896,
+      "unrealizedPnl": 0,
       "spreadHistory": [
         {
           "time": 1773427790113,
@@ -72,8 +72,8 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.0002486533333333335,
-      "unrealizedPnl": 863.373939390102,
+      "currentSpread": -0.0027769333333333333,
+      "unrealizedPnl": 0,
       "spreadHistory": [
         {
           "time": 1773427790114,
@@ -116,8 +116,8 @@
       "settlementAligned": true,
       "longOrderId": 933623125,
       "shortOrderId": "1416472683204976642",
-      "currentSpread": 0,
-      "unrealizedPnl": 516.482549982,
+      "currentSpread": 0.007471928888888888,
+      "unrealizedPnl": 0,
       "spreadHistory": [
         {
           "time": 1773442190104,
@@ -139,17 +139,19 @@
       "entryTime": "2026-03-13T23:50:03.369Z",
       "spread": 0.0038779999999999995,
       "annualized": 424.6409999999999,
-      "earned": 0,
+      "earned": 5.863797680000001,
       "totalFee": 12,
       "settlementAligned": true,
       "longOrderId": "930af558-887b-4dbb-acfa-83b2fd4a8fd2",
-      "shortOrderId": "1416499854602543105"
+      "shortOrderId": "1416499854602543105",
+      "currentSpread": 0.00042968,
+      "unrealizedPnl": 0
     }
   ],
   "balances": {
-    "binance": 3484.09877266,
-    "bybit": 2890.91175878,
-    "bitget": 6838.005702428931,
+    "binance": 0,
+    "bybit": 0.00003462,
+    "bitget": 6.58931e-7,
     "okx": 0
   },
   "lastTrade": {
@@ -205,7 +207,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773445803537,
+  "_lastEarnedCheck": 1773447488434,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
