@@ -532,6 +532,15 @@
       "addedAt": "2026-03-14T14:01:18.666Z"
     },
     {
+      "symbol": "FIGHT",
+      "mint": "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab",
+      "fdv": 2576508.47983475,
+      "vol": 394719.657859755,
+      "ageD": 51,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T14:46:01.045Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -899,6 +908,15 @@
       "ageD": 0,
       "chain": "solana",
       "addedAt": "2026-03-14T13:28:46.418Z"
+    },
+    {
+      "symbol": "SLx",
+      "mint": "CaDy1Ubsy1DXUmUyvmJ6kyA8GA3FjNxcDxhWjvqALaDG",
+      "fdv": 644391.8444,
+      "vol": 41046235.5010362,
+      "ageD": 2,
+      "chain": "solana",
+      "addedAt": "2026-03-14T14:53:42.574Z"
     }
   ],
   "scanned": [
@@ -995,6 +1013,8 @@
     "88tLap8DhAQrkxws2jQxCvPd4AxKVi5GxciJzYCDDMSM",
     "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump",
     "G2egjtmfDed6ji7qYqiCJHYC1KwiaCrZYHALKKipump",
-    "C4feHH7akapRnG5YMzyHkrJMtHP3tUVvG8ezMRXQejsi"
+    "C4feHH7akapRnG5YMzyHkrJMtHP3tUVvG8ezMRXQejsi",
+    "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab",
+    "CaDy1Ubsy1DXUmUyvmJ6kyA8GA3FjNxcDxhWjvqALaDG"
   ]
 }

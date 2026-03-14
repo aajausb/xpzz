@@ -5702,6 +5702,10 @@
         "0x7977bf3e7e0c954d12cdca3e013adaf57e0b06e0": {
           "symbol": "OPN",
           "netTokens": 82
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "netTokens": 3403
         }
       },
       "profitByMint": {
@@ -5734,6 +5738,12 @@
           "buys": 30,
           "sells": 29,
           "netTokens": 82
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "buys": 27,
+          "sells": 38,
+          "netTokens": 3403
         }
       },
       "chain": "bsc",
@@ -7030,6 +7040,10 @@
         "0x6907a5986c4950bdaf2f81828ec0737ce787519f": {
           "symbol": "ZAMA",
           "netTokens": 32356
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "netTokens": 0
         }
       },
       "profitByMint": {
@@ -7038,6 +7052,12 @@
           "buys": 9,
           "sells": 9,
           "netTokens": 32356
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "buys": 11,
+          "sells": 11,
+          "netTokens": 0
         }
       },
       "chain": "bsc",
@@ -7052,6 +7072,10 @@
         "0x97693439ea2f0ecdeb9135881e49f354656a911c": {
           "symbol": "RAVE",
           "netTokens": 252
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "netTokens": 29057
         }
       },
       "profitByMint": {
@@ -7066,6 +7090,12 @@
           "buys": 79,
           "sells": 81,
           "netTokens": 252
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "buys": 24,
+          "sells": 23,
+          "netTokens": 29057
         }
       },
       "chain": "bsc",
@@ -7374,6 +7404,10 @@
         "0x7977bf3e7e0c954d12cdca3e013adaf57e0b06e0": {
           "symbol": "OPN",
           "netTokens": 1003
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "netTokens": 564442
         }
       },
       "profitByMint": {
@@ -7388,6 +7422,12 @@
           "buys": 23,
           "sells": 18,
           "netTokens": 1003
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "buys": 47,
+          "sells": 12,
+          "netTokens": 564442
         }
       },
       "chain": "bsc",
@@ -8182,6 +8222,10 @@
         "0xf758cfb1467a227516d73d87da7d36e7cb6f71f1": {
           "symbol": "SN3",
           "netTokens": 365
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "netTokens": 132719
         }
       },
       "profitByMint": {
@@ -8190,6 +8234,12 @@
           "buys": 67,
           "sells": 57,
           "netTokens": 365
+        },
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "buys": 11,
+          "sells": 0,
+          "netTokens": 132719
         }
       },
       "chain": "bsc",
@@ -16267,6 +16317,42 @@
         }
       },
       "firstSeen": "2026-03-14T12:34:28.093Z"
+    },
+    "0xf6228ae750eb636949f936754562023c7230329b": {
+      "holdings": {
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "netTokens": 107881
+        }
+      },
+      "profitByMint": {
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 107881
+        }
+      },
+      "chain": "bsc",
+      "firstSeen": "2026-03-14T14:46:21.445Z"
+    },
+    "0xc94ab02cec92047a687905ebc7183e7e4cc64bb0": {
+      "holdings": {
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "netTokens": 85104
+        }
+      },
+      "profitByMint": {
+        "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab": {
+          "symbol": "FIGHT",
+          "buys": 8,
+          "sells": 0,
+          "netTokens": 85104
+        }
+      },
+      "chain": "bsc",
+      "firstSeen": "2026-03-14T14:46:21.445Z"
     }
   },
   "analyzed": [
