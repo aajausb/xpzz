@@ -649,6 +649,15 @@
       "addedAt": "2026-03-14T20:33:47.608Z"
     },
     {
+      "symbol": "CityBoy",
+      "mint": "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+      "fdv": 35658039.6,
+      "vol": 1405737.97258906,
+      "ageD": 14,
+      "chain": "solana",
+      "addedAt": "2026-03-14T21:27:35.864Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -1088,6 +1097,33 @@
       "ageD": 0,
       "chain": "solana",
       "addedAt": "2026-03-14T20:40:44.672Z"
+    },
+    {
+      "symbol": "SOS",
+      "mint": "6ZDDpxizxZ44b7EEGypiK6A7Pdd1fkxaacs8VSQG45sv",
+      "fdv": 514560,
+      "vol": 16656385.05,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T20:59:50.607Z"
+    },
+    {
+      "symbol": "ROBOTMONEY",
+      "mint": "0x59c3ddb10520740898438210ddcedc27664aeaad",
+      "fdv": 523723.9377,
+      "vol": 3902883.77340103,
+      "ageD": 2,
+      "chain": "base",
+      "addedAt": "2026-03-14T21:14:00.625Z"
+    },
+    {
+      "symbol": "RS C0IN",
+      "mint": "EfVcUanNpwAWYS18Mxr3VH4SwtQrF77X7ttEjEmmX1Kb",
+      "fdv": 501596.496929138,
+      "vol": 41959768.651179,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T21:27:37.525Z"
     }
   ],
   "scanned": [
@@ -1205,6 +1241,10 @@
     "AZcaMNiZMZ9HK22z71XHBRCwZ5ksfExSAUvGfEQEACWZ",
     "iNKezFtQnxqjX8JMrez3pT6VaV8VwhA1SZXTbbzpump",
     "2vvgntX4zSaoVGkQod69Nd1AxtfTA3jYdK3soaZhDyP7",
-    "Eto1iGaWND7sUk5i3uhPbKPVnWyxQb6M2JGvuoW1GWMf"
+    "Eto1iGaWND7sUk5i3uhPbKPVnWyxQb6M2JGvuoW1GWMf",
+    "6ZDDpxizxZ44b7EEGypiK6A7Pdd1fkxaacs8VSQG45sv",
+    "0x59c3ddb10520740898438210ddcedc27664aeaad",
+    "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
+    "EfVcUanNpwAWYS18Mxr3VH4SwtQrF77X7ttEjEmmX1Kb"
   ]
 }
