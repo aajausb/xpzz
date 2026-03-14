@@ -1,4 +1,184 @@
 {
-  "wallets": {},
-  "analyzed": []
+  "wallets": {
+    "AmztW1bSwyekPHXUktetMYEfBtsCVzopaxDBehJYfcLx": {
+      "holdings": {
+        "GgGELDvsPQAsq2VYsu5Yd2eDeLFnfeutup7QvKdKgyEE": {
+          "symbol": "SMITH",
+          "amount": 49750623.419986
+        }
+      },
+      "profitByMint": {
+        "GgGELDvsPQAsq2VYsu5Yd2eDeLFnfeutup7QvKdKgyEE": {
+          "symbol": "SMITH",
+          "profit": -7044,
+          "pattern": "normal",
+          "buys": 1,
+          "sells": 0,
+          "transfersIn": 0
+        }
+      },
+      "firstSeen": "2026-03-14T05:48:26.226Z",
+      "analysis": {
+        "txCount": 2000,
+        "timeSpanDays": 0,
+        "totalTokens": 9,
+        "profitableTokens": 0,
+        "totalProfitUsd": -100020,
+        "tokens": [
+          {
+            "mint": "GgGELDvsPQAsq2VYsu5Yd2eDeLFnfeutup7QvKdKgyEE",
+            "profitUsd": -7044,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 80.00431336000001,
+            "receivedSol": 0
+          },
+          {
+            "mint": "ELoudmVQ5Ps75VXTVnPcZp7WdBBPjbj1EG7B5gkNweFz",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          },
+          {
+            "mint": "FZsiqCvsjbG9NGK2i9PDxKVrcZxTan2urSyHEtUX3y9Z",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          },
+          {
+            "mint": "9GmJ1toJXxmBMt6AFF73wX2mr8McSLA5aZxPjf692PtH",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          },
+          {
+            "mint": "ApNpXnYWNqLZyCgRFRHdCaPtgQHhL9TpFAKqzwgyAsRQ",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          },
+          {
+            "mint": "9etqPjhTw9JQE91eLhXXDeFbkYcEM5bRA1A5pXFrdz4G",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          },
+          {
+            "mint": "BAMkDSdwnenqoQorRLxhX8gB74azJfgU26Vua8AT1uYr",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          },
+          {
+            "mint": "55V1iu8h3ZsptY7eJiK9aib6DNjZFdkDZGXxu2E2Uk8s",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          },
+          {
+            "mint": "62iLg1W5rbNcQUAHi34XpobFe1burvZGLHxHRuhwLE4P",
+            "profitUsd": -11622,
+            "buys": 1,
+            "sells": 0,
+            "spentSol": 132.00431336,
+            "receivedSol": 0
+          }
+        ],
+        "analyzedAt": "2026-03-14T05:53:30.452Z"
+      }
+    },
+    "4tamLUvPY7s1WpnfX42uXkgF8gCg3Qre6ozXB6U7TiDy": {
+      "holdings": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "amount": 5416602.663227
+        }
+      },
+      "profitByMint": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "profit": -10163,
+          "pattern": "normal",
+          "buys": 2,
+          "sells": 0,
+          "transfersIn": 1
+        }
+      },
+      "firstSeen": "2026-03-14T05:55:29.675Z"
+    },
+    "3Yfh7KG8PHxZmjp2wx7c74sxTCfmgp5fnWdvbUKj2ggx": {
+      "holdings": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "amount": 3016613.060737
+        }
+      },
+      "profitByMint": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "profit": -7151,
+          "pattern": "normal",
+          "buys": 5,
+          "sells": 0,
+          "transfersIn": 1
+        }
+      },
+      "firstSeen": "2026-03-14T05:55:42.746Z"
+    },
+    "31YTRXzEhdjLhY36BkwxS4JCNjm7tUbwz4BFCJyof7Nt": {
+      "holdings": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "amount": 2603336.612166
+        }
+      },
+      "profitByMint": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "profit": -13115,
+          "pattern": "normal",
+          "buys": 1,
+          "sells": 0,
+          "transfersIn": 1
+        }
+      },
+      "firstSeen": "2026-03-14T05:55:55.031Z"
+    },
+    "HkE27njBnLu1VB2sMKkvV8k9V5QUecc6X9yoJ9Me7Sv9": {
+      "holdings": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "amount": 1703447.260583
+        }
+      },
+      "profitByMint": {
+        "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump": {
+          "symbol": "WAR",
+          "profit": 5927,
+          "pattern": "normal",
+          "buys": 5,
+          "sells": 2,
+          "transfersIn": 1
+        }
+      },
+      "firstSeen": "2026-03-14T05:56:50.387Z"
+    }
+  },
+  "analyzed": [
+    "AmztW1bSwyekPHXUktetMYEfBtsCVzopaxDBehJYfcLx"
+  ]
 }

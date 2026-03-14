@@ -246,6 +246,8 @@ async function checkHolderProfit(wallet, mint) {
   
   return {
     realizedProfitUsd: Math.round(realizedProfitUsd),
+    costSol: solSpent,
+    revenueSol: solReceived,
     swapBuys,
     swapSells,
     transfersIn,
@@ -414,7 +416,12 @@ async function main() {
       
       const pool = loadJSON(WALLET_POOL_FILE, { wallets: {}, analyzed: [] });
       const analyzedSet = new Set(pool.analyzed || []);
-      const toScan = pending.slice(0, 5);
+      // 过滤假币（BTC/ETH/BNB/SOL仿盘，真正的不会在DexScreener上）
+      const fakeSymbols = new Set(['BTC', 'ETH', 'BNB', 'SOL', 'USDT', 'USDC', 'XRP', 'ADA', 'AVAX', 'DOT']);
+      const realPending = pending.filter(c => !fakeSymbols.has(c.symbol?.trim().toUpperCase()));
+      // 按市值从大到小
+      realPending.sort((a, b) => (b.fdv || 0) - (a.fdv || 0));
+      const toScan = realPending.slice(0, 3);
       
       for (const coin of toScan) {
         log('INFO', `查持有者: ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) mint:${coin.mint.slice(0, 16)}`);
@@ -433,9 +440,22 @@ async function main() {
           // 验证这个持有者在这个币上是否赚钱
           const profit = await checkHolderProfit(h.wallet, coin.mint);
           
-          if (profit.realizedProfitUsd >= MIN_HOLDER_PROFIT || (profit.pattern === 'transfer_sell' && profit.realizedProfitUsd >= MIN_HOLDER_PROFIT)) {
+          // 未实现利润 = 当前持仓价值 - 买入成本
+          // 持仓价值用coin.fdv估算（fdv / totalSupply * holdingAmount，简化为占比×fdv）
+          // 但没有totalSupply，用已实现+未实现综合判断
+          const unrealizedUsd = profit.costSol > 0 ? (h.amount > 0 ? profit.costSol * 2 : 0) : 0; // 还拿着=至少2x成本（保守估计）
+          const totalProfit = profit.swapSells > 0 ? profit.realizedProfitUsd : (profit.costSol * (await getSolPrice())); // 没卖的用成本代替
+          
+          // 收集条件：已实现利润≥$2k，或者还持仓且买入成本≥$1k（说明认真买了）
+          const costUsd = profit.costSol * (await getSolPrice());
+          const isQualified = profit.realizedProfitUsd >= MIN_HOLDER_PROFIT 
+            || (profit.swapSells === 0 && costUsd >= 1000) // 还没卖但花了$1k+买入
+            || (profit.pattern === 'transfer_sell' && profit.realizedProfitUsd >= MIN_HOLDER_PROFIT);
+          
+          if (isQualified) {
             qualified++;
-            log('INFO', `  ✓ ${h.wallet.slice(0, 16)} 盈$${profit.realizedProfitUsd} (${profit.pattern}, buy:${profit.swapBuys} sell:${profit.swapSells} transfer:${profit.transfersIn})`);
+            const status = profit.swapSells > 0 ? `已实现$${profit.realizedProfitUsd}` : `持仓中(成本$${Math.round(costUsd)})`;
+            log('INFO', `  ✓ ${h.wallet.slice(0, 16)} ${status} (${profit.pattern}, buy:${profit.swapBuys} sell:${profit.swapSells} transfer:${profit.transfersIn})`);
             
             if (!pool.wallets[h.wallet]) {
               pool.wallets[h.wallet] = { 
