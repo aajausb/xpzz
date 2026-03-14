@@ -17,91 +17,74 @@ const WALLET_TYPES = {
   WHALE: 'whale',
 };
 
-// ========== Step 1: 找近期涨幅大的币 ==========
+// ========== Step 1: 找近期涨幅大的币（市值>$500k） ==========
 
-// 用 DexScreener API 找热门 Solana meme 币
 async function findWinningTokens() {
-  logger.info('scanner', '🔍 搜索近期涨幅大的Solana meme币...');
-  
+  logger.info('scanner', '🔍 搜索市值>$500k的Solana涨幅币...');
   const results = [];
-  
-  try {
-    // DexScreener 热门代币
-    const url = 'https://api.dexscreener.com/token-boosts/top/v1';
-    const resp = await fetch(url);
-    if (resp.ok) {
-      const data = await resp.json();
-      const solTokens = (data || [])
-        .filter(t => t.chainId === 'solana')
-        .slice(0, 20);
+  const seen = new Set();
+
+  // 搜索关键词覆盖不同类型的meme
+  const queries = [
+    'pump solana', 'meme solana', 'SOL meme', 'doge solana',
+    'pepe solana', 'cat solana', 'ai solana', 'trump solana',
+  ];
+
+  for (const q of queries) {
+    try {
+      const r = await fetch('https://api.dexscreener.com/latest/dex/search?q=' + encodeURIComponent(q));
+      if (!r.ok) continue;
+      const data = await r.json();
       
-      for (const t of solTokens) {
-        results.push({
-          mint: t.tokenAddress,
-          source: 'dexscreener_boost',
-        });
-      }
-      logger.info('scanner', `DexScreener boosts: ${solTokens.length}个`);
-    }
-  } catch (e) {
-    logger.warn('scanner', `DexScreener boost failed: ${e.message}`);
-  }
-  
-  try {
-    // DexScreener 最近涨幅排行
-    const url2 = 'https://api.dexscreener.com/latest/dex/search?q=pump';
-    const resp2 = await fetch(url2);
-    if (resp2.ok) {
-      const data2 = await resp2.json();
-      const pairs = (data2.pairs || [])
-        .filter(p => p.chainId === 'solana' && p.priceChange?.h24 > 100) // 24h涨>100%
-        .sort((a, b) => (b.priceChange?.h24 || 0) - (a.priceChange?.h24 || 0))
-        .slice(0, 20);
+      const pairs = (data.pairs || []).filter(p => 
+        p.chainId === 'solana' && 
+        p.fdv > 500000 &&  // 市值>$500k
+        p.baseToken?.address?.endsWith('pump') && // pump.fun的币
+        !seen.has(p.baseToken?.address)
+      );
       
       for (const p of pairs) {
-        if (!results.find(r => r.mint === p.baseToken?.address)) {
-          results.push({
-            mint: p.baseToken?.address,
-            name: p.baseToken?.name,
-            symbol: p.baseToken?.symbol,
-            priceChange24h: p.priceChange?.h24,
-            volume24h: p.volume?.h24,
-            source: 'dexscreener_gainers',
-          });
-        }
+        seen.add(p.baseToken.address);
+        results.push({
+          mint: p.baseToken.address,
+          symbol: p.baseToken.symbol,
+          name: p.baseToken.name,
+          fdv: p.fdv,
+          volume24h: p.volume?.h24 || 0,
+          priceChange24h: p.priceChange?.h24 || 0,
+          createdAt: p.pairCreatedAt,
+        });
       }
-      logger.info('scanner', `DexScreener 24h涨幅>100%: ${pairs.length}个`);
+      
+      await new Promise(r => setTimeout(r, 500));
+    } catch (e) {
+      logger.warn('scanner', `DexScreener搜索失败(${q}): ${e.message}`);
     }
-  } catch (e) {
-    logger.warn('scanner', `DexScreener search failed: ${e.message}`);
   }
 
+  // DexScreener boost热门
   try {
-    // Birdeye 热门代币（备用）
-    const url3 = 'https://public-api.birdeye.so/defi/token_trending?sort_by=rank&sort_type=asc&offset=0&limit=20';
-    const resp3 = await fetch(url3, {
-      headers: { 'X-API-KEY': 'public' },
-    });
-    if (resp3.ok) {
-      const data3 = await resp3.json();
-      const tokens = data3.data?.items || [];
-      for (const t of tokens) {
-        if (!results.find(r => r.mint === t.address)) {
-          results.push({
-            mint: t.address,
-            name: t.name,
-            symbol: t.symbol,
-            source: 'birdeye_trending',
-          });
-        }
+    const r = await fetch('https://api.dexscreener.com/token-boosts/top/v1');
+    if (r.ok) {
+      const boosts = await r.json();
+      const solBoosts = (boosts || []).filter(t => 
+        t.chainId === 'solana' && !seen.has(t.tokenAddress)
+      );
+      for (const t of solBoosts.slice(0, 10)) {
+        seen.add(t.tokenAddress);
+        results.push({ mint: t.tokenAddress, source: 'boost' });
       }
-      logger.info('scanner', `Birdeye trending: ${tokens.length}个`);
     }
-  } catch (e) {
-    logger.warn('scanner', `Birdeye failed: ${e.message}`);
-  }
+  } catch {}
 
-  logger.info('scanner', `共找到 ${results.length} 个候选币`);
+  // 按市值排序，优先分析大币
+  results.sort((a, b) => (b.fdv || 0) - (a.fdv || 0));
+  
+  logger.info('scanner', `找到 ${results.length} 个候选币（市值>$500k的pump.fun币）`);
+  for (const r of results.slice(0, 10)) {
+    logger.info('scanner', `  ${r.symbol || r.mint?.slice(0,8)} | $${((r.fdv||0)/1e6).toFixed(1)}M | 24h${r.priceChange24h > 0 ? '+' : ''}${(r.priceChange24h||0).toFixed(0)}%`);
+  }
+  
   return results;
 }
 
