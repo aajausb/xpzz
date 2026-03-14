@@ -667,6 +667,24 @@
       "addedAt": "2026-03-14T21:32:25.209Z"
     },
     {
+      "symbol": "ACU",
+      "mint": "0x6ef2ffb38d64afe18ce782da280b300e358cfeaf",
+      "fdv": 2430534.45727169,
+      "vol": 430478.599181901,
+      "ageD": 55,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T22:07:00.714Z"
+    },
+    {
+      "symbol": "UP",
+      "mint": "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b",
+      "fdv": 12627144.5980283,
+      "vol": 567250.233104764,
+      "ageD": 32,
+      "chain": "base",
+      "addedAt": "2026-03-14T22:23:01.412Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -1133,6 +1151,15 @@
       "ageD": 0,
       "chain": "solana",
       "addedAt": "2026-03-14T21:27:37.525Z"
+    },
+    {
+      "symbol": "RSC0IN",
+      "mint": "3iHb989twJFuQ7rMUNSxBZE9B6s1Zz5eFxgFHPbSj4GP",
+      "fdv": 204068207.695919,
+      "vol": 40856090.2854249,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T22:18:25.495Z"
     }
   ],
   "scanned": [
@@ -1255,6 +1282,9 @@
     "0x59c3ddb10520740898438210ddcedc27664aeaad",
     "ENJpMVwQ5Cxi4SNtSmAX1ZTm7KBHPwQ3WaRWgRyvaLB8",
     "EfVcUanNpwAWYS18Mxr3VH4SwtQrF77X7ttEjEmmX1Kb",
-    "51zGGPreR28m5zBKU75MZakzJVDrGgJVaVaS2kHipEqT"
+    "51zGGPreR28m5zBKU75MZakzJVDrGgJVaVaS2kHipEqT",
+    "0x6ef2ffb38d64afe18ce782da280b300e358cfeaf",
+    "3iHb989twJFuQ7rMUNSxBZE9B6s1Zz5eFxgFHPbSj4GP",
+    "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b"
   ]
 }
