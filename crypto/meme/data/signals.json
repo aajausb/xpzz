@@ -1,0 +1,46 @@
+[
+  {
+    "type": "BUY",
+    "wallet": "atom2VuiFEhgGSggRokWuXfsZaS6mxHKwKUSFnECshJ",
+    "walletLabel": "GOLD_cross_4_coins",
+    "walletTier": "GOLD",
+    "tokenMint": "5ohCSjq8m9sNZefTPSSxXkQeQqf5RfR7gjJpeEZRpump",
+    "solAmount": 0.000001,
+    "timestamp": "2026-03-14T03:35:14.000Z",
+    "txSig": "5n4utd6s491qdgzMTKUfFvn82faJpVzkY2PaVTfqEPH97y7vjCUSn3BughFDyd2DzMaWKmVZjpu2EjhktTuBWqRh",
+    "notifiedAt": "2026-03-14T03:35:17.838Z"
+  },
+  {
+    "type": "SELL",
+    "wallet": "atom2VuiFEhgGSggRokWuXfsZaS6mxHKwKUSFnECshJ",
+    "walletLabel": "GOLD_cross_4_coins",
+    "walletTier": "GOLD",
+    "tokenMint": "5ohCSjq8m9sNZefTPSSxXkQeQqf5RfR7gjJpeEZRpump",
+    "solAmount": 0.000001,
+    "timestamp": "2026-03-14T03:35:14.000Z",
+    "txSig": "5n4utd6s491qdgzMTKUfFvn82faJpVzkY2PaVTfqEPH97y7vjCUSn3BughFDyd2DzMaWKmVZjpu2EjhktTuBWqRh",
+    "notifiedAt": "2026-03-14T03:35:17.838Z"
+  },
+  {
+    "type": "BUY",
+    "wallet": "54Pz1e35z9uoFdnxtzjp7xZQoFiofqhdayQWBMN7dsuy",
+    "walletLabel": "cross_coin_winner",
+    "walletTier": "CROSS",
+    "tokenMint": "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH",
+    "solAmount": 0.00411336,
+    "timestamp": "2026-03-14T03:35:13.000Z",
+    "txSig": "2e6uPE33FP2ficZQVaT4E3NHjKYHWcVjaG9YyzcA3tZM2eNjzjxHcBFzF2Y4zgDT42p7r1PcZeaYUh1ZE7QetbW5",
+    "notifiedAt": "2026-03-14T03:35:19.198Z"
+  },
+  {
+    "type": "SELL",
+    "wallet": "54Pz1e35z9uoFdnxtzjp7xZQoFiofqhdayQWBMN7dsuy",
+    "walletLabel": "cross_coin_winner",
+    "walletTier": "CROSS",
+    "tokenMint": "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH",
+    "solAmount": 0.00411336,
+    "timestamp": "2026-03-14T03:35:13.000Z",
+    "txSig": "2e6uPE33FP2ficZQVaT4E3NHjKYHWcVjaG9YyzcA3tZM2eNjzjxHcBFzF2Y4zgDT42p7r1PcZeaYUh1ZE7QetbW5",
+    "notifiedAt": "2026-03-14T03:35:19.198Z"
+  }
+]

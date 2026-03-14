@@ -1,30 +1,6 @@
 {
   "wallets": [
     {
-      "address": "atom2VuiFEhgGSggRokWuXfsZaS6mxHKwKUSFnECshJ",
-      "chain": "solana",
-      "label": "cross_coin_winner",
-      "totalProfit": 4137,
-      "coins": [
-        "WAR",
-        "刀盾"
-      ],
-      "source": "geckoterminal_v4",
-      "addedAt": "2026-03-14T03:30:00Z"
-    },
-    {
-      "address": "54Pz1e35z9uoFdnxtzjp7xZQoFiofqhdayQWBMN7dsuy",
-      "chain": "solana",
-      "label": "cross_coin_winner",
-      "totalProfit": 3800,
-      "coins": [
-        "WAR",
-        "SOS"
-      ],
-      "source": "geckoterminal_v4",
-      "addedAt": "2026-03-14T03:20:00Z"
-    },
-    {
       "address": "AZ27ps4QfRbmtznMzp1QF5vgJyLLSPM1vHnCxvSf59BW",
       "chain": "solana",
       "label": "cross_coin_winner",
@@ -70,67 +46,50 @@
       "addedAt": "2026-03-14T03:20:00Z"
     },
     {
-      "address": "7iVCXQn4u6tiTEfNVqbWSEsRdEi69E9oYsSMiepuECwi",
+      "address": "9v3xeLZiWPevBN8ydoDdc7W6KRofScFKYsnizD9WZCmp",
       "chain": "solana",
-      "label": "sos_big_winner",
-      "totalProfit": 9092,
+      "label": "cross_coin_winner",
+      "totalProfit": 1134,
       "coins": [
-        "SOS"
+        "Distorted",
+        "SMITH"
       ],
       "source": "geckoterminal_v4",
-      "addedAt": "2026-03-14T03:30:00Z"
+      "addedAt": "2026-03-14T03:40:00Z"
     },
     {
-      "address": "R1gskXeMjBpqUCyUHsnMMWuNUaAL8mzRmjL5U8YRpTq",
+      "address": "AgmLJBMDCqWynYnQiPCuj9ewsNNsBJXyzoUhD9LJzN51",
       "chain": "solana",
-      "label": "daodun_big_winner",
-      "totalProfit": 8049,
+      "label": "sm_v4_2coins",
+      "totalProfit": 6395.9705673546705,
+      "avgProfit": 3198,
+      "winRate": 100,
       "coins": [
-        "刀盾"
+        "Distorted",
+        "WAR"
       ],
-      "source": "geckoterminal_v4",
-      "addedAt": "2026-03-14T03:30:00Z"
-    },
-    {
-      "address": "DW61Wd1hpqJXPZnPo2sLipjifkwkFEBaEQzB4tDvAFcH",
-      "chain": "solana",
-      "label": "daodun_big_winner",
-      "totalProfit": 7549,
-      "coins": [
-        "刀盾"
-      ],
-      "source": "geckoterminal_v4",
-      "addedAt": "2026-03-14T03:30:00Z"
-    },
-    {
-      "address": "83sHoLP2QjrgFS6bV4xCmQjUrBS6Js64AztN4MNYfzuT",
-      "chain": "solana",
-      "label": "daodun_big_winner",
-      "totalProfit": 6314,
-      "coins": [
-        "刀盾"
-      ],
-      "source": "geckoterminal_v4",
-      "addedAt": "2026-03-14T03:30:00Z"
+      "coinsDetail": {
+        "Distorted": {
+          "profit": 4107.541922561339,
+          "buys": 15,
+          "sells": 25,
+          "pool": "CCmh7tvVRrCaExBn6Uu3AyDZr5P16WhJnZcLvAMHkec4"
+        },
+        "WAR": {
+          "profit": 2288.428644793332,
+          "buys": 60,
+          "sells": 90,
+          "pool": "7xYkR7Rz9PWZLBxpyq385AgEcdzPabFHzHN3JsuDyMrP"
+        }
+      },
+      "source": "scanner_v4",
+      "addedAt": "2026-03-14T03:59:03.672Z"
     }
   ],
-  "lastScan": "2026-03-14T03:30:00Z",
+  "lastScan": "2026-03-14T03:59:03.673Z",
   "scanMethod": "geckoterminal_trades_cross_analysis_v4",
   "stats": {
-    "totalWallets": 10,
-    "crossCoinWallets": 3,
-    "solanaWallets": 10,
-    "baseWallets": 0,
-    "bscWallets": 0,
-    "coinsAnalyzed": [
-      "WAR",
-      "SOS",
-      "ROBO",
-      "BURN",
-      "刀盾",
-      "SMITH"
-    ],
-    "totalProfitTracked": 176000,
-    "notes": "BURN(BSC)已移除:高税盘(buyTax1000%/sellTax961%); UP(BSC)未入库:貔貅盘; ROBO(Base)标记未验证; ROBO(Base)已移除:Virtual生态打新,非独立meme聪明钱"
+    "totalWallets": 6,
+    "crossCoinWallets": 3
   }
 }
