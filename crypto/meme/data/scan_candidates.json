@@ -550,6 +550,15 @@
       "addedAt": "2026-03-14T15:18:08.027Z"
     },
     {
+      "symbol": "ROBOTMONEY",
+      "mint": "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3",
+      "fdv": 1441231,
+      "vol": 876729.51,
+      "ageD": 2,
+      "chain": "base",
+      "addedAt": "2026-03-14T16:30:58.883Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -935,6 +944,15 @@
       "ageD": 1,
       "chain": "bsc",
       "addedAt": "2026-03-14T15:50:01.824Z"
+    },
+    {
+      "symbol": "SMITH",
+      "mint": "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7",
+      "fdv": 207788800,
+      "vol": 53214.13,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T16:47:59.894Z"
     }
   ],
   "scanned": [
@@ -1035,6 +1053,8 @@
     "0xb2d97c4ed2d0ef452654f5cab3da3735b5e6f3ab",
     "CaDy1Ubsy1DXUmUyvmJ6kyA8GA3FjNxcDxhWjvqALaDG",
     "G9K6xToJafgVhWKZ8LVkyDfEn9q2t7Nh1RE9QD8Wpump",
-    "0x9de61558250431b3eb16f14652e35b031bc4355e"
+    "0x9de61558250431b3eb16f14652e35b031bc4355e",
+    "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3",
+    "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7"
   ]
 }

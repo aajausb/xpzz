@@ -13,6 +13,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { buy, sell } = require('./dex_trader');
+const { collectSignals: collectRankerSignals, updatePriceAndRank } = require('./smart_money_ranker');
 
 // ============ 配置 ============
 
@@ -26,6 +27,12 @@ const CONFIG = {
   // 三链
   chains: ['solana', 'bsc', 'base'],
   chainMap: { solana: '501', bsc: '56', base: '8453' },
+  
+  // === 排名系统 ===
+  useRanking: true,              // 启用排名过滤
+  minRankedWallets: 1,           // 至少1个排名钱包参与
+  rankBoostThreshold: 3,         // 排名前N的钱包参与 → 降低其他门槛
+  rankUpdateInterval: 300_000,   // 排名更新间隔5分钟
   
   // === 信号过滤 ===
   minSmartMoneyCount: 3,      // 最少3个聪明钱买入
@@ -77,6 +84,15 @@ async function main() {
   ensureDir(CONFIG.dataDir);
   loadState();
   
+  // 首次收集+排名
+  try {
+    await collectRankerSignals();
+    await updatePriceAndRank();
+    console.log('📊 排名系统初始化完成');
+  } catch(e) { console.error('排名初始化出错:', e.message); }
+  
+  let lastRankUpdate = Date.now();
+  
   // 主循环
   while (true) {
     try {
@@ -89,6 +105,16 @@ async function main() {
       await checkPositions();
     } catch (e) {
       console.error('持仓检查出错:', e.message);
+    }
+    
+    // 定期更新排名
+    if (Date.now() - lastRankUpdate > CONFIG.rankUpdateInterval) {
+      try {
+        await collectRankerSignals();
+        await updatePriceAndRank();
+        lastRankUpdate = Date.now();
+        console.log('📊 排名已更新');
+      } catch(e) { console.error('排名更新出错:', e.message); }
     }
     
     saveState();
@@ -105,7 +131,7 @@ async function scanSignals() {
   for (const chain of CONFIG.chains) {
     try {
       const cmd = `onchainos market signal-list ${chain} --wallet-type "1"`;
-      const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 15000, maxBuffer: 10*1024*1024 }).toString());
+      const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 30000, maxBuffer: 10*1024*1024 }).toString());
       const signals = result.data || [];
       
       for (const s of signals) {
@@ -150,6 +176,21 @@ async function scanSignals() {
     t.signals.push(s);
   }
   
+  // 加载排名数据
+  let walletRanks = {};
+  if (CONFIG.useRanking) {
+    try {
+      const rankFile = path.join(CONFIG.dataDir, 'wallet_rank.json');
+      if (fs.existsSync(rankFile)) {
+        const rankData = JSON.parse(fs.readFileSync(rankFile, 'utf8'));
+        // 转为 address → rank 映射
+        (rankData.ranks || []).forEach((r, i) => {
+          walletRanks[r.address] = { rank: i + 1, score: r.score, winRate: r.winRate, avgReturn: r.avgReturn };
+        });
+      }
+    } catch(e) {}
+  }
+  
   // 过滤出可操作信号
   const candidates = [];
   for (const [key, t] of Object.entries(tokenMap)) {
@@ -158,21 +199,28 @@ async function scanSignals() {
     if (positions.find(p => p.chain === t.chain && p.address === t.address)) continue;
     if (blacklist.has(t.address)) continue;
     
-    // 过滤条件
-    if (t.wallets.size < CONFIG.minSmartMoneyCount) continue;
+    // 计算排名钱包参与数和最高排名
+    const rankedWallets = [...t.wallets].filter(w => walletRanks[w]);
+    const topRank = rankedWallets.length > 0 
+      ? Math.min(...rankedWallets.map(w => walletRanks[w].rank))
+      : 999;
+    const hasTopWallet = topRank <= CONFIG.rankBoostThreshold;
+    
+    t.rankedWalletCount = rankedWallets.length;
+    t.topRank = topRank;
+    t.rankScore = rankedWallets.reduce((sum, w) => sum + (walletRanks[w]?.score || 0), 0);
+    
+    // 基础过滤（排名前3的钱包参与时放宽条件）
+    const minSM = hasTopWallet ? 1 : CONFIG.minSmartMoneyCount;
+    if (t.wallets.size < minSM) continue;
     if (t.minSoldPercent > CONFIG.maxSoldPercent) continue;
-    if (t.holders < CONFIG.minHolders) continue;
+    if (t.holders < (hasTopWallet ? 50 : CONFIG.minHolders)) continue;
     if (t.top10Percent > CONFIG.maxTop10Percent) continue;
     if (t.marketCap > 0 && t.marketCap < CONFIG.minMarketCapUsd) continue;
     if (t.marketCap > CONFIG.maxMarketCapUsd) continue;
     
-    // 记录聪明钱排名
-    for (const w of t.wallets) {
-      if (!smartMoneyRank[w]) smartMoneyRank[w] = { count: 0, chains: new Set(), firstSeen: now };
-      smartMoneyRank[w].count++;
-      smartMoneyRank[w].chains.add(t.chain);
-      smartMoneyRank[w].lastSeen = now;
-    }
+    // 排名过滤：如果启用排名但没有任何排名钱包参与，需要更多聪明钱
+    if (CONFIG.useRanking && rankedWallets.length === 0 && t.wallets.size < 5) continue;
     
     candidates.push(t);
     seenSignals[key] = now;
@@ -180,12 +228,16 @@ async function scanSignals() {
   
   if (candidates.length === 0) return;
   
-  // 按聪明钱数量排序
-  candidates.sort((a, b) => b.wallets.size - a.wallets.size);
+  // 排序：排名分 > 聪明钱数量
+  candidates.sort((a, b) => {
+    if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
+    return b.wallets.size - a.wallets.size;
+  });
   
   console.log(`🎯 发现${candidates.length}个候选:`);
   for (const c of candidates.slice(0, 5)) {
-    console.log(`  ${c.symbol} (${c.chain}) SM=${c.wallets.size} MC=$${c.marketCap.toFixed(0)} H=${c.holders} sold=${c.minSoldPercent}%`);
+    const rankTag = c.rankedWalletCount > 0 ? ` ⭐rank=${c.topRank} ranked=${c.rankedWalletCount}` : '';
+    console.log(`  ${c.symbol} (${c.chain}) SM=${c.wallets.size} MC=$${c.marketCap.toFixed(0)} H=${c.holders} sold=${c.minSoldPercent}%${rankTag}`);
   }
   
   // 执行买入

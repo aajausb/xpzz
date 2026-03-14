@@ -9,6 +9,10 @@
         "AWc7tg2H3agf9kwFJAD1Gw2vcRRf5gR6r9vQNMbETaJV": {
           "symbol": "SMITH",
           "amount": 49750623.419986
+        },
+        "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7": {
+          "symbol": "SMITH",
+          "amount": 49825174.816995
         }
       },
       "profitByMint": {
@@ -23,6 +27,14 @@
         "AWc7tg2H3agf9kwFJAD1Gw2vcRRf5gR6r9vQNMbETaJV": {
           "symbol": "SMITH",
           "profit": -6995,
+          "pattern": "normal",
+          "buys": 1,
+          "sells": 0,
+          "transfersIn": 0
+        },
+        "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7": {
+          "symbol": "SMITH",
+          "profit": -17404,
           "pattern": "normal",
           "buys": 1,
           "sells": 0,
@@ -14008,6 +14020,10 @@
         "0x0086cff0c1e5d17b19f5bcd4c8840a5b4251d959": {
           "symbol": "ODAI",
           "netTokens": 164568149
+        },
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 1267090495
         }
       },
       "profitByMint": {
@@ -14016,6 +14032,12 @@
           "buys": 4,
           "sells": 1,
           "netTokens": 164568149
+        },
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 6,
+          "sells": 0,
+          "netTokens": 1267090495
         }
       },
       "chain": "base",
@@ -15332,6 +15354,10 @@
         "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07": {
           "symbol": "JUNO",
           "netTokens": 529647464
+        },
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 376703460
         }
       },
       "profitByMint": {
@@ -15340,6 +15366,12 @@
           "buys": 2,
           "sells": 0,
           "netTokens": 529647464
+        },
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 3,
+          "sells": 4,
+          "netTokens": 376703460
         }
       },
       "chain": "base",
@@ -16436,6 +16468,330 @@
       },
       "chain": "bsc",
       "firstSeen": "2026-03-14T15:50:19.661Z"
+    },
+    "0xb151d9a0733868d3b3d28f14b8b5588a0fd0522e": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 916480454
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 9,
+          "sells": 0,
+          "netTokens": 916480454
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xd030ee948526761c5d43dbf1bb8fcd761626cb00": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 704839900
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 8,
+          "sells": 3,
+          "netTokens": 704839900
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x9066e004fc80c977b439b450e7aade32c2571a37": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 653603445
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 653603445
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xa00599107ffc6ba1a5959cb9ecda5598b828cf20": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 537200921
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 537200921
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x3b50adfd327f465b4d4ae2d8f90c543493982ffe": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 264462248
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 6,
+          "sells": 0,
+          "netTokens": 264462248
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xafb76bff5804280b9bf8722aef53249a3a0cb26b": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 200391198
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 200391198
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x6697d9743cb69f2dd6d9e1949f02f1f4ac5c89fa": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 198026353
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 198026353
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xf87cbde3cd8baf0e3ade7b824bd0abd878aea16b": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 195984813
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 3,
+          "sells": 1,
+          "netTokens": 195984813
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x3820e04f4d00a06338b66e9a1c67bc13b7d069d5": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 152152241
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 5,
+          "sells": 3,
+          "netTokens": 152152241
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xafeda640f0972acb4183d2396eac53440ff35c0e": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 147132057
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 147132057
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x3ba305ec3e528d70cfffa0f3b1dcceca75af7813": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 96755202
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 96755202
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x70ab8848e86f26e79853e91678158d2071466d5c": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 90200563
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 90200563
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xaf7350d9582c6384bc7ed9941bc1808314bbb6ed": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 89443658
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 89443658
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x8e9d7e789009ee85fd46538928d6d7e6d7f80cb8": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 86166687
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 86166687
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x56ed99261fe2134e13879bf98cc7df1c589ccfb3": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 83502416
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 83502416
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xd0488188cb6b992bac10568d4402eac2d5efc0a0": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 66581639
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 3,
+          "sells": 3,
+          "netTokens": 66581639
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0x2b175f2675d75638b4c37a37cdb5b47cbb755886": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 63871605
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 63871605
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
+    },
+    "0xdd92dfdb79b3ec9a2a064106480998241637e9aa": {
+      "holdings": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "netTokens": 63684841
+        }
+      },
+      "profitByMint": {
+        "0x65021a79AeEF22b17cdc1B768f5e79a8618bEbA3": {
+          "symbol": "ROBOTMONEY",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 63684841
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T16:32:03.006Z"
     }
   },
   "analyzed": [
@@ -16639,6 +16995,36 @@
     "0x9706e12a0ca6646e195a230faec37a032500789f",
     "0xa1daf346567b6fc13bb2b8119afbc33786d52244",
     "0x4faf59b2922387554c6226a38426ff2538425f77",
-    "0x498581ff718922c3f8e6a244956af099b2652b2b"
+    "0x498581ff718922c3f8e6a244956af099b2652b2b",
+    "0x4bd647bd282da233753eac47158ddd3c9564da03",
+    "0xaab12568818e917048789dd15dee28b90dc642f5",
+    "0x225e1ffa3be3d6fd83f1da8c0b6419b8e6c98d9b",
+    "0x8ede7670a57500bd000378d22ea944a210475663",
+    "0x7ee98b3bf623f609ba786826bf4d29e98976172e",
+    "0x7a3bb00fed15b77945a8a3460ac9f25410266647",
+    "0x935a49649085db42c9a167712d46149fb55505a1",
+    "0x2c93bc4502ad53f241882a4a54c6281e056a160d",
+    "0xef4c36bc1080c98c3d490a2aab3bf01f832f860c",
+    "0x4a623a5e05316b603d9757360356907b4db5e580",
+    "0xa0a7163af4c0aac70139a833fba39411dd21f131",
+    "0x367937462fa4d7b0205430ef03b935ed8a8532e6",
+    "0xf5cea7fe938061c03e3737b56c4fd15b42129863",
+    "0x26fde0f173cb57f2e25094d4895f2ef1a3d580fc",
+    "0x983e5ef4f089677543f20415ef8fc046a8d7183b",
+    "0x52333b34653a2742d26807279563dc997270c3e2",
+    "0x8028b145ea63746615dff2ba5be54010ea8aadaf",
+    "0x755462f75356d2dc97e9a7c98c5eb0f6fc9de126",
+    "0xcd55381a53da35ab1d7bc5e3fe5f76cac976fac3",
+    "0x4e3ae00e8323558fa5cac04b152238924aa31b60",
+    "0x32abf8ab7bfe58455f5918164756620143a68c6d",
+    "0xb72a6e1091d43e19284050b7132e0646509eba5d",
+    "0x000000000000000000000000000000000000dead",
+    "0x092bf8aaaf06017ab4c18517c0119bd14f9c0efa",
+    "0x34fd7b56c51d685702b9d4e325d0238c7999d108",
+    "0xe458a906b91fb4be7976810bbe2ad72d0d909539",
+    "0x2b5e2cfa2ede2fc969a8184a42414fcaef603816",
+    "0x46dd54169adc3643157643eb7b75c7e0e126eab0",
+    "0x90ef2a9211a3e7ce788561e5af54c76b0fa3aed0",
+    "0x7a8ba143f8866242782e5b3a5ad1410bb6722206"
   ]
 }
