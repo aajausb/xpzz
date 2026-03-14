@@ -685,6 +685,24 @@
       "addedAt": "2026-03-14T22:23:01.412Z"
     },
     {
+      "symbol": "SOS",
+      "mint": "H1ew7tRYs1q3itqtHMxaxVBWddk8sMyv66Gk1UtZNUNi",
+      "fdv": 1283015,
+      "vol": 2773799.62,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T22:30:37.405Z"
+    },
+    {
+      "symbol": "C0IN",
+      "mint": "9CttdFQ13REhrrhBrBNc7cKbLFMNcqD4RFH9Yj5VsqXf",
+      "fdv": 4182125.89864452,
+      "vol": 43036091.02646,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T22:53:08.369Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -1160,6 +1178,24 @@
       "ageD": 0,
       "chain": "solana",
       "addedAt": "2026-03-14T22:18:25.495Z"
+    },
+    {
+      "symbol": "frogs",
+      "mint": "0x1e458f709b32bcf79e0e8f9d9afdd0ad18a81f6c",
+      "fdv": 111737323.3,
+      "vol": 279053223.906201,
+      "ageD": 1,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T22:31:01.485Z"
+    },
+    {
+      "symbol": "RSStrateg",
+      "mint": "97XSMhS4JmH6GjRQSqJJU2UaYi4kbbKRZRvSLkXDrvmf",
+      "fdv": 92794713.3521125,
+      "vol": 41203304.8811545,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T22:53:08.369Z"
     }
   ],
   "scanned": [
@@ -1285,6 +1321,10 @@
     "51zGGPreR28m5zBKU75MZakzJVDrGgJVaVaS2kHipEqT",
     "0x6ef2ffb38d64afe18ce782da280b300e358cfeaf",
     "3iHb989twJFuQ7rMUNSxBZE9B6s1Zz5eFxgFHPbSj4GP",
-    "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b"
+    "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b",
+    "0x1e458f709b32bcf79e0e8f9d9afdd0ad18a81f6c",
+    "H1ew7tRYs1q3itqtHMxaxVBWddk8sMyv66Gk1UtZNUNi",
+    "97XSMhS4JmH6GjRQSqJJU2UaYi4kbbKRZRvSLkXDrvmf",
+    "9CttdFQ13REhrrhBrBNc7cKbLFMNcqD4RFH9Yj5VsqXf"
   ]
 }
