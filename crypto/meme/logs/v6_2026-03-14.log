@@ -362,3 +362,122 @@
 [2026-03-14T11:28:50.900Z] [INFO]   ⛏ [BSC] frogs (0xc3b1a6229d...)
 [2026-03-14T11:29:14.260Z] [INFO]     0个事件 → 0个地址
 [2026-03-14T11:29:14.561Z] [INFO]   ⛏ [SOL] NEO (HL8i2d74iFZQ...)
+[2026-03-14T11:30:02.915Z] [INFO]     248笔tx → 126个钱包, 9个盈利>$100
+[2026-03-14T11:30:03.215Z] [INFO]   ⛏ [SOL] BURN (GcqpRf1JafEN...)
+[2026-03-14T11:30:25.704Z] [INFO]     72笔tx → 14个钱包, 0个盈利>$100
+[2026-03-14T11:30:26.004Z] [INFO]   ⛏ [SOL] XSAI (AY1ZUqnLhrBw...)
+[2026-03-14T11:30:45.890Z] [INFO]     377笔tx → 200个钱包, 11个盈利>$100
+[2026-03-14T11:30:46.191Z] [INFO]   ⛏ [BSC] MOONDOGE (0x444433123b...)
+[2026-03-14T11:31:09.946Z] [INFO]     0个事件 → 0个地址
+[2026-03-14T11:31:10.247Z] [INFO]   ⛏ [SOL] KAt (F4v2oXKGUsVv...)
+[2026-03-14T11:31:23.381Z] [INFO]     1000笔tx → 485个钱包, 0个盈利>$100
+[2026-03-14T11:31:23.681Z] [INFO]   ⛏ [SOL] SPAce (Fwj9JWxdNw9D...)
+[2026-03-14T11:31:34.709Z] [INFO]     999笔tx → 488个钱包, 0个盈利>$100
+[2026-03-14T11:31:35.009Z] [INFO]   ⛏ [SOL] SEa (6Heo4qHRvHc3...)
+[2026-03-14T11:31:47.850Z] [INFO]     1000笔tx → 490个钱包, 0个盈利>$100
+[2026-03-14T11:31:48.151Z] [INFO]   ⛏ [SOL] gomu (Bx74hpFiaiBb...)
+[2026-03-14T11:32:02.807Z] [INFO]     717笔tx → 255个钱包, 1个盈利>$100
+[2026-03-14T11:32:03.108Z] [INFO]   ⛏ [BSC] 暴富 (0xa3ecf8e0d2...)
+[2026-03-14T11:32:26.935Z] [INFO]     0个事件 → 0个地址
+[2026-03-14T11:32:27.242Z] [INFO] 
+🔬 Phase 3: 交叉验证 + 评分...
+[2026-03-14T11:32:27.245Z] [INFO] 🔬 结果: 259 个聪明钱候选
+[2026-03-14T11:32:27.245Z] [INFO]    链分布: SOL=259 BSC=0 Base=0
+[2026-03-14T11:32:27.256Z] [INFO]   8psNvWTrdNTiVRNz... [Solana] 2币(XSAI,gomu) Profit:$91.15 WR:100% Bot:10% Score:6.39
+[2026-03-14T11:32:27.256Z] [INFO]   BEnMDbSdUwocfZ36... [Solana] 2币(SMITH,NEO) Profit:$81.49 WR:100% Bot:10% Score:6.29
+[2026-03-14T11:32:27.257Z] [INFO]   2UaoiLQQfYrCT8Lh... [Solana] 2币(Sheep,SMITH) Profit:$74.17 WR:100% Bot:10% Score:6.2
+[2026-03-14T11:32:27.257Z] [INFO]   BMPVAFuEpy8wZjJ6... [Solana] 3币(KAt,SPAce,SEa) Profit:$37 WR:67% Bot:10% Score:6.01
+[2026-03-14T11:32:27.257Z] [INFO]   EZth5m5a8MSEWnfg... [Solana] 3币(KAt,SPAce,SEa) Profit:$25.61 WR:67% Bot:10% Score:5.64
+[2026-03-14T11:32:27.257Z] [INFO]   Gmvc3GBTaCx87AWR... [Solana] 3币(KAt,SPAce,SEa) Profit:$12.02 WR:67% Bot:10% Score:4.87
+[2026-03-14T11:32:27.257Z] [INFO]   5pTC1Fcs38vXc8ux... [Solana] 3币(KAt,SPAce,SEa) Profit:$5.69 WR:67% Bot:10% Score:4.11
+[2026-03-14T11:32:27.257Z] [INFO]   34ucTijq9W5aNsqK... [Solana] 3币(KAt,SPAce,SEa) Profit:$53.27 WR:33% Bot:10% Score:3.93
+[2026-03-14T11:32:27.257Z] [INFO]   9Pw5NpsufEuc3t2b... [Solana] 2币(Memehouse,NEO) Profit:$24.75 WR:50% Bot:10% Score:3.02
+[2026-03-14T11:32:27.257Z] [INFO]   MDWKnfMZut8C2FaW... [Solana] 2币(SPAce,SEa) Profit:$23.47 WR:50% Bot:10% Score:2.99
+[2026-03-14T11:32:27.257Z] [INFO]   FWCuXEqTQ89ZX1wg... [Solana] 2币(KAt,SPAce) Profit:$17.56 WR:50% Bot:10% Score:2.83
+[2026-03-14T11:32:27.257Z] [INFO]   GiaDQPvBJJQTso6L... [Solana] 2币(NEO,XSAI) Profit:$13.26 WR:50% Bot:10% Score:2.67
+[2026-03-14T11:32:27.257Z] [INFO]   GRPyRdFm8QQtvZvZ... [Solana] 2币(Sheep,SMITH) Profit:$7.32 WR:50% Bot:10% Score:2.35
+[2026-03-14T11:32:27.257Z] [INFO]   6cxxbYzDuGhrNC9C... [Solana] 3币(WHALE,NEO,XSAI) Profit:$0 WR:67% Bot:10% Score:2.34
+[2026-03-14T11:32:27.257Z] [INFO]   2QdUHt7arEaddULw... [Solana] 3币(KAt,SPAce,SEa) Profit:$0.35 WR:67% Bot:10% Score:2.34
+[2026-03-14T11:32:27.257Z] [INFO]   8UgLw7bttpCta558... [Solana] 2币(SMITH,NEO) Profit:$6.96 WR:50% Bot:10% Score:2.32
+[2026-03-14T11:32:27.257Z] [INFO]   12a3hPZcvw8iAbiq... [Solana] 2币(KAt,SPAce) Profit:$1.15 WR:100% Bot:10% Score:2.29
+[2026-03-14T11:32:27.257Z] [INFO]   2mypBGoPftiV256d... [Solana] 2币(KAt,SEa) Profit:$1.14 WR:100% Bot:10% Score:2.29
+[2026-03-14T11:32:27.257Z] [INFO]   6e8Hy93vzATzNuCf... [Solana] 2币(KAt,SPAce) Profit:$1.04 WR:100% Bot:10% Score:2.2
+[2026-03-14T11:32:27.257Z] [INFO]   HUpvDkk1QqABynbG... [Solana] 2币(Sheep,SMITH) Profit:$0.74 WR:100% Bot:10% Score:2.16
+[2026-03-14T11:32:27.257Z] [INFO]   361ffNx9HsZyhWG5... [Solana] 2币(KAt,SEa) Profit:$0.45 WR:100% Bot:10% Score:2.16
+[2026-03-14T11:32:27.257Z] [INFO]   8Y7csLiwz9FmtLz2... [Solana] 2币(KAt,SPAce) Profit:$0.59 WR:100% Bot:10% Score:2.16
+[2026-03-14T11:32:27.257Z] [INFO]   FUTmYMmkNJZSLMua... [Solana] 2币(KAt,SPAce) Profit:$0.47 WR:100% Bot:10% Score:2.16
+[2026-03-14T11:32:27.257Z] [INFO]   91mos84ncZNq2a4i... [Solana] 2币(SPAce,SEa) Profit:$0.56 WR:100% Bot:10% Score:2.16
+[2026-03-14T11:32:27.257Z] [INFO]   GxDC9e7SP9mzhDo4... [Solana] 3币(DRONE,Sheep,NEO) Profit:$-0.32 WR:33% Bot:10% Score:1.44
+[2026-03-14T11:32:27.257Z] [INFO]   BGARafC7taXf3r6D... [Solana] 3币(KAt,SPAce,SEa) Profit:$-0.43 WR:33% Bot:10% Score:1.44
+[2026-03-14T11:32:27.257Z] [INFO]   CZqQyGxvAvcfs62F... [Solana] 3币(KAt,SPAce,SEa) Profit:$-0.11 WR:33% Bot:10% Score:1.44
+[2026-03-14T11:32:27.257Z] [INFO]   EqgrWtZr6HUYt4bF... [Solana] 3币(KAt,SPAce,SEa) Profit:$-68.4 WR:33% Bot:10% Score:1.44
+[2026-03-14T11:32:27.257Z] [INFO]   vjz6cV8mtfsLEs4C... [Solana] 2币(KAt,SPAce) Profit:$1.16 WR:50% Bot:10% Score:1.34
+[2026-03-14T11:32:27.257Z] [INFO]   J2nhTskfGvGibTdh... [Solana] 2币(KAt,SEa) Profit:$1.04 WR:50% Bot:10% Score:1.28
+[2026-03-14T11:32:27.257Z] [INFO] 
+👛 Phase 3b: 查聪明钱当前持仓 (前20个)...
+[2026-03-14T11:32:27.720Z] [INFO]   8psNvWTrdNTiVRNz... 持仓694币 $5407 | Sheep($521), WhiteHouse($343), abcdefg($296), NORWOOD($195), SOL($159)
+[2026-03-14T11:32:27.911Z] [INFO]   BEnMDbSdUwocfZ36... 持仓0币 $0 | 
+[2026-03-14T11:32:28.110Z] [INFO]   2UaoiLQQfYrCT8Lh... 持仓2币 $73 | SOL($56), Sheep($17)
+[2026-03-14T11:32:28.451Z] [INFO]   BMPVAFuEpy8wZjJ6... 持仓15币 $1536 | KAt($509), tea($257), SEa($235), 龙虾($136), up($133)
+[2026-03-14T11:32:28.751Z] [INFO]   EZth5m5a8MSEWnfg... 持仓14币 $2657 | SLx($2125), SOL($137), CHIP($84), Grvt($45), MEZo($45)
+[2026-03-14T11:32:29.025Z] [INFO]   Gmvc3GBTaCx87AWR... 持仓13币 $4889 | KDK($1621), EDGe($1490), KAt($724), SLx($419), SPAce($234)
+[2026-03-14T11:32:29.298Z] [INFO]   5pTC1Fcs38vXc8ux... 持仓12币 $5726 | FOGO($3909), tea($552), up($306), Grvt($288), KAt($205)
+[2026-03-14T11:32:29.562Z] [INFO]   34ucTijq9W5aNsqK... 持仓14币 $3709 | SLx($937), EDGe($894), CHIP($694), Grvt($432), esp($188)
+[2026-03-14T11:32:29.749Z] [INFO]   9Pw5NpsufEuc3t2b... 持仓3币 $86 | SOL($31), NEO($28), Memehouse($27)
+[2026-03-14T11:32:30.000Z] [INFO]   MDWKnfMZut8C2FaW... 持仓14币 $3856 | SLx($1299), EDGe($765), CHIP($475), SEa($370), tea($360)
+[2026-03-14T11:32:30.280Z] [INFO]   FWCuXEqTQ89ZX1wg... 持仓13币 $2592 | CHIP($1036), up($395), tea($351), SPAce($233), 龙虾($176)
+[2026-03-14T11:32:30.515Z] [INFO]   GiaDQPvBJJQTso6L... 持仓7币 $102 | XSAI($28), 00($27), SOL($14), 00($11), Sheep($10)
+[2026-03-14T11:32:30.752Z] [INFO]   GRPyRdFm8QQtvZvZ... 持仓3币 $557 | NEO($553), SOL($3), SAM($1)
+[2026-03-14T11:32:30.976Z] [INFO]   6cxxbYzDuGhrNC9C... 持仓3币 $9 | SOL($6), NEO($2), EUSB($1)
+[2026-03-14T11:32:31.197Z] [INFO]   2QdUHt7arEaddULw... 持仓6币 $18 | SLx($7), SOL($3), EDGe($3), SEa($2), Btw($1)
+[2026-03-14T11:32:31.419Z] [INFO]   8UgLw7bttpCta558... 持仓3币 $58 | C0IN($42), NEO($10), SOL($6)
+[2026-03-14T11:32:31.643Z] [INFO]   12a3hPZcvw8iAbiq... 持仓6币 $20 | SLx($6), EDGe($6), SOL($3), KAt($3), Grvt($1)
+[2026-03-14T11:32:31.865Z] [INFO]   2mypBGoPftiV256d... 持仓5币 $18 | SOL($8), EDGe($6), CHIP($3), Btw($1), SPAce($1)
+[2026-03-14T11:32:32.085Z] [INFO]   6e8Hy93vzATzNuCf... 持仓5币 $17 | SOL($7), SLx($5), CHIP($3), KAt($1), SPAce($1)
+[2026-03-14T11:32:32.306Z] [INFO]   HUpvDkk1QqABynbG... 持仓4币 $175 | Sheep($74), USDC($51), SMITH($48), SOL($2)
+[2026-03-14T11:32:32.459Z] [INFO] 
+✅ 完成！种子:124 聪明钱:259
+[2026-03-14T11:54:06.066Z] [INFO] 🚀 Smart Money Scanner v6.1 启动 (mode=seeds)
+[2026-03-14T11:54:06.067Z] [INFO] Helius: 2keys, RPC: bsc,base
+[2026-03-14T11:54:06.067Z] [INFO] 🌱 Phase 1: 从币安排行榜拉种子币...
+[2026-03-14T11:54:06.270Z] [INFO]   Solana Trending(pump): 193
+[2026-03-14T11:54:06.648Z] [INFO]   Solana TopSearch(pump): 193
+[2026-03-14T11:54:07.022Z] [INFO]   BSC Trending(pump): 199
+[2026-03-14T11:54:07.448Z] [INFO]   BSC TopSearch(pump): 200
+[2026-03-14T11:54:07.849Z] [INFO]   Base Trending(pump): 190
+[2026-03-14T11:54:08.227Z] [INFO]   Base TopSearch(pump): 168
+[2026-03-14T11:54:08.564Z] [INFO]   Solana Trending(mature): 198
+[2026-03-14T11:54:08.798Z] [INFO]   Solana Alpha(mature): 28
+[2026-03-14T11:54:09.103Z] [INFO]   BSC Trending(mature): 200
+[2026-03-14T11:54:09.414Z] [INFO]   BSC Alpha(mature): 200
+[2026-03-14T11:54:09.751Z] [INFO]   Base Trending(mature): 197
+[2026-03-14T11:54:09.981Z] [INFO]   Base Alpha(mature): 23
+[2026-03-14T11:54:10.182Z] [INFO]   🔒 安全审计 (127 个候选)...
+[2026-03-14T11:54:17.139Z] [INFO]   🔒 审计完成: 50个审计, 0个踢掉
+[2026-03-14T11:54:17.139Z] [INFO]   🏊 池子健康检查 (爆发型种子)...
+[2026-03-14T11:54:17.165Z] [INFO]     ❌ DRONE[Solana] KICKED: Liq/MC=4.0% Txns=6236 Pools=10
+[2026-03-14T11:54:20.244Z] [INFO]     ❌ BURN[Solana] KICKED: Liq/MC=0.0% Txns=2770 Pools=1
+[2026-03-14T11:54:27.635Z] [INFO]     ❌ BCPI[BSC] KICKED: Liq/MC=2.8% Txns=301 Pools=5
+[2026-03-14T11:54:27.935Z] [INFO]   🏊 池子检查完成: 3个踢掉
+[2026-03-14T11:54:27.936Z] [INFO] 🌱 种子币: 124 个通过
+[2026-03-14T11:54:27.936Z] [INFO]   爆发型: 21, 成熟型: 103
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] WHALE MC:$2277k Liq:$152k Vol:$10.4M +90990% H:2026 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] Memehouse MC:$639k Liq:$159k Vol:$4.5M +24903% H:2034 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] Sheep MC:$526k Liq:$98k Vol:$8.4M +18891% H:3040 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] SMITH MC:$419k Liq:$127k Vol:$7.7M +17040% H:3757 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] nees MC:$294k Liq:$51k Vol:$4.5M +11842% H:753 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [BSC][pump] frogs MC:$443k Liq:$97k Vol:$4.3M +11635% H:1721 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] NEO MC:$246k Liq:$58k Vol:$3.1M +9984% H:1872 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] XSAI MC:$387k Liq:$73k Vol:$0.6M +5758% H:859 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [BSC][pump] MOONDOGE MC:$222k Liq:$89k Vol:$7.5M +1820% H:1822 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] KAt MC:$622k Liq:$93k Vol:$15.3M +1336% H:2054 Trending+TopSearch
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] SPAce MC:$569k Liq:$94k Vol:$14.3M +1216% H:1817 Trending
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] SEa MC:$331k Liq:$69k Vol:$16.0M +964% H:1747 Trending
+[2026-03-14T11:54:27.936Z] [INFO]   [Solana][pump] gomu MC:$128k Liq:$62k Vol:$0.2M +879% H:2810 Trending
+[2026-03-14T11:54:27.936Z] [INFO]   [BSC][pump] 暴富 MC:$824k Liq:$84k Vol:$0.1M +281% H:1349 Trending
+[2026-03-14T11:54:27.937Z] [INFO]   [Solana][pump] UGOR MC:$132k Liq:$142k Vol:$8.5M +233% H:4700 Trending
+[2026-03-14T11:54:27.937Z] [INFO]   [Solana][pump] shitcoin MC:$339k Liq:$57k Vol:$0.2M +216% H:1241 Trending
+[2026-03-14T11:54:27.937Z] [INFO]   [Solana][pump] SAGE MC:$182k Liq:$65k Vol:$0.0M +146% H:6771 Trending
+[2026-03-14T11:54:27.937Z] [INFO]   [BSC][pump] 分红财神 MC:$382k Liq:$59k Vol:$0.0M +120% H:2432 Trending
+[2026-03-14T11:54:27.937Z] [INFO]   [Solana][pump] SOS MC:$627k Liq:$240k Vol:$0.3M +119% H:15522 Trending
+[2026-03-14T11:54:27.937Z] [INFO]   [Solana][pump] WNTV MC:$1791k Liq:$115k Vol:$0.1M +107% H:1105 Trending

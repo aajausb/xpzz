@@ -207,6 +207,37 @@ async function fetchSeeds() {
   }
   log('INFO', `  🔒 审计完成: ${audited}个审计, ${kicked}个踢掉`);
   
+  // Phase 1c: DexScreener池子健康检查（踢掉断头铡）
+  log('INFO', `  🏊 池子健康检查 (爆发型种子)...`);
+  const pumpCandidates = [...all.values()].filter(s => s.seedType === 'pump' || s.seedType === 'both');
+  let poolKicked = 0;
+  for (const s of pumpCandidates.slice(0, 30)) {
+    try {
+      const d = await httpReq(`https://api.dexscreener.com/latest/dex/tokens/${s.contractAddress}`);
+      const pairs = d?.pairs || [];
+      if (!pairs.length) continue;
+      const mainPair = pairs.reduce((best, p) => 
+        ((p.liquidity?.usd || 0) > (best.liquidity?.usd || 0)) ? p : best, pairs[0]);
+      const totalLiq = pairs.reduce((sum, p) => sum + (p.liquidity?.usd || 0), 0);
+      const mc = mainPair.marketCap || 1;
+      const liqMcRatio = totalLiq / mc;
+      const mainTxns = (mainPair.txns?.h24?.buys || 0) + (mainPair.txns?.h24?.sells || 0);
+      s.dexPools = pairs.length;
+      s.dexTotalLiq = totalLiq;
+      s.dexLiqMcRatio = liqMcRatio;
+      s.dexMainTxns = mainTxns;
+      
+      // 踢掉: 流动性/MC < 5% 且 主池交易笔数 < 10000
+      if (liqMcRatio < 0.05 && mainTxns < 10000) {
+        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED: Liq/MC=${(liqMcRatio*100).toFixed(1)}% Txns=${mainTxns} Pools=${pairs.length}`);
+        all.delete(s.contractAddress.toLowerCase());
+        poolKicked++;
+      }
+      await sleep(300); // DexScreener限流
+    } catch (e) { /* skip */ }
+  }
+  log('INFO', `  🏊 池子检查完成: ${poolKicked}个踢掉`);
+  
   const seeds = [...all.values()].sort((a, b) => b.percentChange24h - a.percentChange24h);
   log('INFO', `🌱 种子币: ${seeds.length} 个通过`);
   const pumpSeeds = seeds.filter(s => s.seedType === 'pump' || s.seedType === 'both');
