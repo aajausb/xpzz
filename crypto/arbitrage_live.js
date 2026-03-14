@@ -1461,8 +1461,10 @@ async function closeFundingPosition(pos, urgent = false, dangerousEx = null) {
           longExObj.getFuturesPositions(),
           shortExObj.getFuturesPositions()
         ]);
-        const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
-        const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
+        const lPosArr = Array.isArray(lPos) ? lPos : [];
+        const sPosArr = Array.isArray(sPos) ? sPos : [];
+        const lp = lPosArr.find(p => (p.symbol||'').includes(pos.symbol));
+        const sp = sPosArr.find(p => (p.symbol||'').includes(pos.symbol));
         const checkLiqDist = (p) => {
           if (!p) return 999;
           const mark = +(p.markPrice || p.lastPrice || 0);
@@ -1627,8 +1629,10 @@ async function closeFundingPosition(pos, urgent = false, dangerousEx = null) {
         if (batchCount > 1) {
           try {
             const [lPos, sPos] = await Promise.all([longExObj.getFuturesPositions(), shortExObj.getFuturesPositions()]);
-            const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
-            const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
+            const lPosArr = Array.isArray(lPos) ? lPos : [];
+            const sPosArr = Array.isArray(sPos) ? sPos : [];
+            const lp = lPosArr.find(p => (p.symbol||'').includes(pos.symbol));
+            const sp = sPosArr.find(p => (p.symbol||'').includes(pos.symbol));
             currentLongQty = lp ? Math.abs(+(lp.positionAmt || lp.total || lp.size || 0)) : 0;
             currentShortQty = sp ? Math.abs(+(sp.positionAmt || sp.total || sp.size || 0)) : 0;
             if (currentLongQty === 0 && currentShortQty === 0) { closeLOk = true; closeSOk = true; break; }
@@ -2603,6 +2607,12 @@ async function main() {
   setInterval(async () => {
     for (const pos of state.positions) {
       if (tradingSymbols.has(pos.symbol)) continue; // 有其他操作在进行
+      // 连续失败退避: >10次后每5分钟才重试一次
+      if ((pos._topupFails || 0) > 10) {
+        pos._topupSkips = (pos._topupSkips || 0) + 1;
+        if (pos._topupSkips < 60) continue; // 60*5s = 5min
+        pos._topupSkips = 0;
+      }
       const target = getTradeSize(pos.spread || 0.003);
       if (pos.size < target) {
         // 检查价差
@@ -2685,6 +2695,7 @@ async function main() {
             state.totalPnl -= addFee;
             state.dailyPnl -= addFee;
             saveState();
+            pos._topupFails = 0;
             log(`  ✅ 补仓成功! +$${addSize}，总$${pos.size}（目标$${target}）`);
             await notify(`📥 补仓 ${pos.symbol} +$${addSize}（总$${pos.size}，目标$${target}）`);
           } else if (lrOk && !srOk) {
@@ -2730,14 +2741,19 @@ async function main() {
               } catch(e) { log(`  ❌ 多头补救第${fix+1}次失败: ${e.message}`); }
             }
           } else {
-            log(`  ❌ 补仓两边都失败`);
+            pos._topupFails = (pos._topupFails || 0) + 1;
+            if (pos._topupFails <= 3 || pos._topupFails % 60 === 0) {
+              log(`  ❌ 补仓两边都失败 ${pos.symbol}（连续${pos._topupFails}次）`);
+            }
           }
           
           // 补仓后对齐校验
           try {
             const [lPos, sPos] = await Promise.all([lowExObj.getFuturesPositions(), highExObj.getFuturesPositions()]);
-            const lp = lPos.find(p => (p.symbol||'').includes(pos.symbol));
-            const sp = sPos.find(p => (p.symbol||'').includes(pos.symbol));
+            const lPosArr = Array.isArray(lPos) ? lPos : [];
+            const sPosArr = Array.isArray(sPos) ? sPos : [];
+            const lp = lPosArr.find(p => (p.symbol||'').includes(pos.symbol));
+            const sp = sPosArr.find(p => (p.symbol||'').includes(pos.symbol));
             const lQty = lp ? Math.abs(+(lp.positionAmt || lp.total || lp.size || 0)) : 0;
             const sQty = sp ? Math.abs(+(sp.positionAmt || sp.total || sp.size || 0)) : 0;
             if (lQty > 0 && sQty > 0 && Math.abs(lQty - sQty) / Math.max(lQty, sQty) > 0.01) {

@@ -128,10 +128,50 @@ $100 分成 5 笔 × $20：
 3. **链上过滤**: OKX OnchainOS skills（已装）查 holder/liquidity/dev 行为
 4. **执行交易**: OKX OnchainOS swap（已装）
 
-## 6. 待办
+## 6. 2026年初 Meme 市场数据快照（2026-03-14 搜集）
+
+### 市场规模
+- Solana meme 总市值 $6.7B（2026年1月）
+- Pump.fun 日DEX交易量峰值 $2.03B（1/6），月均从$11.7B降至~$2.4B
+- 每日新发币 30,000+（pump.fun平台）
+- 仅极小比例的币能跑出10x+（Galaxy Research确认）
+
+### 头部 meme 表现（2026年1月数据）
+| Token | 市值 | 周涨幅 | 特征 |
+|-------|------|--------|------|
+| BONK | $1.5B+ | +50% | Solana叙事复苏，社区burn |
+| WIF | $2B+ | 稳定 | 蓝筹meme，持仓分布健康 |
+| POPCAT | ~$500M | 高波动 | 病毒式社交传播，快速pump/dump |
+| PEPE | $4B+ | +32% | 跨链吸引力，1月流动性带动 |
+| $PUMP | ATH跌70% | — | 平台token，$0.0026，pivot做基建 |
+
+### 重要趋势
+1. **AI + Meme 叙事**：SUGEE（3月初pump.fun上线，AI agent创建）引发关注
+2. **政治meme**：$TRUMP上线后$MELANIA分流流动性，$TRUMP跌50%
+3. **创始人风险**：Bags生态创始人跑路，$GAS -91%、$RALPH -54%
+4. **Pump.fun转型**：$3M Pump Fund投资12个项目，从炒作转基建
+5. **Sniper bot 生态成熟**：Padre/Axium/Photon/Trojan/BonkBot 五大工具
+
+### 10x币的共同特征（综合分析）
+1. **叙事先行**：有清晰的 meme 主题（AI/政治/动物/病毒梗）
+2. **社交爆发**：推特KOL喊单能带34%涨幅（James Wynn案例）
+3. **bonding curve速度**：成功币的bonding curve 10x速度完成
+4. **持仓分散**：top10 holder 占比低，几百个maker以上
+5. **流动性锁定**：有LP锁，不是随时能跑的
+6. **时机对**：跟随BTC/SOL大盘上涨趋势，不逆势
+7. **生命周期极短**：多数pump.fun币在小时级别完成涨跌，要极快进出
+
+### 对我们策略的启示
+- **纯数据驱动不够**：必须加社交情绪（推特热度 = 最强信号）
+- **速度是核心竞争力**：sniper bot级别的毫秒响应
+- **小仓位多试错**：$20/笔，5笔并行，1个10x就回本
+- **创始人背景查**：避开key-man risk（一人项目跑路=归零）
+- **跟KOL不如跟链上**：KOL喊单时已经晚了，要看他们的钱包先动
+
+## 7. 待办
 - [x] 搜索现在 Solana 上有什么好的新币监控 API ✅
 - [x] 调研推特情绪监控方案 ✅
-- [ ] 回测过去 30 天的 10 倍币特征（用 okx-dex-market skill 拉数据）
+- [x] 分析10倍币共同特征 ✅（综合搜索数据 + 文章分析，见第6节）
 - [ ] 设计自动筛选评分模型
 - [ ] 把 Chainstack bot 改写成 Node.js 版本（匹配现有技术栈）
 - [ ] 测试 Helius webhook 配置 pump.fun 监听
