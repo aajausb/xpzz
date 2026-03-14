@@ -1,82 +1,83 @@
 {
   "coins": [
     {
-      "symbol": "SOS",
-      "pool": "BM7Qw7JbGtyLoZw3canKF6Q6EJDp1Q3PYuHQhTNwoq2D",
-      "fdv": 3720114.019576,
-      "vol": 5852759.73106807,
-      "ageD": 4,
-      "addedAt": "2026-03-14T03:54:20.881Z"
-    },
-    {
-      "symbol": "Distorted",
-      "pool": "CCmh7tvVRrCaExBn6Uu3AyDZr5P16WhJnZcLvAMHkec4",
-      "fdv": 1243295.47719137,
-      "vol": 1197433.11515552,
-      "ageD": 4,
-      "addedAt": "2026-03-14T03:54:20.881Z"
-    },
-    {
-      "symbol": "SOS",
-      "pool": "6QAFXSM2bRWUiQTqDsXmf6p4t8o2H4CUGJFM9c52JC2i",
-      "fdv": 3731514.98238575,
-      "vol": 347770.021941947,
-      "ageD": 12,
-      "addedAt": "2026-03-14T03:54:20.881Z"
-    },
-    {
       "symbol": "WAR",
+      "mint": "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump",
       "pool": "7xYkR7Rz9PWZLBxpyq385AgEcdzPabFHzHN3JsuDyMrP",
-      "fdv": 33648488.667792,
-      "vol": 1393729.03520244,
+      "fdv": 34360216,
+      "vol": 1426163.37,
       "ageD": 3,
-      "addedAt": "2026-03-14T03:54:23.200Z"
-    },
-    {
-      "symbol": "DRONE",
-      "pool": "37iyAmMDhJg3A47HXh1QNJzaKpdbFyCqptr1ogcEwBFF",
-      "fdv": 4378289.727,
-      "vol": 950524.279895855,
-      "ageD": 0,
-      "addedAt": "2026-03-14T03:54:23.200Z"
-    },
-    {
-      "symbol": "TripleT",
-      "pool": "3KFCgJ5R3zshW8hTDbzjSrrKSRYmKvsMfhc4Vo4iddxD",
-      "fdv": 1469915.98015863,
-      "vol": 615986.162017884,
-      "ageD": 18,
-      "addedAt": "2026-03-14T03:54:27.704Z"
-    },
-    {
-      "symbol": "Lobstar",
-      "pool": "AADJrfmWoHVXZhF1UkbHvNC5tqrBpkGdSaxtMYteDm2x",
-      "fdv": 3407955.73812468,
-      "vol": 498297.98224112,
-      "ageD": 22,
-      "addedAt": "2026-03-14T03:54:30.016Z"
+      "addedAt": "2026-03-14T04:27:57.394Z"
     },
     {
       "symbol": "WAR",
+      "mint": "GHXwEFxKNcz7FLgFvYRi1ZAwvKKALdRVUJ8M3Aszmoon",
       "pool": "DcX4vhZdWX7HKzFQvAyugzSbsn1RtyDHFU6jnuUQAiXs",
-      "fdv": 3964777,
-      "vol": 163211.92,
+      "fdv": 3931962,
+      "vol": 162338.17,
       "ageD": 29,
-      "addedAt": "2026-03-14T03:54:34.885Z"
+      "addedAt": "2026-03-14T04:27:57.394Z"
     },
     {
       "symbol": "我的刀盾",
+      "mint": "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump",
       "pool": "9RpsV1vWy6itWjiHsBjrbpw2Z36AeiCnaiktyqTnXxcr",
-      "fdv": 1952016,
-      "vol": 520778.42,
+      "fdv": 2146791,
+      "vol": 520689.44,
       "ageD": 17,
-      "addedAt": "2026-03-14T03:54:35.600Z"
+      "addedAt": "2026-03-14T04:27:57.938Z"
+    },
+    {
+      "symbol": "SOS",
+      "mint": "33dhma9QA7xefhVpA7c5vMrN826xcHanSHruUEKF2LmW",
+      "pool": "6QAFXSM2bRWUiQTqDsXmf6p4t8o2H4CUGJFM9c52JC2i",
+      "fdv": 3076411,
+      "vol": 362693.85,
+      "ageD": 12,
+      "addedAt": "2026-03-14T04:28:06.151Z"
+    },
+    {
+      "symbol": "SOS",
+      "mint": "DpxKNEi3XVeRByaGqYKvz2w6E2PhPgBAqdayLcQEpump",
+      "pool": "BM7Qw7JbGtyLoZw3canKF6Q6EJDp1Q3PYuHQhTNwoq2D",
+      "fdv": 4306041,
+      "vol": 5916858.53,
+      "ageD": 4,
+      "addedAt": "2026-03-14T04:28:06.151Z"
+    },
+    {
+      "symbol": "DRONE",
+      "mint": "7NYWLY8vL9s4NRjjXo2pK9USSDqre6tCMETAyzkMGiPN",
+      "pool": "37iyAmMDhJg3A47HXh1QNJzaKpdbFyCqptr1ogcEwBFF",
+      "fdv": 4490759,
+      "vol": 984788.68,
+      "ageD": 0,
+      "addedAt": "2026-03-14T04:28:06.465Z"
+    },
+    {
+      "symbol": "SHAPE",
+      "mint": "4HhWcsfjaWYKJtjaxd4EyGSAL4Ky8C3DvqAWPHnrpump",
+      "pool": "G6B6QdZmg9sY27pCidm4Yew3hWcEGa2Bye9Qfujrk6fW",
+      "fdv": 1690890,
+      "vol": 364588,
+      "ageD": 11,
+      "addedAt": "2026-03-14T04:28:06.783Z"
+    },
+    {
+      "symbol": "PIPPIN",
+      "mint": "Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump",
+      "pool": "",
+      "fdv": 370714374,
+      "vol": 0,
+      "ageD": 0,
+      "addedAt": "2026-03-14T04:28:35.025Z"
     }
   ],
   "scanned": [
-    "BM7Qw7JbGtyLoZw3canKF6Q6EJDp1Q3PYuHQhTNwoq2D",
-    "CCmh7tvVRrCaExBn6Uu3AyDZr5P16WhJnZcLvAMHkec4",
-    "6QAFXSM2bRWUiQTqDsXmf6p4t8o2H4CUGJFM9c52JC2i",
-    "7xYkR7Rz9PWZLBxpyq385AgEcdzPabFHzHN3JsuDyMrP"
+    "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump",
+    "GHXwEFxKNcz7FLgFvYRi1ZAwvKKALdRVUJ8M3Aszmoon",
+    "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump",
+    "33dhma9QA7xefhVpA7c5vMrN826xcHanSHruUEKF2LmW",
+    "DpxKNEi3XVeRByaGqYKvz2w6E2PhPgBAqdayLcQEpump"
   ]
 }

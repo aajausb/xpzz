@@ -34,12 +34,13 @@ const HELIUS_PARSE_URL = `https://api.helius.xyz/v0/transactions/?api-key=${HELI
 const MIN_FDV = 1_000_000;          // $1M
 const MIN_VOL_24H = 100_000;        // $100k
 const MAX_AGE_DAYS = 30;
-const MIN_PROFIT_PER_COIN = 300;    // 候选门槛（低，宁多勿漏）
-const FINAL_MIN_COINS = 2;          // 至少2个币盈利
+const MIN_PROFIT_PER_COIN = 2000;   // 单币盈利≥$2000
+const FINAL_MIN_COINS = 10;         // 至少10个币盈利
 const FINAL_MIN_AVG_PROFIT = 2000;  // 单币均利≥$2k
 const FINAL_MIN_WIN_RATE = 0.6;     // 胜率≥60%
-const SCAN_INTERVAL_MS = 5 * 60 * 1000; // 5分钟
+const SCAN_INTERVAL_MS = 60 * 1000; // 1分钟（Helius不限流，加快扫描）
 const GECKO_DELAY_MS = 2000;        // GeckoTerminal请求间隔
+const HELIUS_DELAY_MS = 200;        // Helius请求间隔（10万/天额度充裕）
 
 // ============ Logger ============
 function log(level, msg) {
@@ -83,39 +84,25 @@ async function discoverCoins() {
   const candidates = loadJSON(CANDIDATES_FILE, { coins: [], scanned: [] });
   const scannedSet = new Set(candidates.scanned || []);
 
-  // GeckoTerminal trending pools
-  for (let page = 1; page <= 5; page++) {
-    try {
-      const d = await geckoFetch(`https://api.geckoterminal.com/api/v2/networks/solana/trending_pools?page=${page}`);
-      for (const p of (d.data || [])) {
-        const a = p.attributes;
-        const fdv = parseFloat(a.fdv_usd || 0);
-        const vol = parseFloat(a.volume_usd?.h24 || 0);
-        const created = new Date(a.pool_created_at).getTime();
-        const pool = a.address;
+  // 用mint地址去重
+  const seenMints = new Set(candidates.coins.map(c => c.mint).filter(Boolean));
 
-        if (fdv >= MIN_FDV && vol >= MIN_VOL_24H && created > thirtyDaysAgo && !scannedSet.has(pool)) {
-          const existing = candidates.coins.find(c => c.pool === pool);
-          if (!existing) {
-            candidates.coins.push({
-              symbol: a.name?.split(' / ')[0] || '?',
-              pool,
-              fdv,
-              vol,
-              ageD: Math.round((Date.now() - created) / 86400000),
-              addedAt: new Date().toISOString(),
-            });
-          }
-        }
-      }
-    } catch (e) {
-      log('WARN', `Trending page ${page}: ${e.message}`);
-    }
-    await new Promise(r => setTimeout(r, GECKO_DELAY_MS));
+  function addCoin(symbol, mint, pool, fdv, vol, ageD) {
+    if (!mint || seenMints.has(mint)) return;
+    if (scannedSet.has(mint)) return;
+    seenMints.add(mint);
+    candidates.coins.push({ symbol, mint, pool, fdv, vol, ageD, addedAt: new Date().toISOString() });
   }
 
-  // DexScreener supplement
-  const queries = ['pump solana', 'meme solana', 'ai solana', 'war solana', 'dog solana', 'agent solana'];
+  // === 数据源1: DexScreener搜索 ===
+  const queries = ['pump solana', 'meme solana', 'ai solana', 'war solana', 'dog solana', 'agent solana',
+    'cat solana', 'frog solana', 'trump solana', 'fight solana', 'moon solana', 'degen solana',
+    'pepe solana', 'bonk solana', 'chad solana', 'dragon solana', 'ninja solana',
+    'smith solana', 'sos solana', 'drone solana', 'shape solana', 'lobster solana',
+    'punch solana', 'cash solana', 'gold solana', 'baby solana', 'king solana',
+    'ape solana', 'bear solana', 'bull solana', 'fox solana', 'wolf solana',
+    'bird solana', 'fish solana', 'panda solana', 'tiger solana', 'lion solana',
+    'whale solana', 'shark solana', 'monkey solana', 'rabbit solana', 'rocket solana'];
   for (const q of queries) {
     try {
       const r = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(q)}`);
@@ -125,75 +112,199 @@ async function discoverCoins() {
         if ((p.fdv || 0) < MIN_FDV) continue;
         if ((p.volume?.h24 || 0) < MIN_VOL_24H) continue;
         if (!p.pairCreatedAt || p.pairCreatedAt < thirtyDaysAgo) continue;
-        if (scannedSet.has(p.pairAddress)) continue;
-
-        const existing = candidates.coins.find(c => c.pool === p.pairAddress);
-        if (!existing) {
-          candidates.coins.push({
-            symbol: p.baseToken?.symbol || '?',
-            pool: p.pairAddress,
-            fdv: p.fdv,
-            vol: p.volume?.h24 || 0,
-            ageD: Math.round((Date.now() - p.pairCreatedAt) / 86400000),
-            addedAt: new Date().toISOString(),
-          });
-        }
+        addCoin(p.baseToken?.symbol, p.baseToken?.address, p.pairAddress, p.fdv, p.volume?.h24, Math.round((Date.now() - p.pairCreatedAt) / 86400000));
       }
     } catch {}
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 300));
   }
 
+  // === 数据源2: DexScreener token-boosts（热门推广） ===
+  try {
+    const r = await fetch('https://api.dexscreener.com/token-boosts/top/v1');
+    const boosts = await r.json();
+    for (const b of (boosts || [])) {
+      if (b.chainId !== 'solana') continue;
+      const addr = b.tokenAddress;
+      if (!addr) continue;
+      // 查详情
+      try {
+        const r2 = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + addr);
+        const d2 = await r2.json();
+        const p = (d2.pairs || []).find(p => p.chainId === 'solana' && (p.fdv || 0) >= MIN_FDV);
+        if (p && p.pairCreatedAt && p.pairCreatedAt > thirtyDaysAgo && (p.volume?.h24 || 0) >= MIN_VOL_24H) {
+          addCoin(p.baseToken?.symbol, addr, p.pairAddress, p.fdv, p.volume?.h24, Math.round((Date.now() - p.pairCreatedAt) / 86400000));
+        }
+      } catch {}
+      await new Promise(r => setTimeout(r, 200));
+    }
+  } catch {}
+
+  // === 数据源3: DexScreener token-profiles（最新） ===
+  try {
+    const r = await fetch('https://api.dexscreener.com/token-profiles/latest/v1');
+    const profiles = await r.json();
+    for (const p of (profiles || []).slice(0, 30)) {
+      if (p.chainId !== 'solana') continue;
+      const addr = p.tokenAddress;
+      if (!addr || seenMints.has(addr)) continue;
+      try {
+        const r2 = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + addr);
+        const d2 = await r2.json();
+        const pair = (d2.pairs || []).find(p => p.chainId === 'solana' && (p.fdv || 0) >= MIN_FDV);
+        if (pair && pair.pairCreatedAt && pair.pairCreatedAt > thirtyDaysAgo && (pair.volume?.h24 || 0) >= MIN_VOL_24H) {
+          addCoin(pair.baseToken?.symbol, addr, pair.pairAddress, pair.fdv, pair.volume?.h24, Math.round((Date.now() - pair.pairCreatedAt) / 86400000));
+        }
+      } catch {}
+      await new Promise(r => setTimeout(r, 200));
+    }
+  } catch {}
+
+  // === 数据源4: CoinGecko预存数据 ===
+  try {
+    const cgFile = path.join(DATA_DIR, 'coingecko_pumpfun.json');
+    const cgCoins = loadJSON(cgFile, []);
+    for (const c of cgCoins) {
+      if (c.mint && c.mc >= MIN_FDV) {
+        addCoin(c.symbol, c.mint, '', c.mc, 0, 0);
+      }
+    }
+  } catch {}
+
   saveJSON(CANDIDATES_FILE, candidates);
-  const pending = candidates.coins.filter(c => !scannedSet.has(c.pool));
-  log('INFO', `待扫描: ${pending.length}, 已扫描: ${scannedSet.size}`);
+  // 按mint去重scanned
+  const pending = candidates.coins.filter(c => c.mint && !scannedSet.has(c.mint));
+  log('INFO', `待扫描: ${pending.length}, 已扫描: ${scannedSet.size}, 总: ${candidates.coins.length}`);
   return candidates;
 }
 
-// ============ Step 2: Scan one coin ============
+// ============ Step 2: Scan one coin (Helius版，无限流) ============
 async function scanCoin(coin) {
-  log('INFO', `扫描 ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M, ${coin.ageD}d) pool:${coin.pool.slice(0, 16)}`);
+  log('INFO', `扫描 ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M, ${coin.ageD}d) mint:${(coin.mint || coin.pool).slice(0, 16)}`);
 
-  let trades = [];
-  for (let page = 1; page <= 5; page++) {
+  const mint = coin.mint;
+  if (!mint) {
+    log('WARN', `  ${coin.symbol}: 没有mint地址，跳过`);
+    return [];
+  }
+  const SOL_MINT = 'So11111111111111111111111111111111111111112';
+
+  // 用Helius Address Transactions API拿SWAP交易
+  let allTxs = [];
+  let beforeSig;
+  
+  for (let batch = 0; batch < 10; batch++) { // 最多1000条
+    let url = `https://api.helius.xyz/v0/addresses/${mint}/transactions?api-key=${HELIUS_KEY_2}&limit=100`;
+    if (beforeSig) url += `&before=${beforeSig}`;
+    
     try {
-      const d = await geckoFetch(
-        `https://api.geckoterminal.com/api/v2/networks/solana/pools/${coin.pool}/trades?trade_volume_in_usd_greater_than=50&page=${page}`
-      );
-      const t = d.data || [];
-      trades.push(...t);
-      if (t.length < 200) break;
+      const r = await fetch(url);
+      if (!r.ok) { log('WARN', `Helius ${r.status}`); break; }
+      const txs = await r.json();
+      if (!Array.isArray(txs) || txs.length === 0) break;
+      
+      allTxs.push(...txs);
+      beforeSig = txs[txs.length - 1].signature;
+      
+      if (txs.length < 100) break;
     } catch (e) {
-      log('WARN', `Trades page ${page}: ${e.message}`);
+      log('WARN', `Helius error: ${e.message}`);
       break;
     }
-    await new Promise(r => setTimeout(r, GECKO_DELAY_MS));
+    await new Promise(r => setTimeout(r, HELIUS_DELAY_MS));
   }
 
-  log('INFO', `  ${coin.symbol}: ${trades.length} trades`);
+  log('INFO', `  ${coin.symbol}: ${allTxs.length} swaps via Helius`);
 
-  // Aggregate by maker
+  // 按地址聚合所有涉及该token的活动
   const makers = new Map();
-  for (const t of trades) {
-    const a = t.attributes;
-    const maker = a.tx_from_address;
-    if (!maker) continue;
-    if (!makers.has(maker)) makers.set(maker, { buys: 0, sells: 0, buyVol: 0, sellVol: 0 });
-    const rec = makers.get(maker);
-    const vol = parseFloat(a.volume_in_usd || 0);
-    if (a.kind === 'buy') { rec.buys++; rec.buyVol += vol; }
-    else { rec.sells++; rec.sellVol += vol; }
+  let swapCount = 0;
+  
+  for (const tx of allTxs) {
+    const transfers = tx.tokenTransfers || [];
+    const hasTargetToken = transfers.some(tt => tt.mint === mint);
+    if (!hasTargetToken) continue;
+    
+    swapCount++;
+    
+    // 找所有跟目标token有交互的地址（不只是feePayer）
+    const involvedAddrs = new Set();
+    for (const tt of transfers) {
+      if (tt.mint === mint) {
+        if (tt.toUserAccount) involvedAddrs.add(tt.toUserAccount);
+        if (tt.fromUserAccount) involvedAddrs.add(tt.fromUserAccount);
+      }
+    }
+    
+    for (const addr of involvedAddrs) {
+      let solSpent = 0, solReceived = 0;
+      let tokenReceived = 0, tokenSent = 0;
+      
+      for (const tt of transfers) {
+        if (tt.mint === SOL_MINT) {
+          if (tt.fromUserAccount === addr) solSpent += (tt.tokenAmount || 0);
+          if (tt.toUserAccount === addr) solReceived += (tt.tokenAmount || 0);
+        } else if (tt.mint === mint) {
+          if (tt.toUserAccount === addr) tokenReceived += (tt.tokenAmount || 0);
+          if (tt.fromUserAccount === addr) tokenSent += (tt.tokenAmount || 0);
+        }
+      }
+      
+      for (const nt of (tx.nativeTransfers || [])) {
+        if (nt.fromUserAccount === addr) solSpent += (nt.amount || 0) / 1e9;
+        if (nt.toUserAccount === addr) solReceived += (nt.amount || 0) / 1e9;
+      }
+      
+      const isSwap = tx.type === 'SWAP' || tx.source === 'PUMP_AMM' || tx.source === 'JUPITER' || tx.source === 'RAYDIUM';
+      const isTransferIn = tokenReceived > 0 && tokenSent === 0 && !isSwap;
+      const isSell = tokenSent > tokenReceived && (solReceived > 0 || isSwap);
+      const isBuy = tokenReceived > tokenSent && (solSpent > 0 || isSwap);
+      
+      const solNet = solSpent - solReceived;
+      const solUsd = solNet * 170;
+      
+      if (!makers.has(addr)) makers.set(addr, { buys: 0, sells: 0, buyVol: 0, sellVol: 0, transfersIn: 0 });
+      const rec = makers.get(addr);
+      
+      if (isTransferIn) {
+        rec.transfersIn++;
+      } else if (isBuy) {
+        rec.buys++;
+        rec.buyVol += Math.abs(solUsd);
+      } else if (isSell) {
+        rec.sells++;
+        rec.sellVol += Math.abs(solUsd);
+      }
+    }
   }
+  
+  log('INFO', `  ${coin.symbol}: ${swapCount} 涉及该token的交易 (共${allTxs.length}条)`);
 
-  // Find profitable wallets
+
+  // 找盈利钱包
   const winners = [];
   for (const [addr, data] of makers) {
+    // 跳过pool/program地址（它们不是真人）
+    if (data.buys === 0 && data.sells === 0 && data.transfersIn === 0) continue;
+    
     const profit = data.sellVol - data.buyVol;
-    if (profit >= MIN_PROFIT_PER_COIN) {
-      winners.push({ address: addr, profit, buys: data.buys, sells: data.sells });
+    
+    // 转入+卖出模式：有转入记录、有卖出、没有买入 → 分仓大号
+    const isTransferSell = data.transfersIn > 0 && data.sells > 0 && data.buys === 0;
+    
+    if (profit >= MIN_PROFIT_PER_COIN || (isTransferSell && data.sellVol >= MIN_PROFIT_PER_COIN)) {
+      winners.push({
+        address: addr,
+        profit: isTransferSell ? data.sellVol : profit, // 转入卖出的利润按卖出额算
+        buys: data.buys,
+        sells: data.sells,
+        transfersIn: data.transfersIn,
+        pattern: isTransferSell ? 'transfer_sell' : 'normal',
+      });
     }
   }
 
-  log('INFO', `  ${coin.symbol}: ${winners.length} winners (profit>$${MIN_PROFIT_PER_COIN})`);
+  const transferSellCount = winners.filter(w => w.pattern === 'transfer_sell').length;
+  log('INFO', `  ${coin.symbol}: ${makers.size} 地址, ${winners.length} 盈利>$${MIN_PROFIT_PER_COIN} (其中${transferSellCount}个转入卖出模式)`);
   return winners;
 }
 
@@ -338,8 +449,8 @@ async function main() {
         continue;
       }
 
-      // Step 2: Scan 1-2 coins
-      const toScan = pending.slice(0, 2);
+      // Step 2: Scan 3-5 coins per round (Helius无限流)
+      const toScan = pending.slice(0, 5);
       const pool = loadJSON(WALLET_POOL_FILE, { wallets: {} });
 
       for (const coin of toScan) {
@@ -357,10 +468,12 @@ async function main() {
           };
         }
 
-        // Mark as scanned
+        // Mark as scanned (by mint)
         if (!candidates.scanned) candidates.scanned = [];
-        candidates.scanned.push(coin.pool);
-        scannedSet.add(coin.pool);
+        if (coin.mint) {
+          candidates.scanned.push(coin.mint);
+          scannedSet.add(coin.mint);
+        }
 
         saveJSON(CANDIDATES_FILE, candidates);
         saveJSON(WALLET_POOL_FILE, pool);
