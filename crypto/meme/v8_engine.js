@@ -29,10 +29,10 @@ const CONFIG = {
   confirmWindowMs: 30 * 60 * 1000,         // 30分钟窗口内的确认算数
   minLiqMcRatio: 0.05,                     // Liq/MC ≥ 5%
   
-  // 交易
-  positionSizeTop10: 10,                   // TOP10钱包: $10
-  positionSizeTop30: 7,                    // TOP11-30: $7
-  positionSizeDefault: 5,                  // 其他: $5
+  // 交易 — 按SM确认数决定仓位
+  positionSizeTop10: 10,                   // SM≥10: $10
+  positionSizeTop30: 7,                    // SM 5-9: $7
+  positionSizeDefault: 5,                  // SM 2-4: $5
   maxPositions: 10,
   maxPerChain: 5,
   
@@ -58,6 +58,7 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 let rankedWallets = [];    // 排名后的钱包列表
 let positions = {};        // tokenAddress -> position
 let pendingSignals = {};   // tokenAddress -> [{wallet, chain, timestamp}]
+let boughtTokens = new Set(); // 已买过的token（防重复）
 let blacklist = new Set();
 let auditCache = {};
 
@@ -198,13 +199,11 @@ async function verifyWallets(wallets) {
 }
 
 function rankWallets(wallets) {
-  const now = Date.now();
-  for (const w of wallets) {
-    const activityAge = now - (w.lastActivity || 0);
-    const activityBonus = activityAge < 86400000 ? 1.5 : activityAge < 172800000 ? 1.2 : 1.0;
-    w.score = w.pnl * (w.winRate / 100) * Math.log2((w.tokens || 1) + 1) * activityBonus;
-  }
-  wallets.sort((a, b) => b.score - a.score);
+  // 按胜率排行，胜率相同按PnL排
+  wallets.sort((a, b) => {
+    if (b.winRate !== a.winRate) return b.winRate - a.winRate;
+    return b.pnl - a.pnl;
+  });
   wallets.forEach((w, i) => w.rank = i + 1);
   return wallets;
 }
@@ -271,13 +270,14 @@ async function pollEvmChain(chainKey) {
       );
       
       const signals = d?.data || [];
+      const processed = new Set(); // 本轮去重
       for (const sig of signals) {
         const tokenAddr = (sig.contractAddress || '').toLowerCase();
         if (!tokenAddr || blacklist.has(tokenAddr)) continue;
+        if (processed.has(tokenAddr)) continue;
+        if (positions[tokenAddr] || boughtTokens.has(tokenAddr)) continue;
+        processed.add(tokenAddr);
         
-        // 检查触发钱包是否在我们的排名列表里
-        // (币安signal里没有具体钱包地址，需要用signal-list或链上检测)
-        // 暂用smartMoneyCount作为确认数
         const smCount = sig.smartMoneyCount || 0;
         if (smCount >= CONFIG.minSmartMoneyConfirm) {
           await handleSignal({
@@ -301,8 +301,9 @@ async function pollEvmChain(chainKey) {
 async function handleSignal(signal) {
   const { chain, token, symbol, smartMoneyCount } = signal;
   
-  // 已有持仓?
+  // 去重: 已持仓或已买过的不重复
   if (positions[token]) return;
+  if (boughtTokens.has(token)) return;
   if (Object.keys(positions).length >= CONFIG.maxPositions) return;
   
   const chainPositions = Object.values(positions).filter(p => p.chain === chain).length;
@@ -428,6 +429,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount) {
         highPrice: result.price || 0,
         trailingActive: false,
       };
+      boughtTokens.add(tokenAddress);
       saveJSON(POSITIONS_FILE, positions);
       log('INFO', `✅ 买入成功 ${symbol} | tx: ${result.txHash || '?'}`);
       
@@ -505,8 +507,35 @@ async function managePositions() {
           }
         }
         
-        // 跟卖: 检查聪明钱是否在卖
-        // TODO: 监控钱包卖出信号 + 价格下跌确认
+        // 跟卖: 检查聪明钱是否在卖 + 价格下跌确认
+        try {
+          const sigUrl = `https://web3.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/web/signal/smart-money`;
+          const chainId = CHAINS[pos.chain]?.binanceId;
+          if (chainId) {
+            const sigData = await httpPost(sigUrl, 
+              { smartSignalType: '', page: 1, pageSize: 100, chainId },
+              { 'Content-Type': 'application/json' }
+            );
+            const signals = sigData?.data || [];
+            for (const sig of signals) {
+              const sigToken = (sig.contractAddress || '').toLowerCase();
+              if (sigToken !== tokenAddr) continue;
+              
+              // 检查exitRate — 聪明钱卖出比例
+              const exitRate = parseFloat(sig.exitRate || 0);
+              if (exitRate >= 50 && pnlPercent < 0) {
+                // 聪明钱卖了50%+ 且 我们也在亏 → 跟卖
+                await executeSell(tokenAddr, `跟卖: SM卖出${exitRate}% + 当前${pnlPercent.toFixed(1)}%`);
+                continue;
+              }
+              if (exitRate >= 80) {
+                // 聪明钱卖了80%+ → 无论盈亏都跟卖
+                await executeSell(tokenAddr, `跟卖: SM卖出${exitRate}%`);
+                continue;
+              }
+            }
+          }
+        } catch(e) {}
         
         saveJSON(POSITIONS_FILE, positions);
       } catch(e) {}
@@ -535,6 +564,8 @@ async function main() {
   positions = loadJSON(POSITIONS_FILE, {});
   blacklist = new Set(loadJSON(BLACKLIST_FILE, []));
   auditCache = loadJSON(AUDIT_CACHE_FILE, {});
+  // 已买过的token（含当前持仓）
+  boughtTokens = new Set(Object.keys(positions));
   
   // Phase 1: 拉取排名
   const rawWallets = await fetchBinanceRank();

@@ -150,8 +150,8 @@
   ],
   "balances": {
     "binance": 0,
-    "bybit": 0.00003462,
-    "bitget": 6.58931e-7,
+    "bybit": 0,
+    "bitget": 0,
     "okx": 0
   },
   "lastTrade": {
@@ -207,7 +207,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773451559136,
+  "_lastEarnedCheck": 1773513583423,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
