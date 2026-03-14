@@ -47,6 +47,15 @@ const SOL_STABLES = new Set([SOL_MINT, 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyT
 // === 种子黑名单（手动标记：空投币、已确认的垃圾等） ===
 const SEED_BLACKLIST = new Set([
   '0x7977bf3e7e0c954d12cdca3e013adaf57e0b06e0', // OPN: 空投币，筹码在项目方
+  '33dhma9qa7xefhvpa7c5vmrn826xchanshruuekf2lmw', // 假SOS: Meteora上的Strategic Oil Supply
+  'cfd7ovkz7exc8okecytjndpr8zzyrl1bmqtw2gpxw2hh', // 假SOS: 币安返回的另一个地址
+  'hda3zjc12ahykssbrvgiwzr6wlebyf36yzkkkbvvy4gnf', // 假SOS: Raydium上的同名币
+]);
+
+// === 种子白名单（确认过的好种子，跳过池子健康检查） ===
+// 用symbol+chain匹配，避免同一个币多个合约地址的问题
+const SEED_WHITELIST_SYMBOLS = new Set([
+  'SOS_Solana', 'PENGUIN_Solana', 'Punch_Solana', '龙虾_BSC', 'MOLT_Base',
 ]);
 
 // === 种子币筛选标准（只用成熟通道） ===
@@ -197,7 +206,7 @@ async function fetchSeeds() {
   
   // Phase 1c: DexScreener池子健康检查
   log('INFO', `  🏊 池子健康检查...`);
-  const toCheck = [...all.values()].slice(0, 50);
+  const toCheck = [...all.values()].filter(s => !SEED_WHITELIST_SYMBOLS.has(`${s.symbol}_${s.chain}`));
   let poolKicked = 0;
   for (const s of toCheck) {
     try {
@@ -271,10 +280,12 @@ async function fetchSeeds() {
     } catch (e) { /* skip */ }
   }
   
-  // 规则3: 关联盘检测 — 同批创建+买卖比相同的踢掉
+  // 规则3: 关联盘检测 — 同DEX+买卖比完全相同的踢掉
+  // 排除pumpswap/pumpfun（它们天然B/S在1.1-1.2范围，是平台特征不是关联）
+  const PUMP_DEXES = new Set(['pumpswap', 'pumpfun', 'pump.fun']);
   const dexInfoMap = new Map();
   for (const s of [...all.values()]) {
-    if (s.dexBsRatio && s.dexMainDex) {
+    if (s.dexBsRatio && s.dexMainDex && !PUMP_DEXES.has(s.dexMainDex)) {
       const key = `${s.dexMainDex}_${s.dexBsRatio.toFixed(2)}`;
       if (!dexInfoMap.has(key)) dexInfoMap.set(key, []);
       dexInfoMap.get(key).push(s);
