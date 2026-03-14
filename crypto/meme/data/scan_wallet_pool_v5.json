@@ -8879,6 +8879,10 @@
         "0xde61878b0b21ce395266c44d4d548d1c72a3eb07": {
           "symbol": "SAIRI",
           "netTokens": 408296352
+        },
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 5
         }
       },
       "profitByMint": {
@@ -8917,6 +8921,12 @@
           "buys": 258,
           "sells": 262,
           "netTokens": 408296352
+        },
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 5
         }
       },
       "chain": "base",
@@ -12076,6 +12086,10 @@
         "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e": {
           "symbol": "OSO",
           "netTokens": 9967
+        },
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 1
         }
       },
       "profitByMint": {
@@ -12084,6 +12098,12 @@
           "buys": 8,
           "sells": 0,
           "netTokens": 9967
+        },
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 1
         }
       },
       "chain": "base",
@@ -12778,6 +12798,10 @@
         "0x9eadbe35f3ee3bf3e28180070c429298a1b02f93": {
           "symbol": "LMTS",
           "netTokens": 36
+        },
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 1
         }
       },
       "profitByMint": {
@@ -12786,6 +12810,12 @@
           "buys": 30,
           "sells": 0,
           "netTokens": 36
+        },
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 14,
+          "sells": 0,
+          "netTokens": 1
         }
       },
       "chain": "base",
@@ -14910,6 +14940,312 @@
       },
       "chain": "base",
       "firstSeen": "2026-03-14T10:22:13.853Z"
+    },
+    "0xc3f6b6c4309ba9a9887216dbebf39fac78406696": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 27319
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 9,
+          "sells": 10,
+          "netTokens": 27319
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x0edfbf26f1855d7058a554a0e66a4d71263f5c53": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 3861
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 321,
+          "sells": 257,
+          "netTokens": 3861
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0xf1fb9dc555dfda2ed1b7c679f69d58c1624b073c": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 2744
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 55,
+          "sells": 4,
+          "netTokens": 2744
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0xb80d90fcf2ed0e4febe02d2a209109bf1f62df95": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 1669
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 109,
+          "sells": 121,
+          "netTokens": 1669
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x907424dc6a74befc6085acf069759638060e28b7": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 1214
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 1214
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0xb9981eeef11cdf3f05ed8927ee8f98fa3c9179ac": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 1211
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 435,
+          "sells": 426,
+          "netTokens": 1211
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x70b7627d02a08b51eed51c3b5dd722a3a7db7bc6": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 544
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 16,
+          "sells": 16,
+          "netTokens": 544
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x0309d818956854bd34ce69e925250aad83b0210a": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 16
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 16,
+          "sells": 0,
+          "netTokens": 16
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x088242933fce729f1b14bc2149be35b665f9c8a7": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 5
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 4,
+          "sells": 1,
+          "netTokens": 5
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x19ceead7105607cd444f5ad10dd51356436095a1": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 2
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 18,
+          "sells": 16,
+          "netTokens": 2
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0xdd95c075db48b3dce1e54df3c156180568a4be28": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 2
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 6,
+          "sells": 2,
+          "netTokens": 2
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x73ebc72977819b1735ecc4adf515e47b18970200": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 0
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 0
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0xd4627ecb405b64448ee6b07dcf860bf55590c83d": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 0
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 11,
+          "sells": 0,
+          "netTokens": 0
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0xd9d1d1f92a3ee033b5d6554283b72d8906af5823": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 0
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 27,
+          "sells": 41,
+          "netTokens": 0
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0xca056ce73290da10a320810be3a9e2bb01780d37": {
+      "holdings": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "netTokens": 0
+        }
+      },
+      "profitByMint": {
+        "0x93918567cdd1bc845be955325a43419a7c56d66f": {
+          "symbol": "MWXT",
+          "buys": 3,
+          "sells": 3,
+          "netTokens": 0
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-14T11:14:21.076Z"
+    },
+    "0x2f96ecafdd4b1cd64b077f12ffaa00fb810924a5": {
+      "holdings": {
+        "0x63d3001f2420a09fcae5822723167e857adf04ab": {
+          "symbol": "龙虾",
+          "netTokens": 776119337
+        }
+      },
+      "profitByMint": {
+        "0x63d3001f2420a09fcae5822723167e857adf04ab": {
+          "symbol": "龙虾",
+          "buys": 506,
+          "sells": 490,
+          "netTokens": 776119337
+        }
+      },
+      "chain": "bsc",
+      "firstSeen": "2026-03-14T11:22:17.913Z"
+    },
+    "0x0a5f9e383426192da5bb6daa0060c389cbaa2ace": {
+      "holdings": {
+        "0x63d3001f2420a09fcae5822723167e857adf04ab": {
+          "symbol": "龙虾",
+          "netTokens": 23880546
+        }
+      },
+      "profitByMint": {
+        "0x63d3001f2420a09fcae5822723167e857adf04ab": {
+          "symbol": "龙虾",
+          "buys": 489,
+          "sells": 506,
+          "netTokens": 23880546
+        }
+      },
+      "chain": "bsc",
+      "firstSeen": "2026-03-14T11:22:17.913Z"
     }
   },
   "analyzed": [

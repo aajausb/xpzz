@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 /**
- * Smart Money Scanner v6
+ * Smart Money Scanner v6.1
  * 
- * 核心思路：
- * 1. 从币安 Unified Token Rank (Trending/Alpha/TopSearch) 拿到三条链热门币
- * 2. 筛选出涨幅大、流动性够、不是假币的种子币
- * 3. 链上查这些种子币的早期买家（Helius for SOL, EVM logs for BSC/Base）
- * 4. 自己验证：买入时机、盈亏、是否bot、分仓行为
- * 5. 跨币交叉：在多个种子币里都赚了 = 真聪明钱
- * 6. 私有聪明钱库 → 监控新买入 → 跟单信号
+ * 数据源: 币安 Unified Token Rank (Trending/Alpha/TopSearch) × 3链
+ * 链上验证: Helius (Solana) / Public RPC (BSC/Base)
  * 
- * 数据源：币安Web3 Skills Hub (免费，无需API Key)
- * 链上验证：Helius (Solana) / Public RPC (BSC/Base)
+ * Phase 1: 拉种子币（币安排行榜，按涨幅排序）
+ * Phase 2: 链上挖掘早期买家（计算真实盈亏）
+ * Phase 3: 跨币交叉验证 + 评分 → 私有聪明钱库
+ * 
+ * 用法:
+ *   node smart_money_v6.js full     # 全流程
+ *   node smart_money_v6.js seeds    # 只拉种子
+ *   node smart_money_v6.js mine     # 用已有种子挖钱包
+ *   node smart_money_v6.js status   # 查看当前结果
  */
 
 require('dotenv').config({ path: '/root/.openclaw/workspace/.env', override: true });
@@ -26,15 +28,10 @@ const SEEDS_FILE = path.join(BASE_DIR, 'seeds.json');
 const WALLETS_FILE = path.join(BASE_DIR, 'candidate_wallets.json');
 const SMART_MONEY_FILE = path.join(BASE_DIR, 'smart_money.json');
 const LOG_DIR = path.join(__dirname, 'logs');
-
-if (!fs.existsSync(BASE_DIR)) fs.mkdirSync(BASE_DIR, { recursive: true });
-if (!fs.existsSync(LOG_DIR)) fs.mkdirSync(LOG_DIR, { recursive: true });
+for (const d of [BASE_DIR, LOG_DIR]) { if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true }); }
 
 // === Config ===
-const HELIUS_KEYS = [
-  process.env.HELIUS_API_KEY || '',
-  process.env.HELIUS_API_KEY_2 || '',
-].filter(Boolean);
+const HELIUS_KEYS = [process.env.HELIUS_API_KEY, process.env.HELIUS_API_KEY_2].filter(Boolean);
 let heliusIdx = 0;
 function nextHeliusKey() { return HELIUS_KEYS[heliusIdx++ % HELIUS_KEYS.length]; }
 
@@ -44,420 +41,387 @@ const EVM_RPCS = {
 };
 
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+const SOL_MINT = 'So11111111111111111111111111111111111111112';
+const SOL_STABLES = new Set([SOL_MINT, 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'Es9vMFrzaCERmJfrF4H2fvD2EcfY6hVckvyCuuP1CETn']);
 
-// === 种子币筛选标准 ===
-const SEED_FILTER = {
-  minLiquidity: 50000,      // 最低流动性 $50k（防假币）
-  minMarketCap: 100000,     // 最低MC $100k
-  minHolders: 50,           // 最低持有者数
-  minPercentChange: 100,    // 24h最低涨幅100%（翻倍以上）
-  maxTop10Percent: 80,      // top10持有者占比不超80%（防庄控盘）
+// === 种子币筛选标准（双通道） ===
+// 通道1：爆发型（24h暴涨）
+const SEED_PUMP = {
+  minLiquidity: 50000, minMarketCap: 100000, minHolders: 50,
+  minPercentChange: 100, maxTop10Percent: 85,
+};
+// 通道2：成熟型（高流动性+高交易量+高持有者，不看涨幅）
+const SEED_MATURE = {
+  minLiquidity: 100000, minMarketCap: 500000, minHolders: 3000,
+  minVolume24h: 500000, maxTop10Percent: 85,
 };
 
-// === 聪明钱评分标准 ===
-const SMART_MONEY_CRITERIA = {
-  minSeedAppearance: 2,     // 至少在2个种子币中出现
-  minProfitPerSeed: 1000,   // 单币最低盈利 $1k
-  minWinRate: 0.4,          // 最低胜率40%
-  maxBotScore: 0.5,         // bot分数低于50%
+// === 聪明钱标准 ===
+const SM_CRITERIA = {
+  minSeedAppearance: 2,
+  minTotalProfit: 500,     // 总盈利至少$500
+  maxBotScore: 0.6,
 };
 
-// === 链配置 ===
+// === 链 ===
 const CHAINS = [
   { name: 'Solana', chainId: 'CT_501', type: 'solana' },
   { name: 'BSC', chainId: '56', type: 'evm', rpcKey: 'bsc' },
   { name: 'Base', chainId: '8453', type: 'evm', rpcKey: 'base' },
 ];
 
-// === 工具函数 ===
+// === 工具 ===
 function log(level, msg) {
   const ts = new Date().toISOString();
   const line = `[${ts}] [${level}] ${msg}`;
   console.log(line);
-  const logFile = path.join(LOG_DIR, `v6_${ts.slice(0, 10)}.log`);
-  fs.appendFileSync(logFile, line + '\n');
+  fs.appendFileSync(path.join(LOG_DIR, `v6_${ts.slice(0, 10)}.log`), line + '\n');
 }
-
-function loadJSON(file, fallback) {
-  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; }
-}
-
-function saveJSON(file, data) {
-  fs.writeFileSync(file, JSON.stringify(data, null, 2));
-}
-
+function loadJSON(f, fb) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return fb; } }
+function saveJSON(f, d) { fs.writeFileSync(f, JSON.stringify(d, null, 2)); }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// === HTTP请求封装 ===
-function httpRequest(url, options = {}) {
+function httpReq(url, opts = {}) {
   return new Promise((resolve, reject) => {
-    const urlObj = new URL(url);
-    const mod = urlObj.protocol === 'https:' ? https : http;
-    const reqOptions = {
-      hostname: urlObj.hostname,
-      port: urlObj.port,
-      path: urlObj.pathname + urlObj.search,
-      method: options.method || 'GET',
-      headers: {
-        'Accept-Encoding': 'identity',
-        'User-Agent': 'binance-web3/2.0 (Skill)',
-        ...options.headers,
-      },
-      timeout: 15000,
-    };
-
-    const req = mod.request(reqOptions, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try { resolve(JSON.parse(data)); } catch { reject(new Error(`Parse error: ${data.slice(0, 200)}`)); }
-      });
+    const u = new URL(url);
+    const mod = u.protocol === 'https:' ? https : http;
+    const req = mod.request({
+      hostname: u.hostname, port: u.port, path: u.pathname + u.search,
+      method: opts.method || 'GET',
+      headers: { 'Accept-Encoding': 'identity', 'User-Agent': 'binance-web3/2.0 (Skill)', ...opts.headers },
+      timeout: 20000,
+    }, res => {
+      let d = '';
+      res.on('data', c => d += c);
+      res.on('end', () => { try { resolve(JSON.parse(d)); } catch { reject(new Error(`Parse: ${d.slice(0, 100)}`)); } });
     });
     req.on('error', reject);
     req.on('timeout', () => { req.destroy(); reject(new Error('Timeout')); });
-    if (options.body) req.write(options.body);
+    if (opts.body) req.write(opts.body);
     req.end();
   });
 }
-
-async function binancePost(url, data) {
-  return httpRequest(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-}
-
-async function binanceGet(url) {
-  return httpRequest(url);
+function binPost(url, data) {
+  return httpReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
 }
 
 // ============================================================
-// Phase 1: 从币安 Unified Token Rank 获取种子币
+// Phase 1: 从币安拉种子币
 // ============================================================
 async function fetchSeeds() {
-  log('INFO', '🌱 Phase 1: 从币安排行榜获取种子币...');
-  
+  log('INFO', '🌱 Phase 1: 从币安排行榜拉种子币...');
   const url = 'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/market/token/pulse/unified/rank/list';
-  const allSeeds = new Map(); // contractAddress.lower() → seed info
+  const all = new Map();
+
+  // 双通道扫描
+  const scans = [
+    // 通道1: 爆发型 — 按涨幅排序
+    { sortBy: 50, label: 'pump', rankTypes: [[10,'Trending'],[11,'TopSearch']] },
+    // 通道2: 成熟型 — 按交易量排序
+    { sortBy: 70, label: 'mature', rankTypes: [[10,'Trending'],[20,'Alpha']] },
+  ];
   
-  for (const chain of CHAINS) {
-    // Trending (rankType=10) 按24h涨幅排序
-    for (const [rankType, rankName] of [[10, 'Trending'], [11, 'TopSearch'], [20, 'Alpha']]) {
-      try {
-        const d = await binancePost(url, {
-          rankType,
-          chainId: chain.chainId,
-          period: 50, // 24h
-          sortBy: 50, // 按涨幅排序
-          orderAsc: false,
-          page: 1,
-          size: 200,
-        });
-        
-        const tokens = d?.data?.tokens || [];
-        log('INFO', `  ${chain.name} ${rankName}: ${tokens.length} 个`);
-        
-        for (const t of tokens) {
-          const ca = (t.contractAddress || '').toLowerCase();
-          if (!ca) continue;
-          
-          const mc = parseFloat(t.marketCap || 0);
-          const liq = parseFloat(t.liquidity || 0);
-          const holders = parseInt(t.holders || 0);
-          const pc24h = parseFloat(t.percentChange24h || 0);
-          const top10 = parseFloat(t.holdersTop10Percent || 100);
-          
-          // 筛选
-          if (liq < SEED_FILTER.minLiquidity) continue;
-          if (mc < SEED_FILTER.minMarketCap) continue;
-          if (holders < SEED_FILTER.minHolders) continue;
-          if (pc24h < SEED_FILTER.minPercentChange) continue;
-          if (top10 > SEED_FILTER.maxTop10Percent) continue;
-          
-          // 去重，保留最好的排名来源
-          if (!allSeeds.has(ca)) {
-            allSeeds.set(ca, {
-              symbol: t.symbol || '?',
-              name: t.name || t.symbol || '?',
-              contractAddress: t.contractAddress,
-              chain: chain.name,
-              chainId: chain.chainId,
-              chainType: chain.type,
-              rpcKey: chain.rpcKey,
-              marketCap: mc,
-              liquidity: liq,
-              holders,
-              percentChange24h: pc24h,
-              top10HolderPercent: top10,
-              source: `${rankName}`,
-              volume24h: parseFloat(t.volume24h || 0),
-              launchTime: parseInt(t.launchTime || 0),
-              fetchedAt: Date.now(),
-            });
-          } else {
-            // 更新source
-            const existing = allSeeds.get(ca);
-            if (!existing.source.includes(rankName)) {
-              existing.source += `+${rankName}`;
+  for (const scan of scans) {
+    for (const chain of CHAINS) {
+      for (const [rt, rn] of scan.rankTypes) {
+        try {
+          const d = await binPost(url, { rankType: rt, chainId: chain.chainId, period: 50,
+            sortBy: scan.sortBy, orderAsc: false, page: 1, size: 200 });
+          const tokens = d?.data?.tokens || [];
+          log('INFO', `  ${chain.name} ${rn}(${scan.label}): ${tokens.length}`);
+          for (const t of tokens) {
+            const ca = (t.contractAddress || '').toLowerCase();
+            if (!ca) continue;
+            const mc = parseFloat(t.marketCap || 0);
+            const liq = parseFloat(t.liquidity || 0);
+            const holders = parseInt(t.holders || 0);
+            const pc = parseFloat(t.percentChange24h || 0);
+            const top10 = parseFloat(t.holdersTop10Percent || 100);
+            const vol = parseFloat(t.volume24h || 0);
+            
+            // 双通道筛选：满足任一即可
+            const passPump = liq >= SEED_PUMP.minLiquidity && mc >= SEED_PUMP.minMarketCap &&
+              holders >= SEED_PUMP.minHolders && pc >= SEED_PUMP.minPercentChange && top10 <= SEED_PUMP.maxTop10Percent;
+            const passMature = liq >= SEED_MATURE.minLiquidity && mc >= SEED_MATURE.minMarketCap &&
+              holders >= SEED_MATURE.minHolders && vol >= SEED_MATURE.minVolume24h && top10 <= SEED_MATURE.maxTop10Percent;
+            
+            if (!passPump && !passMature) continue;
+            
+            const seedType = passPump ? 'pump' : 'mature';
+            if (!all.has(ca)) {
+              all.set(ca, {
+                symbol: t.symbol || '?', contractAddress: t.contractAddress,
+                chain: chain.name, chainId: chain.chainId, chainType: chain.type, rpcKey: chain.rpcKey,
+                marketCap: mc, liquidity: liq, holders, percentChange24h: pc,
+                top10HolderPercent: top10, source: rn, seedType,
+                volume24h: vol, launchTime: parseInt(t.launchTime || 0),
+              });
+            } else {
+              const e = all.get(ca);
+              if (!e.source.includes(rn)) e.source += `+${rn}`;
+              if (passPump && e.seedType === 'mature') e.seedType = 'both';
+              if (passMature && e.seedType === 'pump') e.seedType = 'both';
             }
           }
-        }
-        
-        await sleep(300); // 温柔点
-      } catch (e) {
-        log('WARN', `  ${chain.name} ${rankName} 失败: ${e.message?.slice(0, 60)}`);
+          await sleep(200);
+        } catch (e) { log('WARN', `  ${chain.name} ${rn}(${scan.label}): ${e.message?.slice(0, 50)}`); }
       }
     }
   }
-  
-  // 按涨幅排序
-  const seeds = [...allSeeds.values()].sort((a, b) => b.percentChange24h - a.percentChange24h);
-  
-  log('INFO', `🌱 种子币筛选完成: ${seeds.length} 个通过`);
-  for (const s of seeds.slice(0, 20)) {
-    log('INFO', `  [${s.chain}] ${s.symbol} | MC:$${s.marketCap.toLocaleString()} | Liq:$${s.liquidity.toLocaleString()} | +${s.percentChange24h.toFixed(0)}% | Holders:${s.holders} | Source:${s.source}`);
+  // Phase 1b: 安全审计过滤（排除高风险/貔貅盘）
+  log('INFO', `  🔒 安全审计 (${all.size} 个候选)...`);
+  const auditUrl = 'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/security/token/audit';
+  let audited = 0, kicked = 0;
+  const toAudit = [...all.values()].slice(0, 50); // 最多审计50个（控制速度）
+  for (const s of toAudit) {
+    try {
+      const d = await binPost(auditUrl, {
+        binanceChainId: s.chainId, contractAddress: s.contractAddress,
+        requestId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+      });
+      const audit = d?.data || {};
+      s.auditRiskLevel = audit.riskLevelEnum || 'UNKNOWN';
+      s.auditBuyTax = audit.extraInfo?.buyTax || null;
+      s.auditSellTax = audit.extraInfo?.sellTax || null;
+      s.auditIsHoneypot = false;
+      // 检查具体风险项
+      for (const cat of (audit.riskItems || [])) {
+        for (const detail of (cat.details || [])) {
+          if (detail.isHit && detail.riskType === 'RISK') {
+            if (detail.title?.includes('Honeypot')) s.auditIsHoneypot = true;
+          }
+        }
+      }
+      audited++;
+      // 踢掉: HIGH风险 或 honeypot 或 卖税>10%
+      const sellTax = parseFloat(s.auditSellTax || 0);
+      if (audit.riskLevelEnum === 'HIGH' || s.auditIsHoneypot || sellTax > 10) {
+        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED: risk=${audit.riskLevelEnum} honeypot=${s.auditIsHoneypot} sellTax=${sellTax}%`);
+        all.delete(s.contractAddress.toLowerCase());
+        kicked++;
+      }
+      await sleep(100);
+    } catch (e) {
+      s.auditRiskLevel = 'ERROR';
+    }
   }
+  log('INFO', `  🔒 审计完成: ${audited}个审计, ${kicked}个踢掉`);
   
-  saveJSON(SEEDS_FILE, { updatedAt: new Date().toISOString(), seeds });
+  const seeds = [...all.values()].sort((a, b) => b.percentChange24h - a.percentChange24h);
+  log('INFO', `🌱 种子币: ${seeds.length} 个通过`);
+  const pumpSeeds = seeds.filter(s => s.seedType === 'pump' || s.seedType === 'both');
+  const matureSeeds = seeds.filter(s => s.seedType === 'mature');
+  log('INFO', `  爆发型: ${pumpSeeds.length}, 成熟型: ${matureSeeds.length}`);
+  for (const s of seeds.slice(0, 20)) {
+    log('INFO', `  [${s.chain}][${s.seedType}] ${s.symbol} MC:$${(s.marketCap/1000).toFixed(0)}k Liq:$${(s.liquidity/1000).toFixed(0)}k Vol:$${(s.volume24h/1e6).toFixed(1)}M +${s.percentChange24h.toFixed(0)}% H:${s.holders} ${s.source}`);
+  }
+  saveJSON(SEEDS_FILE, { updatedAt: new Date().toISOString(), count: seeds.length, seeds });
   return seeds;
 }
 
 // ============================================================
-// Phase 2: 从种子币链上挖掘早期买家
+// Phase 2: 链上挖掘
 // ============================================================
 
-// --- Solana: Helius ---
-async function mineSolanaEarlyBuyers(seed) {
-  log('INFO', `  🔍 [SOL] ${seed.symbol} 挖早期买家...`);
-  
+// --- SOL价格 ---
+let solPrice = 130, bnbPrice = 580;
+async function updatePrices() {
+  try {
+    const d = await httpReq('https://api.coingecko.com/api/v3/simple/price?ids=solana,binancecoin&vs_currencies=usd');
+    if (d.solana?.usd) solPrice = d.solana.usd;
+    if (d.binancecoin?.usd) bnbPrice = d.binancecoin.usd;
+    log('INFO', `价格: SOL=$${solPrice}, BNB=$${bnbPrice}`);
+  } catch {}
+}
+
+// --- Solana挖掘（Helius parsed transactions） ---
+async function mineSolana(seed) {
   const mint = seed.contractAddress;
-  const buyers = new Map(); // wallet → { totalBuyUsd, totalSellUsd, firstBuyTime, txCount, buys, sells }
+  log('INFO', `  ⛏ [SOL] ${seed.symbol} (${mint.slice(0,12)}...)`);
   
-  // 用 Helius getSignaturesForAddress 查 mint 的交易
-  // 然后 parseTransactions 分析买卖
-  let beforeSig;
-  let totalTxs = 0;
-  const MAX_BATCHES = 5; // 最多5批 × 100 = 500笔交易（先快速跑通）
+  const wallets = new Map(); // wallet → stats
+  let beforeSig, totalTx = 0;
   
-  for (let batch = 0; batch < MAX_BATCHES; batch++) {
+  for (let batch = 0; batch < 10; batch++) {
     const key = nextHeliusKey();
     let url = `https://api.helius.xyz/v0/addresses/${mint}/transactions?api-key=${key}&limit=100&type=SWAP`;
     if (beforeSig) url += `&before=${beforeSig}`;
-    
     try {
-      const resp = await httpRequest(url);
-      if (!Array.isArray(resp) || resp.length === 0) break;
+      const txs = await httpReq(url);
+      if (!Array.isArray(txs) || !txs.length) break;
+      totalTx += txs.length;
+      beforeSig = txs[txs.length - 1].signature;
       
-      totalTxs += resp.length;
-      beforeSig = resp[resp.length - 1].signature;
-      
-      for (const tx of resp) {
-        // 解析 token transfers
-        const transfers = tx.tokenTransfers || [];
-        const feePayer = tx.feePayer;
-        if (!feePayer) continue;
+      for (const tx of txs) {
+        const fp = tx.feePayer;
+        if (!fp) continue;
+        const ts = (tx.timestamp || 0) * 1000;
         
-        for (const tr of transfers) {
-          if (tr.mint !== mint) continue;
-          
-          const amount = tr.tokenAmount || 0;
-          if (amount <= 0) continue;
-          
-          // 买入：toUserAccount === feePayer 或者 fromUserAccount 是池子
-          // 卖出：fromUserAccount === feePayer
-          const isBuy = tr.toUserAccount === feePayer;
-          const isSell = tr.fromUserAccount === feePayer;
-          
-          if (!isBuy && !isSell) continue;
-          
-          if (!buyers.has(feePayer)) {
-            buyers.set(feePayer, {
-              wallet: feePayer,
-              totalBuyAmount: 0,
-              totalSellAmount: 0,
-              firstBuyTime: null,
-              lastTxTime: null,
-              buyCount: 0,
-              sellCount: 0,
-              txSignatures: [],
-            });
-          }
-          
-          const b = buyers.get(feePayer);
-          if (isBuy) {
-            b.totalBuyAmount += amount;
-            b.buyCount++;
-            const ts = (tx.timestamp || 0) * 1000;
-            if (!b.firstBuyTime || ts < b.firstBuyTime) b.firstBuyTime = ts;
-          } else if (isSell) {
-            b.totalSellAmount += amount;
-            b.sellCount++;
-          }
-          b.lastTxTime = Math.max(b.lastTxTime || 0, (tx.timestamp || 0) * 1000);
-          if (b.txSignatures.length < 5) b.txSignatures.push(tx.signature);
+        // 分析 nativeTransfers + tokenTransfers 算真实盈亏
+        let tokenIn = 0, tokenOut = 0, solSpent = 0, solReceived = 0;
+        
+        for (const nt of (tx.nativeTransfers || [])) {
+          if (nt.fromUserAccount === fp) solSpent += (nt.amount || 0) / 1e9;
+          if (nt.toUserAccount === fp) solReceived += (nt.amount || 0) / 1e9;
         }
+        
+        for (const tt of (tx.tokenTransfers || [])) {
+          if (tt.mint === mint) {
+            if (tt.toUserAccount === fp) tokenIn += tt.tokenAmount || 0;
+            if (tt.fromUserAccount === fp) tokenOut += tt.tokenAmount || 0;
+          }
+        }
+        
+        const isBuy = tokenIn > 0 && solSpent > 0;
+        const isSell = tokenOut > 0 && solReceived > 0;
+        if (!isBuy && !isSell) continue;
+        
+        if (!wallets.has(fp)) {
+          wallets.set(fp, {
+            wallet: fp, chain: 'Solana',
+            buys: [], sells: [],
+            totalSolSpent: 0, totalSolReceived: 0,
+            totalTokenBought: 0, totalTokenSold: 0,
+            firstBuyTime: null, lastTxTime: null,
+          });
+        }
+        const w = wallets.get(fp);
+        if (isBuy) {
+          w.buys.push({ sol: solSpent, token: tokenIn, time: ts, sig: tx.signature });
+          w.totalSolSpent += solSpent;
+          w.totalTokenBought += tokenIn;
+          if (!w.firstBuyTime || ts < w.firstBuyTime) w.firstBuyTime = ts;
+        }
+        if (isSell) {
+          w.sells.push({ sol: solReceived, token: tokenOut, time: ts });
+          w.totalSolReceived += solReceived;
+          w.totalTokenSold += tokenOut;
+        }
+        w.lastTxTime = Math.max(w.lastTxTime || 0, ts);
       }
-      
-      await sleep(200);
+      await sleep(150);
     } catch (e) {
-      log('WARN', `    Helius batch ${batch} 失败: ${e.message?.slice(0, 60)}`);
-      await sleep(1000);
+      log('WARN', `    batch${batch}: ${e.message?.slice(0, 50)}`);
+      await sleep(500);
     }
   }
   
-  log('INFO', `    扫了 ${totalTxs} 笔交易，发现 ${buyers.size} 个买家`);
-  return [...buyers.values()];
+  // 计算盈亏
+  const result = [];
+  for (const [addr, w] of wallets) {
+    const profitSol = w.totalSolReceived - w.totalSolSpent;
+    const profitUsd = profitSol * solPrice;
+    const costUsd = w.totalSolSpent * solPrice;
+    const roi = costUsd > 0 ? profitUsd / costUsd : 0;
+    
+    result.push({
+      wallet: addr, chain: 'Solana',
+      buyCount: w.buys.length, sellCount: w.sells.length,
+      costUsd, profitUsd, roi,
+      firstBuyTime: w.firstBuyTime,
+      totalTokenBought: w.totalTokenBought,
+      totalTokenSold: w.totalTokenSold,
+    });
+  }
+  
+  const profitable = result.filter(r => r.profitUsd > 100);
+  log('INFO', `    ${totalTx}笔tx → ${wallets.size}个钱包, ${profitable.length}个盈利>$100`);
+  return result;
 }
 
-// --- EVM (BSC/Base): Transfer事件 ---
-async function mineEvmEarlyBuyers(seed) {
-  log('INFO', `  🔍 [${seed.chain}] ${seed.symbol} 挖早期买家...`);
-  
+// --- EVM挖掘（Transfer事件 + 估算盈亏） ---
+async function mineEvm(seed) {
+  log('INFO', `  ⛏ [${seed.chain}] ${seed.symbol} (${seed.contractAddress.slice(0,12)}...)`);
   const rpc = EVM_RPCS[seed.rpcKey];
-  if (!rpc) {
-    log('WARN', `    无RPC: ${seed.rpcKey}`);
-    return [];
-  }
+  if (!rpc) return [];
   
   const contract = seed.contractAddress.toLowerCase();
-  const buyers = new Map();
+  const wallets = new Map();
   
-  // 查Transfer事件找买家
-  // Transfer(from, to, value) — to就是买家（from池子或其他来源）
-  // 分批查，先查最近1万个block
   try {
     // 获取当前区块
-    const blockResp = await httpRequest(rpc, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }),
-    });
-    const currentBlock = parseInt(blockResp.result, 16);
+    const br = await httpReq(rpc, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }) });
+    const curBlock = parseInt(br.result, 16);
     
-    // BSC ~3s/block, Base ~2s/block, 查最近7天
+    // 查最近14天的Transfer事件
     const blocksPerDay = seed.chain === 'BSC' ? 28800 : 43200;
-    const fromBlock = currentBlock - blocksPerDay * 7;
-    
-    // 分批查（每批5000个block）
-    const BATCH_SIZE = 5000;
+    const fromBlock = curBlock - blocksPerDay * 14;
+    const BATCH = 5000;
     let totalEvents = 0;
     
-    for (let start = fromBlock; start < currentBlock; start += BATCH_SIZE) {
-      const end = Math.min(start + BATCH_SIZE - 1, currentBlock);
-      
+    for (let start = fromBlock; start < curBlock && totalEvents < 5000; start += BATCH) {
+      const end = Math.min(start + BATCH - 1, curBlock);
       try {
-        const logsResp = await httpRequest(rpc, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            method: 'eth_getLogs',
-            params: [{
-              address: contract,
-              topics: [TRANSFER_TOPIC],
-              fromBlock: '0x' + start.toString(16),
-              toBlock: '0x' + end.toString(16),
-            }],
-            id: 1,
-          }),
-        });
+        const lr = await httpReq(rpc, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_getLogs',
+            params: [{ address: contract, topics: [TRANSFER_TOPIC],
+              fromBlock: '0x' + start.toString(16), toBlock: '0x' + end.toString(16) }], id: 1 }) });
         
-        const logs = logsResp.result || [];
+        const logs = lr.result || [];
         totalEvents += logs.length;
         
-        for (const log_ of logs) {
-          if (!log_.topics || log_.topics.length < 3) continue;
-          
-          const from = '0x' + log_.topics[1].slice(26);
-          const to = '0x' + log_.topics[2].slice(26);
-          const value = parseInt(log_.data, 16);
-          
-          // to 就是买家（收到token的人）
-          // 排除零地址和合约地址（简单排除）
+        for (const l of logs) {
+          if (!l.topics || l.topics.length < 3) continue;
+          const from = '0x' + l.topics[1].slice(26).toLowerCase();
+          const to = '0x' + l.topics[2].slice(26).toLowerCase();
+          const value = parseInt(l.data || '0x0', 16);
+          const block = parseInt(l.blockNumber, 16);
           if (to === '0x0000000000000000000000000000000000000000') continue;
-          if (from === '0x0000000000000000000000000000000000000000') continue; // mint事件
           
-          if (!buyers.has(to)) {
-            buyers.set(to, {
-              wallet: to,
-              totalReceived: 0,
-              totalSent: 0,
-              receiveCount: 0,
-              sendCount: 0,
-              firstReceiveBlock: null,
-              lastTxBlock: null,
-            });
+          // 记录收到token（买入信号）和发出token（卖出信号）
+          for (const [addr, isBuy] of [[to, true], [from, false]]) {
+            if (addr === '0x0000000000000000000000000000000000000000') continue;
+            if (!wallets.has(addr)) {
+              wallets.set(addr, { wallet: addr, chain: seed.chain, received: 0, sent: 0,
+                receiveCount: 0, sendCount: 0, firstBlock: null, lastBlock: null });
+            }
+            const w = wallets.get(addr);
+            if (isBuy) { w.received += value; w.receiveCount++; }
+            else { w.sent += value; w.sendCount++; }
+            if (!w.firstBlock || block < w.firstBlock) w.firstBlock = block;
+            w.lastBlock = Math.max(w.lastBlock || 0, block);
           }
-          
-          const b = buyers.get(to);
-          b.totalReceived += value;
-          b.receiveCount++;
-          if (!b.firstReceiveBlock || parseInt(log_.blockNumber, 16) < b.firstReceiveBlock) {
-            b.firstReceiveBlock = parseInt(log_.blockNumber, 16);
-          }
-          b.lastTxBlock = Math.max(b.lastTxBlock || 0, parseInt(log_.blockNumber, 16));
-          
-          // 也记录卖出（from是卖家）
-          if (!buyers.has(from)) {
-            buyers.set(from, {
-              wallet: from,
-              totalReceived: 0,
-              totalSent: 0,
-              receiveCount: 0,
-              sendCount: 0,
-              firstReceiveBlock: null,
-              lastTxBlock: null,
-            });
-          }
-          const s = buyers.get(from);
-          s.totalSent += value;
-          s.sendCount++;
         }
-        
-        await sleep(100);
-      } catch (e) {
-        // 单批失败继续
-        await sleep(500);
-      }
+        await sleep(80);
+      } catch { await sleep(300); }
     }
     
-    log('INFO', `    扫了 ${totalEvents} 个Transfer事件，发现 ${buyers.size} 个地址`);
+    log('INFO', `    ${totalEvents}个事件 → ${wallets.size}个地址`);
   } catch (e) {
-    log('WARN', `    EVM扫描失败: ${e.message?.slice(0, 60)}`);
+    log('WARN', `    EVM失败: ${e.message?.slice(0, 50)}`);
   }
   
-  return [...buyers.values()];
+  // 转换格式（EVM没法直接算USD盈亏，用token净买入量作为指标）
+  return [...wallets.values()].map(w => ({
+    wallet: w.wallet, chain: w.chain,
+    buyCount: w.receiveCount, sellCount: w.sendCount,
+    netTokens: w.received - w.sent,
+    profitUsd: 0, // EVM暂时无法算
+    costUsd: 0,
+    roi: w.sent > 0 && w.received > 0 ? (w.sent / w.received) : 0,
+    firstBlock: w.firstBlock,
+  }));
 }
 
-async function mineWallets(seeds) {
-  log('INFO', `\n⛏️ Phase 2: 挖掘种子币早期买家 (${seeds.length} 个种子)...`);
+async function mineAll(seeds) {
+  log('INFO', `\n⛏ Phase 2: 挖掘早期买家 (前${Math.min(seeds.length, 15)}个种子)...`);
+  await updatePrices();
   
-  // 每个种子币的所有买家
-  const seedBuyers = {}; // seedAddress → buyers[]
-  
-  // 限制每次最多处理前5个种子（先快速跑通）
-  const toProcess = seeds.slice(0, 5);
+  const seedBuyers = {};
+  const toProcess = seeds.slice(0, 15);
   
   for (const seed of toProcess) {
     try {
-      let buyers;
-      if (seed.chainType === 'solana') {
-        buyers = await mineSolanaEarlyBuyers(seed);
-      } else {
-        buyers = await mineEvmEarlyBuyers(seed);
-      }
-      
+      const buyers = seed.chainType === 'solana' ? await mineSolana(seed) : await mineEvm(seed);
       seedBuyers[seed.contractAddress.toLowerCase()] = {
-        seed: { symbol: seed.symbol, chain: seed.chain, contractAddress: seed.contractAddress },
+        seed: { symbol: seed.symbol, chain: seed.chain, ca: seed.contractAddress },
+        buyerCount: buyers.length,
+        profitableBuyers: buyers.filter(b => b.profitUsd > 100 || b.netTokens > 0).length,
         buyers,
-        minedAt: new Date().toISOString(),
       };
-      
-      await sleep(500);
-    } catch (e) {
-      log('WARN', `  ${seed.symbol} 挖掘失败: ${e.message?.slice(0, 60)}`);
-    }
+      await sleep(300);
+    } catch (e) { log('WARN', `  ${seed.symbol}: ${e.message?.slice(0, 50)}`); }
   }
   
   saveJSON(WALLETS_FILE, { updatedAt: new Date().toISOString(), seedBuyers });
@@ -465,131 +429,148 @@ async function mineWallets(seeds) {
 }
 
 // ============================================================
-// Phase 3: 跨币交叉验证 + 评分
+// Phase 3: 交叉验证 + 评分
 // ============================================================
-function crossValidate(seedBuyers) {
-  log('INFO', '\n🔬 Phase 3: 跨币交叉验证...');
+async function crossValidate(seedBuyers) {
+  log('INFO', '\n🔬 Phase 3: 交叉验证 + 评分...');
   
-  // wallet → { seeds: Set<seedAddr>, seedDetails: { seedAddr: buyerInfo } }
-  const walletMap = new Map();
+  const wMap = new Map(); // wallet → aggregated info
   
   for (const [seedAddr, data] of Object.entries(seedBuyers)) {
-    const chain = data.seed.chain;
-    
-    for (const buyer of data.buyers) {
-      const w = buyer.wallet.toLowerCase();
-      
-      if (!walletMap.has(w)) {
-        walletMap.set(w, {
-          wallet: buyer.wallet,
-          chain,
-          seeds: new Set(),
-          seedDetails: {},
-          totalBuyCount: 0,
-          totalSellCount: 0,
-        });
+    for (const b of data.buyers) {
+      const w = b.wallet.toLowerCase();
+      if (!wMap.has(w)) {
+        wMap.set(w, { wallet: b.wallet, chain: b.chain, seeds: new Map(), totalProfit: 0, totalCost: 0, totalBuys: 0, totalSells: 0 });
       }
-      
-      const wInfo = walletMap.get(w);
-      wInfo.seeds.add(seedAddr);
-      wInfo.seedDetails[seedAddr] = {
-        symbol: data.seed.symbol,
-        ...buyer,
-      };
-      wInfo.totalBuyCount += buyer.buyCount || buyer.receiveCount || 0;
-      wInfo.totalSellCount += buyer.sellCount || buyer.sendCount || 0;
+      const info = wMap.get(w);
+      info.seeds.set(seedAddr, { symbol: data.seed.symbol, profit: b.profitUsd, cost: b.costUsd, buys: b.buyCount, sells: b.sellCount });
+      info.totalProfit += b.profitUsd;
+      info.totalCost += b.costUsd;
+      info.totalBuys += b.buyCount;
+      info.totalSells += b.sellCount;
     }
   }
   
-  // 只保留出现在多个种子中的钱包
+  // 筛选 + 评分
   const candidates = [];
-  for (const [w, info] of walletMap) {
+  for (const [w, info] of wMap) {
     const seedCount = info.seeds.size;
-    if (seedCount < SMART_MONEY_CRITERIA.minSeedAppearance) continue;
+    if (seedCount < SM_CRITERIA.minSeedAppearance) continue;
     
-    // Bot检测：买卖次数过多且无pause = 可能是bot
-    const totalTx = info.totalBuyCount + info.totalSellCount;
-    const botScore = totalTx > 500 ? 0.8 : totalTx > 200 ? 0.5 : totalTx > 100 ? 0.3 : 0.1;
+    // Bot检测
+    const totalTx = info.totalBuys + info.totalSells;
+    const botScore = totalTx > 500 ? 0.9 : totalTx > 200 ? 0.6 : totalTx > 50 ? 0.3 : 0.1;
+    if (botScore > SM_CRITERIA.maxBotScore) continue;
     
-    if (botScore > SMART_MONEY_CRITERIA.maxBotScore) continue;
+    // 盈利种子数
+    const profitableSeeds = [...info.seeds.values()].filter(s => s.profit > 0).length;
+    const winRate = seedCount > 0 ? profitableSeeds / seedCount : 0;
     
-    // 简单胜率：有卖出的种子 / 总种子数（卖了说明赚了跑了）
-    const seedsWithSell = Object.values(info.seedDetails).filter(d => 
-      (d.sellCount || d.sendCount || 0) > 0
-    ).length;
-    const winRate = seedsWithSell / seedCount;
+    // 综合评分：种子覆盖 × 盈利能力 × 非bot × 胜率
+    const score = seedCount * (1 + Math.log10(Math.max(info.totalProfit, 1))) * (1 - botScore) * (winRate + 0.2);
+    
+    const seedSymbols = [...info.seeds.values()].map(s => s.symbol);
     
     candidates.push({
-      wallet: info.wallet,
-      chain: info.chain,
-      seedCount,
-      seeds: [...info.seeds],
-      seedSymbols: Object.values(info.seedDetails).map(d => d.symbol),
-      totalBuys: info.totalBuyCount,
-      totalSells: info.totalSellCount,
-      botScore,
-      estimatedWinRate: winRate,
-      // 评分：种子数 × (1-botScore) × (winRate+0.3)
-      score: seedCount * (1 - botScore) * (winRate + 0.3),
+      wallet: info.wallet, chain: info.chain,
+      seedCount, seedSymbols,
+      totalProfit: Math.round(info.totalProfit * 100) / 100,
+      totalCost: Math.round(info.totalCost * 100) / 100,
+      winRate: Math.round(winRate * 100),
+      botScore: Math.round(botScore * 100),
+      score: Math.round(score * 100) / 100,
+      totalBuys: info.totalBuys, totalSells: info.totalSells,
     });
   }
   
-  // 按分数排序
   candidates.sort((a, b) => b.score - a.score);
   
-  log('INFO', `🔬 交叉验证完成: ${candidates.length} 个候选聪明钱`);
-  for (const c of candidates.slice(0, 20)) {
-    log('INFO', `  ${c.wallet.slice(0, 20)}... | ${c.chain} | ${c.seedCount}币 [${c.seedSymbols.join(',')}] | Score:${c.score.toFixed(2)} | Bot:${(c.botScore*100).toFixed(0)}% | WR:${(c.estimatedWinRate*100).toFixed(0)}%`);
+  log('INFO', `🔬 结果: ${candidates.length} 个聪明钱候选`);
+  log('INFO', `   链分布: SOL=${candidates.filter(c=>c.chain==='Solana').length} BSC=${candidates.filter(c=>c.chain==='BSC').length} Base=${candidates.filter(c=>c.chain==='Base').length}`);
+  
+  for (const c of candidates.slice(0, 30)) {
+    log('INFO', `  ${c.wallet.slice(0, 16)}... [${c.chain}] ${c.seedCount}币(${c.seedSymbols.join(',')}) Profit:$${c.totalProfit.toLocaleString()} WR:${c.winRate}% Bot:${c.botScore}% Score:${c.score}`);
   }
   
-  saveJSON(SMART_MONEY_FILE, {
-    updatedAt: new Date().toISOString(),
-    criteria: SMART_MONEY_CRITERIA,
-    smartMoney: candidates,
-  });
+  // Phase 3b: 查聪明钱当前持仓
+  log('INFO', `\n👛 Phase 3b: 查聪明钱当前持仓 (前20个)...`);
+  const posUrl = 'https://web3.binance.com/bapi/defi/v3/public/wallet-direct/buw/wallet/address/pnl/active-position-list';
+  const chainIdMap = { 'Solana': 'CT_501', 'BSC': '56', 'Base': '8453' };
   
+  for (const c of candidates.slice(0, 20)) {
+    const cid = chainIdMap[c.chain];
+    if (!cid) continue;
+    try {
+      const d = await httpReq(`${posUrl}?address=${c.wallet}&chainId=${cid}&offset=0`, {
+        headers: { 'clienttype': 'web', 'clientversion': '1.2.0' },
+      });
+      const list = d?.data?.list || [];
+      c.currentHoldings = list.map(t => ({
+        symbol: t.symbol, name: t.name, ca: t.contractAddress,
+        price: parseFloat(t.price || 0), qty: parseFloat(t.remainQty || 0),
+        change24h: parseFloat(t.percentChange24h || 0),
+        valueUsd: parseFloat(t.price || 0) * parseFloat(t.remainQty || 0),
+      })).filter(t => t.valueUsd > 1).sort((a, b) => b.valueUsd - a.valueUsd);
+      
+      const totalValue = c.currentHoldings.reduce((s, t) => s + t.valueUsd, 0);
+      const topSyms = c.currentHoldings.slice(0, 5).map(t => `${t.symbol}($${t.valueUsd.toFixed(0)})`).join(', ');
+      log('INFO', `  ${c.wallet.slice(0,16)}... 持仓${c.currentHoldings.length}币 $${totalValue.toFixed(0)} | ${topSyms}`);
+      await sleep(150);
+    } catch (e) {
+      c.currentHoldings = [];
+    }
+  }
+  
+  saveJSON(SMART_MONEY_FILE, { updatedAt: new Date().toISOString(), count: candidates.length, criteria: SM_CRITERIA, smartMoney: candidates });
   return candidates;
+}
+
+// ============================================================
+// Status
+// ============================================================
+function showStatus() {
+  const seeds = loadJSON(SEEDS_FILE, { seeds: [] });
+  const sm = loadJSON(SMART_MONEY_FILE, { smartMoney: [] });
+  
+  console.log('\n📊 Smart Money Scanner v6 状态');
+  console.log(`种子币: ${seeds.seeds?.length || 0} 个 (更新: ${seeds.updatedAt || 'N/A'})`);
+  console.log(`聪明钱: ${sm.smartMoney?.length || 0} 个 (更新: ${sm.updatedAt || 'N/A'})`);
+  
+  if (sm.smartMoney?.length) {
+    console.log('\nTop 10 聪明钱:');
+    for (const c of sm.smartMoney.slice(0, 10)) {
+      console.log(`  ${c.wallet.slice(0,20)}... [${c.chain}] ${c.seedCount}币 Profit:$${c.totalProfit} WR:${c.winRate}% Score:${c.score}`);
+    }
+  }
 }
 
 // ============================================================
 // Main
 // ============================================================
 async function main() {
-  log('INFO', '🚀 Smart Money Scanner v6 启动');
-  log('INFO', `Helius Keys: ${HELIUS_KEYS.length}, EVM RPCs: ${Object.keys(EVM_RPCS).join(',')}`);
-  
   const mode = process.argv[2] || 'full';
   
+  if (mode === 'status') return showStatus();
+  
+  log('INFO', `🚀 Smart Money Scanner v6.1 启动 (mode=${mode})`);
+  log('INFO', `Helius: ${HELIUS_KEYS.length}keys, RPC: ${Object.keys(EVM_RPCS).join(',')}`);
+  
+  let seeds, seedBuyers;
+  
   if (mode === 'seeds' || mode === 'full') {
-    // Phase 1: 获取种子币
-    const seeds = await fetchSeeds();
-    log('INFO', `\n种子币总计: ${seeds.length}`);
-    
-    if (mode === 'seeds') {
-      log('INFO', '仅种子模式，完成');
-      return;
-    }
-    
-    // Phase 2: 挖掘早期买家
-    const seedBuyers = await mineWallets(seeds);
-    
-    // Phase 3: 交叉验证
-    const smartMoney = crossValidate(seedBuyers);
-    
-    log('INFO', `\n✅ 完成！种子: ${seeds.length}, 聪明钱: ${smartMoney.length}`);
-  } else if (mode === 'mine') {
-    // 只挖掘（用已有种子）
-    const seedData = loadJSON(SEEDS_FILE, { seeds: [] });
-    const seedBuyers = await mineWallets(seedData.seeds);
-    const smartMoney = crossValidate(seedBuyers);
-    log('INFO', `\n✅ 完成！聪明钱: ${smartMoney.length}`);
-  } else {
-    log('INFO', `用法: node smart_money_v6.js [full|seeds|mine]`);
+    seeds = await fetchSeeds();
+    if (mode === 'seeds') return;
+  }
+  
+  if (mode === 'mine') {
+    seeds = loadJSON(SEEDS_FILE, { seeds: [] }).seeds;
+  }
+  
+  if (mode === 'full' || mode === 'mine') {
+    seedBuyers = await mineAll(seeds);
+    const sm = await crossValidate(seedBuyers);
+    log('INFO', `\n✅ 完成！种子:${seeds.length} 聪明钱:${sm.length}`);
   }
 }
 
-main().catch(e => {
-  log('ERROR', `致命错误: ${e.message}`);
-  console.error(e);
-  process.exit(1);
-});
+main().catch(e => { log('ERROR', `致命: ${e.stack}`); process.exit(1); });

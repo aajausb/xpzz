@@ -505,6 +505,15 @@
       "addedAt": "2026-03-14T10:04:00.126Z"
     },
     {
+      "symbol": "龙虾",
+      "mint": "0x63d3001f2420a09fcae5822723167e857adf04ab",
+      "fdv": 20081836.28,
+      "vol": 502406459.179754,
+      "ageD": 0,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T11:22:00.394Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -827,6 +836,15 @@
       "ageD": 37,
       "chain": "base",
       "addedAt": "2026-03-14T10:38:00.533Z"
+    },
+    {
+      "symbol": "MWXT",
+      "mint": "0x93918567cdd1bc845be955325a43419a7c56d66f",
+      "fdv": 89416810.7110253,
+      "vol": 789542.237101704,
+      "ageD": 82,
+      "chain": "base",
+      "addedAt": "2026-03-14T11:14:00.369Z"
     }
   ],
   "scanned": [
@@ -915,6 +933,8 @@
     "0xc3b1a6229d9017376cf9a5ba7a60782bd8db4444",
     "0xac780b6e4ee50585df265c7766cc2bed51e43fb8",
     "4K2R9k8h7tHkY1UJj9RnyB82szHTXwjVoixKMLhkjaZh",
-    "0xf27b8ef47842e6445e37804896f1bc5e29381b07"
+    "0xf27b8ef47842e6445e37804896f1bc5e29381b07",
+    "0x93918567cdd1bc845be955325a43419a7c56d66f",
+    "0x63d3001f2420a09fcae5822723167e857adf04ab"
   ]
 }

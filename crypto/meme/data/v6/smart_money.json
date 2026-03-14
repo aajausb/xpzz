@@ -1,121 +1,4175 @@
 {
-  "updatedAt": "2026-03-14T10:58:02.141Z",
+  "updatedAt": "2026-03-14T11:08:19.876Z",
+  "count": 255,
   "criteria": {
     "minSeedAppearance": 2,
-    "minProfitPerSeed": 1000,
-    "minWinRate": 0.4,
-    "maxBotScore": 0.5
+    "minTotalProfit": 500,
+    "maxBotScore": 0.6
   },
   "smartMoney": [
     {
-      "wallet": "3nMNd89AxwHUa1AFvQGqohRkxFEQsTsgiEyEyqXFHyyH",
+      "wallet": "3nDVs4NV3yZCvwMifCxetTScfx2KS57eDPjTk5xLp62u",
       "chain": "Solana",
       "seedCount": 2,
-      "seeds": [
-        "7nywly8vl9s4nrjjxo2pk9ussdqre6tcmetayzkmgipn",
-        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
+      "seedSymbols": [
+        "Sheep",
+        "NEO"
       ],
+      "totalProfit": 140.46,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 6.8,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "4WXZcrjEMXYFZvCnxD2vuZdViQd18A71jmGR7uuxtrvG",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Memehouse",
+        "NEO"
+      ],
+      "totalProfit": 111.64,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 6.58,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "EZth5m5a8MSEWnfguW1q6H7f17Xuqz6DNk64iDVRXsPk",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 105.11,
+      "totalCost": 46.29,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 6.53,
+      "totalBuys": 2,
+      "totalSells": 2
+    },
+    {
+      "wallet": "GgsBQj6cyQQYfRR8pWNYYpBWXH8evztnpQmUDYCs9a4S",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "WHALE",
+        "NEO"
+      ],
+      "totalProfit": 100.6,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 6.49,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "8psNvWTrdNTiVRNzAgsou9kETXNJm2SXZyaKuJraVRtf",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "XSAI",
+        "gomu"
+      ],
+      "totalProfit": 91.05,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 6.39,
+      "totalBuys": 0,
+      "totalSells": 6
+    },
+    {
+      "wallet": "5PBwYy8YrfX1ZXEcjJRWi2R6UEtvvcTtDGymcxmfdHpg",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 53.8,
+      "totalCost": 84.64,
+      "winRate": 67,
+      "botScore": 10,
+      "score": 6.39,
+      "totalBuys": 2,
+      "totalSells": 3
+    },
+    {
+      "wallet": "6gN6ZZSAe6eConJ1T2SVTD8RYL96p3gmActaGdXgado5",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Memehouse",
+        "NEO"
+      ],
+      "totalProfit": 43.13,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 5.69,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "GuJsA6cnYw4wjcKGDdqscaK5vSQLL56iM6ccBSrXVZsB",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 33.56,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 5.46,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "34ucTijq9W5aNsqKN7cQCGKKrKHZ2a3Zx87u97qWZZyi",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 8.5,
+      "totalCost": 39.45,
+      "winRate": 67,
+      "botScore": 10,
+      "score": 4.52,
+      "totalBuys": 2,
+      "totalSells": 2
+    },
+    {
+      "wallet": "7nft8CPx9usR9nnBuoYUY65UidQRbF2DjmDPudkWaUaQ",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Sheep",
+        "SMITH"
+      ],
+      "totalProfit": 350.18,
+      "totalCost": 2.55,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 4.47,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "6VKq9u97UeWRMvMBiKBYrPzMwG3RywS1W8Bwtc9oEAhW",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 53.88,
+      "totalCost": 40.83,
+      "winRate": 33,
+      "botScore": 10,
+      "score": 3.93,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "CCkKHgNgpLfFytNF4WSXrmdJy5kNrPCV545rvXcyVdPY",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 34.16,
+      "totalCost": 34.73,
+      "winRate": 33,
+      "botScore": 10,
+      "score": 3.65,
+      "totalBuys": 2,
+      "totalSells": 2
+    },
+    {
+      "wallet": "7CxpppnTf1Z7t6qSU2bsyanqhNrLkJ8VFj3h9F8eoMJN",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 28.16,
+      "totalCost": 22.34,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 3.09,
+      "totalBuys": 2,
+      "totalSells": 2
+    },
+    {
+      "wallet": "JQnfyWqh9c1YPWAcSMrQeP43agicCxQJ4ht3HEEmXWF",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 2.09,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.85,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "8EyRoviKAZrbscKMupSNVbyTAA4GxQzLz5PBH7rAsRw",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 15.09,
+      "totalCost": 25.6,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 2.75,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "sqwqZQsbAhoEHf3As5LMUZxoLU5Xj9tqNgXHvzosKx7",
+      "chain": "Solana",
+      "seedCount": 2,
       "seedSymbols": [
         "DRONE",
-        "SMITH"
+        "gomu"
       ],
+      "totalProfit": 13.76,
+      "totalCost": 26.71,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 2.69,
       "totalBuys": 2,
-      "totalSells": 2,
-      "botScore": 0.1,
-      "estimatedWinRate": 1,
-      "score": 2.3400000000000003
+      "totalSells": 3
     },
     {
-      "wallet": "52oc72vjNbpUhF7jNE1pPAvc17JwBTyxybFp3u7PvetG",
+      "wallet": "J965KdJj626o9hL5MLcC6N7EQU4pyVgpQKSk3vzS4htM",
       "chain": "Solana",
       "seedCount": 2,
-      "seeds": [
-        "d9g3nfv4qcedfbj35dxb4aa53odudfutbv6s8umdpump",
-        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
-      ],
       "seedSymbols": [
-        "WHALE",
-        "SMITH"
+        "KAt",
+        "SEa"
       ],
+      "totalProfit": 1.43,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.49,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "7CBQdrAfwTZxfPYGJdN4vXiyvibYrgh56h93BHzBXNS2",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -17.35,
+      "totalCost": 32.55,
+      "winRate": 67,
+      "botScore": 10,
+      "score": 2.34,
       "totalBuys": 1,
-      "totalSells": 2,
-      "botScore": 0.1,
-      "estimatedWinRate": 1,
-      "score": 2.3400000000000003
+      "totalSells": 2
     },
     {
-      "wallet": "7eHTBRPFWZm7TnfYaw83mNq6wHC5dq1jf2RCk4aV4w2o",
+      "wallet": "U7nyZwgfV1oWUDUEM7We4qME275F7D89E8MpXxuwqBY",
       "chain": "Solana",
       "seedCount": 2,
-      "seeds": [
-        "d9g3nfv4qcedfbj35dxb4aa53odudfutbv6s8umdpump",
-        "e93jugqchixz9upfzwelgvu5qsc9dd1qzkcghjrpump"
-      ],
       "seedSymbols": [
-        "WHALE",
+        "DRONE",
         "Memehouse"
       ],
+      "totalProfit": 0.78,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "7A4nFhFkxzPbZXYqzYA2AJ5f4TPZsS3Gk5bx7Vu9VRAg",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.72,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "HT5KjuPK16W5SrGbs4vJC6NMefG9JtL4XXoNNoE6U57W",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.66,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "ZKro1NK5w9C58pKQ61VcVsdUfetx4C8FZDkxXGxzq5W",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.72,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "9jtYesCtkQ2Aqb6V1iLV6Tytf88yM9dF97ZxyV2kE9Sa",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.97,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "9BLUXTBGZUwPC8QkwvgTKwEsZXzbJ7gJjUEJRdrTLmRg",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.46,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "8BvpBjoFoXX64eJVoK7bzqrcAjG5Fk3geQdrDJjEhhth",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.58,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "GnS6z6BR24PYmiMXQ5ftfDyTqREt8CZrvjNANDQbdg5p",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.69,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "6cpjmsaoi1rnheXB6fVsDfqpsr3ucaUwf2suvFvr2aQX",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.96,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "9djrqS7n2qH9TgubrxUoMBejaUbhrXZz35m1p9FRpSXj",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.91,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "GXeAaS7MeJqG9YGyENCWgDfyVnxFMcYr15MkzYp8g61g",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.62,
+      "totalCost": 0,
+      "winRate": 100,
+      "botScore": 10,
+      "score": 2.16,
+      "totalBuys": 0,
+      "totalSells": 2
+    },
+    {
+      "wallet": "EamdUNgJfznfpr7RGyK2VUqdWv4GUhxUrU3NiKkS1Tbc",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "Sheep",
+        "NEO",
+        "XSAI"
+      ],
+      "totalProfit": -2.09,
+      "totalCost": 13.21,
+      "winRate": 33,
+      "botScore": 10,
+      "score": 1.44,
+      "totalBuys": 3,
+      "totalSells": 1
+    },
+    {
+      "wallet": "CQC2fA2TUsa3MTLuMFNeDjNYTywJAA5QX15HzPutVtyA",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.2,
+      "totalCost": 0.67,
+      "winRate": 33,
+      "botScore": 10,
+      "score": 1.44,
       "totalBuys": 2,
-      "totalSells": 1,
-      "botScore": 0.1,
-      "estimatedWinRate": 0.5,
-      "score": 1.4400000000000002
+      "totalSells": 2
     },
     {
-      "wallet": "9jPvqa7DmscP3yFR8DykXFUbgdAroCMxkCrkbWqUDpGR",
+      "wallet": "7LR5VwUeJYgpHjtaEUddk81onCHCuoNeyxEGrz6y99Bm",
       "chain": "Solana",
-      "seedCount": 2,
-      "seeds": [
-        "5dfhpibxagakgumlpcm246qhb8i8gade3xdpvndkpump",
-        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
-      ],
+      "seedCount": 3,
       "seedSymbols": [
-        "Sheep",
-        "SMITH"
+        "KAt",
+        "SPAce",
+        "SEa"
       ],
-      "totalBuys": 1,
-      "totalSells": 2,
-      "botScore": 0.1,
-      "estimatedWinRate": 0.5,
-      "score": 1.4400000000000002
+      "totalProfit": -0.69,
+      "totalCost": 0.95,
+      "winRate": 33,
+      "botScore": 10,
+      "score": 1.44,
+      "totalBuys": 2,
+      "totalSells": 1
     },
     {
-      "wallet": "BEcU74sJ6uuoBRLMHj26hpfYg1D64FDdFGu6NkFFvmmm",
+      "wallet": "6cxxbYzDuGhrNC9CG56hfqdL7R6gsWxvDUwyDdN4uGh5",
       "chain": "Solana",
       "seedCount": 2,
-      "seeds": [
-        "5dfhpibxagakgumlpcm246qhb8i8gade3xdpvndkpump",
-        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
-      ],
       "seedSymbols": [
-        "Sheep",
-        "SMITH"
+        "NEO",
+        "XSAI"
       ],
+      "totalProfit": 1.2,
+      "totalCost": 1.18,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.36,
       "totalBuys": 1,
-      "totalSells": 2,
-      "botScore": 0.1,
-      "estimatedWinRate": 0.5,
-      "score": 1.4400000000000002
+      "totalSells": 2
+    },
+    {
+      "wallet": "R1EGv3Bjj8TqGwMGFGF4s32eFEuvBKovVgm5YetvieS",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Memehouse",
+        "Sheep"
+      ],
+      "totalProfit": 1.13,
+      "totalCost": 550.36,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.33,
+      "totalBuys": 7,
+      "totalSells": 1
+    },
+    {
+      "wallet": "QkNCnHWb9jrrPfaSByrNc7PPxhq69535gY8Vbyo2Mui",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.2,
+      "totalCost": 0.2,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "8dqscGqtHjnxGnstnNZJnY5K9vggGtnCUcmU13sgBvH5",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.47,
+      "totalCost": 0.22,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "CySmvhYgrTWXu4uH7MUFBHudnakCJ9eqMwHz4JziyzJM",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.01,
+      "totalCost": 0.24,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "8XALZ3EzZUx3kwuxkzcBxntzW92r1FxK7guggjT35Z2w",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.08,
+      "totalCost": 0.59,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "8tzKBVm6xdiocioqm1eGvArqVQVoYJcTSZMX5LCrqHxn",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.17,
+      "totalCost": 0.42,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 2,
+      "totalSells": 2
+    },
+    {
+      "wallet": "BSuCwN7xSnVd51cx8ZkgTbUSArWDYcV5zuhpE25qTkbK",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.14,
+      "totalCost": 0.43,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 2
+    },
+    {
+      "wallet": "DxY9PFs68n74JmcCehrvTLVPaTRSt4g5grHYALnUvKxz",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.21,
+      "totalCost": 0.21,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "3DQ8VmcefyTXPomQpHc69bziZ5pteyVSgpP7EApA4QwS",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.17,
+      "totalCost": 0.48,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "Gz2N4z3YiojRkreB5mjVvZccprDtM6yQwuWRcQq9uwJt",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.95,
+      "totalCost": 0.24,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "Ea4T9hFjvHeXSRF9j114YPVHPpUgxetnDi1CzZnXnvp6",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.11,
+      "totalCost": 0.35,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "9nN2BBAi8GTLxwXRn7paoeFbyeBQyRCpTg3JE1mxfmU9",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -15.99,
+      "totalCost": 28.19,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "5dRGWsASY9nVokryDPVsFDRLHzeniTm3R8HZHtztQbwv",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.26,
+      "totalCost": 0.56,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "69sUeQu1rxwrD9hcgGXAKZz1ZWwSYUW4fDxzheDC97xe",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.33,
+      "totalCost": 0.54,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "GBwU1Le4LpiGjTqZobUN3DTmqupUCmPPSa6Sbs6nFf78",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.33,
+      "totalCost": 0.61,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "8649Zfz3n7HBJUCdHf8jJQAvd82DFnHLBQayEPfRtRDi",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.25,
+      "totalCost": 0.22,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "EMnbgAzo5fw6CVggmmLEF42UY4133vj79Do564hy6S4g",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.2,
+      "totalCost": 0.61,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "FkypXpPrutptEV2bGRZ8CRriu5BQEGgg2hAGzc1kgKhG",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.35,
+      "totalCost": 0.67,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "BiZ9F5KWQmyT7kxjiQ7ihKzjAoJMhHQbr4GR8jvpBj5G",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.35,
+      "totalCost": 0.61,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "9kLgR2grVLC3J7BL7dFZ2hjTX5rwb4WSt4prfC65F7by",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.06,
+      "totalCost": 0.23,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "2UKXRFfDc4di52gURJF9XwCsHPg8yL6kL8nwrVvs6P1o",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.04,
+      "totalCost": 0.24,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "DwgbU52xr7fMQwpJj2RjviULsSpf3g6mVFK3VwS824Y7",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.29,
+      "totalCost": 0.94,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "Gmvc3GBTaCx87AWRMcK5AkAfE8aRGmR5CkHrr931LM95",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.07,
+      "totalCost": 18.15,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "GVbLTd8LbkUhaw7ustESQTWjbkwd3XTqVRxT4K5RamXp",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.04,
+      "totalCost": 0.23,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "6B4G8LHW7ZAFhy4cG5rARNkWB3vG1p5a6E5B7CfBsSi3",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.39,
+      "totalCost": 0.2,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "BWVbi33e2E1ZqtDpy3gE63UfMGQDyUGGPEQS3VVP4VGc",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -19.9,
+      "totalCost": 37.46,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "9fBwN25LQ6tHnKbieVi2QuKdGCXBH9ed7ugAnFEunDyM",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.12,
+      "totalCost": 0.48,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "6RYnJmp1fDqVAtJ5ayiUxaFUNiGmh13XnBkB3etDrEtf",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.02,
+      "totalCost": 0.44,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "BTXQFoneCyZnStKzjGndH2LEnV4UaEh7TBv8VBnYpdw2",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.98,
+      "totalCost": 0.24,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "79FxBtikXZk6MRKWG3NrTrbk3tCttcvJL9KRVnzMGNyy",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.06,
+      "totalCost": 0.25,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "AN7BociUSJnf5PtzYjKnyLHLXukNF5zAqPVQdMWJF7J5",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.04,
+      "totalCost": 0.2,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "JCMhfoK8w4W6FyDpPVHL71SGLai2kBJ7CvkzbTybGo6R",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.02,
+      "totalCost": 0.37,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "FC5hVwXtkXdgD51VyR81J2j7DMxbNMCJ3Mj3CrZfsVxo",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.05,
+      "totalCost": 0.51,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "CQ8gQBMScy11ywE86Mm7zAdyn3eJ6AXrPkQUV9HXEiDd",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.02,
+      "totalCost": 0.28,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "DMTkc1Wkc5voCXQuYgktrHWTFimBvB2Dgto921q5cZqG",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": 0.33,
+      "totalCost": 0.24,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "EHpNhWSZNQNkZiBEKbPzm2g7aKFiCXaQ4Az5dMM7UB37",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.49,
+      "totalCost": 0.24,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "7s5F3pbFNavvvDmiQdhCStc5fChWYS516AB8MmoAuzHq",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.32,
+      "totalCost": 0.61,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "BSFqmbHwzSnmkHQ1tNP7PEBf6nMmB8cCqG74Jx9YssdT",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.34,
+      "totalCost": 0.22,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "6iahJsvvo3wLgyk16hU2PFZVxj49uUMfRPrMZ7aNJpHt",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.01,
+      "totalCost": 0.22,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "5GcN2JjDPXa3QDCx2ivjyPoKjQVnW3Zvawv34QBDKqSX",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.24,
+      "totalCost": 0.4,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "2zmK8f1kD1QLWMsvSMr68W9dZAhkQR82jYhmKDvUoZmd",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.11,
+      "totalCost": 0.5,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "G9vsfXzM4nkSPS5iu5AsURhTKBKSyUoUc92JcT1y3y6D",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0.12,
+      "totalCost": 0.24,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "49fan4kWi7GE5XYdGezPSRkWnaTZWDssG4NnAoG9zqrR",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": 0,
+      "totalCost": 0.23,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "GQemg4eWjbCJ8gELPr1d4RJyTrAEGfgyhLu7vitA22F1",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.2,
+      "totalCost": 0.51,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "FqSzRB73UAoPXuU1bJrwnacrHb6ua6ABXGxdenzrh76N",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.36,
+      "totalCost": 0.49,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 2
+    },
+    {
+      "wallet": "6ba9GrovmQmef8TZqx18tbJuiGkirZGMuBYehYFw63U8",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.03,
+      "totalCost": 0.52,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "Cfn1oGnAYzx6ddECWNdSytdGGbY33Nf46Zcqv2Jfejgc",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.03,
+      "totalCost": 0.2,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "6jBQ7sqY5kPUJtsdzUwSEuPrr8HqS7tFc7nQy8Tx4fzg",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.25,
+      "totalCost": 0.45,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "J1dZA8MKm3SK6kxXuP2GV6hsssnhkYahwxSC4p2GFjAT",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.01,
+      "totalCost": 0.21,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "Eg8n5k7YB7m7Cp3cozc5aGdAJTAqNgCA8ytfJxViHD4F",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.13,
+      "totalCost": 0.23,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "4T296cxZoZzttdLujqiCwKWsbxdrEY8C6otBJ2S174To",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.09,
+      "totalCost": 0.37,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "7pqSG2p4H5jSa1ppzGPsFca7C3bagycNqd6D7JiyM2cx",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.38,
+      "totalCost": 0.58,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "J22bNdEJ4Me92LzrCUw5MAQGy3J3MdixKen9n5UPT4jP",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.17,
+      "totalCost": 0.22,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "5ee9oMSacSBRYDpfnqQPwcJti3mJs8h2tmDTqVwE4hQi",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.02,
+      "totalCost": 0.35,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "87J7wgBLXS7k6j13w4hmDW5gxrJ8eyJuBAf7Si7FBG8t",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.04,
+      "totalCost": 0.32,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "D8F7ehuNpDY5ky4Jre7RJ5TTbvTutVfGPW7CA8mHPVru",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.26,
+      "totalCost": 0.5,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "fHsu5TYMhta6KafAKvr5igvLjBei4sGNnsSVrEtqoA8",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.15,
+      "totalCost": 0.35,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "A4sK1uizGtLPz6NusfX5r7STCNPVzB1oKwCjJTBHocvw",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.01,
+      "totalCost": 0.22,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "3eLaJ7noTFn9v63vJh4cLzaLXZcZ6qU8XkJEJDHkvqzu",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.34,
+      "totalCost": 0.45,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 2
+    },
+    {
+      "wallet": "4tfEZHMKiAyQnvT2VqB8eiV5D9vaNdkTMCREdRh3Ttwp",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.06,
+      "totalCost": 0.37,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "CuHpvWqvjbuY1Cc8PXqwjrW6K8zecGPdsVBxJravUTLW",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.12,
+      "totalCost": 0.35,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "G3sQ36Ed8rpYpuFE5hhvVYmVtKcpFfW7b5tKmoZQ5zd6",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -12.82,
+      "totalCost": 16.58,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 1
+    },
+    {
+      "wallet": "7uC7cK8tiXtg1MgYm2VFR8Jt2Z61EHswTHZmo3h7sSan",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": 0.53,
+      "totalCost": 0.22,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 1,
+      "totalSells": 2
+    },
+    {
+      "wallet": "zUn7wJNxsPje3KqrZoss8FbW1vdtNkSS5nVVhoHy1pP",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.28,
+      "totalCost": 0.82,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "Gokutqf5h2FexNhpe1DLPNq6AWiRWzHTP263ia6CEd6Z",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.03,
+      "totalCost": 0.41,
+      "winRate": 50,
+      "botScore": 10,
+      "score": 1.26,
+      "totalBuys": 2,
+      "totalSells": 1
     },
     {
       "wallet": "2Bw6YNdLGciRkQmGZsteLPF8v3nkUE9F63unrBE2JmGP",
       "chain": "Solana",
-      "seedCount": 3,
-      "seeds": [
-        "7nywly8vl9s4nrjjxo2pk9ussdqre6tcmetayzkmgipn",
-        "5dfhpibxagakgumlpcm246qhb8i8gade3xdpvndkpump",
-        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
+      "seedCount": 4,
+      "seedSymbols": [
+        "DRONE",
+        "WHALE",
+        "Sheep",
+        "NEO"
       ],
+      "totalProfit": -0.4,
+      "totalCost": 0.4,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.72,
+      "totalBuys": 9,
+      "totalSells": 0
+    },
+    {
+      "wallet": "3nNqq6KrJoosWCstMGNPcZ1Z2wCuqULd9pBZNWHXxH4t",
+      "chain": "Solana",
+      "seedCount": 4,
       "seedSymbols": [
         "DRONE",
         "Sheep",
-        "SMITH"
+        "NEO",
+        "gomu"
       ],
+      "totalProfit": 0,
+      "totalCost": 0,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.72,
+      "totalBuys": 6,
+      "totalSells": 0
+    },
+    {
+      "wallet": "8wNhJMoAnx6cyxZAZbdGvLfgRyVNsiKKHxfMcwwaQMrq",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6872.47,
+      "totalCost": 6872.47,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 33,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9YfmGRzKjgMYVkWbR5WaBKVNoBydKHCgpyMrxWFQwzk1",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5035.14,
+      "totalCost": 5035.14,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 24,
+      "totalSells": 0
+    },
+    {
+      "wallet": "FxmS7gTU49SQoqR2vd8CJyuLP3Yo1YVb1c3tJbcw93y3",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4528.94,
+      "totalCost": 4528.94,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 21,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9mcUSSDb4FfXdySfzTFC3wifurHEYptnZVtY3aWdMvgL",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3999.17,
+      "totalCost": 3999.17,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "8C3bNc1KoojDqsSp7RdrGJcmNQFvUTFkGo5Wr4c1yPV8",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3269.08,
+      "totalCost": 3269.08,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 16,
+      "totalSells": 0
+    },
+    {
+      "wallet": "BcwFSsTEWD7txciVFBAnhaM7hbw6GYeVNMDFM7SpVxXa",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4962.09,
+      "totalCost": 4962.09,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 24,
+      "totalSells": 0
+    },
+    {
+      "wallet": "2zcG6efoahQWKA7hKntusEkvzt5bMzvenmxZrp5JSR49",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3828.18,
+      "totalCost": 3828.18,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 21,
+      "totalSells": 0
+    },
+    {
+      "wallet": "DxA3TxBpn3UQrZgaLpZUFQHcJfLXzZJPwq2UhJGjas3e",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -7579.36,
+      "totalCost": 7579.36,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 35,
+      "totalSells": 0
+    },
+    {
+      "wallet": "YdqnFaRgLTCX4fVzAj3TKhpj6Tg76cULMDJzZrAk1Ws",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4164.88,
+      "totalCost": 4164.88,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 21,
+      "totalSells": 0
+    },
+    {
+      "wallet": "BUfaRC4kD2xMveV8YxaoiikqM8455mM4u7uJggJ1vSNJ",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5966.65,
+      "totalCost": 5966.65,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 28,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6NQxNKjqG7nybhudHzvdU3qhkb6pJjCpTX1zuqw6DhU8",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3396.92,
+      "totalCost": 3396.92,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 17,
+      "totalSells": 0
+    },
+    {
+      "wallet": "GeDBD9tMvrGrxgnkS1SHneNjrmmY3mr1yRRqcSgkBVkZ",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6592.39,
+      "totalCost": 6592.39,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 30,
+      "totalSells": 0
+    },
+    {
+      "wallet": "ENSyuaaD3Sju5jHUwGg5dR144dc8GRHFPGp9aAVCPiJE",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4196.74,
+      "totalCost": 4196.74,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "1MVBDyqimFQEXpmGaxfm1AKbUBWGRa8jJuNaeuYuy9F",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4361.44,
+      "totalCost": 4361.44,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 25,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6LKDhDmK1oGyZfYuHdy92LMvyQdrkoHtgv3o3HJn5p7M",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -1930.92,
+      "totalCost": 1930.92,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 15,
+      "totalSells": 0
+    },
+    {
+      "wallet": "32nsYc4nPn8VTz9yjQTWUWXP2PLMv7RPWWZjoTNezTut",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5455.08,
+      "totalCost": 5455.08,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 26,
+      "totalSells": 0
+    },
+    {
+      "wallet": "ABLrfmtZ4LZQfbzZEVQwFbgh13baUKFTEJhfSJwayS88",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -7296.8,
+      "totalCost": 7296.8,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 34,
+      "totalSells": 0
+    },
+    {
+      "wallet": "8Y9mjAFjqhu2Yc9WLQoCqu11xdMW8zGhimXrgRQS5rir",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4413.61,
+      "totalCost": 4413.61,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 21,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4vaC5BNCPfowanUseDL2SwzkPrjuwoGwkPuaB8BH1jcb",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5652.67,
+      "totalCost": 5652.67,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 27,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4ZwYf8okEL7vgyBDZEcas2mcpDAVujsgtthxRHCMDqyP",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5312.81,
+      "totalCost": 5312.81,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 26,
+      "totalSells": 0
+    },
+    {
+      "wallet": "AYrVS8gbYdKWnSC3X6g5kdS979R7Q8fCm8SHNxLtS526",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4258.02,
+      "totalCost": 4258.02,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CcZUX1vsNfvZXrxyadypMUYrZwbjso6nk3vFCfgKY2K1",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3644.9,
+      "totalCost": 3644.9,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 17,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4W111nfvgbzQf7rciNtijXjh69LqjZvUwvHJNEiCVd9J",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3456.81,
+      "totalCost": 3456.81,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 16,
+      "totalSells": 0
+    },
+    {
+      "wallet": "3EHbeTTUHVeqBNQNkWtk7jGAjfxAQHADDtJGkDZa46Z8",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6882.61,
+      "totalCost": 6882.61,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 32,
+      "totalSells": 0
+    },
+    {
+      "wallet": "TA9TMUtfqBim7nehQrEjotUwdteqMyWUZFMT5tbAphm",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -7312.89,
+      "totalCost": 7312.89,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 34,
+      "totalSells": 0
+    },
+    {
+      "wallet": "8jpTrTnBCp7NRSgZmCdA7sgasBUuFcr7YLY92dKpaCGa",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5372.99,
+      "totalCost": 5372.99,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 25,
+      "totalSells": 0
+    },
+    {
+      "wallet": "44QfkBicwJjwpt63rnz864W9DcKtzKxD4nyXaLVLoM3o",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6126.19,
+      "totalCost": 6126.19,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 30,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9HRKXdT1Pd4cT9Lwnakieu2az7m7M4k1rSsnnkBCQLJw",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5033.9,
+      "totalCost": 5033.9,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 25,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Gm9z87GTcndujz5ftRnfwCJu3xMXkpPSVSYGuPZizi9d",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6490.5,
+      "totalCost": 6490.5,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 30,
+      "totalSells": 0
+    },
+    {
+      "wallet": "A6m2M7om56YomueB1vUmURGSMeUaBRGen51tFoE4AcuW",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3281.41,
+      "totalCost": 3281.41,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 15,
+      "totalSells": 0
+    },
+    {
+      "wallet": "oyFFgogF9QLMGRAxkHVQ4eU1LsVwzn7d4sdxrSnsqnb",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3770.85,
+      "totalCost": 3770.85,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 18,
+      "totalSells": 0
+    },
+    {
+      "wallet": "HgXUiReMx6kzM1HQJKGyPvYnvTZZS1pJDSbk44r4dc3P",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6700.7,
+      "totalCost": 6700.7,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 31,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4RypVP9yUZSrnzgr4jv7b1z53rCS4Tz9aBseHi6BPmUE",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5473.94,
+      "totalCost": 5473.94,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 26,
+      "totalSells": 0
+    },
+    {
+      "wallet": "GzsC8hgycbd3drScsyrERVUPhEU8wwT5Wp51QvqaDsQd",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5793.59,
+      "totalCost": 5793.59,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 27,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9XBoZMTVr6EEc87MHXyggE2zPCwuSy9c1p4qWucZ76Tn",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5685.69,
+      "totalCost": 5685.69,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 26,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6VbZcZpDZWGyuKFqNcEPu4a6ZrMB7C9R892b6T4c1HM",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5718.78,
+      "totalCost": 5718.78,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 26,
+      "totalSells": 0
+    },
+    {
+      "wallet": "49CduoU4M5Va46tXeqCZFYGQpAxTSGYi28KUxX3tskYY",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3814.1,
+      "totalCost": 3814.1,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 18,
+      "totalSells": 0
+    },
+    {
+      "wallet": "C7tqCtVurDakyksQF2tUq4EbTLiCrt9WffR4sEaT78cT",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4456.31,
+      "totalCost": 4456.31,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 21,
+      "totalSells": 0
+    },
+    {
+      "wallet": "AujeNcchJkDzoQtTN6JwwxZikonfZGFBs7i1pRkAfo1c",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3800.94,
+      "totalCost": 3800.94,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 24,
+      "totalSells": 0
+    },
+    {
+      "wallet": "AvRXwy68XtEHgSRRET5odcicGev4P5eoA3QVFmvsTaq5",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5780.51,
+      "totalCost": 5780.51,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 27,
+      "totalSells": 0
+    },
+    {
+      "wallet": "2fPCxpdcAqm51CpM5CaSqCzY8XWfSg9Y9RAsSwXWR7tY",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6559.7,
+      "totalCost": 6559.7,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 31,
+      "totalSells": 0
+    },
+    {
+      "wallet": "DHrPHLqpk4uF9Qq2XEg5RWnVCw1pdj3VQNFgnvoM3v29",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5288.31,
+      "totalCost": 5288.31,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 28,
+      "totalSells": 0
+    },
+    {
+      "wallet": "3KjjosmECzyixDahw59YhM9ZjeqMdWcpTbkFFSwox5aq",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6105.7,
+      "totalCost": 6105.7,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 31,
+      "totalSells": 0
+    },
+    {
+      "wallet": "ExCZTxX1gV27Aeg7jb4hQBqkwDKHZnETEeWb9otCNBc",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -7749.01,
+      "totalCost": 7749.01,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 36,
+      "totalSells": 0
+    },
+    {
+      "wallet": "AgLNvjbT2RzEnHp6zuj1zU97tuSynf5ninDSVDnkYKMd",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6311.15,
+      "totalCost": 6311.15,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 29,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5cgHgU68WvHHyBdp684q8po9S77zrb685345SMqhVxXd",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6079.61,
+      "totalCost": 6079.61,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 28,
+      "totalSells": 0
+    },
+    {
+      "wallet": "DtygiPhhrB8BTxcJxhxvvKLzVW5YJxJrT7tUaWwFAPiA",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5248.29,
+      "totalCost": 5248.29,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 26,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CaQwkomh5FgmzRW28wQsZ6YPMoK938v4v8CFWJ4vLgYn",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5341.84,
+      "totalCost": 5341.84,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 25,
+      "totalSells": 0
+    },
+    {
+      "wallet": "FumSkmBHwb1Ufu97yXd1Cmkva16HnC7tKbweeQTAuJGN",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4949.12,
+      "totalCost": 4949.12,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 23,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4P2gmEUBnG91MLUZgLH3zKs2MtFyUW5VPJ1jNrp1xhkq",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3745.89,
+      "totalCost": 3745.89,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "2MPXvHpMt7KEoYDB1rWv2Kk5o1TKHHmCEwq5QYnDTYkX",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6383.39,
+      "totalCost": 6383.39,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 30,
+      "totalSells": 0
+    },
+    {
+      "wallet": "GZX91x59NpZfv4Qkp3rrDjoHdsBkmDJiQfVr1rWCJK1t",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -6683.8,
+      "totalCost": 6683.8,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 31,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5bFk9BmHNn9BgZ4tZqUcccNMq21XjSuhyUP8b6c3VV3C",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5971.88,
+      "totalCost": 5971.88,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 27,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Cvf2r8Fuws6mpLpRwo2Xk5WbFgZCLGJAxfvHYZzDPLUY",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -1.03,
+      "totalCost": 1.03,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 3,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5DLPnGX6RUB5YepQUnyYTtRiywBUaAm2RPvqsNcVgh65",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3335.78,
+      "totalCost": 3335.78,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 21,
+      "totalSells": 0
+    },
+    {
+      "wallet": "i6zEHEevGrruHUGsNjFz5L3Ko7R4gyGeWUNDjWUCHZc",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -1711.71,
+      "totalCost": 1711.71,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 8,
+      "totalSells": 0
+    },
+    {
+      "wallet": "BcHDFaqSZtXqanSozJWNaJQWpgA52SGmeqRmAQefBd6k",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3889.78,
+      "totalCost": 3889.78,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5m4VGV3u16U9QkKd74Ffc6ziv1Zqs44cVmA3oajAxkM6",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -5055.25,
+      "totalCost": 5055.25,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 24,
+      "totalSells": 0
+    },
+    {
+      "wallet": "AgN5H3MeJyYKwu8asfSwB1m7mB4MZBhqpd1xC6xaQWZb",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4597.6,
+      "totalCost": 4597.6,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 22,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9eWNHqhPeYgpgD9uvf512ByVWnuEPrZK31aibitLgyZ8",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -2307.69,
+      "totalCost": 2307.69,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 11,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Cfo79NSYs52UGHURp1psgrgt2SQVPgfmw1kdZR1pSxpc",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.94,
+      "totalCost": 1.28,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 3,
+      "totalSells": 1
+    },
+    {
+      "wallet": "5hV1mCM2pPGUmjq939eCyJxSWA4AJgJUPpASCaZ4fC2p",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -2417.26,
+      "totalCost": 2417.26,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 14,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5eKXMMPUQBN1utwx9Vsqz5ZfGbSSAm7GL1Jzy5eexbyv",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4687.72,
+      "totalCost": 4687.72,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 21,
+      "totalSells": 0
+    },
+    {
+      "wallet": "AgGWu4Xy3fHw2vLSwsRYCDgFpihL2e49coAzsoedT7FS",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4678.46,
+      "totalCost": 4678.46,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 22,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4RVWyf5fvgPSp319ziZ194wA3RUJ9bi4MB5c9jHzLciH",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4275.04,
+      "totalCost": 4275.04,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6VozR9BAoxsQV1JoNDtZz6j7tMU3BkN65W7847LHSBPN",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3868.24,
+      "totalCost": 3868.24,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 18,
+      "totalSells": 0
+    },
+    {
+      "wallet": "437E4LvLmFG6Stp3ZRwGBzmsEBXuCBcU4NyVNuAdAeje",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3048.91,
+      "totalCost": 3048.91,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 14,
+      "totalSells": 0
+    },
+    {
+      "wallet": "FfNLMd6iLdhKWeHNvDhLAf5D4A15B6xtXbpqnK3GoCo4",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -2849.07,
+      "totalCost": 2849.07,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 16,
+      "totalSells": 0
+    },
+    {
+      "wallet": "EHybAixmLa12LiAxaCg1XHQBz17fUKX9iP411RmY4Acz",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -4300,
+      "totalCost": 4300,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "EZQiSmPiXnfQrJzCEqYS5f8NBhoTPro4jQznEGRkcP9R",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3473.58,
+      "totalCost": 3473.58,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 19,
+      "totalSells": 0
+    },
+    {
+      "wallet": "7K86CpuL7US62bZGLsYYy8w7C53fjktaDVx5jKawFfSk",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3858.15,
+      "totalCost": 3858.15,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 20,
+      "totalSells": 0
+    },
+    {
+      "wallet": "JRp2Qv9MNjCozuXo7RdWepuRspP9utTcPgEowiXowY4",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seedSymbols": [
+        "KAt",
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -3625.73,
+      "totalCost": 3625.73,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.54,
+      "totalBuys": 17,
+      "totalSells": 0
+    },
+    {
+      "wallet": "sy88tvipKfaCTuVVeU2PczPa88hqgPfKnYQyCHboHP8",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "DRONE",
+        "NEO"
+      ],
+      "totalProfit": 0,
+      "totalCost": 0,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
       "totalBuys": 4,
-      "totalSells": 0,
-      "botScore": 0.1,
-      "estimatedWinRate": 0,
-      "score": 0.81
+      "totalSells": 0
+    },
+    {
+      "wallet": "3nMNd89AxwHUa1AFvQGqohRkxFEQsTsgiEyEyqXFHyyH",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "DRONE",
+        "NEO"
+      ],
+      "totalProfit": -0.17,
+      "totalCost": 0.17,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "GgGap6tiUKhD8XeUZaHpVB3rerb3zKWNouWQJHozDujt",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "DRONE",
+        "gomu"
+      ],
+      "totalProfit": -0.44,
+      "totalCost": 8.57,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 24,
+      "totalSells": 24
+    },
+    {
+      "wallet": "ESuvjvsQtjuxC4XGsDeMhx8Wp5yjQcCFGncGhupcJbg8",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "DRONE",
+        "XSAI"
+      ],
+      "totalProfit": 0,
+      "totalCost": 0,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 6,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Em8J3gBWapfVBGVhVipwQnLrqCvnWBnLajw6XFsFECPF",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "DRONE",
+        "NEO"
+      ],
+      "totalProfit": -0.62,
+      "totalCost": 1.15,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 3,
+      "totalSells": 3
+    },
+    {
+      "wallet": "FkdDHrM8j8psKbxuwjV1jBKCM2JGPygkj7WCX8sSCzNm",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "WHALE",
+        "gomu"
+      ],
+      "totalProfit": -0.01,
+      "totalCost": 0.01,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "HUpvDkk1QqABynbGgpLb2Q3ACwbu3m6HRqrXQkr72QHK",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Memehouse",
+        "Sheep"
+      ],
+      "totalProfit": -0.77,
+      "totalCost": 0.89,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 3,
+      "totalSells": 1
+    },
+    {
+      "wallet": "9H8qBoP1LZnvYQVJ5BCPDhN42G94Em8M6opoWbdtSsgx",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Memehouse",
+        "NEO"
+      ],
+      "totalProfit": -14.79,
+      "totalCost": 14.79,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9sihnWnBwNjFpmgc9P4ZM5Xvy98iy9GXLQTFV2Din5Mu",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Sheep",
+        "NEO"
+      ],
+      "totalProfit": -0.95,
+      "totalCost": 0.95,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "3kSZ8roBnEwPAU5RoQLRZZfSoZKiZsG6Ah79rxgA1tGA",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Sheep",
+        "NEO"
+      ],
+      "totalProfit": -20.66,
+      "totalCost": 20.66,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "7iVCXQn4u6tiTEfNVqbWSEsRdEi69E9oYsSMiepuECwi",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Sheep",
+        "NEO"
+      ],
+      "totalProfit": -0.17,
+      "totalCost": 0.53,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 2
+    },
+    {
+      "wallet": "F8U1n5H171tSwEPzKKhvb8tUbRwBV6V1D1A6i4Pb31ec",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "Sheep",
+        "NEO"
+      ],
+      "totalProfit": -1.1,
+      "totalCost": 1.1,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "2VVFbdf6RVcKNxMHtcBwskLwoKAEAqnHpNzWTGepyV7N",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "XSAI",
+        "gomu"
+      ],
+      "totalProfit": -14.3,
+      "totalCost": 14.3,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 7,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9BysRAUU75VQBcTXMrvNmqMRgprwp45eBnKac9Anc9YQ",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.68,
+      "totalCost": 0.68,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "8enoxBwbW2tRd9PBxnoaVAtKedNyPHjfKfb8QZPA7gW7",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.16,
+      "totalCost": 1.16,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "DHThZYyxLQ8ZhKnYPjCBnqTB4YdZ1MAkAmcaFKZZtVdo",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.06,
+      "totalCost": 1.06,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6acHM5LPUFNync5TwiXwU3e3pjG4jNst1Midq2EsSgFi",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.59,
+      "totalCost": 0.59,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5bp48m9Jzh8bnshURPD4HxCGHUEqfrWbNuUysNuLMdne",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.86,
+      "totalCost": 0.86,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "G5YP1BWEPLQVPhCaLTZe6cLxZfwtDrSh3sQp1B6bpGYX",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.89,
+      "totalCost": 0.89,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "F26fEDuc8Qsaont6UcMyr74GAzuygFosvvvsFeSRjWEa",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.9,
+      "totalCost": 0.9,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "C66H2Z3p1vYH3FvqX7mtV2h1awEmZfrVLPhFdCdruhMM",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.79,
+      "totalCost": 0.79,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "7JVXi7Z6H6NvS98ba8payfiHmGFUpgKqbdeRbJ2YN1Wa",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -35.07,
+      "totalCost": 78.29,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "Bq9pf9SJkjediUpSJ3cK8de4dGHELbyhfxWFSbEhd6La",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.04,
+      "totalCost": 1.04,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "FUnnkhg3orZFtyMTScN6bAu5WdYcbwrqH5G84Xz1YUBw",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.54,
+      "totalCost": 0.54,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4qXctd7YRpzmpfPntNFDezRgShPnfaW6KQgo5uVK4EBU",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.58,
+      "totalCost": 0.58,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "3epWw39C9Akx75XYR4SQUbVLotmF2AJUDfyhqh6LDmi9",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.8,
+      "totalCost": 0.8,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6S3ucmqiduw6idc9K3hdUoqBHTpwbHKzfwoAXEUrApaT",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.74,
+      "totalCost": 0.74,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "3Fbn7MfcVsFMxgvaSKS5QJkC2Z5rSKFRrnNheEyeHXu4",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.86,
+      "totalCost": 0.86,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "J8MeARrJgeeZ2heLMScyjMaYpghFrvByiSpA7BYKA8Sn",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -18.62,
+      "totalCost": 20.44,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "AbsX2T2EnAuvV6Z2QuZMe8JnpcBYSXLLZR4doUbZGeH2",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.73,
+      "totalCost": 0.73,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4JY47ZbgKzbB8TARbnp2sDiJaSHndLiBPitRcVDh2UbF",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.93,
+      "totalCost": 0.93,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "2xXFDGi2iXVjhQvMXEh3w38ovWAqRHdBRZ9fimPZDKRD",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.87,
+      "totalCost": 0.87,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Dx4GTbiQbm8wMnpWsyzaTwJbKq6fHV1T96mv6V5jweV9",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.74,
+      "totalCost": 0.74,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "HoNh4Av1zxbeRitYEgfwtAATYtGwFxQXi5LwtF4CgbpZ",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.96,
+      "totalCost": 0.96,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6uPgpbMntXhmvB2Fpp4WT7W7xUN2MEdAWJr6UEUrYVve",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.09,
+      "totalCost": 1.09,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "AafBeZ8amDhHpVMZ5ZrqkictCLT6Vp7gRJmXAzk2ek9h",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.18,
+      "totalCost": 1.18,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "FZzsozHhW4e51pRyAp16wVCGrkEFcs5TG3rBsDqndWfZ",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.59,
+      "totalCost": 0.59,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CscX2TYJE7ZNwwUgW3HXwPGQAtJiAq8eph94ag9fxcPG",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.67,
+      "totalCost": 0.67,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "7F248dAau7foHAptmwQzY55iBPZj2trJX2xEz8cd5Emn",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.49,
+      "totalCost": 0.49,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6gSZRjLDXaSCGETMM7xyVmFBcPqo2cPUDZ6MdoVUzkZH",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -32.85,
+      "totalCost": 47.57,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "GAQjnt7xjEfshdgWX3p92KfZ3ZqhP3fQPwWJAzPhhF8M",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.33,
+      "totalCost": 1.33,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5sYTENrjvZDFFAUEDXLeTAAAoiLsAQmxskP39zk3zjRK",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.91,
+      "totalCost": 0.91,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "ApZwK1miDwy9TA8QMswT9UYLbqKoaMgLUqpSywzyA9Nn",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.47,
+      "totalCost": 0.47,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "EThbw538V9fGm5gjundFuNjiejNNH5iz2wJS13VvQ3PT",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -1.04,
+      "totalCost": 1.04,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "4eYvfER1ck5y6KPvXNcvyfRMYKjZw3KJSG4S4CSaicer",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.74,
+      "totalCost": 0.74,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CpXosWB6TSuHqThMByiUFgZhHKYEZXuGthP9U1A4zTZm",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.48,
+      "totalCost": 0.48,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5PU2ZPfaDhbKC8yTn7yc9PKAHzogfgmsbWX8NSyCMDPc",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.94,
+      "totalCost": 0.94,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "GhHSwNsJ7pf1c61tiKhQcEXN7m8ByJPSyMPaqxQirjpA",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -32.1,
+      "totalCost": 32.1,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "J4BQWjGuU6PcQZ6nhZzVGqGADxwoEqnBx1VZjBbYBR69",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.74,
+      "totalCost": 0.74,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CpmE3CW4V1sGRqou2ATAqGFUA2ZWN17CcPqxHfX6M1Xf",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.71,
+      "totalCost": 0.71,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "DHykT3nuG8BPdXAnfgh2aJq91ptn8PphZhmnTyFzSL6K",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.76,
+      "totalCost": 0.76,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Eb6G6PTShrpGJUXYYZ8cPL92nTZHD3EozyDofgvg9Dkz",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.61,
+      "totalCost": 0.61,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "EznduxbJLVYWAXjXM8Q2aYGyMTVbPEm1DWWCboVUHDyG",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -0.45,
+      "totalCost": 0.45,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "DDUrJLNhjUQ8yHmhPE7hSEoopJdQfQwSAKZn5rnVDCmh",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SEa"
+      ],
+      "totalProfit": -61.7,
+      "totalCost": 72.11,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "8iAVS6YogTvMXdvDKv11CZrHvvM3RPFL1QxAE4o65Mgf",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -48.88,
+      "totalCost": 75.45,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "8NKzQsvK8tuAJ8ec7LuraxhqZ9j672Mfaq4h72a9hZ5Y",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -0.51,
+      "totalCost": 0.51,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "FWCuXEqTQ89ZX1wgDWvyMzFjBau7LbgC3Vk9ojVqrhwT",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "KAt",
+        "SPAce"
+      ],
+      "totalProfit": -13.42,
+      "totalCost": 13.42,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CoJi5wgzUZaVfhX8ygWFN3CD17FRNvovmsHuyh7rTXEi",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -1.03,
+      "totalCost": 1.03,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CUTy4GXo2kRB7PGg73KEvNyhuT7yg1X8tqz3DeiYb3ky",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.47,
+      "totalCost": 0.47,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "BHugVJKeNg1GgZk3TDkdrHumEnro9JYJakEvm9VnCFvQ",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.76,
+      "totalCost": 0.76,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "CN1XKiftzjsbJDiqqRryTNK5kPGdYi8J2uwGozsbEdh9",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.52,
+      "totalCost": 0.52,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "9MrvqLRqPAu3FqJm2NE5Rm5ntBxqXZMusQFqjADNNp7u",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.86,
+      "totalCost": 0.86,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "2RKRex86vFNVtLEW8osX4AkbwJdG6rH5SLMVh3fSBGCP",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.81,
+      "totalCost": 0.81,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "E84JDbydzN7WYj1nbJabEuZWSihraqHxCAbgXxy1cpEG",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.43,
+      "totalCost": 0.43,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "7zAXpG8FdQwrvVDhPRVGLoAM688TViYcbSdGf3HT8qyk",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -43.43,
+      "totalCost": 43.43,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "GiXNfVZQymk4Y3Lb3hQH99jSzfC3hmitCQXbkSLuSQsi",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.83,
+      "totalCost": 0.83,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "iGdXDoAJxaGHWBYcPoJUE3BzRjKYH4dLpJnoNHRSVK9",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.68,
+      "totalCost": 0.68,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "G8r6h9oDdf98dj2JhneNW6CHeRemVMzHEYf1hKhf9rQt",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.71,
+      "totalCost": 0.71,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Fq1ztYSYgf5mre28DzKac7YRA4kMYyD4Cydme4r21RKn",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.75,
+      "totalCost": 0.75,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "DaEYPcvZe5SaEigb7dVL3FFEHfqFxJ1kcSk2mRkCC9kF",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.52,
+      "totalCost": 0.52,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "2mypBGoPftiV256diZ7Gs4hjBr3r4CehJQLNA7fZrLoe",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.35,
+      "totalCost": 0.56,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "2tmxy9fRirpHBVt5j7hsgYxVKPf5xhvNV98SaGURdtQ6",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.31,
+      "totalCost": 0.53,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "BEXXM6ZqnQfkQoPTpyCf8kQRCnoULnHMexbQgPdMKE8H",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.5,
+      "totalCost": 0.5,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "F1ZoWqo82YJy5W722h9Ckc6V8eoEbYekffqvTzzqaAPY",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.44,
+      "totalCost": 0.44,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "C7FDAK2VHtfE6gEbHdwmPk3WQA9gaUy29beQrfMujpzN",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.6,
+      "totalCost": 0.6,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "42hGuno9BbWAZ18UF7sTdypiu3GR1rrneaLNeaA3XHor",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.57,
+      "totalCost": 0.85,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 1
+    },
+    {
+      "wallet": "C5B2z8MST54n2ERua4Qs1G8s8B1rBddyQ8PrXcpvgzEM",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.63,
+      "totalCost": 0.63,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "Cb17LeZ1EyvHtvmzzr3ZoUSzRbfGUYX9weP9HdrZVPKC",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.9,
+      "totalCost": 0.9,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "HaazxV19pRbFSNuysMcM1MjqxXEaDNsmsvHK6iUKaMDm",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.47,
+      "totalCost": 0.47,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6tHgvaAScBro33k8t4VekLXon4LmRxHyf4jcpbMFy9U9",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.8,
+      "totalCost": 0.8,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "6b9w4K8kSeN6XqvpqxVe8q6LfBg8iUF5tfdQFJphxvbM",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.61,
+      "totalCost": 0.61,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "HyZ87weF3G8fKuC9see8cKWShJahkozcvyPtSnx8BPRq",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.78,
+      "totalCost": 0.78,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
+    },
+    {
+      "wallet": "5DkMabB8NvyNigKV2xhGcqbVmgrWaS4xrwVEZDmfAgB9",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seedSymbols": [
+        "SPAce",
+        "SEa"
+      ],
+      "totalProfit": -0.78,
+      "totalCost": 0.78,
+      "winRate": 0,
+      "botScore": 10,
+      "score": 0.36,
+      "totalBuys": 2,
+      "totalSells": 0
     }
   ]
 }
