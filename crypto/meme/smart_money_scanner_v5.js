@@ -217,49 +217,83 @@ async function discoverCoins() {
   return candidates;
 }
 
-// ============ 阶段1a：K线涨幅检查 ============
-const MIN_PUMP_MULTIPLIER = 10; // 从低点到高点至少涨10倍
+// ============ 阶段1a：慢涨检查（排除开盘冲高型）============
+const MIN_SLOW_PUMP = 5; // 收盘价从低到高至少5倍
+const MAX_SINGLE_DAY_RANGE = 8; // 单日日内波动超过8x = 冲高型
 
-async function checkPumpMultiplier(coin) {
-  // 先用DexScreener找pool地址
+async function checkSlowPump(coin) {
   try {
+    // 找pool地址
     const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${coin.mint}`);
     const d = await r.json();
     const pair = (d.pairs || []).find(p => p.chainId === 'solana');
     if (!pair) return { pass: false, reason: 'no_pair' };
     
     const poolAddr = pair.pairAddress;
-    if (!poolAddr) return { pass: false, reason: 'no_pool_addr' };
+    const pairAge = pair.pairCreatedAt ? (Date.now() - pair.pairCreatedAt) / 3600000 : 0; // 小时
     
-    await new Promise(r => setTimeout(r, 1000)); // 限流
+    await new Promise(r => setTimeout(r, 1500)); // GeckoTerminal限流
     
-    // 查GeckoTerminal K线
+    // 查日K线
     const kr = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${poolAddr}/ohlcv/day?aggregate=1&limit=30`);
     const kd = await kr.json();
     const ohlcv = kd?.data?.attributes?.ohlcv_list;
     
-    if (!ohlcv || ohlcv.length < 2) return { pass: false, reason: 'no_kline' };
-    
-    const lows = ohlcv.map(c => parseFloat(c[3])).filter(l => l > 0);
-    const highs = ohlcv.map(c => parseFloat(c[2])).filter(h => h > 0);
-    
-    if (lows.length === 0 || highs.length === 0) return { pass: false, reason: 'invalid_kline' };
-    
-    const minLow = Math.min(...lows);
-    const maxHigh = Math.max(...highs);
-    const multiplier = minLow > 0 ? maxHigh / minLow : 0;
-    
-    // 检查开盘价（第一天）vs高点，判断是不是"开盘就高"
-    const firstOpen = parseFloat(ohlcv[ohlcv.length - 1][1]);
-    const openToHigh = firstOpen > 0 ? maxHigh / firstOpen : 0;
-    
-    if (multiplier >= MIN_PUMP_MULTIPLIER) {
-      return { pass: true, multiplier: Math.round(multiplier), openToHigh: Math.round(openToHigh), minLow, maxHigh, days: ohlcv.length };
-    } else {
-      return { pass: false, reason: `only_${multiplier.toFixed(1)}x`, multiplier };
+    if (!ohlcv || ohlcv.length < 2) {
+      // 太新没K线 → 如果创建超24h且FDV>$1M就放行（给新币一个机会）
+      if (pairAge > 24 && (coin.fdv || 0) >= 1e6) {
+        return { pass: true, reason: 'new_coin_pass', multiplier: 0, days: 0, type: 'new' };
+      }
+      return { pass: false, reason: `no_kline_${Math.round(pairAge)}h_old` };
     }
+    
+    const candles = ohlcv.slice().reverse(); // 时间正序（早→晚）
+    const closes = candles.map(c => parseFloat(c[4])).filter(v => v > 0);
+    
+    if (closes.length < 2) return { pass: false, reason: 'too_few_closes' };
+    
+    // 检查每天的日内波动
+    const dayRanges = candles.map(c => {
+      const h = parseFloat(c[2]), l = parseFloat(c[3]);
+      return (l > 0) ? h / l : 0;
+    });
+    
+    // 第一天（上线日）日内波动不算（bonding curve毕业正常会大）
+    const dayRangesAfterFirst = dayRanges.slice(1);
+    const maxSingleDay = dayRangesAfterFirst.length > 0 ? Math.max(...dayRangesAfterFirst) : 0;
+    
+    // 收盘价涨幅
+    const minClose = Math.min(...closes);
+    const maxClose = Math.max(...closes);
+    const closeMultiplier = minClose > 0 ? maxClose / minClose : 0;
+    
+    // 判断是否"慢涨"
+    // 条件1: 收盘价涨幅≥5x
+    // 条件2: 排除首日后没有单日>8x的暴拉（说明是逐步涨上来的）
+    // 条件3: K线≥3根（至少有几天的历史）
+    
+    if (closeMultiplier < MIN_SLOW_PUMP) {
+      return { pass: false, reason: `close_only_${closeMultiplier.toFixed(1)}x`, multiplier: closeMultiplier };
+    }
+    
+    if (maxSingleDay > MAX_SINGLE_DAY_RANGE) {
+      return { pass: false, reason: `spike_${maxSingleDay.toFixed(0)}x_in_1day`, multiplier: closeMultiplier, spike: maxSingleDay };
+    }
+    
+    if (closes.length < 3) {
+      return { pass: false, reason: `only_${closes.length}_days`, multiplier: closeMultiplier };
+    }
+    
+    return { 
+      pass: true, 
+      multiplier: Math.round(closeMultiplier), 
+      maxDayRange: Math.round(maxSingleDay * 10) / 10,
+      days: closes.length, 
+      type: 'slow_pump' 
+    };
   } catch (e) {
-    return { pass: false, reason: `error: ${e.message?.slice(0, 40)}` };
+    // API错误不阻塞，放行让持有者分析来判断
+    return { pass: true, reason: `api_error_pass`, multiplier: 0, days: 0, type: 'error_pass' };
   }
 }
 
@@ -540,17 +574,16 @@ async function main() {
       const toScan = realPending.slice(0, 3);
       
       for (const coin of toScan) {
-        // 先检查K线：从低点涨了多少倍？
-        const pump = await checkPumpMultiplier(coin);
+        // 先检查K线：是慢涨还是开盘冲高？
+        const pump = await checkSlowPump(coin);
         if (!pump.pass) {
           log('INFO', `跳过 ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M): ${pump.reason}`);
           if (!candidates.scanned) candidates.scanned = [];
           candidates.scanned.push(coin.mint);
           saveJSON(CANDIDATES_FILE, candidates);
-          await new Promise(r => setTimeout(r, 2000)); // GeckoTerminal限流
           continue;
         }
-        log('INFO', `✓ ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) ${pump.multiplier}x涨幅 (${pump.days}天, 开盘到高${pump.openToHigh}x)`);
+        log('INFO', `✓ ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) 慢涨${pump.multiplier}x (${pump.days}天, 最大单日${pump.maxDayRange || '?'}x) [${pump.type}]`);
         
         log('INFO', `查持有者: ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) mint:${coin.mint.slice(0, 16)}`);
         
