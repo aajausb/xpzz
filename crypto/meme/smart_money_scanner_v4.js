@@ -460,7 +460,7 @@ async function evaluateWalletPool() {
 
   // === 构建关联实体（Union-Find）===
   const parent = {};
-  function find(x) { return parent[x] ? (parent[x] = find(parent[x])) : x; }
+  function find(x) { while (parent[x]) { parent[x] = parent[parent[x]] || parent[x]; x = parent[x]; } return x; }
   function union(a, b) { parent[find(a)] = find(b); }
   
   for (const [addr, related] of Object.entries(pool.associations || {})) {
