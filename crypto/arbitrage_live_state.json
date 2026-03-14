@@ -2,14 +2,14 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -199.91725441999998,
-  "realizedPnl": -760.0631393923411,
+  "totalPnl": -223.91725441999998,
+  "realizedPnl": -772.0631393923411,
   "unrealizedPnl": 0,
-  "dailyPnl": -199.91725441999998,
+  "dailyPnl": -223.91725441999998,
   "dailyPnlDate": "2026-03-13",
-  "trades": 10,
+  "trades": 11,
   "wins": 3,
-  "losses": 24,
+  "losses": 25,
   "positions": [
     {
       "id": "mmojtgek",
@@ -29,7 +29,7 @@
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
       "currentSpread": 0,
-      "unrealizedPnl": 580.086822595896,
+      "unrealizedPnl": 538.624110595896,
       "spreadHistory": [
         {
           "time": 1773427790113,
@@ -72,8 +72,8 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.0001570533333333339,
-      "unrealizedPnl": 843.949549390102,
+      "currentSpread": 0.0002486533333333335,
+      "unrealizedPnl": 863.373939390102,
       "spreadHistory": [
         {
           "time": 1773427790114,
@@ -117,7 +117,7 @@
       "longOrderId": 933623125,
       "shortOrderId": "1416472683204976642",
       "currentSpread": 0,
-      "unrealizedPnl": 485.402549982,
+      "unrealizedPnl": 516.482549982,
       "spreadHistory": [
         {
           "time": 1773442190104,
@@ -128,30 +128,28 @@
       "health": "weak"
     },
     {
-      "id": "mmpi86gk",
+      "id": "mmpjubmx",
       "symbol": "RESOLV",
       "type": "funding",
       "longEx": "bybit",
       "shortEx": "bitget",
       "size": 6000,
-      "qty": 72050,
-      "entryPrice": 0.08327499999999999,
-      "entryTime": "2026-03-13T23:04:50.612Z",
-      "spread": 0.004052979999999999,
-      "annualized": 443.80130999999994,
+      "qty": 72948,
+      "entryPrice": 0.08225,
+      "entryTime": "2026-03-13T23:50:03.369Z",
+      "spread": 0.0038779999999999995,
+      "annualized": 424.6409999999999,
       "earned": 0,
       "totalFee": 12,
       "settlementAligned": true,
-      "longOrderId": "83b1dca4-338e-4163-92c0-9f19f69e8ca6",
-      "shortOrderId": "1416488476491784193",
-      "currentSpread": 0.0015352666666666665,
-      "unrealizedPnl": -6.5247905228
+      "longOrderId": "930af558-887b-4dbb-acfa-83b2fd4a8fd2",
+      "shortOrderId": "1416499854602543105"
     }
   ],
   "balances": {
-    "binance": 5480.88504987,
-    "bybit": 2961.45672548,
-    "bitget": 4876.456454188931,
+    "binance": 3484.09877266,
+    "bybit": 2890.91175878,
+    "bitget": 6838.005702428931,
     "okx": 0
   },
   "lastTrade": {
@@ -202,12 +200,12 @@
     "KITE_binance_bitget": 1773403264376,
     "TRUMP_bybit_bitget": 1773402542173,
     "SIREN_bybit_bitget": 1773430790492,
-    "RESOLV_bybit_bitget": 1773443090612
+    "RESOLV_bybit_bitget": 1773445803369
   },
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773443990083,
+  "_lastEarnedCheck": 1773445803537,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
