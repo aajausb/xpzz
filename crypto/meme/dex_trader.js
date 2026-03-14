@@ -1,13 +1,12 @@
 /**
- * DEX交易模块 - 三链统一买卖
- * Solana: Raydium API + Helius RPC + 高priority fee
- * BSC/Base: OKX聚合器
+ * DEX交易模块 - 三链统一买卖（OKX聚合器）
+ * Solana: OKX聚合器 + 自动wrap/unwrap wSOL
+ * BSC/Base: OKX聚合器 + 自动approve
  */
 const { Connection, Keypair, VersionedTransaction, PublicKey } = require('@solana/web3.js');
 const { ethers } = require('ethers');
 const { getWallets } = require('../wallet_runtime');
 const { execSync } = require('child_process');
-const crypto = require('crypto');
 const bs58 = require('bs58');
 
 const HELIUS_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
@@ -29,8 +28,6 @@ const NATIVE = {
 };
 
 // ============ Solana (OKX聚合器) ============
-// OKX Solana tx.data是base58编码的带空签名VersionedTransaction
-// 需要bs58.decode → VersionedTransaction.deserialize → sign → send
 
 async function solanaBuy(tokenAddress, amountLamports, slippageBps = 300) {
   return solanaSwap(NATIVE.solana, tokenAddress, amountLamports, 'buy', slippageBps);
@@ -46,15 +43,21 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300)
   const conn = new Connection(HELIUS_RPC, 'confirmed');
   const slippage = (slippageBps / 100).toString();
   
-  // 0. OKX合约要求wSOL ATA有余额，自动wrap（用户无感知）
+  // 0. OKX合约要求wSOL ATA有余额，买入时自动wrap（用户无感知）
   if (fromToken === NATIVE.solana) {
-    await ensureWsolBalance(conn, kp, parseInt(amount));
+    const solBal = await conn.getBalance(kp.publicKey);
+    const needed = parseInt(amount);
+    // 保留0.01 SOL作为gas（rent + priority fee）
+    if (solBal < needed + 10000000) {
+      throw new Error(`SOL余额不足: 需要${needed/1e9} SOL, 当前${solBal/1e9} SOL (需预留0.01 SOL gas)`);
+    }
+    await ensureWsolBalance(conn, kp, needed);
   }
   
   // 1. 获取swap交易数据
   const cmd = `onchainos swap swap --chain solana --from ${fromToken} --to ${toToken} --amount ${amount} --wallet ${w.solana.address} --slippage ${slippage}`;
   const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 15000, maxBuffer: 10*1024*1024 }).toString());
-  if (!result.ok) throw new Error(result.error);
+  if (!result.ok) throw new Error(`OKX swap失败: ${result.error || JSON.stringify(result)}`);
   
   // 2. OKX返回base58编码的带空签名VersionedTransaction
   const decoded = bs58.decode(result.data[0].tx.data);
@@ -73,13 +76,13 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300)
       if (status.value.confirmationStatus === 'confirmed' || status.value.confirmationStatus === 'finalized') {
         // 卖出后自动unwrap wSOL→SOL
         if (toToken === NATIVE.solana) {
-          try { await unwrapWsol(conn, kp); } catch(e) { /* 忽略unwrap失败 */ }
+          try { await unwrapWsol(conn, kp); } catch(e) { /* unwrap失败不影响主流程 */ }
         }
         return { chain: 'solana', action, txHash: sig, success: true };
       }
     }
   }
-  return { chain: 'solana', action, txHash: sig, success: false, note: '超时未确认' };
+  return { chain: 'solana', action, txHash: sig, success: false, note: '超时未确认，查TX: ' + sig };
 }
 
 // ============ EVM (OKX聚合器) ============
@@ -88,13 +91,15 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   const chainName = chain === 'bsc' ? 'bsc' : 'base';
   const rpc = chain === 'bsc' ? BSC_RPC : BASE_RPC;
   const chainId = chain === 'bsc' ? 56 : 8453;
+  const w = getWallets();
   
-  const cmd = `onchainos swap swap --chain ${chainName} --from ${NATIVE[chain]} --to ${tokenAddress} --amount ${amountWei} --wallet 0xe00ca1d766f329eFfC05E704499f10dB1F14FD47 --slippage ${slippage}`;
+  const cmd = `onchainos swap swap --chain ${chainName} --from ${NATIVE[chain]} --to ${tokenAddress} --amount ${amountWei} --wallet ${w.evm.address} --slippage ${slippage}`;
   const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 15000, maxBuffer: 10*1024*1024 }).toString());
-  if (!result.ok) throw new Error(result.error);
+  if (!result.ok) throw new Error(`OKX swap失败: ${result.error || JSON.stringify(result)}`);
   
   const txData = result.data[0].tx;
-  const w = getWallets();
+  if (!txData.data || txData.data.length < 10) throw new Error('swap tx data为空');
+  
   const provider = new ethers.JsonRpcProvider(rpc);
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
   
@@ -107,7 +112,8 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   });
   
   const receipt = await tx.wait();
-  return { chain, action: 'buy', txHash: tx.hash, success: receipt.status === 1, block: receipt.blockNumber };
+  if (receipt.status !== 1) throw new Error(`交易revert: ${tx.hash}`);
+  return { chain, action: 'buy', txHash: tx.hash, success: true, block: receipt.blockNumber };
 }
 
 async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
@@ -130,19 +136,24 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
         chainId,
         gasLimit: BigInt(ar.data[0].gasLimit || '100000')
       });
-      await approveTx.wait();
-      // 等2秒让nonce更新，避免swap nonce冲突
+      const approveReceipt = await approveTx.wait();
+      if (approveReceipt.status !== 1) throw new Error('approve交易revert');
+      // 等nonce同步
       await sleep(2000);
     }
-  } catch(e) { /* 已approved或不需要 */ }
+  } catch(e) {
+    // 如果是"已经approved"可以忽略，其他错误要抛出
+    if (e.message?.includes('revert')) throw e;
+  }
   
-  // 2. Swap
+  // 2. Swap（approve之后再获取，确保nonce正确）
   const cmd = `onchainos swap swap --chain ${chainName} --from ${tokenAddress} --to ${NATIVE[chain]} --amount ${amountRaw} --wallet ${w.evm.address} --slippage ${slippage}`;
   const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 15000, maxBuffer: 10*1024*1024 }).toString());
-  if (!result.ok) throw new Error(result.error);
+  if (!result.ok) throw new Error(`OKX swap失败: ${result.error || JSON.stringify(result)}`);
   
   const txData = result.data[0].tx;
-  if (!txData.data || txData.data.length < 10) throw new Error('swap tx data is empty');
+  if (!txData.data || txData.data.length < 10) throw new Error('swap tx data为空');
+  
   const tx = await wallet.sendTransaction({
     to: txData.to,
     data: txData.data,
@@ -152,7 +163,8 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   });
   
   const receipt = await tx.wait();
-  return { chain, action: 'sell', txHash: tx.hash, success: receipt.status === 1, block: receipt.blockNumber };
+  if (receipt.status !== 1) throw new Error(`交易revert: ${tx.hash}`);
+  return { chain, action: 'sell', txHash: tx.hash, success: true, block: receipt.blockNumber };
 }
 
 // ============ 统一接口 ============
@@ -182,7 +194,6 @@ async function ensureWsolBalance(conn, kp, lamportsNeeded) {
   const owner = kp.publicKey;
   const wsolAta = await getAssociatedTokenAddress(NATIVE_MINT, owner);
   
-  // 检查wSOL ATA是否存在
   const info = await conn.getAccountInfo(wsolAta);
   let currentBalance = 0;
   if (info) {
