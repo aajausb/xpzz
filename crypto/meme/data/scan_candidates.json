@@ -361,6 +361,15 @@
       "addedAt": "2026-03-14T08:25:10.726Z"
     },
     {
+      "symbol": "UGOR",
+      "mint": "32EzeGqgnVf9NWJdvv7obFFGK1uqXKZZpnRaWHaFqYVV",
+      "fdv": 5092466.96409247,
+      "vol": 33132614.8197318,
+      "ageD": 1,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:56:25.877Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -530,11 +539,38 @@
       "ageD": 41,
       "chain": "solana",
       "addedAt": "2026-03-14T08:25:10.726Z"
+    },
+    {
+      "symbol": "Sheep",
+      "mint": "5dfHpiBxagAKGUMLpCM246qHb8i8gADE3xdpVnDKpump",
+      "fdv": 751655.191124074,
+      "vol": 6293168.38007281,
+      "ageD": 1,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:34:52.903Z"
     }
   ],
   "scanned": [
     "0x444045b0ee1ee319a660a5e3d604ca0ffa35acaa",
     "0x4b3d30992f003c8167699735f5ab2831b2a087d3",
-    "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG"
+    "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
+    "AWc7tg2H3agf9kwFJAD1Gw2vcRRf5gR6r9vQNMbETaJV",
+    "0xb150e91cb40909f47d45115ee9e90667d807464b",
+    "ZoNfYo3F9Ghcc9J5w5KFeDTwBPQdJVgh5so8s7AEd4t",
+    "0x000008d2175f9aeaddb2430c26f8a6f73c5a0000",
+    "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump",
+    "0xCcC3A0aD598e1958C563a9c9d79fe6bDcc058938",
+    "85ha8wFF5d2dZDef91ciBPi1xSu3GPesmtjmv4As5xyX",
+    "7JvXT93eBGefwjFo5gKXUFPNebKPLikFhxD79pmFsw58",
+    "4iVNcnD16mj5vecEZUj3r71cLWjh9BKngjpXtSbPZxEW",
+    "0xeccbb861c0dda7efd964010085488b69317e4444",
+    "0x3e17ee3b1895dd1a7cf993a89769c5e029584444",
+    "0x6907a5986c4950bdaf2f81828ec0737ce787519f",
+    "0xb0b92de23baa85fb06208277e925ced53edab482",
+    "0xe1ab61f7b093435204df32f5b3a405de55445ea8",
+    "NV2RYH954cTJ3ckFUpvfqaQXU4ARqqDH3562nFSpump",
+    "0x97693439ea2f0ecdeb9135881e49f354656a911c",
+    "2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump",
+    "0xf758cfb1467a227516d73d87da7d36e7cb6f71f1"
   ]
 }
