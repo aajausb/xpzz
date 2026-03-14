@@ -13,6 +13,10 @@
         "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7": {
           "symbol": "SMITH",
           "amount": 49825174.816995
+        },
+        "J6VaXQNa5CMB9KogbpKngxKk2sqtWZ2pvscGmJmKGZDi": {
+          "symbol": "SMITH",
+          "amount": 49825174.815995
         }
       },
       "profitByMint": {
@@ -35,6 +39,14 @@
         "2cGNG2yEUKbb2YibqACyKVc6G65N11gaxMSTGoPVHqB7": {
           "symbol": "SMITH",
           "profit": -17404,
+          "pattern": "normal",
+          "buys": 1,
+          "sells": 0,
+          "transfersIn": 0
+        },
+        "J6VaXQNa5CMB9KogbpKngxKk2sqtWZ2pvscGmJmKGZDi": {
+          "symbol": "SMITH",
+          "profit": -17392,
           "pattern": "normal",
           "buys": 1,
           "sells": 0,
@@ -21514,6 +21526,36 @@
     "0x7d4b6b55141f6b13c888f3af79dc6862f07748a6",
     "0x519a0a9a4f2146cd7eb29aaeaaf22ba92429fc92",
     "0x14926224168492cdc06461713b3011cd25d8c901",
-    "0x07da9c5d35028f578dfac5be6e5aaa8a835704f6"
+    "0x07da9c5d35028f578dfac5be6e5aaa8a835704f6",
+    "0x7ef91c1ce9dfe2812d947e05fdddaa1c07108be4",
+    "0xd369f5bab78ff512a55e9f06732eed9b28347c65",
+    "0x05e21a27e7b78997000349e64dd7262bd9d4c6b8",
+    "0x137a48f028be804425428cdd1591675a583235e0",
+    "0x8db50600219d828a57c666ad055e9e41cdbbe40f",
+    "0x9eadc119e4547b9f5078b205b1fd9ed6c133fbde",
+    "0xac7499364fd973c78bc8d81fbea563a93e7d11c9",
+    "0x274cc3156c32c1743f7926df1e5d473684dff791",
+    "0x88538812e41b89689f5e23871ef5d5ce2be0f987",
+    "0x74c6001f4dfa7f76edf75fbac6528c428cf29252",
+    "0x85def423aa19239cae527963fb131a14e5cb4bba",
+    "0x70f9a39a53097ee38e0aa0eca83773e79d5c6ead",
+    "0xb1c3db530b9ba75466134363b345967f4041f049",
+    "0x4aff1288eee7f87975c5d4fb10f07ce419687a72",
+    "0xb16395a423162b2577a91d40171aaf28a214719f",
+    "0xa2582ea1f039c4770d438d1d00cde5123956396e",
+    "0xe56a1c457b2ea6bb60da7354e79542e9adb1bafd",
+    "0xd717f2d7b3cc48c5d77658bc88fc8f587484407f",
+    "0x9df6354d9a21082635b025a92da1983672c4b44d",
+    "0xe4a0045c0ed4e703c56c5bbffab3ee0e58cad112",
+    "0x68b1675ed9dba46271eb95d7919e15612a7ff2ef",
+    "0xecc41ea41592b4f8563454b27c62263443c7095c",
+    "0x174debea52ecad85daa976ce41770840d7520e68",
+    "0x332dcb860e2ca32016eb133200c0f05d31d856dc",
+    "0x327facc561234ebd02c933a4d4486fab6585c566",
+    "0x05e60f413f1e0f7189fd8eaef9a485b204b3ea0e",
+    "0x21105ef6805c52178a49af8f4de458434689ffb9",
+    "0xaf64f47f6b27c8d69ae2950c71bb4899387e0139",
+    "0x55c23ff8058699d6ca8f67e0a6d90a599f009c8e",
+    "0x85fb468a5e65a537c5ac767776599708a3d41046"
   ]
 }
