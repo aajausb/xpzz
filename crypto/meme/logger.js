@@ -8,9 +8,9 @@ function getLogFile() {
   return path.join(config.paths.logDir, `meme_${date}.log`);
 }
 
-function log(level, component, msg, data = null) {
+function log(level, module, msg, data) {
   const ts = new Date().toISOString();
-  const line = `[${ts}] [${level}] [${component}] ${msg}${data ? ' | ' + JSON.stringify(data) : ''}`;
+  const line = `[${ts}] [${level}] [${module}] ${msg}${data ? ' | ' + JSON.stringify(data) : ''}`;
   console.log(line);
   try {
     fs.appendFileSync(getLogFile(), line + '\n');
@@ -18,9 +18,9 @@ function log(level, component, msg, data = null) {
 }
 
 module.exports = {
-  info: (component, msg, data) => log('INFO', component, msg, data),
-  warn: (component, msg, data) => log('WARN', component, msg, data),
-  error: (component, msg, data) => log('ERROR', component, msg, data),
-  signal: (component, msg, data) => log('SIGNAL', component, msg, data),
-  trade: (component, msg, data) => log('TRADE', component, msg, data),
+  info: (mod, msg, data) => log('INFO', mod, msg, data),
+  warn: (mod, msg, data) => log('WARN', mod, msg, data),
+  error: (mod, msg, data) => log('ERROR', mod, msg, data),
+  signal: (mod, msg, data) => log('SIGNAL', mod, msg, data),
+  trade: (mod, msg, data) => log('TRADE', mod, msg, data),
 };

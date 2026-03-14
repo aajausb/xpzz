@@ -7,7 +7,7 @@ const CHAT_ID = config.telegram.chatId;
 
 async function send(text) {
   if (!config.telegram.enabled || !BOT_TOKEN) {
-    logger.warn('notifier', 'Telegram not configured');
+    logger.warn('notifier', 'Telegram not configured, skip notification');
     return;
   }
   try {
@@ -31,26 +31,24 @@ async function send(text) {
 }
 
 module.exports = {
-  buyAlert: async (token, score, reason, amountSol) => {
+  buyAlert: async (tokenInfo, score, reason, amountSol) => {
     await send(
-      `🟢 <b>买入信号</b>\n` +
-      `币: <code>${token.symbol}</code> (${token.name})\n` +
-      `Mint: <code>${token.mint}</code>\n` +
-      `评分: ${score}/100\n` +
-      `原因: ${reason}\n` +
-      `金额: ${amountSol} SOL\n` +
-      `🔗 <a href="https://pump.fun/coin/${token.mint}">pump.fun</a> | <a href="https://solscan.io/token/${token.mint}">Solscan</a>`
+      `🟢 <b>买入</b> $${tokenInfo.symbol} (${tokenInfo.name})\n` +
+      `💰 ${amountSol} SOL\n` +
+      `📊 评分: ${score}/100\n` +
+      `📋 原因: ${reason}\n` +
+      `📍 <code>${tokenInfo.mint}</code>\n` +
+      `🔗 <a href="https://pump.fun/coin/${tokenInfo.mint}">pump.fun</a> | <a href="https://solscan.io/token/${tokenInfo.mint}">Solscan</a>`
     );
   },
 
-  sellAlert: async (token, pnlPct, reason, amountSol) => {
+  sellAlert: async (position, pnlPct, reason, solReceived) => {
     const emoji = pnlPct >= 0 ? '💰' : '🔴';
     await send(
-      `${emoji} <b>卖出</b>\n` +
-      `币: <code>${token.symbol}</code>\n` +
+      `${emoji} <b>卖出</b> $${position.symbol}\n` +
       `盈亏: ${pnlPct >= 0 ? '+' : ''}${(pnlPct * 100).toFixed(1)}%\n` +
-      `原因: ${reason}\n` +
-      `金额: ${amountSol} SOL`
+      `收到: ${solReceived.toFixed(4)} SOL\n` +
+      `原因: ${reason}`
     );
   },
 
@@ -60,17 +58,19 @@ module.exports = {
 
   dailyReport: async (stats) => {
     await send(
-      `📊 <b>每日报告</b>\n` +
-      `交易次数: ${stats.trades}\n` +
+      `📊 <b>日报</b> ${new Date().toISOString().slice(0, 10)}\n` +
+      `交易: ${stats.trades}笔\n` +
       `胜率: ${(stats.winRate * 100).toFixed(0)}%\n` +
-      `总盈亏: ${stats.totalPnl >= 0 ? '+' : ''}${stats.totalPnl.toFixed(4)} SOL\n` +
-      `最佳: ${stats.bestTrade || 'N/A'}\n` +
-      `最差: ${stats.worstTrade || 'N/A'}\n` +
-      `当前持仓: ${stats.openPositions}个`
+      `盈亏: ${stats.totalPnl >= 0 ? '+' : ''}${stats.totalPnl.toFixed(4)} SOL\n` +
+      `最佳: ${stats.bestTrade || '-'}\n` +
+      `最差: ${stats.worstTrade || '-'}\n` +
+      `持仓: ${stats.openPositions}个`
     );
   },
 
   info: async (msg) => {
     await send(`ℹ️ ${msg}`);
   },
+
+  raw: send,
 };

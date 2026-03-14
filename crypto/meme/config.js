@@ -1,5 +1,5 @@
 // 土狗系统配置
-require('dotenv').config({ path: '/root/.openclaw/workspace/.env' });
+require('dotenv').config({ path: '/root/.openclaw/workspace/.env', override: true });
 
 module.exports = {
   // RPC
