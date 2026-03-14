@@ -44,13 +44,9 @@ const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a
 const SOL_MINT = 'So11111111111111111111111111111111111111112';
 const SOL_STABLES = new Set([SOL_MINT, 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'Es9vMFrzaCERmJfrF4H2fvD2EcfY6hVckvyCuuP1CETn']);
 
-// === 种子币筛选标准（双通道） ===
-// 通道1：爆发型（24h暴涨）
-const SEED_PUMP = {
-  minLiquidity: 50000, minMarketCap: 100000, minHolders: 50,
-  minPercentChange: 100, maxTop10Percent: 85,
-};
-// 通道2：成熟型（高流动性+高交易量+高持有者，不看涨幅）
+// === 种子币筛选标准（只用成熟通道） ===
+// 爆发通道已废弃：垃圾太多（刷量盘、断头铡、庄家盘），过滤成本高且早期买家不可信
+// 成熟通道：高流动性+高交易量+高持有者，自然过滤垃圾
 const SEED_MATURE = {
   minLiquidity: 100000, minMarketCap: 500000, minHolders: 3000,
   minVolume24h: 500000, maxTop10Percent: 85,
@@ -113,59 +109,46 @@ async function fetchSeeds() {
   const url = 'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/market/token/pulse/unified/rank/list';
   const all = new Map();
 
-  // 双通道扫描
-  const scans = [
-    // 通道1: 爆发型 — 按涨幅排序
-    { sortBy: 50, label: 'pump', rankTypes: [[10,'Trending'],[11,'TopSearch']] },
-    // 通道2: 成熟型 — 按交易量排序
-    { sortBy: 70, label: 'mature', rankTypes: [[10,'Trending'],[20,'Alpha']] },
-  ];
+  // 只用成熟通道 — 按交易量排序，从Trending和Alpha拉
+  const rankTypes = [[10,'Trending'],[20,'Alpha']];
   
-  for (const scan of scans) {
-    for (const chain of CHAINS) {
-      for (const [rt, rn] of scan.rankTypes) {
-        try {
-          const d = await binPost(url, { rankType: rt, chainId: chain.chainId, period: 50,
-            sortBy: scan.sortBy, orderAsc: false, page: 1, size: 200 });
-          const tokens = d?.data?.tokens || [];
-          log('INFO', `  ${chain.name} ${rn}(${scan.label}): ${tokens.length}`);
-          for (const t of tokens) {
-            const ca = (t.contractAddress || '').toLowerCase();
-            if (!ca) continue;
-            const mc = parseFloat(t.marketCap || 0);
-            const liq = parseFloat(t.liquidity || 0);
-            const holders = parseInt(t.holders || 0);
-            const pc = parseFloat(t.percentChange24h || 0);
-            const top10 = parseFloat(t.holdersTop10Percent || 100);
-            const vol = parseFloat(t.volume24h || 0);
-            
-            // 双通道筛选：满足任一即可
-            const passPump = liq >= SEED_PUMP.minLiquidity && mc >= SEED_PUMP.minMarketCap &&
-              holders >= SEED_PUMP.minHolders && pc >= SEED_PUMP.minPercentChange && top10 <= SEED_PUMP.maxTop10Percent;
-            const passMature = liq >= SEED_MATURE.minLiquidity && mc >= SEED_MATURE.minMarketCap &&
-              holders >= SEED_MATURE.minHolders && vol >= SEED_MATURE.minVolume24h && top10 <= SEED_MATURE.maxTop10Percent;
-            
-            if (!passPump && !passMature) continue;
-            
-            const seedType = passPump ? 'pump' : 'mature';
-            if (!all.has(ca)) {
-              all.set(ca, {
-                symbol: t.symbol || '?', contractAddress: t.contractAddress,
-                chain: chain.name, chainId: chain.chainId, chainType: chain.type, rpcKey: chain.rpcKey,
-                marketCap: mc, liquidity: liq, holders, percentChange24h: pc,
-                top10HolderPercent: top10, source: rn, seedType,
-                volume24h: vol, launchTime: parseInt(t.launchTime || 0),
-              });
-            } else {
-              const e = all.get(ca);
-              if (!e.source.includes(rn)) e.source += `+${rn}`;
-              if (passPump && e.seedType === 'mature') e.seedType = 'both';
-              if (passMature && e.seedType === 'pump') e.seedType = 'both';
-            }
+  for (const chain of CHAINS) {
+    for (const [rt, rn] of rankTypes) {
+      try {
+        const d = await binPost(url, { rankType: rt, chainId: chain.chainId, period: 50,
+          sortBy: 70, orderAsc: false, page: 1, size: 200 });
+        const tokens = d?.data?.tokens || [];
+        log('INFO', `  ${chain.name} ${rn}: ${tokens.length}`);
+        for (const t of tokens) {
+          const ca = (t.contractAddress || '').toLowerCase();
+          if (!ca) continue;
+          const mc = parseFloat(t.marketCap || 0);
+          const liq = parseFloat(t.liquidity || 0);
+          const holders = parseInt(t.holders || 0);
+          const pc = parseFloat(t.percentChange24h || 0);
+          const top10 = parseFloat(t.holdersTop10Percent || 100);
+          const vol = parseFloat(t.volume24h || 0);
+          
+          // 成熟通道筛选
+          if (liq < SEED_MATURE.minLiquidity || mc < SEED_MATURE.minMarketCap) continue;
+          if (holders < SEED_MATURE.minHolders || vol < SEED_MATURE.minVolume24h) continue;
+          if (top10 > SEED_MATURE.maxTop10Percent) continue;
+          
+          if (!all.has(ca)) {
+            all.set(ca, {
+              symbol: t.symbol || '?', contractAddress: t.contractAddress,
+              chain: chain.name, chainId: chain.chainId, chainType: chain.type, rpcKey: chain.rpcKey,
+              marketCap: mc, liquidity: liq, holders, percentChange24h: pc,
+              top10HolderPercent: top10, source: rn, seedType: 'mature',
+              volume24h: vol, launchTime: parseInt(t.launchTime || 0),
+            });
+          } else {
+            const e = all.get(ca);
+            if (!e.source.includes(rn)) e.source += `+${rn}`;
           }
-          await sleep(200);
-        } catch (e) { log('WARN', `  ${chain.name} ${rn}(${scan.label}): ${e.message?.slice(0, 50)}`); }
-      }
+        }
+        await sleep(200);
+      } catch (e) { log('WARN', `  ${chain.name} ${rn}: ${e.message?.slice(0, 50)}`); }
     }
   }
   // Phase 1b: 安全审计过滤（排除高风险/貔貅盘）
@@ -207,11 +190,11 @@ async function fetchSeeds() {
   }
   log('INFO', `  🔒 审计完成: ${audited}个审计, ${kicked}个踢掉`);
   
-  // Phase 1c: DexScreener池子健康检查（踢掉断头铡）
-  log('INFO', `  🏊 池子健康检查 (爆发型种子)...`);
-  const pumpCandidates = [...all.values()].filter(s => s.seedType === 'pump' || s.seedType === 'both');
+  // Phase 1c: DexScreener池子健康检查
+  log('INFO', `  🏊 池子健康检查...`);
+  const toCheck = [...all.values()].slice(0, 50);
   let poolKicked = 0;
-  for (const s of pumpCandidates.slice(0, 30)) {
+  for (const s of toCheck) {
     try {
       const d = await httpReq(`https://api.dexscreener.com/latest/dex/tokens/${s.contractAddress}`);
       const pairs = d?.pairs || [];
@@ -227,24 +210,74 @@ async function fetchSeeds() {
       s.dexLiqMcRatio = liqMcRatio;
       s.dexMainTxns = mainTxns;
       
-      // 踢掉: 流动性/MC < 5% 且 主池交易笔数 < 10000
+      const mainBuys = mainPair.txns?.h24?.buys || 0;
+      const mainSells = mainPair.txns?.h24?.sells || 0;
+      const bsRatio = mainSells > 0 ? (mainBuys / mainSells) : 0;
+      const volMcRatio = (mainPair.volume?.h24 || 0) / mc;
+      const dexId = mainPair.dexId || '';
+      const isPumpfun = s.contractAddress.endsWith('pump') || pairs.some(p => p.dexId === 'pumpfun' || p.dexId === 'pumpswap');
+      
+      s.dexPools = pairs.length;
+      s.dexTotalLiq = totalLiq;
+      s.dexLiqMcRatio = liqMcRatio;
+      s.dexMainTxns = mainTxns;
+      s.dexVolMcRatio = volMcRatio;
+      s.dexBsRatio = bsRatio;
+      s.dexMainDex = dexId;
+      s.isPumpfun = isPumpfun;
+      
+      // 规则1: 流动性/MC < 5% 且 主池交易笔数 < 10000 → 断头铡
       if (liqMcRatio < 0.05 && mainTxns < 10000) {
-        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED: Liq/MC=${(liqMcRatio*100).toFixed(1)}% Txns=${mainTxns} Pools=${pairs.length}`);
+        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED(断头铡): Liq/MC=${(liqMcRatio*100).toFixed(1)}% Txns=${mainTxns}`);
         all.delete(s.contractAddress.toLowerCase());
         poolKicked++;
+        continue;
+      }
+      // 规则2: 非Pump.fun + Vol/MC > 20x → 刷量盘
+      if (!isPumpfun && volMcRatio > 20) {
+        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED(刷量): Vol/MC=${volMcRatio.toFixed(0)}x 非Pump.fun(${dexId})`);
+        all.delete(s.contractAddress.toLowerCase());
+        poolKicked++;
+        continue;
+      }
+      // 规则3: B/S比 > 3.0 → 买单远大于卖单，bot刷买或貔貅卖不掉
+      const bsRatioVal = mainSells > 10 ? (mainBuys / mainSells) : 0;
+      if (bsRatioVal > 3.0) {
+        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED(B/S异常): B/S=${bsRatioVal.toFixed(2)} Buys:${mainBuys} Sells:${mainSells}`);
+        all.delete(s.contractAddress.toLowerCase());
+        poolKicked++;
+        continue;
       }
       await sleep(300); // DexScreener限流
     } catch (e) { /* skip */ }
   }
+  
+  // 规则3: 关联盘检测 — 同批创建+买卖比相同的踢掉
+  const dexInfoMap = new Map();
+  for (const s of [...all.values()]) {
+    if (s.dexBsRatio && s.dexMainDex) {
+      const key = `${s.dexMainDex}_${s.dexBsRatio.toFixed(2)}`;
+      if (!dexInfoMap.has(key)) dexInfoMap.set(key, []);
+      dexInfoMap.get(key).push(s);
+    }
+  }
+  for (const [key, group] of dexInfoMap) {
+    if (group.length >= 3) { // 3个以上币买卖比完全相同 = 同一套bot
+      log('INFO', `    ❌ 关联盘(${group.length}个, B/S=${group[0].dexBsRatio.toFixed(2)}): ${group.map(g => g.symbol).join(', ')}`);
+      for (const g of group) {
+        all.delete(g.contractAddress.toLowerCase());
+        poolKicked++;
+      }
+    }
+  }
+  
   log('INFO', `  🏊 池子检查完成: ${poolKicked}个踢掉`);
   
   const seeds = [...all.values()].sort((a, b) => b.percentChange24h - a.percentChange24h);
   log('INFO', `🌱 种子币: ${seeds.length} 个通过`);
-  const pumpSeeds = seeds.filter(s => s.seedType === 'pump' || s.seedType === 'both');
-  const matureSeeds = seeds.filter(s => s.seedType === 'mature');
-  log('INFO', `  爆发型: ${pumpSeeds.length}, 成熟型: ${matureSeeds.length}`);
+  log('INFO', `  全部成熟型（高流动性+高交易量+高持有者）`);
   for (const s of seeds.slice(0, 20)) {
-    log('INFO', `  [${s.chain}][${s.seedType}] ${s.symbol} MC:$${(s.marketCap/1000).toFixed(0)}k Liq:$${(s.liquidity/1000).toFixed(0)}k Vol:$${(s.volume24h/1e6).toFixed(1)}M +${s.percentChange24h.toFixed(0)}% H:${s.holders} ${s.source}`);
+    log('INFO', `  [${s.chain}] ${s.symbol} MC:$${(s.marketCap/1000).toFixed(0)}k Liq:$${(s.liquidity/1000).toFixed(0)}k Vol:$${(s.volume24h/1e6).toFixed(1)}M H:${s.holders} ${s.source}`);
   }
   saveJSON(SEEDS_FILE, { updatedAt: new Date().toISOString(), count: seeds.length, seeds });
   return seeds;
