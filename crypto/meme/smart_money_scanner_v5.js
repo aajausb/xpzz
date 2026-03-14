@@ -28,6 +28,180 @@ function nextHeliusKey() { return heliusKeys[heliusKeyIdx++ % heliusKeys.length]
 
 const HELIUS_RPC = () => `https://mainnet.helius-rpc.com/?api-key=${nextHeliusKey()}`;
 
+// 多链支持
+const CHAINS = [
+  { id: 'solana', gecko: 'solana', dexscreener: 'solana', label: 'SOL' },
+  { id: 'bsc', gecko: 'bsc', dexscreener: 'bsc', label: 'BSC', rpc: 'https://bsc-mainnet.public.blastapi.io' },
+  { id: 'base', gecko: 'base', dexscreener: 'base', label: 'BASE', rpc: 'https://base-mainnet.public.blastapi.io' },
+];
+
+const EVM_TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+
+// EVM链：通过Transfer事件找活跃买家
+async function getEvmTopBuyers(tokenAddress, chain) {
+  const chainConfig = CHAINS.find(c => c.id === chain);
+  if (!chainConfig?.rpc) return [];
+  
+  try {
+    // 获取当前区块
+    const blockRes = await fetch(chainConfig.rpc, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({jsonrpc:'2.0', method:'eth_blockNumber', id:1})
+    }).then(r => r.json());
+    const latest = parseInt(blockRes.result, 16);
+    
+    // 分批查最近30000块 (~25小时BSC / ~17小时Base)
+    let allEvents = [];
+    const batchSize = 2000;
+    const batches = 15;
+    
+    for (let i = 0; i < batches; i++) {
+      const to = latest - i * batchSize;
+      const from = to - batchSize + 1;
+      try {
+        const r = await fetch(chainConfig.rpc, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({jsonrpc:'2.0', method:'eth_getLogs', params:[{
+            fromBlock: '0x' + from.toString(16),
+            toBlock: '0x' + to.toString(16),
+            address: tokenAddress,
+            topics: [EVM_TRANSFER_TOPIC]
+          }], id: 1})
+        }).then(r => r.json());
+        if (r.result) allEvents.push(...r.result);
+      } catch {}
+      await new Promise(r => setTimeout(r, 300));
+    }
+    
+    if (allEvents.length === 0) return [];
+    
+    log('INFO', `  EVM ${chain}: ${allEvents.length} transfer events`);
+    
+    // 统计每个地址的买卖
+    const activity = {};
+    const zero = '0x' + '0'.repeat(40);
+    
+    for (const evt of allEvents) {
+      const t = evt.topics;
+      if (t.length < 3) continue;
+      const fr = '0x' + t[1].slice(-40);
+      const to = '0x' + t[2].slice(-40);
+      const val = BigInt(evt.data || '0x0');
+      
+      if (fr !== zero) {
+        if (!activity[fr]) activity[fr] = {buys:0, sells:0, net: 0n};
+        activity[fr].sells++;
+        activity[fr].net -= val;
+      }
+      if (to !== zero) {
+        if (!activity[to]) activity[to] = {buys:0, sells:0, net: 0n};
+        activity[to].buys++;
+        activity[to].net += val;
+      }
+    }
+    
+    // 返回净买入最多的地址（排除DEX router等高频地址）
+    const buyers = Object.entries(activity)
+      .filter(([, v]) => v.net > 0n && v.buys >= 2 && v.buys + v.sells < 5000) // 排除router
+      .sort((a, b) => Number(b[1].net - a[1].net))
+      .slice(0, 20)
+      .map(([addr, v]) => ({
+        wallet: addr,
+        buys: v.buys,
+        sells: v.sells,
+        netTokens: Number(v.net / 10n**18n),
+      }));
+    
+    return buyers;
+  } catch (e) {
+    log('WARN', `EVM getTopBuyers失败 ${chain}: ${e.message?.slice(0, 60)}`);
+    return [];
+  }
+}
+
+// EVM链：分析钱包交易历史（查某钱包在多个token上的盈亏）
+async function analyzeEvmWallet(wallet, chain) {
+  const chainConfig = CHAINS.find(c => c.id === chain);
+  if (!chainConfig?.rpc) return null;
+  
+  try {
+    const blockRes = await fetch(chainConfig.rpc, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({jsonrpc:'2.0', method:'eth_blockNumber', id:1})
+    }).then(r => r.json());
+    const latest = parseInt(blockRes.result, 16);
+    
+    // 查这个钱包的所有ERC20 transfer（作为sender或receiver）
+    // 需要两次查询：一次topics[1]=wallet（发出），一次topics[2]=wallet（收到）
+    const paddedWallet = '0x' + '0'.repeat(24) + wallet.slice(2);
+    let allEvents = [];
+    
+    for (let i = 0; i < 15; i++) {
+      const to = latest - i * 2000;
+      const from = to - 1999;
+      
+      // 收到的token
+      try {
+        const r = await fetch(chainConfig.rpc, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({jsonrpc:'2.0', method:'eth_getLogs', params:[{
+            fromBlock: '0x'+from.toString(16), toBlock: '0x'+to.toString(16),
+            topics: [EVM_TRANSFER_TOPIC, null, paddedWallet]
+          }], id:1})
+        }).then(r => r.json());
+        if (r.result) allEvents.push(...r.result.map(e => ({...e, dir: 'in'})));
+      } catch {}
+      
+      // 发出的token
+      try {
+        const r = await fetch(chainConfig.rpc, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({jsonrpc:'2.0', method:'eth_getLogs', params:[{
+            fromBlock: '0x'+from.toString(16), toBlock: '0x'+to.toString(16),
+            topics: [EVM_TRANSFER_TOPIC, paddedWallet]
+          }], id:1})
+        }).then(r => r.json());
+        if (r.result) allEvents.push(...r.result.map(e => ({...e, dir: 'out'})));
+      } catch {}
+      
+      await new Promise(r => setTimeout(r, 300));
+    }
+    
+    if (allEvents.length === 0) return null;
+    
+    // 按token分组统计
+    const tokenPnL = {};
+    for (const evt of allEvents) {
+      const token = evt.address?.toLowerCase();
+      if (!token) continue;
+      if (!tokenPnL[token]) tokenPnL[token] = {buys: 0, sells: 0, netTokens: 0n};
+      const val = BigInt(evt.data || '0x0');
+      if (evt.dir === 'in') {
+        tokenPnL[token].buys++;
+        tokenPnL[token].netTokens += val;
+      } else {
+        tokenPnL[token].sells++;
+        tokenPnL[token].netTokens -= val;
+      }
+    }
+    
+    // 简单盈亏判定：卖出>买入的token = 可能盈利（精确PnL需要价格数据）
+    const tokens = Object.entries(tokenPnL).filter(([, v]) => v.buys > 0 || v.sells > 0);
+    const profitable = tokens.filter(([, v]) => v.sells > 0 && v.netTokens < 0n); // 卖出了更多 = 可能赚了
+    
+    return {
+      wallet,
+      chain,
+      txCount: allEvents.length,
+      totalTokens: tokens.length,
+      profitableTokens: profitable.length,
+    };
+  } catch (e) {
+    log('WARN', `EVM analyzeWallet失败: ${e.message?.slice(0, 60)}`);
+    return null;
+  }
+}
+
 // ============ THRESHOLDS ============
 const MIN_FDV = 500_000;
 const MIN_VOL_24H = 50_000;
@@ -77,10 +251,10 @@ async function discoverCoins() {
   const seenMints = new Set(candidates.coins.map(c => c.mint).filter(Boolean));
   const ninetyDaysAgo = Date.now() - MAX_AGE_DAYS * 86400000;
 
-  function addCoin(symbol, mint, fdv, vol, ageD) {
+  function addCoin(symbol, mint, fdv, vol, ageD, chain = 'solana') {
     if (!mint || seenMints.has(mint)) return;
     seenMints.add(mint);
-    candidates.coins.push({ symbol, mint, fdv, vol, ageD, addedAt: new Date().toISOString() });
+    candidates.coins.push({ symbol, mint, fdv, vol, ageD, chain, addedAt: new Date().toISOString() });
   }
 
   // DexScreener搜索
@@ -99,16 +273,17 @@ async function discoverCoins() {
     'smith', 'sos', 'drone', 'shape', 'runner', 'afk', 'birb',
   ];
 
+  const validChains = new Set(CHAINS.map(c => c.dexscreener));
   for (const q of queries) {
     try {
       const r = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(q)}`);
       const d = await r.json();
       for (const p of (d.pairs || [])) {
-        if (p.chainId !== 'solana') continue;
+        if (!validChains.has(p.chainId)) continue;
         if ((p.fdv || 0) < MIN_FDV) continue;
         if ((p.volume?.h24 || 0) < MIN_VOL_24H) continue;
         if (!p.pairCreatedAt || p.pairCreatedAt < ninetyDaysAgo) continue;
-        addCoin(p.baseToken?.symbol, p.baseToken?.address, p.fdv, p.volume?.h24, Math.round((Date.now() - p.pairCreatedAt) / 86400000));
+        addCoin(p.baseToken?.symbol, p.baseToken?.address, p.fdv, p.volume?.h24, Math.round((Date.now() - p.pairCreatedAt) / 86400000), p.chainId);
       }
     } catch {}
     await new Promise(r => setTimeout(r, 200));
@@ -118,81 +293,66 @@ async function discoverCoins() {
   try {
     const r = await fetch('https://api.dexscreener.com/token-boosts/top/v1');
     const boosts = await r.json();
-    for (const b of (boosts || []).filter(b => b.chainId === 'solana')) {
+    for (const b of (boosts || []).filter(b => validChains.has(b.chainId))) {
       try {
         const r2 = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + b.tokenAddress);
         const d2 = await r2.json();
-        const p = (d2.pairs || []).find(p => p.chainId === 'solana' && (p.fdv || 0) >= MIN_FDV);
+        const p = (d2.pairs || []).find(p => validChains.has(p.chainId) && (p.fdv || 0) >= MIN_FDV);
         if (p && p.pairCreatedAt > ninetyDaysAgo && (p.volume?.h24 || 0) >= MIN_VOL_24H) {
-          addCoin(p.baseToken?.symbol, b.tokenAddress, p.fdv, p.volume?.h24, Math.round((Date.now() - p.pairCreatedAt) / 86400000));
+          addCoin(p.baseToken?.symbol, b.tokenAddress, p.fdv, p.volume?.h24, Math.round((Date.now() - p.pairCreatedAt) / 86400000), p.chainId);
         }
       } catch {}
       await new Promise(r => setTimeout(r, 200));
     }
   } catch {}
 
-  // === 新增币源1: GeckoTerminal trending（当前热门，不靠关键词）===
-  try {
-    const r = await fetch('https://api.geckoterminal.com/api/v2/networks/solana/trending_pools?page=1');
-    const d = await r.json();
-    for (const p of (d.data || [])) {
-      const a = p.attributes || {};
-      const fdv = parseFloat(a.fdv_usd) || 0;
-      const vol = parseFloat((a.volume_usd || {}).h24) || 0;
-      const mint = (p.relationships?.base_token?.data?.id || '').replace('solana_', '');
-      const symbol = (a.name || '').split(' / ')[0]?.trim();
-      if (mint && mint.length > 20 && fdv >= MIN_FDV && vol >= MIN_VOL_24H) {
-        const created = a.pool_created_at ? new Date(a.pool_created_at).getTime() : Date.now();
-        if (created > ninetyDaysAgo) {
-          addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000));
+  // === GeckoTerminal: 三条链 trending + volume ===
+  for (const chain of CHAINS) {
+    // Trending page 1-3
+    for (const page of [1, 2, 3]) {
+      try {
+        const r = await fetch(`https://api.geckoterminal.com/api/v2/networks/${chain.gecko}/trending_pools?page=${page}`);
+        const d = await r.json();
+        for (const p of (d.data || [])) {
+          const a = p.attributes || {};
+          const fdv = parseFloat(a.fdv_usd) || 0;
+          const vol = parseFloat((a.volume_usd || {}).h24) || 0;
+          const rawId = p.relationships?.base_token?.data?.id || '';
+          const mint = rawId.replace(`${chain.gecko}_`, '');
+          const symbol = (a.name || '').split(' / ')[0]?.trim();
+          if (mint && mint.length > 20 && fdv >= MIN_FDV && vol >= MIN_VOL_24H) {
+            const created = a.pool_created_at ? new Date(a.pool_created_at).getTime() : Date.now();
+            if (created > ninetyDaysAgo) {
+              addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000), chain.id);
+            }
+          }
         }
-      }
+      } catch {}
+      await new Promise(r => setTimeout(r, 1500));
     }
-    log('INFO', `GeckoTerminal trending: 已处理`);
-  } catch (e) { log('WARN', `GeckoTerminal trending失败: ${e.message?.slice(0, 60)}`); }
-  await new Promise(r => setTimeout(r, 1500)); // GeckoTerminal限流严格
-
-  // === 新增币源2: GeckoTerminal 成交量排行（曾经热过的）===
-  try {
-    const r = await fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools?sort=h24_volume_usd_desc&page=1');
-    const d = await r.json();
-    for (const p of (d.data || [])) {
-      const a = p.attributes || {};
-      const fdv = parseFloat(a.fdv_usd) || 0;
-      const vol = parseFloat((a.volume_usd || {}).h24) || 0;
-      const mint = (p.relationships?.base_token?.data?.id || '').replace('solana_', '');
-      const symbol = (a.name || '').split(' / ')[0]?.trim();
-      if (mint && mint.length > 20 && fdv >= MIN_FDV && vol >= MIN_VOL_24H) {
-        const created = a.pool_created_at ? new Date(a.pool_created_at).getTime() : Date.now();
-        if (created > ninetyDaysAgo) {
-          addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000));
-        }
-      }
-    }
-    log('INFO', `GeckoTerminal volume排行: 已处理`);
-  } catch (e) { log('WARN', `GeckoTerminal volume失败: ${e.message?.slice(0, 60)}`); }
-  await new Promise(r => setTimeout(r, 1500));
-
-  // === 新增币源3: GeckoTerminal 第2-3页（覆盖更多）===
-  for (const page of [2, 3]) {
+    
+    // Volume排行 page 1
     try {
-      const r = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/trending_pools?page=${page}`);
+      const r = await fetch(`https://api.geckoterminal.com/api/v2/networks/${chain.gecko}/pools?sort=h24_volume_usd_desc&page=1`);
       const d = await r.json();
       for (const p of (d.data || [])) {
         const a = p.attributes || {};
         const fdv = parseFloat(a.fdv_usd) || 0;
         const vol = parseFloat((a.volume_usd || {}).h24) || 0;
-        const mint = (p.relationships?.base_token?.data?.id || '').replace('solana_', '');
+        const rawId = p.relationships?.base_token?.data?.id || '';
+        const mint = rawId.replace(`${chain.gecko}_`, '');
         const symbol = (a.name || '').split(' / ')[0]?.trim();
         if (mint && mint.length > 20 && fdv >= MIN_FDV && vol >= MIN_VOL_24H) {
           const created = a.pool_created_at ? new Date(a.pool_created_at).getTime() : Date.now();
           if (created > ninetyDaysAgo) {
-            addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000));
+            addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000), chain.id);
           }
         }
       }
     } catch {}
     await new Promise(r => setTimeout(r, 1500));
+    
+    log('INFO', `GeckoTerminal ${chain.label}: trending+volume 已处理`);
   }
 
   // 预存数据
@@ -222,11 +382,12 @@ const MIN_SLOW_PUMP = 5; // 收盘价从低到高至少5倍
 const MAX_SINGLE_DAY_RANGE = 8; // 单日日内波动超过8x = 冲高型
 
 async function checkSlowPump(coin) {
+  const chainId = coin.chain || 'solana';
   try {
     // 找pool地址
     const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${coin.mint}`);
     const d = await r.json();
-    const pair = (d.pairs || []).find(p => p.chainId === 'solana');
+    const pair = (d.pairs || []).find(p => p.chainId === chainId);
     if (!pair) return { pass: false, reason: 'no_pair' };
     
     const poolAddr = pair.pairAddress;
@@ -235,16 +396,17 @@ async function checkSlowPump(coin) {
     await new Promise(r => setTimeout(r, 1500)); // GeckoTerminal限流
     
     // 查日K线
-    const kr = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${poolAddr}/ohlcv/day?aggregate=1&limit=30`);
+    const geckoNet = CHAINS.find(c => c.id === chainId)?.gecko || chainId;
+    const kr = await fetch(`https://api.geckoterminal.com/api/v2/networks/${geckoNet}/pools/${poolAddr}/ohlcv/day?aggregate=1&limit=30`);
     const kd = await kr.json();
     const ohlcv = kd?.data?.attributes?.ohlcv_list;
     
     if (!ohlcv || ohlcv.length < 2) {
-      // 太新没K线 → 如果创建超24h且FDV>$1M就放行（给新币一个机会）
-      if (pairAge > 24 && (coin.fdv || 0) >= 1e6) {
-        return { pass: true, reason: 'new_coin_pass', multiplier: 0, days: 0, type: 'new' };
+      // 没K线但FDV≥$1M → 放行（可能是新币或K线延迟）
+      if ((coin.fdv || 0) >= 1e6) {
+        return { pass: true, reason: 'no_kline_but_big', multiplier: 0, days: 0, type: 'new' };
       }
-      return { pass: false, reason: `no_kline_${Math.round(pairAge)}h_old` };
+      return { pass: false, reason: `no_kline_${Math.round(pairAge)}h_old_small` };
     }
     
     const candles = ohlcv.slice().reverse(); // 时间正序（早→晚）
@@ -577,13 +739,49 @@ async function main() {
         // 先检查K线：是慢涨还是开盘冲高？
         const pump = await checkSlowPump(coin);
         if (!pump.pass) {
-          log('INFO', `跳过 ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M): ${pump.reason}`);
+          const chainTag2 = (coin.chain || 'solana').toUpperCase();
+          log('INFO', `跳过 [${chainTag2}] ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M): ${pump.reason}`);
           if (!candidates.scanned) candidates.scanned = [];
           candidates.scanned.push(coin.mint);
           saveJSON(CANDIDATES_FILE, candidates);
           continue;
         }
-        log('INFO', `✓ ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) 慢涨${pump.multiplier}x (${pump.days}天, 最大单日${pump.maxDayRange || '?'}x) [${pump.type}]`);
+        const chainTag = (coin.chain || 'solana').toUpperCase();
+        log('INFO', `✓ [${chainTag}] ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) 慢涨${pump.multiplier}x (${pump.days}天, 最大单日${pump.maxDayRange || '?'}x) [${pump.type}]`);
+        
+        // EVM链：用Transfer事件找top买家
+        if (coin.chain && coin.chain !== 'solana') {
+          log('INFO', `查买家: [${coin.chain.toUpperCase()}] ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) mint:${coin.mint.slice(0, 16)}`);
+          const evmBuyers = await getEvmTopBuyers(coin.mint, coin.chain);
+          log('INFO', `  ${coin.symbol}: ${evmBuyers.length} 个活跃买家`);
+          
+          for (const buyer of evmBuyers) {
+            if (!pool.wallets[buyer.wallet]) {
+              pool.wallets[buyer.wallet] = {
+                holdings: {},
+                profitByMint: {},
+                chain: coin.chain,
+                firstSeen: new Date().toISOString(),
+              };
+            }
+            pool.wallets[buyer.wallet].holdings[coin.mint] = {
+              symbol: coin.symbol,
+              netTokens: buyer.netTokens,
+            };
+            pool.wallets[buyer.wallet].profitByMint[coin.mint] = {
+              symbol: coin.symbol,
+              buys: buyer.buys,
+              sells: buyer.sells,
+              netTokens: buyer.netTokens,
+            };
+          }
+          
+          if (!candidates.scanned) candidates.scanned = [];
+          candidates.scanned.push(coin.mint);
+          saveJSON(CANDIDATES_FILE, candidates);
+          saveJSON(WALLET_POOL_FILE, pool);
+          continue;
+        }
         
         log('INFO', `查持有者: ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) mint:${coin.mint.slice(0, 16)}`);
         
@@ -664,19 +862,23 @@ async function main() {
       const toAnalyze = unanalyzed.slice(0, 3); // 每轮分析3个钱包
       
       for (const wallet of toAnalyze) {
-        log('INFO', `分析钱包: ${wallet.slice(0, 20)}...`);
+        const walletChain = pool.wallets[wallet]?.chain || 'solana';
+        log('INFO', `分析钱包: [${walletChain.toUpperCase()}] ${wallet.slice(0, 20)}...`);
         
-        const result = await analyzeWallet(wallet);
+        const result = walletChain === 'solana' 
+          ? await analyzeWallet(wallet) 
+          : await analyzeEvmWallet(wallet, walletChain);
         
-        if (!result || result.tokens.length === 0) {
+        if (!result || (result.tokens || []).length === 0) {
           log('INFO', `  无交易数据，跳过`);
           pool.analyzed.push(wallet);
           analyzedSet.add(wallet);
           continue;
         }
         
-        const profitable = result.tokens.filter(t => t.profitUsd > 0);
-        const totalProfit = result.tokens.reduce((a, t) => a + t.profitUsd, 0);
+        const tokens = result.tokens || [];
+        const profitable = tokens.filter(t => t.profitUsd > 0);
+        const totalProfit = tokens.reduce((a, t) => a + (t.profitUsd || 0), 0);
         
         log('INFO', `  ${result.txCount}条交易, ${result.timeSpanDays}天, ${result.totalTokens}个token, ${profitable.length}个盈利, 总$${totalProfit}`);
         
@@ -687,7 +889,7 @@ async function main() {
           totalTokens: result.totalTokens,
           profitableTokens: result.profitableTokens,
           totalProfitUsd: totalProfit,
-          tokens: result.tokens.sort((a, b) => b.profitUsd - a.profitUsd).slice(0, 20), // 保留top20
+          tokens: (result.tokens || []).sort((a, b) => (b.profitUsd||0) - (a.profitUsd||0)).slice(0, 20),
           analyzedAt: new Date().toISOString(),
         };
         
@@ -722,7 +924,7 @@ async function main() {
               totalCoins: result.totalTokens,
               txCount: result.txCount,
               timeSpanDays: result.timeSpanDays,
-              topTokens: result.tokens.slice(0, 10),
+              topTokens: (result.tokens || []).slice(0, 10),
               source: 'scanner_v5',
               addedAt: new Date().toISOString(),
             });

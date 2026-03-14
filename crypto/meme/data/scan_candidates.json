@@ -4,25 +4,28 @@
       "symbol": "DOGE",
       "mint": "DogesYEofkdNd6FqbqoBRPBBj3gZzTgnTL5gDK5qx4rG",
       "fdv": 2767505,
-      "vol": 80323.99,
+      "vol": 80319.99,
       "ageD": 53,
-      "addedAt": "2026-03-14T05:47:43.306Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:17.965Z"
     },
     {
       "symbol": "DOGE",
       "mint": "DogeP1Hzndj6KMyB2DggL6ghrVwpC4VvPAJAuNis9KWQ",
       "fdv": 2056820,
-      "vol": 80235.99,
+      "vol": 80227.99,
       "ageD": 32,
-      "addedAt": "2026-03-14T05:47:43.306Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:17.965Z"
     },
     {
       "symbol": "PEPE",
       "mint": "PE85tFDe19MhGLE7FrJEEEiFWPFsD2Zr16dGkhWgmQh",
       "fdv": 4202701,
-      "vol": 161344.95,
+      "vol": 161328.95,
       "ageD": 60,
-      "addedAt": "2026-03-14T05:47:43.525Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:18.182Z"
     },
     {
       "symbol": "Bird",
@@ -30,7 +33,8 @@
       "fdv": 24916667,
       "vol": 11027572.64,
       "ageD": 0,
-      "addedAt": "2026-03-14T05:47:47.198Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:20.515Z"
     },
     {
       "symbol": "ROCKET",
@@ -38,79 +42,116 @@
       "fdv": 1069643,
       "vol": 609522.55,
       "ageD": 1,
-      "addedAt": "2026-03-14T05:47:48.254Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:21.980Z"
     },
     {
       "symbol": "WAR",
       "mint": "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump",
-      "fdv": 33912138,
-      "vol": 1418828.15,
+      "fdv": 34073549,
+      "vol": 1391017.32,
       "ageD": 3,
-      "addedAt": "2026-03-14T05:47:51.260Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:24.860Z"
     },
     {
       "symbol": "WAR",
       "mint": "8opvqaWysX1oYbXuTL8PHaoaTiXD69VFYAX4smPebonk",
-      "fdv": 3924695,
-      "vol": 488816.19,
+      "fdv": 3783665,
+      "vol": 464626.35,
       "ageD": 52,
-      "addedAt": "2026-03-14T05:47:51.260Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:24.860Z"
     },
     {
       "symbol": "WAR",
       "mint": "GHXwEFxKNcz7FLgFvYRi1ZAwvKKALdRVUJ8M3Aszmoon",
-      "fdv": 4005949,
-      "vol": 161495.15,
-      "ageD": 29,
-      "addedAt": "2026-03-14T05:47:51.260Z"
+      "fdv": 3946563,
+      "vol": 149952.68,
+      "ageD": 30,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:24.860Z"
     },
     {
       "symbol": "Punch",
       "mint": "NV2RYH954cTJ3ckFUpvfqaQXU4ARqqDH3562nFSpump",
-      "fdv": 6770657,
-      "vol": 1629410.76,
+      "fdv": 8002097,
+      "vol": 1837500.92,
       "ageD": 37,
-      "addedAt": "2026-03-14T05:47:52.066Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:25.653Z"
     },
     {
-      "symbol": "RUNNER",
-      "mint": "AiLRVGDcBLvP36mDhKEjh8Dc67L9G7cwhTXhZrwLC3nB",
-      "fdv": 1713731,
-      "vol": 154262,
+      "symbol": "RICH",
+      "mint": "0xCcC3A0aD598e1958C563a9c9d79fe6bDcc058938",
+      "fdv": 27499736,
+      "vol": 178516.33,
+      "ageD": 85,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:30.600Z"
+    },
+    {
+      "symbol": "WHALE",
+      "mint": "D9g3NFv4qCeDFbj35DxB4aa53oDudfUtbv6S8Umdpump",
+      "fdv": 1178828,
+      "vol": 2503796.78,
       "ageD": 0,
-      "addedAt": "2026-03-14T05:47:54.392Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:33.719Z"
+    },
+    {
+      "symbol": "MEMECARD",
+      "mint": "ACc3ZBq1c9h7pofwn2J8b8bvRHvqMFwynVg8neLZpump",
+      "fdv": 3155182,
+      "vol": 3544371.21,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:39.307Z"
+    },
+    {
+      "symbol": "memes",
+      "mint": "0xF74548802f4c700315F019FdE17178b392EE4444",
+      "fdv": 1350069,
+      "vol": 5410495.32,
+      "ageD": 52,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:39.307Z"
     },
     {
       "symbol": "SOS",
       "mint": "33dhma9QA7xefhVpA7c5vMrN826xcHanSHruUEKF2LmW",
-      "fdv": 3474545,
-      "vol": 361296.41,
+      "fdv": 3972806,
+      "vol": 345520.96,
       "ageD": 12,
-      "addedAt": "2026-03-14T05:48:06.670Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:41.400Z"
     },
     {
       "symbol": "SOS",
       "mint": "DpxKNEi3XVeRByaGqYKvz2w6E2PhPgBAqdayLcQEpump",
-      "fdv": 5002678,
-      "vol": 5925580.58,
+      "fdv": 4754044,
+      "vol": 5932759.36,
       "ageD": 4,
-      "addedAt": "2026-03-14T05:48:06.670Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:41.400Z"
     },
     {
       "symbol": "DRONE",
       "mint": "7NYWLY8vL9s4NRjjXo2pK9USSDqre6tCMETAyzkMGiPN",
-      "fdv": 4428671,
-      "vol": 1028456.31,
+      "fdv": 5085489,
+      "vol": 1097832.63,
       "ageD": 1,
-      "addedAt": "2026-03-14T05:48:07.066Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:41.783Z"
     },
     {
       "symbol": "SHAPE",
       "mint": "4HhWcsfjaWYKJtjaxd4EyGSAL4Ky8C3DvqAWPHnrpump",
-      "fdv": 1721895,
-      "vol": 362715.36,
+      "fdv": 1452442,
+      "vol": 352797.77,
       "ageD": 11,
-      "addedAt": "2026-03-14T05:48:07.616Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:42.327Z"
     },
     {
       "symbol": "RUNNER",
@@ -118,71 +159,44 @@
       "fdv": 1399795,
       "vol": 217442.81,
       "ageD": 0,
-      "addedAt": "2026-03-14T05:48:08.165Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:42.878Z"
     },
     {
       "symbol": "afk",
       "mint": "kMKX8hBaj3BTRBbeYix9c16EieBP5dih8DTSSwCpump",
-      "fdv": 2557916,
-      "vol": 91698.46,
+      "fdv": 2524037,
+      "vol": 92112.65,
       "ageD": 48,
-      "addedAt": "2026-03-14T05:48:08.706Z"
-    },
-    {
-      "symbol": "我的刀盾",
-      "mint": "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump",
-      "fdv": 2097027,
-      "vol": 0,
-      "ageD": 0,
-      "addedAt": "2026-03-14T05:48:18.006Z"
-    },
-    {
-      "symbol": "BNB",
-      "mint": "9X8uhdXbw5DtpDQUMAZrpTFiEbp5LRQCod1V97wRgXqk",
-      "fdv": 38957280,
-      "vol": 672016.44,
-      "ageD": 1,
-      "addedAt": "2026-03-14T05:48:18.006Z"
-    },
-    {
-      "symbol": "SOL",
-      "mint": "sosd5Q3DutGxMEaukBDmkPgsapMQz59jNjGWmhYcdTQ",
-      "fdv": 3298484,
-      "vol": 144404.99,
-      "ageD": 57,
-      "addedAt": "2026-03-14T05:48:18.006Z"
-    },
-    {
-      "symbol": "SOL",
-      "mint": "sokhCSmzutMPPuNcxG1j6gYLowgiM8mswjJu8FBYm5r",
-      "fdv": 2310801,
-      "vol": 80372,
-      "ageD": 37,
-      "addedAt": "2026-03-14T05:48:18.006Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:43.412Z"
     },
     {
       "symbol": "HeavyPulp",
       "mint": "8G5ayEsJF4Q7FEWEGeF4jtnUWZBEKCqhySTFQf9Ppump",
-      "fdv": 1085186.01762819,
-      "vol": 6704502.87840983,
+      "fdv": 1172342.33074236,
+      "vol": 3372775.53099973,
       "ageD": 46,
-      "addedAt": "2026-03-14T06:15:32.532Z"
-    },
-    {
-      "symbol": "Distorted",
-      "mint": "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump",
-      "fdv": 1270362.86623183,
-      "vol": 1173084.92919088,
-      "ageD": 5,
-      "addedAt": "2026-03-14T06:15:32.532Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:52.090Z"
     },
     {
       "symbol": "PsyopAnime",
       "mint": "2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump",
-      "fdv": 6487022.07410968,
-      "vol": 148089.974746218,
+      "fdv": 6205529.68007328,
+      "vol": 161926.788293656,
       "ageD": 63,
-      "addedAt": "2026-03-14T06:15:32.532Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:53.704Z"
+    },
+    {
+      "symbol": "PENGUIN",
+      "mint": "8Jx8AAHj86wbQgUTjGuj6GTTL5Ps3cqxKRTvpaJApump",
+      "fdv": 4981579.95420847,
+      "vol": 146182.713088535,
+      "ageD": 57,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:53.704Z"
     },
     {
       "symbol": "AFE",
@@ -190,7 +204,8 @@
       "fdv": 19822586.1299207,
       "vol": 53900335.9791477,
       "ageD": 1,
-      "addedAt": "2026-03-14T06:15:34.196Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:56.980Z"
     },
     {
       "symbol": "EJSQ",
@@ -198,31 +213,179 @@
       "fdv": 22111244.2399558,
       "vol": 53323139.8945882,
       "ageD": 1,
-      "addedAt": "2026-03-14T06:15:34.196Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:56.980Z"
     },
     {
-      "symbol": "PENGUIN",
-      "mint": "8Jx8AAHj86wbQgUTjGuj6GTTL5Ps3cqxKRTvpaJApump",
-      "fdv": 4912788.87417178,
-      "vol": 137283.552496687,
+      "symbol": "龙虾",
+      "mint": "0xeccbb861c0dda7efd964010085488b69317e4444",
+      "fdv": 15598774.3107133,
+      "vol": 4269041.49395813,
+      "ageD": 15,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:58.591Z"
+    },
+    {
+      "symbol": "ION",
+      "mint": "0xe1ab61f7b093435204df32f5b3a405de55445ea8",
+      "fdv": 8608460.39560275,
+      "vol": 229799.133365938,
+      "ageD": 11,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:58.591Z"
+    },
+    {
+      "symbol": "Freedom of Money",
+      "mint": "0x3e17ee3b1895dd1a7cf993a89769c5e029584444",
+      "fdv": 11258736.4649376,
+      "vol": 1633792.10552747,
+      "ageD": 73,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:58.591Z"
+    },
+    {
+      "symbol": "memes",
+      "mint": "0xf74548802f4c700315f019fde17178b392ee4444",
+      "fdv": 1337789.86250955,
+      "vol": 1529489.69196934,
+      "ageD": 52,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:58.591Z"
+    },
+    {
+      "symbol": "SN3",
+      "mint": "0xf758cfb1467a227516d73d87da7d36e7cb6f71f1",
+      "fdv": 5162500.42062453,
+      "vol": 649453.236247965,
+      "ageD": 3,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:58.591Z"
+    },
+    {
+      "symbol": "Fight",
+      "mint": "0xe683a48df543d68ed96d53dd1fda73ccbd144444",
+      "fdv": 2626444.521,
+      "vol": 3166048.37531563,
+      "ageD": 3,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
+    },
+    {
+      "symbol": "BSB",
+      "mint": "0x595deaad1eb5476ff1e649fdb7efc36f1e4679cc",
+      "fdv": 5076023.58635591,
+      "vol": 19154805.8730281,
+      "ageD": 11,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
+    },
+    {
+      "symbol": "RAVE",
+      "mint": "0x97693439ea2f0ecdeb9135881e49f354656a911c",
+      "fdv": 7724259.24662921,
+      "vol": 4772733.65481088,
+      "ageD": 78,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
+    },
+    {
+      "symbol": "TRIA",
+      "mint": "0xb0b92de23baa85fb06208277e925ced53edab482",
+      "fdv": 8973522.48603732,
+      "vol": 3241679.88315887,
+      "ageD": 39,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
+    },
+    {
+      "symbol": "我是未来",
+      "mint": "0x6d8d8df799279e761a4f49edc319b3bd50f14444",
+      "fdv": 1041214.47163021,
+      "vol": 758170.350569808,
       "ageD": 56,
-      "addedAt": "2026-03-14T06:15:35.806Z"
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
+    },
+    {
+      "symbol": "ZAMA",
+      "mint": "0x6907a5986c4950bdaf2f81828ec0737ce787519f",
+      "fdv": 10156375.7650414,
+      "vol": 2281413.24139126,
+      "ageD": 43,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
     },
     {
       "symbol": "SMITH",
-      "mint": "AMg45T6X4kzJbwJtfuNvgBnMN9JGf5encaQxAh8uDVqf",
-      "fdv": 27158784,
-      "vol": 52943.4,
+      "mint": "9e1wtawpbkrJGq3vLbPGBvpQFLfsPFtjai4D9eo9pump",
+      "fdv": 1009226,
+      "vol": 0,
       "ageD": 0,
-      "addedAt": "2026-03-14T06:31:16.370Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
+    },
+    {
+      "symbol": "我的刀盾",
+      "mint": "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump",
+      "fdv": 2097027,
+      "vol": 0,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
+    },
+    {
+      "symbol": "BNB",
+      "mint": "9X8uhdXbw5DtpDQUMAZrpTFiEbp5LRQCod1V97wRgXqk",
+      "fdv": 38957280,
+      "vol": 672016.44,
+      "ageD": 1,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
+    },
+    {
+      "symbol": "SOL",
+      "mint": "sosd5Q3DutGxMEaukBDmkPgsapMQz59jNjGWmhYcdTQ",
+      "fdv": 3298484,
+      "vol": 144404.99,
+      "ageD": 57,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
+    },
+    {
+      "symbol": "SOL",
+      "mint": "sokhCSmzutMPPuNcxG1j6gYLowgiM8mswjJu8FBYm5r",
+      "fdv": 2310801,
+      "vol": 80372,
+      "ageD": 37,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
+    },
+    {
+      "symbol": "Wojak",
+      "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
+      "fdv": 596219,
+      "vol": 72960.89,
+      "ageD": 51,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:18.402Z"
     },
     {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
-      "fdv": 157807038,
-      "vol": 617252.68,
+      "fdv": 159459058,
+      "vol": 629580.11,
       "ageD": 45,
-      "addedAt": "2026-03-14T05:47:47.198Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:20.515Z"
+    },
+    {
+      "symbol": "AGENT",
+      "mint": "0x9dD34E127E5198bcF4EbB400902E77FD41664444",
+      "fdv": 573435,
+      "vol": 598474.53,
+      "ageD": 10,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:23.515Z"
     },
     {
       "symbol": "Fight",
@@ -230,39 +393,116 @@
       "fdv": 78786573,
       "vol": 805799.08,
       "ageD": 1,
-      "addedAt": "2026-03-14T05:47:51.674Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:25.257Z"
     },
     {
       "symbol": "Memehouse",
       "mint": "E93JuGQcHiXZ9upFZWELgvu5QsC9DD1qzkcGhJrpump",
-      "fdv": 810583,
-      "vol": 2345334.06,
+      "fdv": 921063,
+      "vol": 3450254.61,
       "ageD": 0,
-      "addedAt": "2026-03-14T05:48:04.700Z"
-    },
-    {
-      "symbol": "SMITH",
-      "mint": "9e1wtawpbkrJGq3vLbPGBvpQFLfsPFtjai4D9eo9pump",
-      "fdv": 691357,
-      "vol": 5436078.48,
-      "ageD": 1,
-      "addedAt": "2026-03-14T05:48:06.119Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:39.307Z"
     },
     {
       "symbol": "SMITH",
       "mint": "6SdA442qgUbrsxhWSRGJuhZdaviZpzPXLkpoCURZr9QS",
-      "fdv": 627615,
-      "vol": 304996.48,
+      "fdv": 666734,
+      "vol": 516852.6,
       "ageD": 0,
-      "addedAt": "2026-03-14T05:48:06.119Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:40.843Z"
+    },
+    {
+      "symbol": "SMITH",
+      "mint": "AWc7tg2H3agf9kwFJAD1Gw2vcRRf5gR6r9vQNMbETaJV",
+      "fdv": 112818054,
+      "vol": 71828.85,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:40.843Z"
     },
     {
       "symbol": "JEW",
       "mint": "4D9jZY6nkXnm3ofmWWJVcJrvtXDMfE5Zwy8rZMy5pump",
-      "fdv": 512960,
-      "vol": 986778.49,
+      "fdv": 510542,
+      "vol": 1019122.01,
       "ageD": 3,
-      "addedAt": "2026-03-14T05:48:12.315Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:46.358Z"
+    },
+    {
+      "symbol": "Distorted",
+      "mint": "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump",
+      "fdv": 924598.938155167,
+      "vol": 1215717.1263616,
+      "ageD": 5,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:52.090Z"
+    },
+    {
+      "symbol": "WhiteHouse",
+      "mint": "7oXNE1dbpHUp6dn1JF8pRgCtzfCy4P2FuBneWjZHpump",
+      "fdv": 592176.1874,
+      "vol": 1143476.36038347,
+      "ageD": 9,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:52.090Z"
+    },
+    {
+      "symbol": "abcdefg",
+      "mint": "89S7oVB4hui8ceJqhHreWB7fcxdthfvoB7z2pfJtpump",
+      "fdv": 549806.5252,
+      "vol": 713325.493458808,
+      "ageD": 7,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:55.307Z"
+    },
+    {
+      "symbol": "GROKIUS",
+      "mint": "67ezHLk8PUkjJCXjmmgPbx85VowA52ghfRXa9A8Tpump",
+      "fdv": 646028.272905161,
+      "vol": 69648.0401256349,
+      "ageD": 23,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:24:55.307Z"
+    },
+    {
+      "symbol": "UP",
+      "mint": "0x000008d2175f9aeaddb2430c26f8a6f73c5a0000",
+      "fdv": 65546790.885,
+      "vol": 50238591.063656,
+      "ageD": 3,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:24:58.591Z"
+    },
+    {
+      "symbol": "BTW",
+      "mint": "0x444045b0ee1ee319a660a5e3d604ca0ffa35acaa",
+      "fdv": 240769132.999553,
+      "vol": 5250731.6945493,
+      "ageD": 16,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
+    },
+    {
+      "symbol": "CRTR",
+      "mint": "0xb150e91cb40909f47d45115ee9e90667d807464b",
+      "fdv": 97612670.52,
+      "vol": 92827896.5316478,
+      "ageD": 19,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
+    },
+    {
+      "symbol": "COLLECT",
+      "mint": "0x4b3d30992f003c8167699735f5ab2831b2a087d3",
+      "fdv": 216116770.89,
+      "vol": 18340549.5940836,
+      "ageD": 78,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T08:25:00.122Z"
     },
     {
       "symbol": "ETH",
@@ -270,7 +510,8 @@
       "fdv": 351436494,
       "vol": 80338.48,
       "ageD": 52,
-      "addedAt": "2026-03-14T05:48:18.006Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
     },
     {
       "symbol": "BNB",
@@ -278,7 +519,8 @@
       "fdv": 90443352,
       "vol": 80275.99,
       "ageD": 60,
-      "addedAt": "2026-03-14T05:48:18.006Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
     },
     {
       "symbol": "BNB",
@@ -286,118 +528,13 @@
       "fdv": 76549077,
       "vol": 80363.99,
       "ageD": 41,
-      "addedAt": "2026-03-14T05:48:18.006Z"
-    },
-    {
-      "symbol": "MEMECARD",
-      "mint": "ACc3ZBq1c9h7pofwn2J8b8bvRHvqMFwynVg8neLZpump",
-      "fdv": 555689,
-      "vol": 776205.12,
-      "ageD": 0,
-      "addedAt": "2026-03-14T06:13:14.343Z"
-    },
-    {
-      "symbol": "Life",
-      "mint": "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump",
-      "fdv": 511324.352572767,
-      "vol": 2057007.70137074,
-      "ageD": 5,
-      "addedAt": "2026-03-14T06:15:32.532Z"
-    },
-    {
-      "symbol": "WhiteHouse",
-      "mint": "7oXNE1dbpHUp6dn1JF8pRgCtzfCy4P2FuBneWjZHpump",
-      "fdv": 562847.5332,
-      "vol": 1200316.09876247,
-      "ageD": 9,
-      "addedAt": "2026-03-14T06:15:32.532Z"
-    },
-    {
-      "symbol": "abcdefg",
-      "mint": "89S7oVB4hui8ceJqhHreWB7fcxdthfvoB7z2pfJtpump",
-      "fdv": 608746.6798,
-      "vol": 786236.909377421,
-      "ageD": 7,
-      "addedAt": "2026-03-14T06:15:37.410Z"
-    },
-    {
-      "symbol": "GROKIUS",
-      "mint": "67ezHLk8PUkjJCXjmmgPbx85VowA52ghfRXa9A8Tpump",
-      "fdv": 623963.009582284,
-      "vol": 72006.4208289142,
-      "ageD": 23,
-      "addedAt": "2026-03-14T06:15:37.410Z"
-    },
-    {
-      "symbol": "NEO",
-      "mint": "HL8i2d74iFZQGkpZ1eBzJQWbkU6bBmRUVJgMF2b6pump",
-      "fdv": 529261.1398,
-      "vol": 2049899.34399224,
-      "ageD": 0,
-      "addedAt": "2026-03-14T06:57:11.665Z"
-    },
-    {
-      "symbol": "MEGA",
-      "mint": "8guaKXAucv6ZiGFkWFtvJVcQa8ACDLqP3Nz7JJ9gSYSv",
-      "fdv": 328990925,
-      "vol": 51078.45,
-      "ageD": 0,
-      "addedAt": "2026-03-14T07:33:12.348Z"
-    },
-    {
-      "symbol": "WHALE",
-      "mint": "D9g3NFv4qCeDFbj35DxB4aa53oDudfUtbv6S8Umdpump",
-      "fdv": 545421,
-      "vol": 1612494.29,
-      "ageD": 0,
-      "addedAt": "2026-03-14T07:46:55.670Z"
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:25:10.726Z"
     }
   ],
   "scanned": [
-    "GgGELDvsPQAsq2VYsu5Yd2eDeLFnfeutup7QvKdKgyEE",
-    "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
-    "ZoNfYo3F9Ghcc9J5w5KFeDTwBPQdJVgh5so8s7AEd4t",
-    "C9dJfTGUzhuqPWxh9mcDr66JZN4uzXh2gh9EWnEdpump",
-    "85ha8wFF5d2dZDef91ciBPi1xSu3GPesmtjmv4As5xyX",
-    "NV2RYH954cTJ3ckFUpvfqaQXU4ARqqDH3562nFSpump",
-    "DpxKNEi3XVeRByaGqYKvz2w6E2PhPgBAqdayLcQEpump",
-    "7NYWLY8vL9s4NRjjXo2pK9USSDqre6tCMETAyzkMGiPN",
-    "PE85tFDe19MhGLE7FrJEEEiFWPFsD2Zr16dGkhWgmQh",
-    "GHXwEFxKNcz7FLgFvYRi1ZAwvKKALdRVUJ8M3Aszmoon",
-    "8opvqaWysX1oYbXuTL8PHaoaTiXD69VFYAX4smPebonk",
-    "33dhma9QA7xefhVpA7c5vMrN826xcHanSHruUEKF2LmW",
-    "BtRrW4fUdhbriANDydbUD4F7WKGUic6NwuTKFRtTpU8y",
-    "3JiCJZ8n6oQrhhrws2Jb4MtytEt4cyWfYmq1xMSNh1F3",
-    "5TxTTURDXy3qp3hA9BS3Nb2fStN2VgqQxenP8e23mb5L",
-    "3C8thx5PJMwcQeKfHm4518PVz7dYDRWPb35CrdZWx6Eo",
-    "BEkNASbXCeGtS4WLGdbqkJTJZJrCwFNi1WNHM9mUY45G",
-    "8M5LMCLUAAMDsy4xq6xaxVs2UcMNe1XKBtKTZZKuvvCW",
-    "7JvXT93eBGefwjFo5gKXUFPNebKPLikFhxD79pmFsw58",
-    "4iVNcnD16mj5vecEZUj3r71cLWjh9BKngjpXtSbPZxEW",
-    "2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump",
-    "AMg45T6X4kzJbwJtfuNvgBnMN9JGf5encaQxAh8uDVqf",
-    "8Jx8AAHj86wbQgUTjGuj6GTTL5Ps3cqxKRTvpaJApump",
-    "DogesYEofkdNd6FqbqoBRPBBj3gZzTgnTL5gDK5qx4rG",
-    "kMKX8hBaj3BTRBbeYix9c16EieBP5dih8DTSSwCpump",
-    "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump",
-    "DogeP1Hzndj6KMyB2DggL6ghrVwpC4VvPAJAuNis9KWQ",
-    "4HhWcsfjaWYKJtjaxd4EyGSAL4Ky8C3DvqAWPHnrpump",
-    "AiLRVGDcBLvP36mDhKEjh8Dc67L9G7cwhTXhZrwLC3nB",
-    "A2whouM6aJvqLdmzaLSBqAyGboGBBAxFyW98apxpnwUg",
-    "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump",
-    "8G5ayEsJF4Q7FEWEGeF4jtnUWZBEKCqhySTFQf9Ppump",
-    "6vwcC6G7SxkdDZ3XMWiVjfBkPnL3XHiJG2fVSwPJUTJC",
-    "E93JuGQcHiXZ9upFZWELgvu5QsC9DD1qzkcGhJrpump",
-    "9e1wtawpbkrJGq3vLbPGBvpQFLfsPFtjai4D9eo9pump",
-    "6SdA442qgUbrsxhWSRGJuhZdaviZpzPXLkpoCURZr9QS",
-    "67ezHLk8PUkjJCXjmmgPbx85VowA52ghfRXa9A8Tpump",
-    "89S7oVB4hui8ceJqhHreWB7fcxdthfvoB7z2pfJtpump",
-    "7oXNE1dbpHUp6dn1JF8pRgCtzfCy4P2FuBneWjZHpump",
-    "ACc3ZBq1c9h7pofwn2J8b8bvRHvqMFwynVg8neLZpump",
-    "4D9jZY6nkXnm3ofmWWJVcJrvtXDMfE5Zwy8rZMy5pump",
-    "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump",
-    "HL8i2d74iFZQGkpZ1eBzJQWbkU6bBmRUVJgMF2b6pump",
-    "8guaKXAucv6ZiGFkWFtvJVcQa8ACDLqP3Nz7JJ9gSYSv",
-    "D9g3NFv4qCeDFbj35DxB4aa53oDudfUtbv6S8Umdpump"
+    "0x444045b0ee1ee319a660a5e3d604ca0ffa35acaa",
+    "0x4b3d30992f003c8167699735f5ab2831b2a087d3",
+    "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG"
   ]
 }
