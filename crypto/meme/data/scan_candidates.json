@@ -613,6 +613,15 @@
       "addedAt": "2026-03-14T18:36:25.586Z"
     },
     {
+      "symbol": "Rosie",
+      "mint": "9QSjVAg5rDfBZPhvKwZcB63St3r6bqohP3Adurkjpump",
+      "fdv": 1024073.892,
+      "vol": 4047132.88405448,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T19:03:09.824Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -1016,6 +1025,15 @@
       "ageD": 12,
       "chain": "solana",
       "addedAt": "2026-03-14T17:18:17.158Z"
+    },
+    {
+      "symbol": "U.S OIL",
+      "mint": "8gLWCR9qXAaxYmTr9HHmNEBTfLPMY9vCRvFaa7NqCAP1",
+      "fdv": 608150.489744577,
+      "vol": 40644266.4314415,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T19:25:51.296Z"
     }
   ],
   "scanned": [
@@ -1125,6 +1143,8 @@
     "0xabae909cd93bc2ddf90086f9aa6c3f8e154e8228",
     "0x475cbf5919608e0c6af00e7bf87fab83bf3ef6e2",
     "12vYRvkvnZnY9e3J2mzZgfuE5u5e134tqHCeMcMrpump",
-    "2ksjXi5HoRxk7avjRRgoWF8NMJvaCXZbot8qsJ1c6te4"
+    "2ksjXi5HoRxk7avjRRgoWF8NMJvaCXZbot8qsJ1c6te4",
+    "9QSjVAg5rDfBZPhvKwZcB63St3r6bqohP3Adurkjpump",
+    "8gLWCR9qXAaxYmTr9HHmNEBTfLPMY9vCRvFaa7NqCAP1"
   ]
 }
