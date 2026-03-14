@@ -131,6 +131,70 @@ async function discoverCoins() {
     }
   } catch {}
 
+  // === 新增币源1: GeckoTerminal trending（当前热门，不靠关键词）===
+  try {
+    const r = await fetch('https://api.geckoterminal.com/api/v2/networks/solana/trending_pools?page=1');
+    const d = await r.json();
+    for (const p of (d.data || [])) {
+      const a = p.attributes || {};
+      const fdv = parseFloat(a.fdv_usd) || 0;
+      const vol = parseFloat((a.volume_usd || {}).h24) || 0;
+      const mint = (p.relationships?.base_token?.data?.id || '').replace('solana_', '');
+      const symbol = (a.name || '').split(' / ')[0]?.trim();
+      if (mint && mint.length > 20 && fdv >= MIN_FDV && vol >= MIN_VOL_24H) {
+        const created = a.pool_created_at ? new Date(a.pool_created_at).getTime() : Date.now();
+        if (created > ninetyDaysAgo) {
+          addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000));
+        }
+      }
+    }
+    log('INFO', `GeckoTerminal trending: 已处理`);
+  } catch (e) { log('WARN', `GeckoTerminal trending失败: ${e.message?.slice(0, 60)}`); }
+  await new Promise(r => setTimeout(r, 1500)); // GeckoTerminal限流严格
+
+  // === 新增币源2: GeckoTerminal 成交量排行（曾经热过的）===
+  try {
+    const r = await fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools?sort=h24_volume_usd_desc&page=1');
+    const d = await r.json();
+    for (const p of (d.data || [])) {
+      const a = p.attributes || {};
+      const fdv = parseFloat(a.fdv_usd) || 0;
+      const vol = parseFloat((a.volume_usd || {}).h24) || 0;
+      const mint = (p.relationships?.base_token?.data?.id || '').replace('solana_', '');
+      const symbol = (a.name || '').split(' / ')[0]?.trim();
+      if (mint && mint.length > 20 && fdv >= MIN_FDV && vol >= MIN_VOL_24H) {
+        const created = a.pool_created_at ? new Date(a.pool_created_at).getTime() : Date.now();
+        if (created > ninetyDaysAgo) {
+          addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000));
+        }
+      }
+    }
+    log('INFO', `GeckoTerminal volume排行: 已处理`);
+  } catch (e) { log('WARN', `GeckoTerminal volume失败: ${e.message?.slice(0, 60)}`); }
+  await new Promise(r => setTimeout(r, 1500));
+
+  // === 新增币源3: GeckoTerminal 第2-3页（覆盖更多）===
+  for (const page of [2, 3]) {
+    try {
+      const r = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/trending_pools?page=${page}`);
+      const d = await r.json();
+      for (const p of (d.data || [])) {
+        const a = p.attributes || {};
+        const fdv = parseFloat(a.fdv_usd) || 0;
+        const vol = parseFloat((a.volume_usd || {}).h24) || 0;
+        const mint = (p.relationships?.base_token?.data?.id || '').replace('solana_', '');
+        const symbol = (a.name || '').split(' / ')[0]?.trim();
+        if (mint && mint.length > 20 && fdv >= MIN_FDV && vol >= MIN_VOL_24H) {
+          const created = a.pool_created_at ? new Date(a.pool_created_at).getTime() : Date.now();
+          if (created > ninetyDaysAgo) {
+            addCoin(symbol, mint, fdv, vol, Math.round((Date.now() - created) / 86400000));
+          }
+        }
+      }
+    } catch {}
+    await new Promise(r => setTimeout(r, 1500));
+  }
+
   // 预存数据
   for (const file of ['coingecko_pumpfun.json', 'dexscreener_coins.json']) {
     try {
@@ -142,9 +206,61 @@ async function discoverCoins() {
     } catch {}
   }
 
+  // 按FDV过滤：$1M-$50M 优先（meme甜蜜区），>$500M直接丢弃（蓝筹/仿盘）
+  candidates.coins = candidates.coins.filter(c => (c.fdv || 0) <= 500e6);
+  const sweetSpot = candidates.coins.filter(c => (c.fdv || 0) >= 1e6 && (c.fdv || 0) <= 50e6);
+  const others = candidates.coins.filter(c => !((c.fdv || 0) >= 1e6 && (c.fdv || 0) <= 50e6));
+  candidates.coins = [...sweetSpot, ...others]; // 甜蜜区排前面优先扫描
+
   saveJSON(CANDIDATES_FILE, candidates);
-  log('INFO', `发现 ${candidates.coins.length} 个币`);
+  log('INFO', `发现 ${candidates.coins.length} 个币 (甜蜜区$1M-$50M: ${sweetSpot.length}个, 丢弃>$500M)`);
   return candidates;
+}
+
+// ============ 阶段1a：K线涨幅检查 ============
+const MIN_PUMP_MULTIPLIER = 10; // 从低点到高点至少涨10倍
+
+async function checkPumpMultiplier(coin) {
+  // 先用DexScreener找pool地址
+  try {
+    const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${coin.mint}`);
+    const d = await r.json();
+    const pair = (d.pairs || []).find(p => p.chainId === 'solana');
+    if (!pair) return { pass: false, reason: 'no_pair' };
+    
+    const poolAddr = pair.pairAddress;
+    if (!poolAddr) return { pass: false, reason: 'no_pool_addr' };
+    
+    await new Promise(r => setTimeout(r, 1000)); // 限流
+    
+    // 查GeckoTerminal K线
+    const kr = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${poolAddr}/ohlcv/day?aggregate=1&limit=30`);
+    const kd = await kr.json();
+    const ohlcv = kd?.data?.attributes?.ohlcv_list;
+    
+    if (!ohlcv || ohlcv.length < 2) return { pass: false, reason: 'no_kline' };
+    
+    const lows = ohlcv.map(c => parseFloat(c[3])).filter(l => l > 0);
+    const highs = ohlcv.map(c => parseFloat(c[2])).filter(h => h > 0);
+    
+    if (lows.length === 0 || highs.length === 0) return { pass: false, reason: 'invalid_kline' };
+    
+    const minLow = Math.min(...lows);
+    const maxHigh = Math.max(...highs);
+    const multiplier = minLow > 0 ? maxHigh / minLow : 0;
+    
+    // 检查开盘价（第一天）vs高点，判断是不是"开盘就高"
+    const firstOpen = parseFloat(ohlcv[ohlcv.length - 1][1]);
+    const openToHigh = firstOpen > 0 ? maxHigh / firstOpen : 0;
+    
+    if (multiplier >= MIN_PUMP_MULTIPLIER) {
+      return { pass: true, multiplier: Math.round(multiplier), openToHigh: Math.round(openToHigh), minLow, maxHigh, days: ohlcv.length };
+    } else {
+      return { pass: false, reason: `only_${multiplier.toFixed(1)}x`, multiplier };
+    }
+  } catch (e) {
+    return { pass: false, reason: `error: ${e.message?.slice(0, 40)}` };
+  }
 }
 
 // ============ 阶段1b：查持有者 + 验证盈利 ============
@@ -424,6 +540,18 @@ async function main() {
       const toScan = realPending.slice(0, 3);
       
       for (const coin of toScan) {
+        // 先检查K线：从低点涨了多少倍？
+        const pump = await checkPumpMultiplier(coin);
+        if (!pump.pass) {
+          log('INFO', `跳过 ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M): ${pump.reason}`);
+          if (!candidates.scanned) candidates.scanned = [];
+          candidates.scanned.push(coin.mint);
+          saveJSON(CANDIDATES_FILE, candidates);
+          await new Promise(r => setTimeout(r, 2000)); // GeckoTerminal限流
+          continue;
+        }
+        log('INFO', `✓ ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) ${pump.multiplier}x涨幅 (${pump.days}天, 开盘到高${pump.openToHigh}x)`);
+        
         log('INFO', `查持有者: ${coin.symbol} ($${(coin.fdv / 1e6).toFixed(1)}M) mint:${coin.mint.slice(0, 16)}`);
         
         const holders = await getTopHolders(coin.mint, coin.symbol);
