@@ -370,6 +370,60 @@
       "addedAt": "2026-03-14T08:56:25.877Z"
     },
     {
+      "symbol": "Fight",
+      "mint": "0xe683A48Df543D68ed96d53Dd1fDa73ccbd144444",
+      "fdv": 2617676,
+      "vol": 3127348.03,
+      "ageD": 3,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:09:35.931Z"
+    },
+    {
+      "symbol": "KIN",
+      "mint": "0xcc1b8207853662c5cfabfb028806ec06ea1f6ac6",
+      "fdv": 32015213.6111948,
+      "vol": 10674063.9300935,
+      "ageD": 43,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:10:13.244Z"
+    },
+    {
+      "symbol": "UGOR",
+      "mint": "0x26fde0f173cb57f2e25094d4895f2ef1a3d580fc",
+      "fdv": 5219486.405,
+      "vol": 378026.605637226,
+      "ageD": 8,
+      "chain": "base",
+      "addedAt": "2026-03-14T09:13:13.152Z"
+    },
+    {
+      "symbol": "FELIX",
+      "mint": "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07",
+      "fdv": 3007242.09398946,
+      "vol": 106824.270369686,
+      "ageD": 40,
+      "chain": "base",
+      "addedAt": "2026-03-14T09:13:13.152Z"
+    },
+    {
+      "symbol": "CLAWD",
+      "mint": "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07",
+      "fdv": 5182964.6366375,
+      "vol": 53670.8751067408,
+      "ageD": 46,
+      "chain": "base",
+      "addedAt": "2026-03-14T09:13:13.152Z"
+    },
+    {
+      "symbol": "OSO",
+      "mint": "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e",
+      "fdv": 1057833.541,
+      "vol": 89546.6458977872,
+      "ageD": 39,
+      "chain": "base",
+      "addedAt": "2026-03-14T09:13:13.152Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -548,6 +602,42 @@
       "ageD": 1,
       "chain": "solana",
       "addedAt": "2026-03-14T08:34:52.903Z"
+    },
+    {
+      "symbol": "MEGA",
+      "mint": "8guaKXAucv6ZiGFkWFtvJVcQa8ACDLqP3Nz7JJ9gSYSv",
+      "fdv": 253821521,
+      "vol": 238006.51,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-14T08:59:35.212Z"
+    },
+    {
+      "symbol": "OPN",
+      "mint": "0x7977bf3e7e0c954d12cdca3e013adaf57e0b06e0",
+      "fdv": 58330484.8189396,
+      "vol": 3497270.40089009,
+      "ageD": 12,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:10:13.244Z"
+    },
+    {
+      "symbol": "cyb3rwr3n",
+      "mint": "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3",
+      "fdv": 973901.7706,
+      "vol": 1061250.80433596,
+      "ageD": 2,
+      "chain": "base",
+      "addedAt": "2026-03-14T09:13:13.152Z"
+    },
+    {
+      "symbol": "frogs",
+      "mint": "0xc3b1a6229d9017376cf9a5ba7a60782bd8db4444",
+      "fdv": 508067.7378,
+      "vol": 3758207.13206019,
+      "ageD": 0,
+      "chain": "bsc",
+      "addedAt": "2026-03-14T09:21:21.060Z"
     }
   ],
   "scanned": [
@@ -571,6 +661,27 @@
     "NV2RYH954cTJ3ckFUpvfqaQXU4ARqqDH3562nFSpump",
     "0x97693439ea2f0ecdeb9135881e49f354656a911c",
     "2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump",
-    "0xf758cfb1467a227516d73d87da7d36e7cb6f71f1"
+    "0xf758cfb1467a227516d73d87da7d36e7cb6f71f1",
+    "8guaKXAucv6ZiGFkWFtvJVcQa8ACDLqP3Nz7JJ9gSYSv",
+    "32EzeGqgnVf9NWJdvv7obFFGK1uqXKZZpnRaWHaFqYVV",
+    "7NYWLY8vL9s4NRjjXo2pK9USSDqre6tCMETAyzkMGiPN",
+    "0x595deaad1eb5476ff1e649fdb7efc36f1e4679cc",
+    "8Jx8AAHj86wbQgUTjGuj6GTTL5Ps3cqxKRTvpaJApump",
+    "DpxKNEi3XVeRByaGqYKvz2w6E2PhPgBAqdayLcQEpump",
+    "0x7977bf3e7e0c954d12cdca3e013adaf57e0b06e0",
+    "0xcc1b8207853662c5cfabfb028806ec06ea1f6ac6",
+    "PE85tFDe19MhGLE7FrJEEEiFWPFsD2Zr16dGkhWgmQh",
+    "0x26fde0f173cb57f2e25094d4895f2ef1a3d580fc",
+    "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07",
+    "33dhma9QA7xefhVpA7c5vMrN826xcHanSHruUEKF2LmW",
+    "GHXwEFxKNcz7FLgFvYRi1ZAwvKKALdRVUJ8M3Aszmoon",
+    "8opvqaWysX1oYbXuTL8PHaoaTiXD69VFYAX4smPebonk",
+    "ACc3ZBq1c9h7pofwn2J8b8bvRHvqMFwynVg8neLZpump",
+    "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07",
+    "DogesYEofkdNd6FqbqoBRPBBj3gZzTgnTL5gDK5qx4rG",
+    "0xe683a48df543d68ed96d53dd1fda73ccbd144444",
+    "0xe683A48Df543D68ed96d53Dd1fDa73ccbd144444",
+    "kMKX8hBaj3BTRBbeYix9c16EieBP5dih8DTSSwCpump",
+    "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump"
   ]
 }

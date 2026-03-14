@@ -1521,3 +1521,189 @@
 [2026-03-14T08:58:06.227Z] [INFO] 分析钱包: [BSC] 0x9c71dc4b91e6bcbbe0...
 [2026-03-14T08:58:23.509Z] [INFO]   无交易数据，跳过
 [2026-03-14T08:58:23.511Z] [INFO] 等待 60秒...
+[2026-03-14T09:00:05.495Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T09:00:11.557Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T09:00:17.618Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T09:00:17.619Z] [INFO] 发现 62 个币 (甜蜜区$1M-$50M: 41个, 丢弃>$500M)
+[2026-03-14T09:00:19.456Z] [INFO] ✓ [SOLANA] MEGA ($253.8M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:00:19.456Z] [INFO] 查持有者: MEGA ($253.8M) mint:8guaKXAucv6ZiGFk
+[2026-03-14T09:00:19.986Z] [INFO]   MEGA: 20 个持有者，验证盈利...
+[2026-03-14T09:00:28.367Z] [INFO]   ✓ 8g9BUEvGfWsf4irP 持仓中(成本$1685) (normal, buy:1 sell:0 transfer:0)
+[2026-03-14T09:02:12.094Z] [INFO] SOL价格: $87.15
+[2026-03-14T09:02:25.508Z] [INFO]   ✓ AwWSRjAob9HvLT5E 已实现$2646 (normal, buy:10 sell:12 transfer:0)
+[2026-03-14T09:02:32.271Z] [INFO]   MEGA: 2/20 个盈利≥$2000
+[2026-03-14T09:02:35.565Z] [INFO] 跳过 [SOLANA] UGOR ($5.1M): spike_128x_in_1day
+[2026-03-14T09:02:37.717Z] [INFO] 跳过 [SOLANA] DRONE ($5.1M): close_only_1.2x
+[2026-03-14T09:02:37.719Z] [INFO] 钱包池: 170 个, 待分析: 107
+[2026-03-14T09:02:37.719Z] [INFO] 分析钱包: [BSC] 0x22af7297243c4eef12...
+[2026-03-14T09:02:54.128Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:02:54.128Z] [INFO] 分析钱包: [BSC] 0x8cda56bb7928be2e7f...
+[2026-03-14T09:03:06.393Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:03:06.394Z] [INFO] 分析钱包: [BSC] 0x28e2ea090877bf7574...
+[2026-03-14T09:04:06.789Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T09:04:06.789Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:04:06.791Z] [INFO] 等待 60秒...
+[2026-03-14T09:05:48.333Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T09:05:55.018Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T09:06:01.092Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T09:06:01.093Z] [INFO] 发现 62 个币 (甜蜜区$1M-$50M: 41个, 丢弃>$500M)
+[2026-03-14T09:06:03.204Z] [INFO] 跳过 [BSC] BSB ($5.1M): close_only_1.4x
+[2026-03-14T09:06:05.020Z] [INFO] ✓ [SOLANA] PENGUIN ($5.0M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:06:05.020Z] [INFO] 查持有者: PENGUIN ($5.0M) mint:8Jx8AAHj86wbQgUT
+[2026-03-14T09:06:07.120Z] [INFO]   PENGUIN: 20 个持有者，验证盈利...
+[2026-03-14T09:06:35.459Z] [INFO]   ✓ DRAf8QxQY86h7yeH 已实现$2082 (normal, buy:2 sell:23 transfer:0)
+[2026-03-14T09:06:49.933Z] [INFO]   ✓ unnfnn1ssVzZofQT 已实现$87138 (normal, buy:3 sell:3 transfer:4)
+[2026-03-14T09:07:05.987Z] [INFO]   ✓ F7uF5geKv9yQr2HY 已实现$6199 (normal, buy:0 sell:5 transfer:0)
+[2026-03-14T09:07:20.933Z] [INFO]   ✓ 3fupiyLEr2BnFE9m 已实现$4459 (normal, buy:4 sell:9 transfer:0)
+[2026-03-14T09:07:29.391Z] [INFO]   ✓ GpuWWgWuiWkn9fL6 已实现$2684 (normal, buy:132 sell:137 transfer:58)
+[2026-03-14T09:07:35.477Z] [INFO]   ✓ FLMp9Fr3TAKNt36h 持仓中(成本$18081) (normal, buy:107 sell:0 transfer:6)
+[2026-03-14T09:07:44.048Z] [INFO]   ✓ A9oTUD5vY9yM7ZH2 已实现$440346 (normal, buy:3 sell:22 transfer:0)
+[2026-03-14T09:07:49.746Z] [INFO]   PENGUIN: 7/20 个盈利≥$2000
+[2026-03-14T09:07:53.284Z] [INFO] 跳过 [SOLANA] SOS ($4.8M): spike_12x_in_1day
+[2026-03-14T09:07:53.286Z] [INFO] 钱包池: 177 个, 待分析: 111
+[2026-03-14T09:07:53.286Z] [INFO] 分析钱包: [BSC] 0x4982085c9e2f89f2ec...
+[2026-03-14T09:08:05.786Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:08:05.786Z] [INFO] 分析钱包: [BSC] 0x6bc5f9b852fc1af6e6...
+[2026-03-14T09:08:16.103Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:08:16.103Z] [INFO] 分析钱包: [BSC] 0x96973f7b83a3c785d9...
+[2026-03-14T09:08:26.411Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:08:26.412Z] [INFO] 等待 60秒...
+[2026-03-14T09:10:09.443Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T09:10:16.263Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T09:10:22.344Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T09:10:22.344Z] [INFO] 发现 65 个币 (甜蜜区$1M-$50M: 43个, 丢弃>$500M)
+[2026-03-14T09:10:23.897Z] [INFO] ✓ [BSC] OPN ($58.3M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:10:23.897Z] [INFO] 查买家: [BSC] OPN ($58.3M) mint:0x7977bf3e7e0c95
+[2026-03-14T09:10:34.716Z] [INFO]   EVM bsc: 1930 transfer events
+[2026-03-14T09:10:34.719Z] [INFO]   OPN: 20 个活跃买家
+[2026-03-14T09:10:36.596Z] [INFO] ✓ [BSC] KIN ($32.0M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:10:36.597Z] [INFO] 查买家: [BSC] KIN ($32.0M) mint:0xcc1b8207853662
+[2026-03-14T09:10:47.289Z] [INFO]   EVM bsc: 5092 transfer events
+[2026-03-14T09:10:47.295Z] [INFO]   KIN: 12 个活跃买家
+[2026-03-14T09:10:49.659Z] [INFO] 跳过 [SOLANA] PEPE ($4.2M): close_only_1.0x
+[2026-03-14T09:10:49.662Z] [INFO] 钱包池: 200 个, 待分析: 131
+[2026-03-14T09:10:49.662Z] [INFO] 分析钱包: [BSC] 0xf9576c037d96ee87a1...
+[2026-03-14T09:11:01.256Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:11:01.257Z] [INFO] 分析钱包: [BSC] 0xf2ceae509c4e7f1e49...
+[2026-03-14T09:11:12.560Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:11:12.560Z] [INFO] 分析钱包: [BSC] 0xb85b098448b2aac4af...
+[2026-03-14T09:11:23.482Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:11:23.484Z] [INFO] 等待 60秒...
+[2026-03-14T09:13:05.301Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T09:13:11.376Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T09:13:17.686Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T09:13:17.686Z] [INFO] 发现 70 个币 (甜蜜区$1M-$50M: 47个, 丢弃>$500M)
+[2026-03-14T09:13:19.545Z] [INFO] ✓ [BASE] UGOR ($5.2M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:13:19.546Z] [INFO] 查买家: [BASE] UGOR ($5.2M) mint:0x26fde0f173cb57
+[2026-03-14T09:13:33.805Z] [INFO]   EVM base: 4327 transfer events
+[2026-03-14T09:13:33.812Z] [INFO]   UGOR: 20 个活跃买家
+[2026-03-14T09:13:35.686Z] [INFO] ✓ [BASE] CLAWD ($5.2M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:13:35.686Z] [INFO] 查买家: [BASE] CLAWD ($5.2M) mint:0x9f86db9fc6f7c9
+[2026-03-14T09:14:05.477Z] [INFO]   EVM base: 113791 transfer events
+[2026-03-14T09:14:05.561Z] [INFO]   CLAWD: 20 个活跃买家
+[2026-03-14T09:14:07.128Z] [INFO] ✓ [SOLANA] SOS ($4.0M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:14:07.128Z] [INFO] 查持有者: SOS ($4.0M) mint:33dhma9QA7xefhVp
+[2026-03-14T09:14:07.701Z] [INFO]   SOS: 20 个持有者，验证盈利...
+[2026-03-14T09:14:07.723Z] [INFO] SOL价格: $87.23
+[2026-03-14T09:14:09.953Z] [INFO]   ✓ 5N8eh81j9svCrRtg 已实现$4353 (normal, buy:1 sell:26 transfer:0)
+[2026-03-14T09:14:38.515Z] [INFO]   ✓ 4qGJqEHsgSfZQ6Vd 已实现$5070 (normal, buy:9 sell:4 transfer:0)
+[2026-03-14T09:14:39.015Z] [INFO]   SOS: 2/20 个盈利≥$2000
+[2026-03-14T09:14:40.020Z] [INFO] 钱包池: 238 个, 待分析: 166
+[2026-03-14T09:14:40.020Z] [INFO] 分析钱包: [BSC] 0x0faeb60e1b406c2f84...
+[2026-03-14T09:14:50.687Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:14:50.687Z] [INFO] 分析钱包: [BSC] 0x8d17fbfb03a6b7e8fd...
+[2026-03-14T09:15:02.082Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:15:02.082Z] [INFO] 分析钱包: [BSC] 0x7658dd86f928a65974...
+[2026-03-14T09:15:15.027Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:15:15.029Z] [INFO] 等待 60秒...
+[2026-03-14T09:16:59.101Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T09:17:05.194Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T09:17:11.260Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T09:17:11.261Z] [INFO] 发现 70 个币 (甜蜜区$1M-$50M: 47个, 丢弃>$500M)
+[2026-03-14T09:17:13.283Z] [INFO] ✓ [SOLANA] WAR ($3.9M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:17:13.283Z] [INFO] 查持有者: WAR ($3.9M) mint:GHXwEFxKNcz7FLgF
+[2026-03-14T09:17:14.027Z] [INFO]   WAR: 20 个持有者，验证盈利...
+[2026-03-14T09:17:40.289Z] [INFO]   ✓ EiLPgCzcVmGrrzji 已实现$8288 (transfer_sell, buy:0 sell:4 transfer:10)
+[2026-03-14T09:17:46.150Z] [INFO]   WAR: 1/20 个盈利≥$2000
+[2026-03-14T09:17:49.337Z] [INFO] 跳过 [SOLANA] WAR ($3.8M): spike_116x_in_1day
+[2026-03-14T09:17:51.170Z] [INFO] ✓ [SOLANA] MEMECARD ($3.2M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:17:51.170Z] [INFO] 查持有者: MEMECARD ($3.2M) mint:ACc3ZBq1c9h7pofw
+[2026-03-14T09:17:51.750Z] [INFO]   MEMECARD: 20 个持有者，验证盈利...
+[2026-03-14T09:17:59.236Z] [INFO]   ✓ 83AjpG4oM9J87FNH 已实现$5334 (normal, buy:4 sell:1 transfer:0)
+[2026-03-14T09:18:02.728Z] [INFO]   ✓ GRJb78TWrEbQby4d 持仓中(成本$1497) (normal, buy:2 sell:0 transfer:0)
+[2026-03-14T09:18:06.717Z] [INFO]   ✓ 6BeJUTZxoytB5d3V 持仓中(成本$1355) (normal, buy:2 sell:0 transfer:0)
+[2026-03-14T09:18:25.142Z] [INFO]   ✓ 6JAKf2F94CPrMtN2 持仓中(成本$1388) (normal, buy:2 sell:0 transfer:0)
+[2026-03-14T09:18:27.624Z] [INFO]   ✓ 5yRT5aGCoExRMT9m 持仓中(成本$1355) (normal, buy:2 sell:0 transfer:0)
+[2026-03-14T09:18:42.414Z] [INFO]   ✓ GngNRbVobLFCiTkP 持仓中(成本$1369) (normal, buy:2 sell:0 transfer:0)
+[2026-03-14T09:18:56.444Z] [INFO]   ✓ 2TbKfubAb3Mz3BQK 持仓中(成本$1320) (normal, buy:2 sell:0 transfer:0)
+[2026-03-14T09:19:04.185Z] [INFO]   MEMECARD: 7/20 个盈利≥$2000
+[2026-03-14T09:19:05.191Z] [INFO] 钱包池: 245 个, 待分析: 170
+[2026-03-14T09:19:05.191Z] [INFO] 分析钱包: [BSC] 0x0d0ec949f343c076af...
+[2026-03-14T09:19:15.564Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:19:15.564Z] [INFO] 分析钱包: [BSC] 0xbf004bff64725914ee...
+[2026-03-14T09:19:26.719Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:19:26.719Z] [INFO] 分析钱包: [BSC] 0xe7917233fee3009788...
+[2026-03-14T09:19:37.020Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:19:37.022Z] [INFO] 等待 60秒...
+[2026-03-14T09:21:19.101Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T09:21:25.583Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T09:21:31.641Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T09:21:31.642Z] [INFO] 发现 71 个币 (甜蜜区$1M-$50M: 47个, 丢弃>$500M)
+[2026-03-14T09:21:33.371Z] [INFO] ✓ [BASE] FELIX ($3.0M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:21:33.372Z] [INFO] 查买家: [BASE] FELIX ($3.0M) mint:0xf30bf00edd0c22
+[2026-03-14T09:21:47.241Z] [INFO]   EVM base: 4145 transfer events
+[2026-03-14T09:21:47.248Z] [INFO]   FELIX: 20 个活跃买家
+[2026-03-14T09:21:49.617Z] [INFO] 跳过 [SOLANA] DOGE ($2.8M): close_only_1.0x
+[2026-03-14T09:21:51.586Z] [INFO] ✓ [BSC] Fight ($2.6M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:21:51.586Z] [INFO] 查买家: [BSC] Fight ($2.6M) mint:0xe683a48df543d6
+[2026-03-14T09:22:03.480Z] [INFO]   EVM bsc: 4514 transfer events
+[2026-03-14T09:22:03.487Z] [INFO]   Fight: 20 个活跃买家
+[2026-03-14T09:22:03.492Z] [INFO] 钱包池: 283 个, 待分析: 205
+[2026-03-14T09:22:03.492Z] [INFO] 分析钱包: [BSC] 0x83ebe392824c046be3...
+[2026-03-14T09:22:15.024Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T09:22:15.025Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:22:15.025Z] [INFO] 分析钱包: [BSC] 0xdd3cb5c974601bc397...
+[2026-03-14T09:22:27.045Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:22:27.045Z] [INFO] 分析钱包: [BSC] 0xee0b2f6f7da9debb96...
+[2026-03-14T09:22:39.754Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:22:39.756Z] [INFO] 等待 60秒...
+[2026-03-14T09:24:24.185Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T09:24:30.333Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T09:24:36.396Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T09:24:36.396Z] [INFO] 发现 71 个币 (甜蜜区$1M-$50M: 47个, 丢弃>$500M)
+[2026-03-14T09:24:38.009Z] [INFO] ✓ [BSC] Fight ($2.6M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:24:38.009Z] [INFO] 查买家: [BSC] Fight ($2.6M) mint:0xe683A48Df543D6
+[2026-03-14T09:24:50.104Z] [INFO]   EVM bsc: 4350 transfer events
+[2026-03-14T09:24:50.111Z] [INFO]   Fight: 20 个活跃买家
+[2026-03-14T09:24:51.983Z] [INFO] ✓ [SOLANA] afk ($2.5M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T09:24:51.983Z] [INFO] 查持有者: afk ($2.5M) mint:kMKX8hBaj3BTRBbe
+[2026-03-14T09:24:53.197Z] [INFO]   afk: 20 个持有者，验证盈利...
+[2026-03-14T09:24:53.215Z] [INFO] SOL价格: $87.2
+[2026-03-14T09:25:16.908Z] [INFO]   ✓ F3RRD52cCipNqBao 持仓中(成本$19875) (normal, buy:18 sell:0 transfer:0)
+[2026-03-14T09:25:32.223Z] [INFO]   ✓ C67vCgL224SxWnkG 持仓中(成本$18850) (normal, buy:81 sell:0 transfer:0)
+[2026-03-14T09:25:37.738Z] [INFO]   ✓ CYnzMM14NG3vYvFV 持仓中(成本$6070) (normal, buy:20 sell:0 transfer:0)
+[2026-03-14T09:25:54.402Z] [INFO]   ✓ EGZg2bdZCrwU9i9U 持仓中(成本$51418) (normal, buy:104 sell:0 transfer:20)
+[2026-03-14T09:26:27.572Z] [INFO]   afk: 4/20 个盈利≥$2000
+[2026-03-14T09:26:30.541Z] [INFO] ✓ [SOLANA] 我的刀盾 ($2.1M) 慢涨65x (18天, 最大单日7.3x) [slow_pump]
+[2026-03-14T09:26:30.541Z] [INFO] 查持有者: 我的刀盾 ($2.1M) mint:6iA73gWCKkLWKbVr
+[2026-03-14T09:26:31.193Z] [INFO]   我的刀盾: 20 个持有者，验证盈利...
+[2026-03-14T09:26:52.265Z] [INFO]   ✓ BJwRYVBpRuxvPsbC 持仓中(成本$32731) (normal, buy:22 sell:0 transfer:2)
+[2026-03-14T09:27:11.644Z] [INFO]   ✓ HPZg9ZJcBv1sDFe2 已实现$9458 (normal, buy:12 sell:23 transfer:0)
+[2026-03-14T09:27:24.827Z] [INFO]   ✓ FRcHp2wrSk2Ej9Y8 持仓中(成本$44219) (normal, buy:24 sell:0 transfer:0)
+[2026-03-14T09:27:33.909Z] [INFO]   ✓ 12xwuNAuxqJgermY 已实现$20416 (normal, buy:2 sell:11 transfer:1)
+[2026-03-14T09:27:41.701Z] [INFO]   ✓ 2dB5siVm4h2pnFaL 持仓中(成本$5255) (normal, buy:2 sell:0 transfer:0)
+[2026-03-14T09:27:48.634Z] [INFO]   ✓ 6XhfFaxsDtSnsLqh 已实现$5272 (normal, buy:14 sell:20 transfer:0)
+[2026-03-14T09:27:49.771Z] [INFO]   ✓ 6AbnZAXvNKps7uiC 持仓中(成本$13003) (normal, buy:5 sell:0 transfer:0)
+[2026-03-14T09:27:56.052Z] [INFO]   ✓ J9GzVdw86xYSjdtu 持仓中(成本$5340) (normal, buy:4 sell:0 transfer:0)
+[2026-03-14T09:28:07.036Z] [INFO]   ✓ EpDUZPF6ueDKLZDY 已实现$9957 (normal, buy:2 sell:6 transfer:0)
+[2026-03-14T09:28:22.324Z] [INFO]   ✓ BC8yiFFQWFEKrEEj 已实现$4118 (normal, buy:0 sell:1 transfer:0)
+[2026-03-14T09:28:28.072Z] [INFO]   ✓ 5i2DvnxbErjn5ams 持仓中(成本$1600) (normal, buy:16 sell:0 transfer:0)
+[2026-03-14T09:28:28.572Z] [INFO]   我的刀盾: 11/20 个盈利≥$2000
+[2026-03-14T09:28:29.578Z] [INFO] 钱包池: 289 个, 待分析: 208
+[2026-03-14T09:28:29.578Z] [INFO] 分析钱包: [BSC] 0x165eccb67e6ef472f2...
+[2026-03-14T09:28:41.529Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:28:41.529Z] [INFO] 分析钱包: [BSC] 0x7bc1e0af49981fe000...
+[2026-03-14T09:28:55.318Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:28:55.318Z] [INFO] 分析钱包: [BSC] 0x73d8bd54f7cf5fab43...
+[2026-03-14T09:29:26.251Z] [INFO]   无交易数据，跳过
+[2026-03-14T09:29:26.253Z] [INFO] 等待 60秒...
