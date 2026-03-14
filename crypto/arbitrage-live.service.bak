@@ -1,0 +1,17 @@
+[Unit]
+Description=Arbitrage Live Trading Engine
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/.openclaw/workspace
+ExecStart=/usr/local/bin/node --max-old-space-size=512 crypto/arbitrage_live.js
+Restart=always
+RestartSec=10
+StandardOutput=append:/root/.openclaw/workspace/crypto/arbitrage_live.log
+StandardError=append:/root/.openclaw/workspace/crypto/arbitrage_live.log
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
