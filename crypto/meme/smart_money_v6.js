@@ -226,6 +226,13 @@ async function fetchSeeds() {
       s.dexMainDex = dexId;
       s.isPumpfun = isPumpfun;
       
+      // 规则0: 流动性/MC < 1% → 市值虚高，直接踢（不管交易量多少）
+      if (liqMcRatio < 0.01) {
+        log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED(市值虚高): Liq/MC=${(liqMcRatio*100).toFixed(2)}% Liq:$${totalLiq.toFixed(0)} MC:$${mc.toFixed(0)}`);
+        all.delete(s.contractAddress.toLowerCase());
+        poolKicked++;
+        continue;
+      }
       // 规则1: 流动性/MC < 5% 且 主池交易笔数 < 10000 → 断头铡
       if (liqMcRatio < 0.05 && mainTxns < 10000) {
         log('INFO', `    ❌ ${s.symbol}[${s.chain}] KICKED(断头铡): Liq/MC=${(liqMcRatio*100).toFixed(1)}% Txns=${mainTxns}`);
