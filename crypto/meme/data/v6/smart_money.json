@@ -1,0 +1,121 @@
+{
+  "updatedAt": "2026-03-14T10:58:02.141Z",
+  "criteria": {
+    "minSeedAppearance": 2,
+    "minProfitPerSeed": 1000,
+    "minWinRate": 0.4,
+    "maxBotScore": 0.5
+  },
+  "smartMoney": [
+    {
+      "wallet": "3nMNd89AxwHUa1AFvQGqohRkxFEQsTsgiEyEyqXFHyyH",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seeds": [
+        "7nywly8vl9s4nrjjxo2pk9ussdqre6tcmetayzkmgipn",
+        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
+      ],
+      "seedSymbols": [
+        "DRONE",
+        "SMITH"
+      ],
+      "totalBuys": 2,
+      "totalSells": 2,
+      "botScore": 0.1,
+      "estimatedWinRate": 1,
+      "score": 2.3400000000000003
+    },
+    {
+      "wallet": "52oc72vjNbpUhF7jNE1pPAvc17JwBTyxybFp3u7PvetG",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seeds": [
+        "d9g3nfv4qcedfbj35dxb4aa53odudfutbv6s8umdpump",
+        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
+      ],
+      "seedSymbols": [
+        "WHALE",
+        "SMITH"
+      ],
+      "totalBuys": 1,
+      "totalSells": 2,
+      "botScore": 0.1,
+      "estimatedWinRate": 1,
+      "score": 2.3400000000000003
+    },
+    {
+      "wallet": "7eHTBRPFWZm7TnfYaw83mNq6wHC5dq1jf2RCk4aV4w2o",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seeds": [
+        "d9g3nfv4qcedfbj35dxb4aa53odudfutbv6s8umdpump",
+        "e93jugqchixz9upfzwelgvu5qsc9dd1qzkcghjrpump"
+      ],
+      "seedSymbols": [
+        "WHALE",
+        "Memehouse"
+      ],
+      "totalBuys": 2,
+      "totalSells": 1,
+      "botScore": 0.1,
+      "estimatedWinRate": 0.5,
+      "score": 1.4400000000000002
+    },
+    {
+      "wallet": "9jPvqa7DmscP3yFR8DykXFUbgdAroCMxkCrkbWqUDpGR",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seeds": [
+        "5dfhpibxagakgumlpcm246qhb8i8gade3xdpvndkpump",
+        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
+      ],
+      "seedSymbols": [
+        "Sheep",
+        "SMITH"
+      ],
+      "totalBuys": 1,
+      "totalSells": 2,
+      "botScore": 0.1,
+      "estimatedWinRate": 0.5,
+      "score": 1.4400000000000002
+    },
+    {
+      "wallet": "BEcU74sJ6uuoBRLMHj26hpfYg1D64FDdFGu6NkFFvmmm",
+      "chain": "Solana",
+      "seedCount": 2,
+      "seeds": [
+        "5dfhpibxagakgumlpcm246qhb8i8gade3xdpvndkpump",
+        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
+      ],
+      "seedSymbols": [
+        "Sheep",
+        "SMITH"
+      ],
+      "totalBuys": 1,
+      "totalSells": 2,
+      "botScore": 0.1,
+      "estimatedWinRate": 0.5,
+      "score": 1.4400000000000002
+    },
+    {
+      "wallet": "2Bw6YNdLGciRkQmGZsteLPF8v3nkUE9F63unrBE2JmGP",
+      "chain": "Solana",
+      "seedCount": 3,
+      "seeds": [
+        "7nywly8vl9s4nrjjxo2pk9ussdqre6tcmetayzkmgipn",
+        "5dfhpibxagakgumlpcm246qhb8i8gade3xdpvndkpump",
+        "9e1wtawpbkrjgq3vlbpgbvpqflfspftjai4d9eo9pump"
+      ],
+      "seedSymbols": [
+        "DRONE",
+        "Sheep",
+        "SMITH"
+      ],
+      "totalBuys": 4,
+      "totalSells": 0,
+      "botScore": 0.1,
+      "estimatedWinRate": 0,
+      "score": 0.81
+    }
+  ]
+}
