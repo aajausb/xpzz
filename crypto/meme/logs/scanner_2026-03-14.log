@@ -3007,3 +3007,135 @@
 [2026-03-14T13:59:18.518Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
 [2026-03-14T13:59:18.519Z] [INFO]   无交易数据，跳过
 [2026-03-14T13:59:18.519Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:00:36.402Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:00:36.402Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:00:36.485Z] [INFO] SOL价格: $87.13
+[2026-03-14T14:01:20.167Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:01:26.399Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:01:32.465Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:01:32.466Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:01:34.169Z] [INFO] ✓ [SOLANA] U.S WAR ($4.8M) 慢涨0x (0天, 最大单日?x) [new]
+[2026-03-14T14:01:34.169Z] [INFO] 查持有者: U.S WAR ($4.8M) mint:C4feHH7akapRnG5Y
+[2026-03-14T14:01:34.576Z] [INFO]   U.S WAR: 14 个持有者，验证盈利...
+[2026-03-14T14:01:34.576Z] [INFO]   跳过LP池: 2jyNypsrSRW3x8cc (988511272555 tokens)
+[2026-03-14T14:01:34.576Z] [INFO]   跳过LP池: CguYFz5DWApm9zmQ (10865640606 tokens)
+[2026-03-14T14:02:00.632Z] [INFO]   U.S WAR: 0/14 个盈利≥$2000
+[2026-03-14T14:02:01.640Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:02:01.641Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:03:15.463Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:03:15.463Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:05:32.237Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:05:32.238Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:05:32.238Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:06:47.653Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:06:47.654Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:06:47.743Z] [INFO] SOL价格: $87.15
+[2026-03-14T14:07:28.779Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:07:34.852Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:07:40.928Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:07:40.929Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:07:40.936Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:07:40.936Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:07:53.123Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:07:53.123Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:08:06.496Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:08:06.496Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:08:06.496Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:09:20.160Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:09:20.160Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:09:20.247Z] [INFO] SOL价格: $87.17
+[2026-03-14T14:10:02.605Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:10:09.194Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:10:15.285Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:10:15.286Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:10:15.292Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:10:15.293Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:10:30.798Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:10:30.798Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:10:41.564Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:10:41.564Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:10:41.564Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:15:02.799Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:15:02.800Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:15:02.894Z] [INFO] SOL价格: $87.05
+[2026-03-14T14:15:46.559Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:15:52.719Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:15:58.797Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:15:58.798Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:15:58.804Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:15:58.805Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:16:09.002Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:16:09.002Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:16:19.138Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:16:19.138Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:16:19.138Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:17:31.154Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:17:31.154Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:17:31.242Z] [INFO] SOL价格: $86.97
+[2026-03-14T14:18:13.087Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:18:19.152Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:18:25.226Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:18:25.227Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:18:25.234Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:18:25.234Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:18:36.950Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:18:36.951Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:18:47.024Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:18:47.024Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:18:47.024Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:20:04.154Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:20:04.154Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:20:04.255Z] [INFO] SOL价格: $86.96
+[2026-03-14T14:20:46.085Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:20:52.250Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:20:58.305Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:20:58.306Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:20:58.313Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:20:58.313Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:21:09.647Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:21:09.647Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:21:21.178Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:21:21.178Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:21:21.178Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:22:37.901Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:22:37.901Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:22:37.986Z] [INFO] SOL价格: $86.92
+[2026-03-14T14:23:21.109Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:23:27.186Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:23:33.266Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:23:33.267Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:23:33.274Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:23:33.275Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:23:45.218Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:23:45.218Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:23:56.921Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:23:56.921Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:23:56.921Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:25:10.161Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:25:10.162Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:25:10.252Z] [INFO] SOL价格: $86.92
+[2026-03-14T14:25:51.993Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:25:58.149Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:26:04.874Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:26:04.875Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:26:04.882Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:26:04.883Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:26:15.469Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:26:15.470Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:26:26.129Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:26:26.129Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:26:26.129Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...
+[2026-03-14T14:27:33.901Z] [INFO] === Smart Money Scanner v5 启动 ===
+[2026-03-14T14:27:33.902Z] [INFO] 标准: ≥3币 + 均利≥$2000 + 胜率≥60%
+[2026-03-14T14:27:33.987Z] [INFO] SOL价格: $86.95
+[2026-03-14T14:28:15.259Z] [INFO] GeckoTerminal SOL: trending+volume 已处理
+[2026-03-14T14:28:21.422Z] [INFO] GeckoTerminal BSC: trending+volume 已处理
+[2026-03-14T14:28:27.495Z] [INFO] GeckoTerminal BASE: trending+volume 已处理
+[2026-03-14T14:28:27.496Z] [INFO] 发现 100 个币 (甜蜜区$1M-$50M: 59个, 丢弃>$500M)
+[2026-03-14T14:28:27.504Z] [INFO] 钱包池: 535 个, 待分析: 337
+[2026-03-14T14:28:27.504Z] [INFO] 分析钱包: [BSC] 0xa1daf346567b6fc13b...
+[2026-03-14T14:28:38.938Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:28:38.938Z] [INFO] 分析钱包: [BSC] 0x4faf59b2922387554c...
+[2026-03-14T14:28:50.649Z] [WARN] EVM analyzeWallet失败: Cannot convert 0x to a BigInt
+[2026-03-14T14:28:50.649Z] [INFO]   无交易数据，跳过
+[2026-03-14T14:28:50.649Z] [INFO] 分析钱包: [BASE] 0x498581ff718922c3f8...

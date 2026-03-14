@@ -423,7 +423,7 @@ async function mineSolana(seed) {
   return result;
 }
 
-// --- EVM挖掘（Transfer事件 + 估算盈亏） ---
+// --- EVM挖掘（Transfer事件 + DexScreener价格估算盈亏） ---
 async function mineEvm(seed) {
   log('INFO', `  ⛏ [${seed.chain}] ${seed.symbol} (${seed.contractAddress.slice(0,12)}...)`);
   const rpc = EVM_RPCS[seed.rpcKey];
@@ -432,13 +432,39 @@ async function mineEvm(seed) {
   const contract = seed.contractAddress.toLowerCase();
   const wallets = new Map();
   
+  // 1) 先拿DexScreener价格 + token decimals
+  let tokenPriceUsd = 0, tokenDecimals = 18;
   try {
-    // 获取当前区块
+    const dex = await httpReq(`https://api.dexscreener.com/latest/dex/tokens/${seed.contractAddress}`);
+    const pairs = dex?.pairs || [];
+    if (pairs.length) {
+      const mainPair = pairs.reduce((best, p) => ((p.liquidity?.usd||0) > (best.liquidity?.usd||0)) ? p : best, pairs[0]);
+      tokenPriceUsd = parseFloat(mainPair.priceUsd || 0);
+      // 尝试从pair info获取decimals（base token）
+      const fdv = mainPair.fdv || 0;
+      const supply = fdv > 0 && tokenPriceUsd > 0 ? fdv / tokenPriceUsd : 0;
+      // 尝试获取K线来估算历史价格范围
+      log('INFO', `    价格: $${tokenPriceUsd.toFixed(8)} (${mainPair.dexId})`);
+    }
+  } catch (e) { log('WARN', `    DexScreener失败: ${e.message?.slice(0,40)}`); }
+  
+  // 2) 查token decimals（ERC20 decimals() call）
+  try {
+    const dr = await httpReq(rpc, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_call',
+        params: [{ to: contract, data: '0x313ce567' }, 'latest'], id: 1 }) });
+    if (dr.result && dr.result !== '0x') {
+      tokenDecimals = parseInt(dr.result, 16);
+    }
+  } catch {}
+  const divisor = 10 ** tokenDecimals;
+  
+  // 3) 拉Transfer事件
+  try {
     const br = await httpReq(rpc, { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }) });
     const curBlock = parseInt(br.result, 16);
     
-    // 按种子币年龄查Transfer事件（最多60天）
     const blocksPerDay = seed.chain === 'BSC' ? 28800 : 43200;
     const ageDays = seed.launchTime ? Math.ceil((Date.now() - seed.launchTime) / 86400000) + 2 : 100;
     const lookbackDays = Math.min(ageDays, 100);
@@ -446,7 +472,7 @@ async function mineEvm(seed) {
     const BATCH = 5000;
     let totalEvents = 0;
     
-    for (let start = fromBlock; start < curBlock && totalEvents < 5000; start += BATCH) {
+    for (let start = fromBlock; start < curBlock && totalEvents < 20000; start += BATCH) {
       const end = Math.min(start + BATCH - 1, curBlock);
       try {
         const lr = await httpReq(rpc, { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -461,20 +487,22 @@ async function mineEvm(seed) {
           if (!l.topics || l.topics.length < 3) continue;
           const from = '0x' + l.topics[1].slice(26).toLowerCase();
           const to = '0x' + l.topics[2].slice(26).toLowerCase();
-          const value = parseInt(l.data || '0x0', 16);
+          const rawValue = BigInt(l.data || '0x0');
+          const tokenAmount = Number(rawValue) / divisor;
           const block = parseInt(l.blockNumber, 16);
           if (to === '0x0000000000000000000000000000000000000000') continue;
           
-          // 记录收到token（买入信号）和发出token（卖出信号）
           for (const [addr, isBuy] of [[to, true], [from, false]]) {
             if (addr === '0x0000000000000000000000000000000000000000') continue;
             if (!wallets.has(addr)) {
-              wallets.set(addr, { wallet: addr, chain: seed.chain, received: 0, sent: 0,
-                receiveCount: 0, sendCount: 0, firstBlock: null, lastBlock: null });
+              wallets.set(addr, { wallet: addr, chain: seed.chain,
+                tokenReceived: 0, tokenSent: 0,
+                receiveCount: 0, sendCount: 0,
+                firstBlock: null, lastBlock: null });
             }
             const w = wallets.get(addr);
-            if (isBuy) { w.received += value; w.receiveCount++; }
-            else { w.sent += value; w.sendCount++; }
+            if (isBuy) { w.tokenReceived += tokenAmount; w.receiveCount++; }
+            else { w.tokenSent += tokenAmount; w.sendCount++; }
             if (!w.firstBlock || block < w.firstBlock) w.firstBlock = block;
             w.lastBlock = Math.max(w.lastBlock || 0, block);
           }
@@ -483,21 +511,37 @@ async function mineEvm(seed) {
       } catch { await sleep(300); }
     }
     
-    log('INFO', `    ${totalEvents}个事件 → ${wallets.size}个地址`);
+    log('INFO', `    ${totalEvents}个事件 → ${wallets.size}个地址 (decimals:${tokenDecimals})`);
   } catch (e) {
     log('WARN', `    EVM失败: ${e.message?.slice(0, 50)}`);
   }
   
-  // 转换格式（EVM没法直接算USD盈亏，用token净买入量作为指标）
-  return [...wallets.values()].map(w => ({
-    wallet: w.wallet, chain: w.chain,
-    buyCount: w.receiveCount, sellCount: w.sendCount,
-    netTokens: w.received - w.sent,
-    profitUsd: 0, // EVM暂时无法算
-    costUsd: 0,
-    roi: w.sent > 0 && w.received > 0 ? (w.sent / w.received) : 0,
-    firstBlock: w.firstBlock,
-  }));
+  // 4) 用当前价格估算盈亏
+  // 卖出收入 = tokenSent × currentPrice
+  // 持仓价值 = (tokenReceived - tokenSent) × currentPrice
+  // 近似profit = 卖出收入 + 持仓价值 - 买入成本
+  // 由于不知道历史买入价格，用一个保守估计：
+  // 如果 tokenSent > 0（已卖出），profit = tokenSent × currentPrice（保守估计，实际可能更高因为早期价格低）
+  // 更合理的估算：用卖出量×当前价作为"已实现收入"，净持仓×当前价作为"未实现"
+  return [...wallets.values()].map(w => {
+    const sellRevenue = w.tokenSent * tokenPriceUsd;
+    const holdingValue = Math.max(0, (w.tokenReceived - w.tokenSent)) * tokenPriceUsd;
+    // 保守估算profit = 卖出收入（不算持仓，因为可能还没卖）
+    // 但如果他买了又卖了，说明已经实现收益
+    const profitUsd = sellRevenue; // 用卖出金额作为已实现利润的下限
+    const costEstimate = w.tokenReceived * tokenPriceUsd; // 如果按当前价买的成本
+    
+    return {
+      wallet: w.wallet, chain: w.chain,
+      buyCount: w.receiveCount, sellCount: w.sendCount,
+      netTokens: w.tokenReceived - w.tokenSent,
+      profitUsd: Math.round(profitUsd * 100) / 100,
+      costUsd: Math.round(costEstimate * 100) / 100,
+      holdingValueUsd: Math.round(holdingValue * 100) / 100,
+      roi: costEstimate > 0 ? sellRevenue / costEstimate : 0,
+      firstBlock: w.firstBlock,
+    };
+  });
 }
 
 async function mineAll(seeds) {
