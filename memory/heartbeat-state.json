@@ -1,15 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1742074600,
-    "memory": 1742074600,
-    "walletCheck": 1742074600
+    "engine": 1742076400,
+    "memory": 1742076400,
+    "walletCheck": 1742076400
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T05:36Z",
-    "SOL": "活跃，05:30有信号，WS正常",
-    "BSC": "活跃，05:22有信号，WS正常",
-    "Base": "90min无信号，凌晨低频属正常",
-    "verdict": "三链正常，无断线无漏单"
+    "time": "2026-03-16T06:07+08:00",
+    "SOL_W3_4vw54B": "活跃(22:06UTC FlashX swap)，引擎未检测(FlashX非标DEX不在识别列表)",
+    "SOL_W4_2cScMk": "最后活跃04:32UTC",
+    "BSC_W3_0x7a23": "nonce=54971",
+    "BASE_W2_0x3f28": "nonce=276",
+    "signalCounts1h": { "SOL": 14, "BSC": 5, "Base": 0 },
+    "verdict": "三链WS正常，信号检测活跃。FlashX DEX交易未被识别(两次heartbeat都发现)，可能是检测盲区待修复。"
   },
-  "notes": "05:36 引擎active, 三链WS正常, 内存5239MB, SOL恢复正常频率(上次04:08稀疏已恢复)"
+  "notes": "06:07 引擎active, 内存5230MB, 三链正常, FlashX盲区待跑步哥决定是否修"
 }
