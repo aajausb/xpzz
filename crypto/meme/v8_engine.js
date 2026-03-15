@@ -32,6 +32,7 @@ const CONFIG = {
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
   confirmWindowMs: 60 * 60 * 1000,          // 60分钟确认窗口
   minLiqMcRatio: 0.05,                     // Liq/MC ≥ 5%
+  minMarketCap: 10000,                     // 最低市值$10K，太小的流动性差买卖滑点大
   
   // 交易 — 按SM确认数决定仓位
   positionSizeTop10: 10,                   // SM≥10: $10
@@ -88,6 +89,28 @@ const OKX_ENV = {
 
 const bscProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
 const baseProvider = new ethers.JsonRpcProvider('https://mainnet.base.org');
+
+// OKX DEX链ID和原生代币
+const CHAIN_ID = { solana: '501', bsc: '56', base: '8453' };
+const NATIVE = {
+  solana: 'So11111111111111111111111111111111111111112',
+  bsc: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+  base: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+};
+
+// OKX签名GET请求
+async function okxGet(fullUrl) {
+  const urlObj = new URL(fullUrl);
+  const pathWithQuery = urlObj.pathname + urlObj.search;
+  const ts = new Date().toISOString();
+  const sign = require('crypto').createHmac('sha256', OKX_ENV.OKX_SECRET_KEY).update(ts + 'GET' + pathWithQuery).digest('base64');
+  return httpGet(fullUrl, {
+    'OK-ACCESS-KEY': OKX_ENV.OKX_API_KEY,
+    'OK-ACCESS-SIGN': sign,
+    'OK-ACCESS-TIMESTAMP': ts,
+    'OK-ACCESS-PASSPHRASE': OKX_ENV.OKX_PASSPHRASE,
+  });
+}
 
 // ============ UTILS ============
 const log = (level, msg) => console.log(`${new Date().toLocaleTimeString('zh-CN')} [${level}] ${msg}`);
@@ -455,45 +478,44 @@ async function pollSolanaWallets() {
 
 async function parseSolSignature(walletAddr, signature) {
   try {
-    const d = await httpPost(`https://api.helius.xyz/v0/transactions/?api-key=${HELIUS_PARSE_KEY}`, [signature]);
-    if (!Array.isArray(d) || d.length === 0) return;
+    // 用QuickNode getTransaction解析swap（不依赖Helius）
+    const txData = await rpcPost(SOL_PUBLIC_RPC, 'getTransaction', [signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
+    const meta = txData.result?.meta;
+    if (!meta || meta.err) return;
     
-    const tx = d[0];
-    if (tx.type !== 'SWAP') return; // 只关心swap
+    const pre = meta.preTokenBalances || [];
+    const post = meta.postTokenBalances || [];
+    if (post.length === 0) return; // 没有token变动，不是swap
     
     const wallet = rankedWallets.find(w => w.address === walletAddr);
     const rank = wallet?.rank || 999;
+    const WSOL = 'So11111111111111111111111111111111111111112';
     
-    // 从tokenTransfers中找买入的token
-    const transfers = tx.tokenTransfers || [];
-    for (const t of transfers) {
-      if (t.toUserAccount === walletAddr && t.fromUserAccount !== walletAddr) {
-        const mint = t.mint;
-        const WSOL = 'So11111111111111111111111111111111111111112';
-        if (mint === WSOL) continue;
-        
-        const amount = t.tokenAmount || 0;
-        log('INFO', `🔔 [SOL] swap检测! 钱包#${rank} ${walletAddr.slice(0,8)}... 买入 ${mint.slice(0,8)}... (${tx.source})`);
-        
+    // 找钱包的token余额变化
+    for (const p of post) {
+      if (p.owner !== walletAddr) continue;
+      if (p.mint === WSOL) continue;
+      
+      const preB = pre.find(x => x.accountIndex === p.accountIndex && x.mint === p.mint);
+      const preAmt = parseFloat(preB?.uiTokenAmount?.uiAmount || 0);
+      const postAmt = parseFloat(p?.uiTokenAmount?.uiAmount || 0);
+      const diff = postAmt - preAmt;
+      
+      if (diff > 0) {
+        // 买入: 余额增加
+        log('INFO', `🔔 [SOL] swap检测! 钱包#${rank} ${walletAddr.slice(0,10)}... 买入 ${p.mint}`);
         await handleSignal({
           chain: 'solana',
-          token: mint,
-          symbol: tx.tokenTransfers?.[0]?.tokenStandard || '?',
+          token: p.mint,
+          symbol: '?',
           wallet: walletAddr,
           walletRank: rank,
           timestamp: Date.now(),
         });
-      }
-      
-      // 检测卖出: 钱包把token转出去
-      if (t.fromUserAccount === walletAddr && t.toUserAccount !== walletAddr) {
-        const mint = t.mint;
-        const WSOL = 'So11111111111111111111111111111111111111112';
-        if (mint === WSOL) continue;
-        if (positions[mint]) {
-          log('INFO', `📉 [SOL] 卖出! 钱包#${rank} ${walletAddr.slice(0,8)}... 卖出 ${mint.slice(0,8)}...`);
-          trackSmartMoneySell(mint, walletAddr, 1.0); // 记录该钱包卖了，managePositions按人数比例决定
-        }
+      } else if (diff < 0 && positions[p.mint]) {
+        // 卖出: 余额减少 + 我们持有该币
+        log('INFO', `📉 [SOL] 卖出! 钱包#${rank} ${walletAddr.slice(0,10)}... 卖出 ${p.mint}`);
+        trackSmartMoneySell(p.mint, walletAddr, 1.0);
       }
     }
   } catch(e) {
@@ -647,7 +669,7 @@ function setupEvmWebSocket(chainKey) {
           if (blacklist.has(tokenAddr)) return;
           const wallet = rankedWallets.find(w => w.address?.toLowerCase() === toAddr);
           const rank = wallet?.rank || 999;
-          log("INFO", "🔔 [" + chain.name + "] 买入! 钱包#" + rank + " " + toAddr.slice(0,8) + "... 获得 " + tokenAddr.slice(0,8) + "...");
+          log("INFO", "🔔 [" + chain.name + "] 买入! 钱包#" + rank + " " + toAddr.slice(0,10) + "... 获得 " + tokenAddr);
           await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now() });
         }
         
@@ -776,7 +798,7 @@ async function handleSignal(signal) {
   if (!confirmed) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
     const extra = watchCount > 0 ? ` (+${watchCount}哨兵)` : '';
-    log('INFO', `⏳ ${token.slice(0,8)}...(${chain}) 确认中 猎手=${confirmCount} 哨兵=${watchCount}${extra} 最高#${bestRank}`);
+    log('INFO', `⏳ ${token}(${chain}) 确认中 猎手=${confirmCount} 哨兵=${watchCount}${extra} 最高#${bestRank}`);
     return;
   }
   
@@ -846,17 +868,34 @@ async function auditToken(chain, tokenAddress) {
 
 async function checkLiquidity(chain, tokenAddress) {
   try {
-    const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`);
-    const pair = d?.pairs?.[0];
-    if (!pair) return { ok: false, reason: 'no_pair' };
+    // OKX报价验证：能报价=有路由=能买卖（覆盖内盘/外盘）
+    const chainIndex = CHAIN_ID[chain];
+    const native = NATIVE[chain];
+    const testAmount = chain === 'solana' ? '10000000' : '5000000000000000'; // 0.01 SOL / 0.005 BNB/ETH
+    const quoteUrl = `https://web3.okx.com/api/v6/dex/aggregator/quote?chainIndex=${chainIndex}&fromTokenAddress=${native}&toTokenAddress=${tokenAddress}&amount=${testAmount}`;
+    const quoteData = await okxGet(quoteUrl);
     
-    const mc = parseFloat(pair.marketCap || 0);
-    const liq = parseFloat(pair.liquidity?.usd || 0);
+    if (!quoteData?.data?.[0]?.routerResult) {
+      return { ok: false, reason: 'OKX无路由' };
+    }
     
-    if (mc <= 0) return { ok: false, reason: 'no_mc' };
-    const ratio = liq / mc;
+    const toAmount = parseFloat(quoteData.data[0].routerResult.toTokenAmount || 0);
+    if (toAmount <= 0) return { ok: false, reason: 'OKX报价=0' };
     
-    return { ok: ratio >= CONFIG.minLiqMcRatio, ratio: (ratio * 100).toFixed(1) + '%', reason: ratio < CONFIG.minLiqMcRatio ? `Liq/MC=${(ratio*100).toFixed(1)}%<5%` : 'OK' };
+    // 补充DexScreener检查市值（有就查，没有不拦）
+    try {
+      const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`);
+      const pair = d?.pairs?.[0];
+      const mc = parseFloat(pair?.marketCap || 0);
+      if (mc > 0 && mc < CONFIG.minMarketCap) {
+        return { ok: false, reason: `MC=$${Math.round(mc)}<$${CONFIG.minMarketCap}` };
+      }
+      const liq = parseFloat(pair?.liquidity?.usd || 0);
+      const ratio = mc > 0 ? (liq / mc * 100).toFixed(1) + '%' : '内盘';
+      return { ok: true, ratio, reason: 'OK(OKX有路由)' };
+    } catch(e) {
+      return { ok: true, ratio: '内盘', reason: 'OK(OKX有路由,DexScreener无数据)' };
+    }
   } catch(e) {
     return { ok: false, reason: 'check_failed_block' };
   }
