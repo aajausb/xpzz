@@ -4,14 +4,18 @@
 ### 当前状态：v8引擎已上线运行！
 ### 服务：meme-v8.service (systemd)
 1. [x] 三链买卖全通（Solana/BSC/Base，统一OKX聚合器）
-2. [x] v8引擎：币安PnL Rank → 验证钱包 → 动态排名 → 实时跟单
-3. [x] 实盘运行中：SOL=27 BSC=32 Base=13 钱包监控，5个持仓
+2. [x] v8引擎：币安PnL Rank → 钱包库(持久化) → 动态排名 → 链上实时跟单
+3. [x] 钱包库233个，实盘56个(WR 60-80%)，BSC/Base WebSocket实时推送
+4. [ ] 等待真实信号验证完整链路（信号→确认→审计→买入）
+
+## 进程存活检查（每次heartbeat执行）
+1. 只检查 `meme-v8`（跟单引擎）
+2. 挂了用 `systemctl restart meme-v8` 拉起
+3. scanner-daemon / auto-trader / arbitrage-live 已永久停止，不要拉起
 
 ## 内存检查（每次heartbeat执行）
 1. 运行 `free -m` 检查可用内存
-2. 如果可用内存 < 1000MB：
-   - 检查各进程内存占用
-   - 运行 `sync && echo 3 > /proc/sys/vm/drop_caches` 清理系统缓存
+2. 如果可用内存 < 1000MB：清理系统缓存
 3. 如果可用内存 > 1000MB，不做操作
 
 ## 记忆维护（每天执行1-2次）

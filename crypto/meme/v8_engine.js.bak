@@ -306,120 +306,17 @@ const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a
 // SOL: 双模式 — Helius WS优先，fallback到公共RPC轮询
 const solLastSigs = new Map(); // wallet -> lastSignature
 
-const SOL_WS_ENDPOINT = 'wss://solana.publicnode.com';
-const solWsConnections = []; // logsSubscribe连接池
-let solWsMode = 'none'; // 'helius' | 'logsSubscribe' | 'polling'
-
 function setupSolanaMonitor() {
   const solWallets = rankedWallets.filter(w => w.chain === 'solana');
   for (const w of solWallets) solWalletSet.add(w.address);
   
   if (solWalletSet.size === 0) return;
   
-  // 优先: Helius transactionSubscribe（毫秒级，最完整）
+  // 尝试Helius WebSocket
   tryHeliusWs();
   
-  // 次优: publicnode logsSubscribe（实时，每钱包一个连接）
-  // Helius连上后这些会被关闭
-  setTimeout(() => {
-    if (!heliusWsConnected) {
-      setupSolanaLogsSubscribe();
-    }
-  }, 10000); // 给Helius 10秒机会
-  
-  // 兜底: 轮询（最慢但最稳）
+  // 同时启动轮询作为fallback（Helius连上后轮询自动降频）
   pollSolanaWallets();
-}
-
-function setupSolanaLogsSubscribe() {
-  const walletList = [...solWalletSet];
-  log('INFO', `🔌 [SOL] logsSubscribe实时模式 ${walletList.length} 个钱包`);
-  
-  let connected = 0;
-  const BATCH_SIZE = 50;
-  
-  for (let i = 0; i < walletList.length; i++) {
-    const addr = walletList[i];
-    const delay = Math.floor(i / BATCH_SIZE) * 5000 + (i % BATCH_SIZE) * 200; // 每批50个，批间5秒
-    
-    setTimeout(() => {
-      if (heliusWsConnected) return; // Helius已连上，不再开新连接
-      
-      const ws = new WebSocket(SOL_WS_ENDPOINT);
-      solWsConnections.push(ws);
-      
-      ws.on('open', () => {
-        ws.send(JSON.stringify({
-          jsonrpc: '2.0', id: 1, method: 'logsSubscribe',
-          params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
-        }));
-      });
-      
-      ws.on('message', async (data) => {
-        try {
-          const msg = JSON.parse(data);
-          if (msg.id === 1 && msg.result) {
-            connected++;
-            if (connected === 1 || connected % 20 === 0 || connected === walletList.length) {
-              log('INFO', `🔌 [SOL] logsSubscribe ${connected}/${walletList.length} 已连接`);
-            }
-            solWsMode = 'logsSubscribe';
-            return;
-          }
-          // 日志通知 = 该钱包有交易
-          if (msg.params?.result) {
-            const sig = msg.params.result.value?.signature;
-            if (sig && !msg.params.result.value?.err) {
-              // 检测到交易，用Helius解析或公共RPC确认
-              await parseSolSignature(addr, sig);
-            }
-          }
-        } catch(e) {}
-      });
-      
-      ws.on('close', () => {
-        // 从连接池移除
-        const idx = solWsConnections.indexOf(ws);
-        if (idx >= 0) solWsConnections.splice(idx, 1);
-        // 如果Helius没连上，重连
-        if (!heliusWsConnected) {
-          setTimeout(() => {
-            if (!heliusWsConnected) {
-              const newWs = new WebSocket(SOL_WS_ENDPOINT);
-              solWsConnections.push(newWs);
-              newWs.on('open', () => {
-                newWs.send(JSON.stringify({
-                  jsonrpc: '2.0', id: 1, method: 'logsSubscribe',
-                  params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
-                }));
-              });
-              newWs.on('message', async (d) => {
-                try {
-                  const m = JSON.parse(d);
-                  if (m.params?.result?.value?.signature && !m.params.result.value.err) {
-                    await parseSolSignature(addr, m.params.result.value.signature);
-                  }
-                } catch(e) {}
-              });
-              newWs.on('close', () => {});
-              newWs.on('error', () => {});
-            }
-          }, 10000);
-        }
-      });
-      
-      ws.on('error', () => {});
-    }, delay);
-  }
-}
-
-// Helius连上后关闭logsSubscribe连接
-function closeSolanaLogsSubscribe() {
-  for (const ws of solWsConnections) {
-    try { ws.close(); } catch(e) {}
-  }
-  solWsConnections.length = 0;
-  log('INFO', '🔌 [SOL] logsSubscribe连接已关闭，切换到Helius模式');
 }
 
 let heliusWsConnected = false;
@@ -452,9 +349,7 @@ function tryHeliusWs() {
       if (msg.id === 1 && msg.result) {
         heliusWsConnected = true;
         solWsRetries = 0;
-        solWsMode = 'helius';
-        log('INFO', `🔌 [SOL] Helius WS订阅成功! 切换到Helius实时模式`);
-        closeSolanaLogsSubscribe(); // 关闭logsSubscribe连接
+        log('INFO', `🔌 [SOL] Helius WS订阅成功! 实时模式`);
         return;
       }
       if (msg.params?.result) {
@@ -494,8 +389,7 @@ async function pollSolanaWallets() {
   
   while (true) {
     // Helius WS连上了就降频（30秒），否则10秒
-    // Helius或logsSubscribe连上后轮询降频，只作兜底
-    const interval = (heliusWsConnected || solWsMode === 'logsSubscribe') ? 60000 : 5000;
+    const interval = heliusWsConnected ? 30000 : 5000;
     await sleep(interval);
     
     for (const addr of solWalletSet) {
@@ -661,67 +555,81 @@ function trackSmartMoneySell(token, wallet, ratio) {
   }
 }
 
-// BSC/Base: WebSocket实时推送 — 订阅DEX Router的Transfer事件
-const EVM_WS_ENDPOINTS = {
-  bsc: "wss://bsc.publicnode.com",
-  base: "wss://base.publicnode.com",
-};
-const evmWsRetries = { bsc: 0, base: 0 };
-
-function setupEvmWebSocket(chainKey) {
+// BSC/Base: 轮询区块 — 查我们钱包的ERC20 Transfer
+async function pollEvmChain(chainKey) {
   const chain = CHAINS[chainKey];
-  const walletSet = chainKey === "bsc" ? bscWalletSet : baseWalletSet;
+  const walletSet = chainKey === 'bsc' ? bscWalletSet : baseWalletSet;
+  const provider = chainKey === 'bsc' ? bscProvider : baseProvider;
   const wallets = rankedWallets.filter(w => w.chain === chainKey);
   for (const w of wallets) walletSet.add(w.address.toLowerCase());
   
   if (walletSet.size === 0) return;
+  log('INFO', `🔌 [${chain.name}] 区块轮询监控 ${walletSet.size} 个钱包`);
   
-  const routers = DEX_ROUTERS[chainKey] || new Set();
-  if (routers.size === 0) return;
+  let lastBlock = await provider.getBlockNumber();
   
-  const wsUrl = EVM_WS_ENDPOINTS[chainKey];
-  const ws = new WebSocket(wsUrl);
-  
-  ws.on("open", () => {
-    let subId = 1;
-    for (const routerAddr of routers) {
-      ws.send(JSON.stringify({
-        jsonrpc: "2.0", id: subId++, method: "eth_subscribe",
-        params: ["logs", { topics: [TRANSFER_TOPIC, ethers.zeroPadValue(routerAddr, 32)] }]
-      }));
-    }
-    evmWsRetries[chainKey] = 0;
-    log("INFO", "🔌 [" + chain.name + "] WebSocket实时监控 " + walletSet.size + " 个钱包 (" + routers.size + "个DEX)");
-  });
-  
-  ws.on("message", async (data) => {
+  while (true) {
     try {
-      const msg = JSON.parse(data);
-      if (msg.id && msg.result) return;
-      if (msg.params?.result) {
-        const logEntry = msg.params.result;
-        const toAddr = "0x" + logEntry.topics[2].slice(26).toLowerCase();
-        if (!walletSet.has(toAddr)) return;
-        const tokenAddr = logEntry.address.toLowerCase();
-        if (blacklist.has(tokenAddr)) return;
-        const wallet = rankedWallets.find(w => w.address?.toLowerCase() === toAddr);
-        const rank = wallet?.rank || 999;
-        log("INFO", "🔔 [" + chain.name + "] 实时swap! 钱包#" + rank + " " + toAddr.slice(0,8) + "... 获得 " + tokenAddr.slice(0,8) + "...");
-        await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now() });
+      const currentBlock = await provider.getBlockNumber();
+      if (currentBlock <= lastBlock) {
+        await sleep(CONFIG.evmPollInterval);
+        continue;
       }
-    } catch(e) {}
-  });
-  
-  ws.on("close", () => {
-    evmWsRetries[chainKey] = (evmWsRetries[chainKey] || 0) + 1;
-    const delay = Math.min(3000 * evmWsRetries[chainKey], 60000);
-    if (evmWsRetries[chainKey] <= 3) log("WARN", "🔌 [" + chain.name + "] WS断开，" + delay/1000 + "秒后重连");
-    setTimeout(() => setupEvmWebSocket(chainKey), delay);
-  });
-  
-  ws.on("error", () => {});
-  const ping = setInterval(() => { if (ws.readyState === WebSocket.OPEN) ws.ping(); else clearInterval(ping); }, 30000);
+      
+      // 查最近几个区块的ERC20 Transfer事件，收件人是我们的钱包 = 买入获得token
+      const fromBlock = lastBlock + 1;
+      const toBlock = Math.min(currentBlock, fromBlock + 5); // 每次最多查5个区块
+      
+      // 批量查: Transfer事件 from=DEX Router → to=任意地址，然后过滤我们的钱包
+      const routers = DEX_ROUTERS[chainKey] || new Set();
+      
+      for (const routerAddr of routers) {
+        try {
+          const logs = await provider.getLogs({
+            fromBlock,
+            toBlock,
+            topics: [
+              TRANSFER_TOPIC,
+              ethers.zeroPadValue(routerAddr, 32), // from: DEX router
+            ],
+          });
+          
+          for (const lg of logs) {
+            const toAddr = '0x' + lg.topics[2].slice(26).toLowerCase();
+            if (!walletSet.has(toAddr)) continue; // 不是我们的钱包，跳过
+            
+            const tokenAddr = lg.address.toLowerCase();
+            if (blacklist.has(tokenAddr)) continue;
+            
+            const wallet = rankedWallets.find(w => w.address.toLowerCase() === toAddr);
+            const rank = wallet?.rank || 999;
+            
+            log('INFO', `🔔 [${chain.name}] 检测到swap! 钱包#${rank} ${toAddr.slice(0,8)}... 获得 ${tokenAddr.slice(0,8)}...`);
+            
+            await handleSignal({
+              chain: chainKey,
+              token: tokenAddr,
+              symbol: '?',
+              wallet: toAddr,
+              walletRank: rank,
+              timestamp: Date.now(),
+            });
+          }
+        } catch(e) {
+          // 单个router查询失败不影响其他
+        }
+        await sleep(200); // 避免RPC限流
+      }
+      
+      lastBlock = toBlock;
+    } catch(e) {
+      log('WARN', `[${chain.name}] 轮询失败: ${e.message}`);
+    }
+    
+    await sleep(CONFIG.evmPollInterval);
+  }
 }
+
 // ============ PHASE 3: 过滤层 ============
 async function handleSignal(signal) {
   const { chain, token, wallet, walletRank } = signal;
@@ -1023,8 +931,8 @@ async function main() {
   
   // Phase 2: 启动监控
   setupSolanaMonitor();
-  setupEvmWebSocket('bsc');
-  setupEvmWebSocket('base');
+  pollEvmChain('bsc');
+  pollEvmChain('base');
   
   // 持仓管理
   managePositions();
