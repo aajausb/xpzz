@@ -352,6 +352,15 @@
       "addedAt": "2026-03-15T02:05:01.131Z"
     },
     {
+      "symbol": "WMTX",
+      "mint": "0xdbb5cf12408a3ac17d668037ce289f9ea75439d7",
+      "fdv": 5244150.99815462,
+      "vol": 79992220.2056214,
+      "ageD": 47,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T02:47:01.426Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -476,6 +485,33 @@
       "ageD": 0,
       "chain": "solana",
       "addedAt": "2026-03-15T02:25:19.206Z"
+    },
+    {
+      "symbol": "龙虾",
+      "mint": "0x63d3001f2420a09fcae5822723167e857adf04ab",
+      "fdv": 203846271,
+      "vol": 608866671.29738,
+      "ageD": 1,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T02:47:01.426Z"
+    },
+    {
+      "symbol": "龙虾",
+      "mint": "0xbe796a46c9e1d0e4666795777f5cfb1ba4ebc7f1",
+      "fdv": 115929447.8,
+      "vol": 312153635.457438,
+      "ageD": 1,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T02:47:01.426Z"
+    },
+    {
+      "symbol": "frogs",
+      "mint": "0x1e458f709b32bcf79e0e8f9d9afdd0ad18a81f6c",
+      "fdv": 494633798.8,
+      "vol": 283552069.864614,
+      "ageD": 1,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T02:47:01.426Z"
     }
   ],
   "scanned": [
@@ -531,6 +567,10 @@
     "0x65021a79aeef22b17cdc1b768f5e79a8618beba3",
     "0x4e6c9f48f73e54ee5f3ab7e2992b2d733d0d0b07",
     "0xde61878b0b21ce395266c44d4d548d1c72a3eb07",
-    "E2h2WiCEfJVV9Pu7mfwRCYJ921gm57gfgJqvHAnoRja2"
+    "E2h2WiCEfJVV9Pu7mfwRCYJ921gm57gfgJqvHAnoRja2",
+    "0x1e458f709b32bcf79e0e8f9d9afdd0ad18a81f6c",
+    "0x63d3001f2420a09fcae5822723167e857adf04ab",
+    "0xbe796a46c9e1d0e4666795777f5cfb1ba4ebc7f1",
+    "0xdbb5cf12408a3ac17d668037ce289f9ea75439d7"
   ]
 }

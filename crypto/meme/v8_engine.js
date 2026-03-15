@@ -726,14 +726,13 @@ function setupEvmWebSocket(chainKey) {
           await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now() });
         }
         
-        // 卖出: from=我们的钱包（swap时token从钱包转到pair合约，不是Router）
-        // 所以只检查from是否是我们的钱包，且该token在持仓中
+        // 卖出检测: from=SM钱包发出token → 查receipt确认是swap还是转仓
         if (walletSet.has(fromAddr) && !routerSet.has(fromAddr)) {
           if (positions[tokenAddr]) {
-            const wallet = rankedWallets.find(w => w.address?.toLowerCase() === fromAddr);
-            const rank = wallet?.rank || 999;
-            log("INFO", "📉 [" + chain.name + "] 卖出! 钱包#" + rank + " " + fromAddr.slice(0,8) + "... 卖出 " + tokenAddr.slice(0,8) + "...");
-            trackSmartMoneySell(tokenAddr, fromAddr, 1.0);
+            const txHash = logEntry.transactionHash;
+            if (txHash) {
+              verifyEvmSell(chainKey, txHash, fromAddr, tokenAddr).catch(() => {});
+            }
           }
         }
       }
@@ -750,6 +749,65 @@ function setupEvmWebSocket(chainKey) {
   ws.on("error", () => {});
   const ping = setInterval(() => { if (ws.readyState === WebSocket.OPEN) ws.ping(); else clearInterval(ping); }, 30000);
 }
+// 验证EVM卖出：查交易receipt，看有没有native token流入钱包（swap的标志）
+async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
+  const chain = CHAINS[chainKey];
+  const provider = chainKey === 'bsc' ? bscProvider : baseProvider;
+  
+  try {
+    const receipt = await provider.getTransactionReceipt(txHash);
+    if (!receipt) return;
+    
+    // 检查同一笔交易的所有logs
+    // swap特征: 有WBNB/WETH的Transfer to=钱包（卖token换到了native）
+    const WBNB = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
+    const WETH_BASE = '0x4200000000000000000000000000000000000006';
+    const nativeToken = chainKey === 'bsc' ? WBNB : WETH_BASE;
+    
+    let isSwap = false;
+    for (const lg of receipt.logs) {
+      // 检查有没有native token Transfer to=该钱包
+      if (lg.address.toLowerCase() === nativeToken &&
+          lg.topics[0] === TRANSFER_TOPIC &&
+          lg.topics.length >= 3) {
+        const toAddr = '0x' + lg.topics[2].slice(26).toLowerCase();
+        if (toAddr === walletAddr.toLowerCase()) {
+          isSwap = true;
+          break;
+        }
+      }
+    }
+    
+    if (isSwap) {
+      const wallet = rankedWallets.find(w => w.address?.toLowerCase() === walletAddr.toLowerCase());
+      const rank = wallet?.rank || 999;
+      log('INFO', `📉 [${chain.name}] 确认卖出! 钱包#${rank} ${walletAddr.slice(0,8)}... swap卖出 ${tokenAddr.slice(0,8)}...`);
+      trackSmartMoneySell(tokenAddr, walletAddr.toLowerCase(), 1.0);
+    } else {
+      // 转仓：把目标地址加入监控（可能是SM的小号）
+      for (const lg of receipt.logs) {
+        if (lg.address.toLowerCase() === tokenAddr.toLowerCase() &&
+            lg.topics[0] === TRANSFER_TOPIC &&
+            lg.topics.length >= 3) {
+          const from = '0x' + lg.topics[1].slice(26).toLowerCase();
+          const to = '0x' + lg.topics[2].slice(26).toLowerCase();
+          if (from === walletAddr.toLowerCase() && to !== walletAddr.toLowerCase()) {
+            // 把转仓目标加入confirmWallets和walletSet
+            const pos = positions[tokenAddr];
+            if (pos && pos.confirmWallets && !pos.confirmWallets.includes(to)) {
+              pos.confirmWallets.push(to);
+              walletSet.add(to);
+              saveJSON(POSITIONS_FILE, positions);
+              log('INFO', `🔄 [${chain.name}] 转仓 ${walletAddr.slice(0,8)}→${to.slice(0,8)} 已加入跟踪`);
+            }
+            break;
+          }
+        }
+      }
+    }
+  } catch(e) {}
+}
+
 // ============ PHASE 3: 过滤层 ============
 async function handleSignal(signal) {
   const { chain, token, wallet, walletRank } = signal;
@@ -1036,18 +1094,42 @@ async function managePositions() {
         const pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
         const holdTime = Date.now() - pos.buyTime;
         
-        // 跟卖：查SM钱包是否还持有该token
-        // sellTracker记录链上检测到的卖出 + 主动查余额补充
-        if (pos.chain !== 'solana' && pos.confirmWallets) {
+        // 跟卖：查SM钱包是否还持有该token（余额=0→验证是卖出还是转仓）
+        if (pos.confirmWallets) {
           try {
-            const { ethers } = require('ethers');
-            const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
-            const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
             for (const smWallet of pos.confirmWallets) {
-              if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) continue; // 已记录
-              const bal = await erc20.balanceOf(smWallet);
-              if (bal.toString() === '0') {
-                trackSmartMoneySell(tokenAddr, smWallet, 1.0);
+              if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) continue; // 已确认过
+              
+              if (pos.chain === 'solana') {
+                // SOL: 查token余额
+                const balData = await rpcPost(SOL_PUBLIC_RPC, 'getTokenAccountsByOwner', [
+                  smWallet, { mint: tokenAddr }, { encoding: 'jsonParsed' }
+                ]);
+                const bal = balData.result?.value?.reduce((s, a) => 
+                  s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0) || 0;
+                if (bal === 0) {
+                  // SOL卖出由Helius SWAP检测确认，这里只做补充
+                  // 查最近签名看是不是swap
+                  const sigs = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', [smWallet, { limit: 3 }]);
+                  for (const sig of (sigs.result || [])) {
+                    if (!sig.err) await parseSolSignature(smWallet, sig.signature);
+                  }
+                }
+              } else {
+                // EVM: 查token余额
+                const { ethers } = require('ethers');
+                const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
+                const bal = await erc20.balanceOf(smWallet);
+                if (bal.toString() === '0') {
+                  // 余额=0，查最近一笔涉及该token的交易验证
+                  // 这里不直接算卖出，WebSocket的verifyEvmSell会处理
+                  // 但如果WS漏掉了，查一次该钱包最近交易
+                  const txCount = await provider.getTransactionCount(smWallet);
+                  // 无法直接查ERC20 transfer历史，依赖WS检测
+                  // 标记为"待确认离场"
+                  log('INFO', `⏳ SM ${smWallet.slice(0,8)}... 余额=0 ${tokenAddr.slice(0,8)}... 等WS确认是卖出还是转仓`);
+                }
               }
             }
           } catch(e) {}
