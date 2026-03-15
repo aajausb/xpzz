@@ -19,7 +19,9 @@ const { execSync } = require('child_process');
 const CONFIG = {
   // 数据刷新
   rankRefreshInterval: 4 * 3600 * 1000,  // 4小时刷新币安排名
-  minWinRate: 60,                          // 最低胜率%
+  // 不限数量，验证通过的全部跟踪，排名只决定优先级
+  activeWinRateMin: 60,                     // 实盘跟单: 胜率60-80%
+  activeWinRateMax: 80,                     // >80%或<60%进观察状态
 
   // 监控
   evmPollInterval: 5000,                   // BSC/Base 5秒轮询
@@ -176,8 +178,6 @@ async function verifyWallets(wallets) {
   const verified = [];
   
   for (const w of wallets) {
-    if (w.winRate < CONFIG.minWinRate) continue;
-    
     try {
       if (w.chain === 'solana') {
         // 用公共RPC验证，省Helius额度给WebSocket
@@ -196,16 +196,28 @@ async function verifyWallets(wallets) {
     await sleep(80);
   }
   
-  log('INFO', `  验证通过: ${verified.length}/${wallets.filter(w=>w.winRate>=CONFIG.minWinRate).length}`);
+  log('INFO', `  验证通过: ${verified.length}/${wallets.length}`);
   return verified;
 }
 
 function rankWallets(wallets) {
-  // 按胜率排行，胜率相同按PnL排
-  wallets.sort((a, b) => {
-    if (b.winRate !== a.winRate) return b.winRate - a.winRate;
-    return b.pnl - a.pnl;
-  });
+  // 综合评分: 胜率 × 样本量 × 盈利能力 × 活跃度
+  const now = Date.now();
+  for (const w of wallets) {
+    const wr = (w.winRate || 0) / 100;                        // 0~1
+    const sampleWeight = Math.log2((w.tokens || 1) + 1);      // 交易币数，log防大户碾压
+    const pnlWeight = Math.log10(Math.max(w.pnl, 1) + 1);    // PnL取log
+    const age = now - (w.lastActivity || 0);
+    const activityMul = age < 7 * 86400000 ? 1.5              // 7天内活跃
+                      : age < 30 * 86400000 ? 1.2             // 30天内
+                      : 1.0;
+    w.score = wr * sampleWeight * pnlWeight * activityMul;
+    
+    // 状态: 60-80%胜率=active(实盘跟单), 其他=watch(观察)
+    const winRate = w.winRate || 0;
+    w.status = (winRate >= CONFIG.activeWinRateMin && winRate <= CONFIG.activeWinRateMax) ? 'active' : 'watch';
+  }
+  wallets.sort((a, b) => b.score - a.score);
   wallets.forEach((w, i) => w.rank = i + 1);
   return wallets;
 }
@@ -574,26 +586,33 @@ async function handleSignal(signal) {
   const chainPositions = Object.values(positions).filter(p => p.chain === chain).length;
   if (chainPositions >= CONFIG.maxPerChain) return;
   
+  // 检查钱包状态: watch的只记录不算确认
+  const walletInfo = rankedWallets.find(w => w.address === wallet || w.address?.toLowerCase() === wallet);
+  const walletStatus = walletInfo?.status || 'watch';
+  
   // 多钱包确认 — 每个钱包只算1次，5分钟窗口
   if (!pendingSignals[token]) pendingSignals[token] = [];
   
   // 同一钱包不重复计数
   const alreadyCounted = pendingSignals[token].some(s => s.wallet === wallet);
   if (!alreadyCounted) {
-    pendingSignals[token].push(signal);
+    pendingSignals[token].push({ ...signal, walletStatus });
   }
   
   // 清理过期信号（5分钟窗口）
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
   
-  // 计数 = 不同钱包数
-  const uniqueWallets = new Set(pendingSignals[token].map(s => s.wallet));
-  const confirmCount = uniqueWallets.size;
+  // 计数 = 只算active钱包（watch的记录但不算确认数）
+  const activeSignals = pendingSignals[token].filter(s => s.walletStatus === 'active');
+  const watchSignals = pendingSignals[token].filter(s => s.walletStatus === 'watch');
+  const confirmCount = new Set(activeSignals.map(s => s.wallet)).size;
+  const watchCount = new Set(watchSignals.map(s => s.wallet)).size;
   
   if (confirmCount < CONFIG.minSmartMoneyConfirm) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
-    log('INFO', `⏳ ${token.slice(0,8)}...(${chain}) 确认中 ${confirmCount}/${CONFIG.minSmartMoneyConfirm} 最高排名#${bestRank}`);
+    const extra = watchCount > 0 ? ` (+${watchCount}观察)` : '';
+    log('INFO', `⏳ ${token.slice(0,8)}...(${chain}) 确认中 ${confirmCount}/${CONFIG.minSmartMoneyConfirm}${extra} 最高#${bestRank}`);
     return;
   }
   
@@ -840,6 +859,7 @@ async function main() {
   saveJSON(WALLETS_FILE, rankedWallets.map(w => ({
     rank: w.rank, address: w.address, chain: w.chain,
     pnl: w.pnl, winRate: w.winRate, tokens: w.tokens,
+    status: w.status,
     topTokens: (w.topTokens || []).map(t => t.tokenSymbol || t),
   })));
   
