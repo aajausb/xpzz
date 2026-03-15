@@ -726,8 +726,9 @@ function setupEvmWebSocket(chainKey) {
           await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now() });
         }
         
-        // 卖出: from=我们的钱包, to=Router（钱包把token送去Router=卖出）
-        if (walletSet.has(fromAddr) && routerSet.has(toAddr)) {
+        // 卖出: from=我们的钱包（swap时token从钱包转到pair合约，不是Router）
+        // 所以只检查from是否是我们的钱包，且该token在持仓中
+        if (walletSet.has(fromAddr) && !routerSet.has(fromAddr)) {
           if (positions[tokenAddr]) {
             const wallet = rankedWallets.find(w => w.address?.toLowerCase() === fromAddr);
             const rank = wallet?.rank || 999;
@@ -796,15 +797,15 @@ async function handleSignal(signal) {
     return;
   }
   
-  // 拿token symbol
-  let symbol = '?';
-  try {
-    const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`);
-    symbol = d?.pairs?.[0]?.baseToken?.symbol || '?';
-  } catch(e) {}
+  // 并行查: symbol + 审计 + 流动性（省时间）
+  const [symbolData, audit, liqCheck] = await Promise.all([
+    httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`).catch(() => null),
+    auditToken(chain, token),
+    checkLiquidity(chain, token),
+  ]);
   
-  // 合约审计
-  const audit = await auditToken(chain, token);
+  const symbol = symbolData?.pairs?.[0]?.baseToken?.symbol || '?';
+  
   if (!audit.safe) {
     log('WARN', `❌ ${symbol}(${chain}) 审计不通过: ${audit.reason}`);
     blacklist.add(token);
@@ -812,20 +813,16 @@ async function handleSignal(signal) {
     return;
   }
   
-  // 流动性检查
-  const liqCheck = await checkLiquidity(chain, token);
   if (!liqCheck.ok) {
     log('WARN', `❌ ${symbol}(${chain}) 流动性不足: ${liqCheck.reason}`);
     return;
   }
   
   // 通过所有过滤 → 买入
-  const bestRank = Math.min(...[...uniqueWallets].map(w => {
-    const sig = pendingSignals[token].find(s => s.wallet === w);
-    return sig?.walletRank || 999;
-  }));
+  const bestRank = Math.min(...activeSignals.map(s => s.walletRank || 999));
+  const confirmWallets = [...new Set(activeSignals.map(s => s.wallet))];
   log('INFO', `✅ ${symbol}(${chain}) 通过过滤! SM=${confirmCount}个钱包 最高#${bestRank} 审计=OK Liq=${liqCheck.ratio}`);
-  await executeBuy(chain, token, symbol, confirmCount);
+  await executeBuy(chain, token, symbol, confirmCount, confirmWallets);
 }
 
 async function auditToken(chain, tokenAddress) {
@@ -882,39 +879,52 @@ async function checkLiquidity(chain, tokenAddress) {
   }
 }
 
+// 原生代币价格缓存（30秒有效）
+const nativePriceCache = {};
+const NATIVE_TOKENS = {
+  solana: 'So11111111111111111111111111111111111111112',
+  bsc: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  base: '0x4200000000000000000000000000000000000006',
+};
+const NATIVE_SYMBOLS = { solana: 'SOL', bsc: 'WBNB', base: 'WETH' };
+async function getNativePrice(chain) {
+  const cached = nativePriceCache[chain];
+  if (cached && Date.now() - cached.time < 30000) return cached.price;
+  const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${NATIVE_TOKENS[chain]}`);
+  // 匹配symbol+地址，避免DexScreener把别的币排第一
+  const sym = NATIVE_SYMBOLS[chain];
+  const pair = d?.pairs?.find(p => p.baseToken?.symbol === sym && parseFloat(p.priceUsd) > 1)
+    || d?.pairs?.find(p => parseFloat(p.liquidity?.usd || 0) > 1000000) // 退而求其次找高流动性的
+    || d?.pairs?.[0];
+  const price = parseFloat(pair?.priceUsd || 0);
+  if (price > 0) nativePriceCache[chain] = { price, time: Date.now() };
+  return price;
+}
+
 // ============ PHASE 4: 交易层 ============
-async function executeBuy(chain, tokenAddress, symbol, confirmCount) {
+async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = []) {
   // 确定仓位大小
   let size = CONFIG.positionSizeDefault;
   // 找参与的最高排名钱包
   const relatedWallets = rankedWallets.filter(w => w.chain === chain);
   // TODO: 精确匹配哪个钱包买了这个token
   // 暂用confirmCount加权
-  if (confirmCount >= 10) size = CONFIG.positionSizeTop10;
-  else if (confirmCount >= 5) size = CONFIG.positionSizeTop30;
+  if (confirmCount >= 5) size = CONFIG.positionSizeTop10;
+  else if (confirmCount >= 3) size = CONFIG.positionSizeTop30;
   
-  // 美元转原生代币单位
+  // 美元转原生代币单位（用缓存价格，30秒刷新）
   let nativeAmount;
   try {
+    const price = await getNativePrice(chain);
+    if (!price) throw new Error(`无法获取${chain}原生代币价格`);
+    
     if (chain === 'solana') {
-      // 查SOL价格
-      const solData = await httpGet('https://api.dexscreener.com/latest/dex/tokens/So11111111111111111111111111111111111111112');
-      const solPrice = parseFloat(solData?.pairs?.[0]?.priceUsd || 0);
-      if (!solPrice) throw new Error('无法获取SOL价格');
-      nativeAmount = Math.floor((size / solPrice) * 1e9); // lamports
+      nativeAmount = Math.floor((size / price) * 1e9); // lamports
       log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(nativeAmount/1e9).toFixed(4)} SOL SM确认=${confirmCount}`);
-    } else if (chain === 'bsc') {
-      const bnbData = await httpGet('https://api.dexscreener.com/latest/dex/tokens/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c');
-      const bnbPrice = parseFloat(bnbData?.pairs?.[0]?.priceUsd || 0);
-      if (!bnbPrice) throw new Error('无法获取BNB价格');
-      nativeAmount = BigInt(Math.floor((size / bnbPrice) * 1e18)).toString(); // wei
-      log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(size/bnbPrice).toFixed(6)} BNB SM确认=${confirmCount}`);
-    } else if (chain === 'base') {
-      const ethData = await httpGet('https://api.dexscreener.com/latest/dex/tokens/0x4200000000000000000000000000000000000006');
-      const ethPrice = parseFloat(ethData?.pairs?.[0]?.priceUsd || 0);
-      if (!ethPrice) throw new Error('无法获取ETH价格');
-      nativeAmount = BigInt(Math.floor((size / ethPrice) * 1e18)).toString(); // wei
-      log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(size/ethPrice).toFixed(6)} ETH SM确认=${confirmCount}`);
+    } else {
+      nativeAmount = BigInt(Math.floor((size / price) * 1e18)).toString(); // wei
+      const unit = chain === 'bsc' ? 'BNB' : 'ETH';
+      log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(size/price).toFixed(6)} ${unit} SM确认=${confirmCount}`);
     }
   } catch(e) {
     log('ERROR', `价格转换失败 ${symbol}(${chain}): ${e.message}`);
@@ -936,7 +946,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount) {
         if (chain === 'solana') {
           // 查token余额
           const balData = await rpcPost(SOL_PUBLIC_RPC, 'getTokenAccountsByOwner', [
-            require('./dex_trader.js').getWalletAddress?.('solana') || '',
+            require('./dex_trader.js').getWalletAddress('solana'),
             { mint: tokenAddress },
             { encoding: 'jsonParsed' }
           ]);
@@ -949,7 +959,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount) {
           const { ethers } = require('ethers');
           const provider = chain === 'bsc' ? bscProvider : baseProvider;
           const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
-          const [bal, dec] = await Promise.all([erc20.balanceOf(require('./dex_trader.js').getWalletAddress?.('evm') || ''), erc20.decimals()]);
+          const [bal, dec] = await Promise.all([erc20.balanceOf(require('./dex_trader.js').getWalletAddress('evm')), erc20.decimals()]);
           buyAmount = parseFloat(ethers.formatUnits(bal, dec));
         }
       } catch(e) {
@@ -968,6 +978,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount) {
         buyCost: size,
         buyTime: Date.now(),
         confirmCount,
+        confirmWallets, // 记录确认的SM钱包
       };
       boughtTokens.add(tokenAddress);
       saveJSON(POSITIONS_FILE, positions);
@@ -1025,7 +1036,23 @@ async function managePositions() {
         const pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
         const holdTime = Date.now() - pos.buyTime;
         
-        // 跟卖：按SM卖出比例决定
+        // 跟卖：查SM钱包是否还持有该token
+        // sellTracker记录链上检测到的卖出 + 主动查余额补充
+        if (pos.chain !== 'solana' && pos.confirmWallets) {
+          try {
+            const { ethers } = require('ethers');
+            const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+            const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
+            for (const smWallet of pos.confirmWallets) {
+              if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) continue; // 已记录
+              const bal = await erc20.balanceOf(smWallet);
+              if (bal.toString() === '0') {
+                trackSmartMoneySell(tokenAddr, smWallet, 1.0);
+              }
+            }
+          } catch(e) {}
+        }
+        
         const sells = sellTracker[tokenAddr] || [];
         const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
         const totalConfirm = pos.confirmCount || 2;
@@ -1101,9 +1128,16 @@ async function main() {
     topTokens: (w.topTokens || []).map(t => t.tokenSymbol || t),
   })));
   
-  const byChain = { solana: 0, bsc: 0, base: 0 };
-  for (const w of rankedWallets) byChain[w.chain]++;
-  console.log(`📋 跟踪: SOL=${byChain.solana} BSC=${byChain.bsc} Base=${byChain.base}`);
+  const activeByChain = { solana: 0, bsc: 0, base: 0 };
+  const watchByChain = { solana: 0, bsc: 0, base: 0 };
+  for (const w of rankedWallets) {
+    if (w.status === 'active') activeByChain[w.chain]++;
+    else watchByChain[w.chain]++;
+  }
+  const totalActive = Object.values(activeByChain).reduce((a,b) => a+b, 0);
+  const totalWatch = Object.values(watchByChain).reduce((a,b) => a+b, 0);
+  console.log(`📋 可触发跟单买入(${totalActive}): SOL=${activeByChain.solana} BSC=${activeByChain.bsc} Base=${activeByChain.base}`);
+  console.log(`👀 观察(${totalWatch}): SOL=${watchByChain.solana} BSC=${watchByChain.bsc} Base=${watchByChain.base}`);
   console.log(`💼 持仓: ${Object.keys(positions).length}个`);
   
   // Phase 2: 启动监控

@@ -243,4 +243,10 @@ async function unwrapWsol(conn, kp) {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-module.exports = { buy, sell, solanaBuy, solanaSell, evmBuy, evmSell };
+function getWalletAddress(chain) {
+  const w = getWallets();
+  if (chain === 'solana') return w.solana.address;
+  return w.evm.address;
+}
+
+module.exports = { buy, sell, solanaBuy, solanaSell, evmBuy, evmSell, getWalletAddress };
