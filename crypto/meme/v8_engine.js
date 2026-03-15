@@ -309,9 +309,9 @@ const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a
 // SOL: 双模式 — Helius WS优先，fallback到公共RPC轮询
 const solLastSigs = new Map(); // wallet -> lastSignature
 
-const SOL_WS_ENDPOINT = 'wss://solana.publicnode.com';
-const solWsConnections = []; // logsSubscribe连接池
-let solWsMode = 'none'; // 'helius' | 'logsSubscribe' | 'polling'
+const SOL_WS_OFFICIAL = 'wss://api.mainnet-beta.solana.com';
+let solOfficialWs = null; // 单连接
+let solWsMode = 'none'; // 'helius' | 'official' | 'polling'
 
 function setupSolanaMonitor() {
   const solWallets = rankedWallets.filter(w => w.chain === 'solana');
@@ -319,117 +319,82 @@ function setupSolanaMonitor() {
   
   if (solWalletSet.size === 0) return;
   
-  // 优先: Helius transactionSubscribe（毫秒级，最完整）
-  tryHeliusWs();
+  // 优先: 官方RPC logsSubscribe（1个WS连接，全部钱包）
+  setupOfficialSolWs();
   
-  // 次优: publicnode logsSubscribe（实时，每钱包一个连接）
-  // Helius连上后这些会被关闭
-  setTimeout(() => {
-    if (!heliusWsConnected) {
-      setupSolanaLogsSubscribe();
-    }
-  }, 10000); // 给Helius 10秒机会
+  // 备用: Helius transactionSubscribe
+  tryHeliusWs();
   
   // 兜底: 轮询（最慢但最稳）
   pollSolanaWallets();
 }
 
-function setupSolanaLogsSubscribe() {
+// 官方RPC: 1个WS连接订阅所有SOL钱包
+function setupOfficialSolWs() {
   const walletList = [...solWalletSet];
-  log('INFO', `🔌 [SOL] logsSubscribe实时模式 ${walletList.length} 个钱包`);
+  if (walletList.length === 0) return;
   
-  let connected = 0;
-  const BATCH_SIZE = 50;
+  log('INFO', `🔌 [SOL] 官方RPC logsSubscribe ${walletList.length} 个钱包 (单连接)`);
   
-  for (let i = 0; i < walletList.length; i++) {
-    const addr = walletList[i];
-    const delay = Math.floor(i / BATCH_SIZE) * 5000 + (i % BATCH_SIZE) * 200; // 每批50个，批间5秒
-    
-    setTimeout(() => {
-      if (heliusWsConnected) return; // Helius已连上，不再开新连接
-      
-      const ws = new WebSocket(SOL_WS_ENDPOINT);
-      solWsConnections.push(ws);
-      
-      ws.on('open', () => {
-        ws.send(JSON.stringify({
-          jsonrpc: '2.0', id: 1, method: 'logsSubscribe',
-          params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
-        }));
-      });
-      
-      ws.on('message', async (data) => {
-        try {
-          const msg = JSON.parse(data);
-          if (msg.id === 1 && msg.result) {
-            connected++;
-            if (connected === 1 || connected % 20 === 0 || connected === walletList.length) {
-              log('INFO', `🔌 [SOL] logsSubscribe ${connected}/${walletList.length} 已连接`);
-            }
-            solWsMode = 'logsSubscribe';
-            return;
-          }
-          // 日志通知 = 该钱包有交易
-          if (msg.params?.result) {
-            const sig = msg.params.result.value?.signature;
-            if (sig && !msg.params.result.value?.err) {
-              // 检测到交易，用Helius解析或公共RPC确认
-              await parseSolSignature(addr, sig);
-            }
-          }
-        } catch(e) {}
-      });
-      
-      ws.on('close', () => {
-        // 从连接池移除
-        const idx = solWsConnections.indexOf(ws);
-        if (idx >= 0) solWsConnections.splice(idx, 1);
-        // 如果Helius没连上，重连
-        if (!heliusWsConnected) {
-          setTimeout(() => {
-            if (!heliusWsConnected) {
-              const newWs = new WebSocket(SOL_WS_ENDPOINT);
-              solWsConnections.push(newWs);
-              newWs.on('open', () => {
-                newWs.send(JSON.stringify({
-                  jsonrpc: '2.0', id: 1, method: 'logsSubscribe',
-                  params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
-                }));
-              });
-              newWs.on('message', async (d) => {
-                try {
-                  const m = JSON.parse(d);
-                  if (m.params?.result?.value?.signature && !m.params.result.value.err) {
-                    await parseSolSignature(addr, m.params.result.value.signature);
-                  }
-                } catch(e) {}
-              });
-              newWs.on('close', () => {});
-              newWs.on('error', () => {});
-            }
-          }, 10000);
+  const ws = new WebSocket(SOL_WS_OFFICIAL);
+  solOfficialWs = ws;
+  let subscribed = 0;
+  const idToAddr = {};
+  
+  ws.on('open', () => {
+    walletList.forEach((addr, i) => {
+      const id = i + 1;
+      idToAddr[id] = addr;
+      ws.send(JSON.stringify({
+        jsonrpc: '2.0', id, method: 'logsSubscribe',
+        params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
+      }));
+    });
+  });
+  
+  const subIdToAddr = {};
+  
+  ws.on('message', async (data) => {
+    try {
+      const msg = JSON.parse(data);
+      if (msg.id && msg.result !== undefined) {
+        subscribed++;
+        subIdToAddr[msg.result] = idToAddr[msg.id];
+        if (subscribed === 1 || subscribed % 20 === 0 || subscribed === walletList.length) {
+          log('INFO', `🔌 [SOL] 官方RPC ${subscribed}/${walletList.length} 已订阅`);
         }
-      });
-      
-      ws.on('error', () => {});
-      
-      // 心跳保活
-      const ping = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) ws.ping();
-        else { clearInterval(ping); ws.close(); }
-      }, 30000);
-    }, delay);
-  }
+        if (subscribed === walletList.length) solWsMode = 'official';
+        return;
+      }
+      if (msg.id && msg.error) {
+        log('WARN', `🔌 [SOL] 订阅失败 #${msg.id}: ${msg.error.message}`);
+        return;
+      }
+      if (msg.params?.result) {
+        const subId = msg.params.subscription;
+        const addr = subIdToAddr[subId];
+        const sig = msg.params.result.value?.signature;
+        if (sig && addr && !msg.params.result.value?.err) {
+          await parseSolSignature(addr, sig);
+        }
+      }
+    } catch(e) {}
+  });
+  
+  ws.on('close', () => {
+    log('WARN', '🔌 [SOL] 官方RPC WS断开，10秒后重连');
+    solOfficialWs = null;
+    solWsMode = 'polling';
+    setTimeout(() => setupOfficialSolWs(), 10000);
+  });
+  
+  ws.on('error', () => {});
+  
+  setInterval(() => {
+    if (ws.readyState === WebSocket.OPEN) ws.ping();
+  }, 30000);
 }
 
-// Helius连上后关闭logsSubscribe连接
-function closeSolanaLogsSubscribe() {
-  for (const ws of solWsConnections) {
-    try { ws.close(); } catch(e) {}
-  }
-  solWsConnections.length = 0;
-  log('INFO', '🔌 [SOL] logsSubscribe连接已关闭，切换到Helius模式');
-}
 
 let heliusWsConnected = false;
 
@@ -463,7 +428,8 @@ function tryHeliusWs() {
         solWsRetries = 0;
         solWsMode = 'helius';
         log('INFO', `🔌 [SOL] Helius WS订阅成功! 切换到Helius实时模式`);
-        closeSolanaLogsSubscribe(); // 关闭logsSubscribe连接
+        // 关闭官方RPC连接
+        if (solOfficialWs) { try { solOfficialWs.close(); } catch(e) {} solOfficialWs = null; }
         return;
       }
       if (msg.params?.result) {
@@ -504,7 +470,7 @@ async function pollSolanaWallets() {
   while (true) {
     // Helius WS连上了就降频（30秒），否则10秒
     // Helius或logsSubscribe连上后轮询降频，只作兜底
-    const interval = (heliusWsConnected || solWsMode === 'logsSubscribe') ? 60000 : 5000;
+    const interval = (heliusWsConnected || solWsMode === 'official') ? 60000 : 5000;
     await sleep(interval);
     
     for (const addr of solWalletSet) {

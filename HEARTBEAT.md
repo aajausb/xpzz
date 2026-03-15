@@ -8,6 +8,15 @@
 3. [x] 钱包库233个，实盘56个(WR 60-80%)，BSC/Base WebSocket实时推送
 4. [ ] 等待真实信号验证完整链路（信号→确认→审计→买入）
 
+## 聪明钱包监控回查（每次heartbeat执行）
+1. 抽查3-5个实盘钱包（每链各1-2个），查最近1小时有没有新交易
+   - SOL: getSignaturesForAddress limit=3
+   - BSC/Base: eth_getTransactionCount 对比上次记录
+2. 如果发现有新交易但引擎日志里没有对应检测记录 → 说明WS漏了
+3. 漏了就：通知跑步哥 + 重启引擎WS连接
+4. 抽查结果记入 `memory/heartbeat-state.json` 的 `lastWalletCheck`
+5. **不要跳过这步**——SOL之前只连上1/61，漏了整条链
+
 ## 进程存活检查（每次heartbeat执行）
 1. 只检查 `meme-v8`（跟单引擎）
 2. 挂了用 `systemctl restart meme-v8` 拉起

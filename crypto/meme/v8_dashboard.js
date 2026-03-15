@@ -29,53 +29,34 @@ function saveJSON(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-// 查余额
+// 查余额+价格（全部并行）
 async function getBalances() {
   const balances = {};
   
-  // SOL
-  try {
-    const r = await fetch('https://api.mainnet-beta.solana.com', {
+  const [solBal, bnbBal, ethBal, solR, bnbR, ethR] = await Promise.all([
+    fetch('https://api.mainnet-beta.solana.com', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
-    });
-    const d = await r.json();
-    balances.sol = (d.result?.value || 0) / 1e9;
-  } catch { balances.sol = 0; }
-
-  // BNB
-  try {
-    const r = await fetch('https://bsc-dataseed1.binance.org', {
+    }).then(r => r.json()).catch(() => null),
+    fetch('https://bsc-dataseed1.binance.org', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })
-    });
-    const d = await r.json();
-    balances.bnb = parseInt(d.result || '0', 16) / 1e18;
-  } catch { balances.bnb = 0; }
-
-  // ETH (Base)
-  try {
-    const r = await fetch('https://mainnet.base.org', {
+    }).then(r => r.json()).catch(() => null),
+    fetch('https://mainnet.base.org', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })
-    });
-    const d = await r.json();
-    balances.eth = parseInt(d.result || '0', 16) / 1e18;
-  } catch { balances.eth = 0; }
-
-  // 查价格
-  try {
-    const [solR, bnbR, ethR] = await Promise.all([
-      fetch('https://api.dexscreener.com/latest/dex/tokens/So11111111111111111111111111111111111111112').then(r => r.json()),
-      fetch('https://api.dexscreener.com/latest/dex/tokens/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c').then(r => r.json()),
-      fetch('https://api.dexscreener.com/latest/dex/tokens/0x4200000000000000000000000000000000000006').then(r => r.json()),
-    ]);
-    balances.solPrice = parseFloat(solR?.pairs?.find(p => p.baseToken?.symbol === 'SOL' && parseFloat(p.priceUsd) > 1)?.priceUsd || 0);
-    balances.bnbPrice = parseFloat(bnbR?.pairs?.find(p => p.baseToken?.symbol === 'WBNB' && parseFloat(p.priceUsd) > 1)?.priceUsd || 0);
-    balances.ethPrice = parseFloat(ethR?.pairs?.find(p => p.baseToken?.symbol === 'WETH' && parseFloat(p.priceUsd) > 1)?.priceUsd || 0);
-  } catch {
-    balances.solPrice = 0; balances.bnbPrice = 0; balances.ethPrice = 0;
-  }
+    }).then(r => r.json()).catch(() => null),
+    fetch('https://api.dexscreener.com/latest/dex/tokens/So11111111111111111111111111111111111111112').then(r => r.json()).catch(() => null),
+    fetch('https://api.dexscreener.com/latest/dex/tokens/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c').then(r => r.json()).catch(() => null),
+    fetch('https://api.dexscreener.com/latest/dex/tokens/0x4200000000000000000000000000000000000006').then(r => r.json()).catch(() => null),
+  ]);
+  
+  balances.sol = (solBal?.result?.value || 0) / 1e9;
+  balances.bnb = parseInt(bnbBal?.result || '0', 16) / 1e18;
+  balances.eth = parseInt(ethBal?.result || '0', 16) / 1e18;
+  balances.solPrice = parseFloat(solR?.pairs?.find(p => p.baseToken?.symbol === 'SOL' && parseFloat(p.priceUsd) > 1)?.priceUsd || 0);
+  balances.bnbPrice = parseFloat(bnbR?.pairs?.find(p => p.baseToken?.symbol === 'WBNB' && parseFloat(p.priceUsd) > 1)?.priceUsd || 0);
+  balances.ethPrice = parseFloat(ethR?.pairs?.find(p => p.baseToken?.symbol === 'WETH' && parseFloat(p.priceUsd) > 1)?.priceUsd || 0);
 
   return balances;
 }
@@ -167,14 +148,16 @@ async function buildDashboard() {
   const totalActive = Object.values(active).reduce((a, b) => a + b, 0);
   const totalWatch = Object.values(watch).reduce((a, b) => a + b, 0);
 
-  const bal = await getBalances();
+  // 并行：余额+价格+钱包token扫描（一次性全拉）
+  const [bal, walletTokens] = await Promise.all([
+    getBalances(),
+    scanWalletTokens(),
+  ]);
+  
   const solUsd = (bal.sol * bal.solPrice).toFixed(2);
   const bnbUsd = (bal.bnb * bal.bnbPrice).toFixed(2);
   const ethUsd = (bal.eth * bal.ethPrice).toFixed(2);
   const totalUsd = (parseFloat(solUsd) + parseFloat(bnbUsd) + parseFloat(ethUsd)).toFixed(2);
-
-  // 钱包实际token持仓（链上扫描）
-  const walletTokens = await scanWalletTokens();
   
   // 持仓详情（v8引擎管理的）
   const posEntries = Object.entries(positions);
@@ -265,7 +248,7 @@ async function sendOrEdit(text) {
       chat_id: CHAT_ID,
       message_id: state.messageId,
       text,
-      reply_markup: { inline_keyboard: buttons },
+      reply_markup: JSON.stringify({ inline_keyboard: buttons }),
     });
     try {
       const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/editMessageText`, {
@@ -282,7 +265,7 @@ async function sendOrEdit(text) {
   const body = JSON.stringify({
     chat_id: CHAT_ID,
     text,
-    reply_markup: { inline_keyboard: buttons },
+    reply_markup: JSON.stringify({ inline_keyboard: buttons }),
   });
   try {
     const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -299,8 +282,13 @@ async function sendOrEdit(text) {
 }
 
 async function refresh() {
-  const text = await buildDashboard();
-  return await sendOrEdit(text);
+  try {
+    const text = await buildDashboard();
+    return await sendOrEdit(text);
+  } catch(e) {
+    console.error('看板刷新异常:', e.message);
+    return null;
+  }
 }
 
 // HTTP server

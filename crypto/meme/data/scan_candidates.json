@@ -397,6 +397,42 @@
       "addedAt": "2026-03-15T03:17:01.042Z"
     },
     {
+      "symbol": "Bird",
+      "mint": "FY9oLBVKTPreXoKy2QHGNticDo37j1QAS9d9PHEzhwzM",
+      "fdv": 18985964,
+      "vol": 2880429.26,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T03:35:19.872Z"
+    },
+    {
+      "symbol": "SN3",
+      "mint": "0xf758cfb1467a227516d73d87da7d36e7cb6f71f1",
+      "fdv": 4442952.03381624,
+      "vol": 313510.663155279,
+      "ageD": 4,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T03:36:00.923Z"
+    },
+    {
+      "symbol": "memes",
+      "mint": "0xf74548802f4c700315f019fde17178b392ee4444",
+      "fdv": 1330845.60785476,
+      "vol": 557931.60821929,
+      "ageD": 53,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T03:36:00.923Z"
+    },
+    {
+      "symbol": "ACU",
+      "mint": "0x6ef2ffb38d64afe18ce782da280b300e358cfeaf",
+      "fdv": 2386060.52040273,
+      "vol": 418101.077326571,
+      "ageD": 56,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T03:36:00.923Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -566,6 +602,42 @@
       "ageD": 2,
       "chain": "base",
       "addedAt": "2026-03-15T03:17:01.042Z"
+    },
+    {
+      "symbol": "R.S UGOR",
+      "mint": "2cu5NurWgSv2uzDfB5CRtHp4uMWZW6TzRNcikg7cZUaC",
+      "fdv": 285711242.474309,
+      "vol": 40870350.8442717,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T03:35:55.604Z"
+    },
+    {
+      "symbol": "BTW",
+      "mint": "0x444045b0ee1ee319a660a5e3d604ca0ffa35acaa",
+      "fdv": 252025410.899532,
+      "vol": 3163692.82589837,
+      "ageD": 17,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T03:36:00.923Z"
+    },
+    {
+      "symbol": "RUNNER",
+      "mint": "8Cnu4bSHjzXxgfwCRrS9BP5ac2EqnrosNz9DJRZnyz9Y",
+      "fdv": 523046,
+      "vol": 51964.51,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T03:46:55.755Z"
+    },
+    {
+      "symbol": "101%",
+      "mint": "6q3Vg1Kvxq7GVXsM9u5y3t6EWmbkhmSHSN9vQJR3pump",
+      "fdv": 558531,
+      "vol": 382481.54,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T03:59:15.168Z"
     }
   ],
   "scanned": [
@@ -631,6 +703,14 @@
     "0x16ee7ecac70d1028e7712751e2ee6ba808a7dd92",
     "AJK2g21GSwBSsZAGbCxoFkFjic6KCiEexBVe3nNToYaj",
     "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07",
-    "0xb233bdffd437e60fa451f62c6c09d3804d285ba3"
+    "0xb233bdffd437e60fa451f62c6c09d3804d285ba3",
+    "2cu5NurWgSv2uzDfB5CRtHp4uMWZW6TzRNcikg7cZUaC",
+    "0x444045b0ee1ee319a660a5e3d604ca0ffa35acaa",
+    "FY9oLBVKTPreXoKy2QHGNticDo37j1QAS9d9PHEzhwzM",
+    "0xf758cfb1467a227516d73d87da7d36e7cb6f71f1",
+    "0x6ef2ffb38d64afe18ce782da280b300e358cfeaf",
+    "0xf74548802f4c700315f019fde17178b392ee4444",
+    "8Cnu4bSHjzXxgfwCRrS9BP5ac2EqnrosNz9DJRZnyz9Y",
+    "6q3Vg1Kvxq7GVXsM9u5y3t6EWmbkhmSHSN9vQJR3pump"
   ]
 }
