@@ -147,7 +147,7 @@ async function buildDashboard() {
   const walletDb = loadJSON(path.join(DATA_DIR, 'wallet_db.json'), {});
   const positions = loadJSON(path.join(DATA_DIR, 'positions.json'), {});
   const signals = loadJSON(path.join(DATA_DIR, 'signals.json'), {});
-  const blacklist = loadJSON(path.join(DATA_DIR, 'blacklist.json'), []);
+  // 黑名单已废弃
 
   const wallets = Object.values(walletDb);
   const active = { solana: 0, bsc: 0, base: 0 };
@@ -248,7 +248,7 @@ async function buildDashboard() {
 
 🎒 钱包持仓:${walletTokens.length > 0 ? walletTokens.map(t => `\n   ${t.chain} ${t.symbol}: ${t.amount.toFixed(2)} ($${t.value.toFixed(2)})`).join('') : ' 无'}
 
-📡 信号: 1h内${recentSigs}个 | 黑名单${blacklist.length}个
+📡 信号: 1h内${recentSigs}个
 ⏱ 运行: ${uptime} | 更新: ${now2}`;
 
   return text;

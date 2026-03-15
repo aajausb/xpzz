@@ -194,5 +194,47 @@
     "isHoneypot": false,
     "sellTax": 0,
     "reason": "OK"
+  },
+  "0xba230781ec8483830a69528cc7e732bdc6dba134": {
+    "safe": false,
+    "riskLevel": "HIGH",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "risk=HIGH honeypot=false tax=0%"
+  },
+  "0x4c938dc2aac0136f0adad3307e929ff94d564444": {
+    "safe": true,
+    "riskLevel": "UNKNOWN",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "OK"
+  },
+  "0x4444a10b19fdf4add8e46efc62c383dc24172548": {
+    "safe": true,
+    "riskLevel": "UNKNOWN",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "OK"
+  },
+  "0x444455887d6881726c0d70ccd034442c51461c36": {
+    "safe": true,
+    "riskLevel": "UNKNOWN",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "OK"
+  },
+  "0x13b0cc3bdfb65c784ff8900b772ac575d41f4444": {
+    "safe": true,
+    "riskLevel": "LOW",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "OK"
+  },
+  "0x512e7746aad0862d7d5c33888e68a46c86a44444": {
+    "safe": true,
+    "riskLevel": "UNKNOWN",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "OK"
   }
 }

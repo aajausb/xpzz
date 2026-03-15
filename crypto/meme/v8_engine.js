@@ -67,7 +67,7 @@ let rankedWallets = [];    // 排名后的钱包列表（从walletDb生成）
 let positions = {};        // tokenAddress -> position
 let pendingSignals = {};   // tokenAddress -> [{wallet, chain, timestamp}]
 let boughtTokens = new Set(); // 已买过的token（防重复）
-let blacklist = new Set();
+let blacklist = {};  // tokenAddress -> { reason, timestamp, permanent }
 let auditCache = {};
 
 // Chain config
@@ -676,7 +676,8 @@ function setupEvmWebSocket(chainKey) {
         
         // 买入: to=我们的钱包（收到非native token）
         if (walletSet.has(toAddr) && !walletSet.has(fromAddr) && !nativeTokens.has(tokenAddr)) {
-          if (blacklist.has(tokenAddr)) return;
+          // 已买过的跳过
+          if (boughtTokens.has(tokenAddr)) return;
           const wallet = rankedWallets.find(w => w.address?.toLowerCase() === toAddr);
           const rank = wallet?.rank || 999;
           log("INFO", "🔔 [" + chain.name + "] 买入! 钱包#" + rank + " " + toAddr.slice(0,10) + "... 获得 " + tokenAddr);
@@ -809,41 +810,29 @@ async function handleSignal(signal) {
   const confirmed = confirmCount >= 2 || (confirmCount >= 1 && watchCount >= 2);
   if (!confirmed) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
+
     const extra = (watchCount > 0 ? ` +${watchCount}哨兵` : '') + (watcherCount > 0 ? ` +${watcherCount}观察` : '');
     log('INFO', `⏳ ${token}(${chain}) 确认中 猎手=${confirmCount} 哨兵=${watchCount}${extra} 最高#${bestRank}`);
     return;
   }
   
-  // 并行查: symbol + 审计 + 流动性（省时间）
-  const [symbolData, audit, liqCheck] = await Promise.all([
+  // 并行查: symbol + 审计
+  const [symbolData, audit] = await Promise.all([
     httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`).catch(() => null),
     auditToken(chain, token),
-    checkLiquidity(chain, token),
   ]);
   
   const symbol = symbolData?.pairs?.[0]?.baseToken?.symbol || '?';
   
   if (!audit.safe) {
     log('WARN', `❌ ${symbol}(${chain}) 审计不通过: ${audit.reason}`);
-    blacklist.add(token);
-    saveJSON(BLACKLIST_FILE, [...blacklist]);
     return;
   }
   
-  if (!liqCheck.ok) {
-    log('WARN', `❌ ${symbol}(${chain}) 流动性不足: ${liqCheck.reason}`);
-    // OKX无路由的加黑名单（大币/死币），其他流动性问题不加（可能后续上外盘）
-    if (liqCheck.reason === 'OKX无路由' || liqCheck.reason === 'OKX报价=0') {
-      blacklist.add(token);
-      saveJSON(BLACKLIST_FILE, [...blacklist]);
-    }
-    return;
-  }
-  
-  // 通过所有过滤 → 买入
+  // 通过审计 → 买入
   const bestRank = Math.min(...activeSignals.map(s => s.walletRank || 999));
   const confirmWallets = [...new Set(activeSignals.map(s => s.wallet))];
-  log('INFO', `✅ ${symbol}(${chain}) 通过过滤! SM=${confirmCount}个钱包 最高#${bestRank} 审计=OK Liq=${liqCheck.ratio}`);
+  log('INFO', `✅ ${symbol}(${chain}) 通过审计! SM=${confirmCount}个钱包 最高#${bestRank}`);
   await executeBuy(chain, token, symbol, confirmCount, confirmWallets);
 }
 
@@ -851,37 +840,53 @@ async function auditToken(chain, tokenAddress) {
   // 检查缓存
   if (auditCache[tokenAddress]) return auditCache[tokenAddress];
   
+  // SOL暂无审计API，直接通过（靠确认门槛过滤）
+  if (chain === 'solana') {
+    const result = { safe: true, reason: 'SOL跳过审计', source: 'skip' };
+    auditCache[tokenAddress] = result;
+    return result;
+  }
+
+  // 币安审计
   try {
-    const chainId = CHAINS[chain].binanceId;
-    const d = await httpPost(
-      'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/security/token/audit',
-      { binanceChainId: chainId, contractAddress: tokenAddress, requestId: `${Date.now()}` },
-      { 'Content-Type': 'application/json' }
-    );
+    const b = await auditBinance(chain, tokenAddress);
+    const safe = !b.isHoneypot && b.sellTax <= 10 && b.riskLevel !== 'HIGH';
+    const reasons = [];
+    if (b.isHoneypot) reasons.push('蜜罐');
+    if (b.sellTax > 10) reasons.push(`卖出税${b.sellTax}%`);
+    if (b.riskLevel === 'HIGH') reasons.push('HIGH风险');
     
-    const audit = d?.data || {};
-    const riskLevel = audit.riskLevelEnum || 'UNKNOWN';
-    let isHoneypot = false;
-    let sellTax = 0;
-    
-    for (const cat of (audit.riskItems || [])) {
-      for (const detail of (cat.details || [])) {
-        if (detail.isHit && detail.riskType === 'RISK') {
-          if (detail.title?.includes('Honeypot')) isHoneypot = true;
-        }
-      }
-    }
-    sellTax = parseFloat(audit.extraInfo?.sellTax || 0);
-    
-    const safe = riskLevel !== 'HIGH' && !isHoneypot && sellTax <= 10;
-    const result = { safe, riskLevel, isHoneypot, sellTax, reason: safe ? 'OK' : `risk=${riskLevel} honeypot=${isHoneypot} tax=${sellTax}%` };
+    const result = { safe, isHoneypot: b.isHoneypot, sellTax: b.sellTax, riskLevel: b.riskLevel, reason: safe ? 'OK' : reasons.join('+') };
     auditCache[tokenAddress] = result;
     saveJSON(AUDIT_CACHE_FILE, auditCache);
     return result;
   } catch(e) {
-    return { safe: false, reason: 'audit_failed_block' }; // 审计失败=拦截，不冒险
+    return { safe: false, reason: 'audit_failed_block' };
   }
 }
+
+async function auditBinance(chain, tokenAddress) {
+  const chainId = CHAINS[chain].binanceId;
+  const d = await httpPost(
+    'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/security/token/audit',
+    { binanceChainId: chainId, contractAddress: tokenAddress, requestId: `${Date.now()}` },
+    { 'Content-Type': 'application/json' }
+  );
+  const audit = d?.data || {};
+  let isHoneypot = false;
+  for (const cat of (audit.riskItems || [])) {
+    for (const detail of (cat.details || [])) {
+      if (detail.isHit && detail.riskType === 'RISK' && detail.title?.includes('Honeypot')) isHoneypot = true;
+    }
+  }
+  return {
+    riskLevel: audit.riskLevelEnum || 'UNKNOWN',
+    isHoneypot,
+    sellTax: parseFloat(audit.extraInfo?.sellTax || 0),
+  };
+}
+
+
 
 async function checkLiquidity(chain, tokenAddress) {
   try {
@@ -1105,10 +1110,17 @@ async function executeSell(tokenAddress, reason, ratio = 1.0) {
       sellAmount = ratio >= 0.99 ? bal.toString() : (bal * BigInt(Math.floor(ratio * 100)) / 100n).toString();
     }
     if (!sellAmount || sellAmount === '0') {
-      log('WARN', `${pos.symbol} 链上余额为0，跳过卖出`);
-      delete positions[tokenAddress];
-      saveJSON(POSITIONS_FILE, positions);
-      return;
+      // 链上查不到余额可能是节点缓存延迟，用记录值兜底
+      log('WARN', `${pos.symbol} 链上余额为0，改用记录值 ${pos.buyAmount}`);
+      if (!pos.buyAmount || pos.buyAmount <= 0) {
+        log('WARN', `${pos.symbol} 记录值也为0，跳过卖出`);
+        delete positions[tokenAddress];
+        saveJSON(POSITIONS_FILE, positions);
+        return;
+      }
+      sellAmount = pos.chain === 'solana' 
+        ? Math.floor(pos.buyAmount * ratio).toString() 
+        : BigInt(Math.floor(pos.buyAmount * ratio)).toString();
     }
   } catch(e) {
     log('WARN', `查余额失败 ${pos.symbol}: ${e.message}，用记录值`);
@@ -1257,7 +1269,7 @@ async function main() {
   
   // 加载状态
   positions = loadJSON(POSITIONS_FILE, {});
-  blacklist = new Set(loadJSON(BLACKLIST_FILE, []));
+  // 黑名单已废弃，不再加载
   auditCache = loadJSON(AUDIT_CACHE_FILE, {});
   // 已买过的token（含当前持仓）
   boughtTokens = new Set(Object.keys(positions));

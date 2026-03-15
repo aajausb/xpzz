@@ -101,26 +101,38 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500)
   const tx = VersionedTransaction.deserialize(decoded);
   tx.sign([kp]);
 
-  // 3. 直接发送（OKX聚合器自带minReceiveAmount防夹，不需要Jito）
+  // 3. 发送 + 确认
   const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
 
-  // 4. HTTP轮询确认
-  let confirmed = false;
-  for (let i = 0; i < 15; i++) {
-    await sleep(800);
-    try {
-      const status = await conn.getSignatureStatus(sig);
-      if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
-      if (status?.value?.confirmationStatus === 'confirmed' || status?.value?.confirmationStatus === 'finalized') {
-        confirmed = true;
-        break;
-      }
-    } catch(e) { if (e.message?.includes('交易失败')) throw e; }
+  // 4. 用confirmTransaction等确认（比手动轮询更可靠）
+  const latestBh = await conn.getLatestBlockhash('confirmed');
+  try {
+    const conf = await conn.confirmTransaction({
+      signature: sig,
+      blockhash: latestBh.blockhash,
+      lastValidBlockHeight: latestBh.lastValidBlockHeight,
+    }, 'confirmed');
+    if (conf.value?.err) {
+      throw new Error(`交易失败: ${JSON.stringify(conf.value.err)}`);
+    }
+  } catch(e) {
+    if (e.message?.includes('交易失败')) throw e;
+    // 超时或网络错误，再查一次状态
+    const status = await conn.getSignatureStatus(sig);
+    if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
+    if (!status?.value?.confirmationStatus) {
+      return { chain: 'solana', action, txHash: sig, success: false, error: 'SOL确认超时' };
+    }
   }
 
-  if (!confirmed) {
-    return { chain: 'solana', action, txHash: sig, success: false, error: 'SOL确认超时12s' };
-  }
+  // 5. 二次验证：查交易详情确认没有内部错误
+  await sleep(500);
+  try {
+    const txDetail = await conn.getTransaction(sig, { maxSupportedTransactionVersion: 0, commitment: 'confirmed' });
+    if (txDetail?.meta?.err) {
+      return { chain: 'solana', action, txHash: sig, success: false, error: `内部错误: ${JSON.stringify(txDetail.meta.err)}` };
+    }
+  } catch(e) { /* 查不到就信任confirmTransaction结果 */ }
 
   return { chain: 'solana', action, txHash: sig, success: true };
 }
@@ -148,7 +160,14 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   if (!txData?.data || txData.data.length < 10) throw new Error('swap tx data为空');
 
   const gasPrice = feeData.gasPrice ? feeData.gasPrice * 150n / 100n : undefined;
-  const gasLimit = BigInt(txData.gas || '500000') * 150n / 100n;
+  // 用链上estimateGas，OKX给的gas经常不够（Base BRETT实测不够4%）
+  let gasLimit;
+  try {
+    const est = await provider.estimateGas({ from: w.evm.address, to: txData.to, data: txData.data, value: txData.value || '0' });
+    gasLimit = est * 150n / 100n; // 实际×1.5倍余量
+  } catch(e) {
+    gasLimit = BigInt(txData.gas || '500000') * 200n / 100n; // estimateGas失败用OKX的×2
+  }
   const txParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
   let tx;
@@ -213,7 +232,13 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   if (!txData?.data || txData.data.length < 10) throw new Error('swap tx data为空');
 
   const gasPrice = feeData.gasPrice ? feeData.gasPrice * 150n / 100n : undefined;
-  const gasLimit = BigInt(txData.gas || '500000') * 150n / 100n;
+  let gasLimit;
+  try {
+    const est = await provider.estimateGas({ from: w.evm.address, to: txData.to, data: txData.data, value: txData.value || '0' });
+    gasLimit = est * 150n / 100n;
+  } catch(e) {
+    gasLimit = BigInt(txData.gas || '500000') * 200n / 100n;
+  }
   const sellTxParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
   let tx;
