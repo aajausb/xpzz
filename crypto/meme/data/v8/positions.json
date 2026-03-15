@@ -56,5 +56,35 @@
     "confirmWallets": [
       "0x64b23c2987aca16b3d3c55ad6f694058783c72ea"
     ]
+  },
+  "H2XDdiMDcBzF2sMXi1RqG1TicWCL6a1knTDoSadVpump": {
+    "chain": "solana",
+    "token": "H2XDdiMDcBzF2sMXi1RqG1TicWCL6a1knTDoSadVpump",
+    "symbol": "ACE",
+    "buyPrice": 0.000007304,
+    "buyAmount": 0,
+    "buyAmountRaw": 0,
+    "buyCost": 5,
+    "buyTime": 1773590707612,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV",
+      "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9"
+    ]
+  },
+  "29u1tE4wx8HHZ2UssBS47QBS8kooE2foLaTw8aV5pump": {
+    "chain": "solana",
+    "token": "29u1tE4wx8HHZ2UssBS47QBS8kooE2foLaTw8aV5pump",
+    "symbol": "ISLAND",
+    "buyPrice": 0.00005709,
+    "buyAmount": 0,
+    "buyAmountRaw": 0,
+    "buyCost": 5,
+    "buyTime": 1773591076349,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9",
+      "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV"
+    ]
   }
 }

@@ -1,7 +1,7 @@
 /**
- * DEX交易模块 - 三链统一买卖（直接调OKX DEX API，无CLI依赖）
- * Solana: OKX聚合器 + Jito Bundle防夹
- * BSC/Base: OKX聚合器 + 私有RPC防夹 + 自动approve max
+ * DEX交易模块 v2 - 三链统一买卖（直接调OKX DEX API）
+ * SOL: OKX聚合器 + 三级RPC fallback
+ * BSC/Base: OKX聚合器 + 私有RPC防夹 + approve缓存
  */
 const { Connection, Keypair, VersionedTransaction, PublicKey } = require('@solana/web3.js');
 const { ethers } = require('ethers');
@@ -11,81 +11,81 @@ const fetch = require('node-fetch');
 const bs58 = require('bs58');
 
 // ============ 配置 ============
-// SOL RPC: 三级fallback（QuickNode→官方→PublicNode）
 const SOL_RPCS = [
   'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/',
   'https://api.mainnet-beta.solana.com',
   'https://solana-rpc.publicnode.com',
 ];
-let solRpcIndex = 0;
-let solRpcDownUntil = [0, 0, 0];
-function getSolRpc() {
-  const now = Date.now();
-  // 从当前index开始找可用的
-  for (let i = 0; i < SOL_RPCS.length; i++) {
-    const idx = (solRpcIndex + i) % SOL_RPCS.length;
-    if (now >= solRpcDownUntil[idx]) return { url: SOL_RPCS[idx], idx };
-  }
-  // 全挂了用最后一个
-  return { url: SOL_RPCS[SOL_RPCS.length - 1], idx: SOL_RPCS.length - 1 };
-}
-function markSolRpcDown(idx) {
-  solRpcDownUntil[idx] = Date.now() + 600000; // 10分钟冷却
-  solRpcIndex = (idx + 1) % SOL_RPCS.length;
-  console.log(`[dex_trader] ⚠️ SOL RPC #${idx} 限速，切换到 #${solRpcIndex}`);
-}
-const SOL_RPC = SOL_RPCS[0]; // 兼容旧引用
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
 const BSC_PRIVATE_RPC = 'https://bsc.rpc.blxrbdn.com';
 const BASE_PRIVATE_RPC = 'https://mainnet.base.org';
-
-// Provider单例复用（不每次new）
-const _providers = {};
-function getProvider(chain) {
-  const rpc = chain === 'bsc' ? BSC_RPC : BASE_RPC;
-  if (!_providers[rpc]) _providers[rpc] = new ethers.JsonRpcProvider(rpc);
-  return _providers[rpc];
-}
-function getPrivateProvider(chain) {
-  const rpc = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
-  if (!_providers['p_'+rpc]) _providers['p_'+rpc] = new ethers.JsonRpcProvider(rpc);
-  return _providers['p_'+rpc];
-}
-
-// approve缓存：token→已approve过就跳过检查
-const _approvedTokens = new Set();
-
-const JITO_BUNDLE_API = 'https://mainnet.block-engine.jito.wtf/api/v1/bundles';
-const JITO_TIP_LAMPORTS = 1_000_000;
 
 const OKX_API_KEY = process.env.OKX_API_KEY || '';
 const OKX_SECRET = process.env.OKX_SECRET_KEY || '';
 const OKX_PASS = process.env.OKX_PASSPHRASE || '';
 
 const NATIVE = {
-  solana: '11111111111111111111111111111111',  // OKX V6用原生SOL地址（不是wSOL）
+  solana: '11111111111111111111111111111111',
   bsc: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
   base: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 };
-
 const CHAIN_ID = { solana: '501', bsc: '56', base: '8453' };
 
-// ============ OKX API 直接调用 ============
+// ============ SOL RPC管理 ============
+let solRpcIdx = 0;
+const solRpcCooldown = [0, 0, 0];
 
-function okxSign(ts, method, path, body = '') {
-  return crypto.createHmac('sha256', OKX_SECRET).update(ts + method + path + body).digest('base64');
+function getSolRpc() {
+  const now = Date.now();
+  for (let i = 0; i < SOL_RPCS.length; i++) {
+    const idx = (solRpcIdx + i) % SOL_RPCS.length;
+    if (now >= solRpcCooldown[idx]) return { url: SOL_RPCS[idx], idx };
+  }
+  return { url: SOL_RPCS[SOL_RPCS.length - 1], idx: SOL_RPCS.length - 1 };
+}
+
+function markSolRpcDown(idx) {
+  solRpcCooldown[idx] = Date.now() + 600000;
+  solRpcIdx = (idx + 1) % SOL_RPCS.length;
+  console.log(`[dex_trader] ⚠️ SOL RPC #${idx} down，切到 #${solRpcIdx}`);
+}
+
+function getSolConn() {
+  const rpc = getSolRpc();
+  return { conn: new Connection(rpc.url, { commitment: 'confirmed', disableRetryOnRateLimit: true }), rpcIdx: rpc.idx };
+}
+
+// ============ EVM Provider单例 ============
+const _providers = {};
+function getProvider(chain) {
+  const k = chain === 'bsc' ? BSC_RPC : BASE_RPC;
+  if (!_providers[k]) _providers[k] = new ethers.JsonRpcProvider(k);
+  return _providers[k];
+}
+function getPrivateProvider(chain) {
+  const k = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
+  const pk = 'p_' + k;
+  if (!_providers[pk]) _providers[pk] = new ethers.JsonRpcProvider(k);
+  return _providers[pk];
+}
+
+// approve缓存
+const _approvedTokens = new Set();
+
+// ============ OKX API ============
+function okxSign(ts, method, path) {
+  return crypto.createHmac('sha256', OKX_SECRET).update(ts + method + path).digest('base64');
 }
 
 async function okxGet(path, params) {
   const qs = new URLSearchParams(params).toString();
   const fullPath = path + (qs ? '?' + qs : '');
   const ts = new Date().toISOString();
-  const sig = okxSign(ts, 'GET', fullPath);
   const r = await fetch('https://web3.okx.com' + fullPath, {
     headers: {
       'OK-ACCESS-KEY': OKX_API_KEY,
-      'OK-ACCESS-SIGN': sig,
+      'OK-ACCESS-SIGN': okxSign(ts, 'GET', fullPath),
       'OK-ACCESS-TIMESTAMP': ts,
       'OK-ACCESS-PASSPHRASE': OKX_PASS,
       'OK-ACCESS-PROJECT': '',
@@ -94,161 +94,142 @@ async function okxGet(path, params) {
   return r.json();
 }
 
-async function okxSwapQuote(chainId, from, to, amount, wallet, slippagePercent) {
+function okxSwapQuote(chainId, from, to, amount, wallet, slippagePct) {
   return okxGet('/api/v6/dex/aggregator/swap', {
     chainIndex: chainId, fromTokenAddress: from, toTokenAddress: to,
-    amount, slippagePercent: slippagePercent.toString(),
-    userWalletAddress: wallet
+    amount, slippagePercent: slippagePct.toString(), userWalletAddress: wallet
   });
 }
 
-async function okxApprove(chainId, tokenAddress, amount) {
+function okxApprove(chainId, tokenAddress, amount) {
   return okxGet('/api/v6/dex/aggregator/approve-transaction', {
     chainIndex: chainId, tokenContractAddress: tokenAddress, approveAmount: amount
   });
 }
 
-// ============ Solana ============
-
+// ============ SOL 买卖 ============
 async function solanaBuy(tokenAddress, amountLamports, slippageBps = 500) {
-  return solanaSwap(NATIVE.solana, tokenAddress, amountLamports, 'buy', slippageBps);
+  return _solanaSwap(NATIVE.solana, tokenAddress, amountLamports, 'buy', slippageBps);
 }
 
 async function solanaSell(tokenAddress, amountRaw, slippageBps = 500) {
-  return solanaSwap(tokenAddress, NATIVE.solana, amountRaw, 'sell', slippageBps);
+  return _solanaSwap(tokenAddress, NATIVE.solana, amountRaw, 'sell', slippageBps);
 }
 
-async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500) {
+async function _solanaSwap(fromToken, toToken, amount, action, slippageBps) {
   const w = getWallets();
   const kp = Keypair.fromSecretKey(w.solana.secretKey);
-  const rpc = getSolRpc();
-  let conn = new Connection(rpc.url, { commitment: 'confirmed' });
+  let { conn, rpcIdx } = getSolConn();
 
-  // 0. 尝试确保wSOL有余额（某些路由需要），失败不阻塞（meme币一般不需要）
-  if (fromToken === NATIVE.solana) {
-    try { await ensureWsolBalance(conn, kp, parseInt(amount)); }
-    catch(e) { console.log('[dex_trader] wSOL wrap跳过:', e.message?.slice(0,50)); }
-  }
-
-  // 1. OKX报价（直接HTTP，~100ms）
+  // 1. OKX报价
   const quote = await okxSwapQuote(CHAIN_ID.solana, fromToken, toToken, amount.toString(), w.solana.address, slippageBps / 100);
-  if (quote.code !== '0' || !quote.data?.[0]) throw new Error(`OKX报价失败: ${quote.msg || JSON.stringify(quote).slice(0,100)}`);
+  if (quote.code !== '0' || !quote.data?.[0]) {
+    throw new Error(`OKX报价失败: ${quote.msg || JSON.stringify(quote).slice(0, 100)}`);
+  }
 
   // 2. 签名
   const decoded = bs58.decode(quote.data[0].tx.data);
   const tx = VersionedTransaction.deserialize(decoded);
   tx.sign([kp]);
 
-  // 3. 发送 + 确认（429自动切RPC）
+  // 3. 发送（429自动切RPC）
   let sig;
   try {
-    sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
-  } catch(e) {
+    sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 3 });
+  } catch (e) {
     if (e.message?.includes('429') || e.message?.includes('Too Many')) {
-      markSolRpcDown(rpc.idx);
-      const fallback = getSolRpc();
-      conn = new Connection(fallback.url, { commitment: 'confirmed' });
-      sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
+      markSolRpcDown(rpcIdx);
+      const r2 = getSolConn();
+      conn = r2.conn;
+      rpcIdx = r2.rpcIdx;
+      sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 3 });
     } else throw e;
   }
 
-  // 4. 用confirmTransaction等确认（比手动轮询更可靠）
-  const latestBh = await conn.getLatestBlockhash('confirmed');
+  // 4. 确认（429也自动切）
   try {
-    const conf = await conn.confirmTransaction({
-      signature: sig,
-      blockhash: latestBh.blockhash,
-      lastValidBlockHeight: latestBh.lastValidBlockHeight,
-    }, 'confirmed');
-    if (conf.value?.err) {
-      throw new Error(`交易失败: ${JSON.stringify(conf.value.err)}`);
-    }
-  } catch(e) {
+    const bh = await conn.getLatestBlockhash('confirmed');
+    const conf = await conn.confirmTransaction({ signature: sig, blockhash: bh.blockhash, lastValidBlockHeight: bh.lastValidBlockHeight }, 'confirmed');
+    if (conf.value?.err) throw new Error(`交易失败: ${JSON.stringify(conf.value.err)}`);
+  } catch (e) {
     if (e.message?.includes('交易失败')) throw e;
-    // 超时或网络错误，再查一次状态
-    const status = await conn.getSignatureStatus(sig);
-    if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
-    if (!status?.value?.confirmationStatus) {
+    // 429或超时 → 切RPC再查一次
+    if (e.message?.includes('429') || e.message?.includes('Too Many')) {
+      markSolRpcDown(rpcIdx);
+      const r3 = getSolConn();
+      conn = r3.conn;
+    }
+    try {
+      const status = await conn.getSignatureStatus(sig);
+      if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
+      if (!status?.value?.confirmationStatus) {
+        return { chain: 'solana', action, txHash: sig, success: false, error: 'SOL确认超时' };
+      }
+    } catch (e2) {
+      // 查不到状态也当超时
       return { chain: 'solana', action, txHash: sig, success: false, error: 'SOL确认超时' };
     }
   }
 
-  // 5. 二次验证：查交易详情确认没有内部错误
-  await sleep(500);
-  try {
-    const txDetail = await conn.getTransaction(sig, { maxSupportedTransactionVersion: 0, commitment: 'confirmed' });
-    if (txDetail?.meta?.err) {
-      return { chain: 'solana', action, txHash: sig, success: false, error: `内部错误: ${JSON.stringify(txDetail.meta.err)}` };
-    }
-  } catch(e) { /* 查不到就信任confirmTransaction结果 */ }
-
+  console.log(`[dex_trader] ✅ solana ${action}确认 sig=${sig.slice(0, 20)}`);
   return { chain: 'solana', action, txHash: sig, success: true };
 }
 
-// ============ EVM (BSC/Base) ============
-
+// ============ EVM 买入 ============
 async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   const chainId = chain === 'bsc' ? 56 : 8453;
   const w = getWallets();
   const provider = getProvider(chain);
-  const privateProvider = getPrivateProvider(chain);
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
-  const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
+  const privateWallet = new ethers.Wallet(w.evm.privateKey, getPrivateProvider(chain));
 
   // 报价 + gas 并行
   const [quote, feeData] = await Promise.all([
     okxSwapQuote(CHAIN_ID[chain], NATIVE[chain], tokenAddress, amountWei.toString(), w.evm.address, slippage),
     provider.getFeeData()
   ]);
-  if (quote.code !== '0' || !quote.data?.[0]) throw new Error(`OKX报价失败: ${quote.msg || JSON.stringify(quote).slice(0,100)}`);
+  if (quote.code !== '0' || !quote.data?.[0]) throw new Error(`OKX报价失败: ${quote.msg || JSON.stringify(quote).slice(0, 100)}`);
 
   const txData = quote.data[0].tx;
   if (!txData?.data || txData.data.length < 10) throw new Error('swap tx data为空');
 
   const gasPrice = feeData.gasPrice ? feeData.gasPrice * 150n / 100n : undefined;
-  // 用链上estimateGas，OKX给的gas经常不够（Base BRETT实测不够4%）
   let gasLimit;
   try {
     const est = await provider.estimateGas({ from: w.evm.address, to: txData.to, data: txData.data, value: txData.value || '0' });
-    gasLimit = est * 150n / 100n; // 实际×1.5倍余量
-  } catch(e) {
-    gasLimit = BigInt(txData.gas || '500000') * 200n / 100n; // estimateGas失败用OKX的×2
+    gasLimit = est * 150n / 100n;
+  } catch {
+    gasLimit = BigInt(txData.gas || '500000') * 200n / 100n;
   }
+
   const txParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
   let tx;
   try { tx = await privateWallet.sendTransaction(txParams); }
-  catch(e) {
+  catch (e) {
     console.log(`[dex_trader] 私有RPC失败(${chain}):`, e.message?.slice(0, 40));
     tx = await wallet.sendTransaction(txParams);
   }
 
-  // 等确认（最多15秒），确认失败返回失败
-  try {
-    const receipt = await tx.wait(1);  // 等1个确认
-    if (receipt.status !== 1) {
-      console.error(`[dex_trader] ❌ ${chain} 买入revert: ${tx.hash}`);
-      return { chain, action: 'buy', txHash: tx.hash, success: false, error: 'revert' };
-    }
-    console.log(`[dex_trader] ✅ ${chain} 买入确认 block=${receipt.blockNumber}`);
-  } catch(e) {
-    console.error(`[dex_trader] ❌ ${chain} 确认失败: ${e.message?.slice(0,60)}`);
-    return { chain, action: 'buy', txHash: tx.hash, success: false, error: e.message?.slice(0,60) };
+  const receipt = await tx.wait(1);
+  if (receipt.status !== 1) {
+    console.error(`[dex_trader] ❌ ${chain} 买入revert: ${tx.hash}`);
+    return { chain, action: 'buy', txHash: tx.hash, success: false, error: 'revert' };
   }
-
+  console.log(`[dex_trader] ✅ ${chain} 买入确认 block=${receipt.blockNumber}`);
   return { chain, action: 'buy', txHash: tx.hash, success: true, mev: 'private' };
 }
 
+// ============ EVM 卖出 ============
 async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   const chainId = chain === 'bsc' ? 56 : 8453;
   const w = getWallets();
   const provider = getProvider(chain);
-  const privateProvider = getPrivateProvider(chain);
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
-  const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
+  const privateWallet = new ethers.Wallet(w.evm.privateKey, getPrivateProvider(chain));
 
-  // 1. approve检查（有缓存就跳过）
-  const approveKey = `${chain}_${tokenAddress}`;
+  // approve（缓存过就跳过）
+  const approveKey = `${chain}_${tokenAddress.toLowerCase()}`;
   if (!_approvedTokens.has(approveKey)) {
     const approveResult = await okxApprove(CHAIN_ID[chain], tokenAddress, amountRaw.toString());
     const spender = approveResult.data?.[0]?.dexContractAddress;
@@ -260,21 +241,21 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
       const allowance = await erc20.allowance(wallet.address, spender);
       if (allowance < BigInt(amountRaw)) {
         console.log(`[dex_trader] ${chain} approve max to ${spender}...`);
-        const approveTx = await erc20.approve(spender, ethers.MaxUint256);
-        await approveTx.wait();
-        await new Promise(r => setTimeout(r, 1000));
+        const appTx = await erc20.approve(spender, ethers.MaxUint256);
+        await appTx.wait();
+        await sleep(1000); // nonce同步
       }
-      _approvedTokens.add(approveKey); // 缓存：后续卖出跳过approve
+      _approvedTokens.add(approveKey);
     }
   }
 
-  // 2. gas + swap报价并行
+  // 报价 + gas 并行
   const [feeData, quote] = await Promise.all([
     provider.getFeeData(),
     okxSwapQuote(CHAIN_ID[chain], tokenAddress, NATIVE[chain], amountRaw.toString(), w.evm.address, slippage)
   ]);
+  if (quote.code !== '0' || !quote.data?.[0]) throw new Error(`OKX报价失败: ${quote.msg || JSON.stringify(quote).slice(0, 100)}`);
 
-  if (quote.code !== '0' || !quote.data?.[0]) throw new Error(`OKX报价失败: ${quote.msg || JSON.stringify(quote).slice(0,100)}`);
   const txData = quote.data[0].tx;
   if (!txData?.data || txData.data.length < 10) throw new Error('swap tx data为空');
 
@@ -283,140 +264,94 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   try {
     const est = await provider.estimateGas({ from: w.evm.address, to: txData.to, data: txData.data, value: txData.value || '0' });
     gasLimit = est * 150n / 100n;
-  } catch(e) {
+  } catch {
     gasLimit = BigInt(txData.gas || '500000') * 200n / 100n;
   }
-  const sellTxParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
+
+  const txParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
   let tx;
-  try { tx = await privateWallet.sendTransaction(sellTxParams); }
-  catch(e) {
+  try { tx = await privateWallet.sendTransaction(txParams); }
+  catch (e) {
     console.log(`[dex_trader] 私有RPC卖出失败(${chain}):`, e.message?.slice(0, 40));
-    tx = await wallet.sendTransaction(sellTxParams);
+    tx = await wallet.sendTransaction(txParams);
   }
 
-  // 等确认
-  try {
-    const receipt = await tx.wait(1);
-    if (receipt.status !== 1) {
-      console.error(`[dex_trader] ❌ ${chain} 卖出revert: ${tx.hash}`);
-      return { chain, action: 'sell', txHash: tx.hash, success: false, error: 'revert' };
-    }
-    console.log(`[dex_trader] ✅ ${chain} 卖出确认 block=${receipt.blockNumber}`);
-  } catch(e) {
-    console.error(`[dex_trader] ❌ ${chain} 卖出确认失败: ${e.message?.slice(0,60)}`);
-    return { chain, action: 'sell', txHash: tx.hash, success: false, error: e.message?.slice(0,60) };
+  const receipt = await tx.wait(1);
+  if (receipt.status !== 1) {
+    console.error(`[dex_trader] ❌ ${chain} 卖出revert: ${tx.hash}`);
+    return { chain, action: 'sell', txHash: tx.hash, success: false, error: 'revert' };
   }
-
+  console.log(`[dex_trader] ✅ ${chain} 卖出确认 block=${receipt.blockNumber}`);
   return { chain, action: 'sell', txHash: tx.hash, success: true, mev: 'private' };
 }
 
 // ============ 统一接口 ============
-
-const MAX_RETRIES = 3;
-const RETRY_DELAYS = [1000, 2000, 3000];
-
-async function withRetry(fn, label) {
-  for (let i = 0; i <= MAX_RETRIES; i++) {
-    try { return await fn(); }
-    catch(e) {
-      if (i === MAX_RETRIES) throw e;
-      console.log(`⚠️ ${label} 失败(第${i+1}次), ${RETRY_DELAYS[i]/1000}秒后重试: ${e.message}`);
-      await sleep(RETRY_DELAYS[i]);
-    }
-  }
-}
-
 async function buy(chain, tokenAddress, amountNative) {
-  return withRetry(() => {
+  return _withRetry(() => {
     if (chain === 'solana') return solanaBuy(tokenAddress, amountNative);
     return evmBuy(chain, tokenAddress, amountNative);
-  }, `买入 ${chain} ${tokenAddress.slice(0,8)}`);
+  }, `买入 ${chain} ${tokenAddress.slice(0, 8)}`);
 }
 
 async function sell(chain, tokenAddress, amountRaw) {
   // 没传数量 → 查链上余额全卖
   if (!amountRaw) {
-    if (chain === 'solana') {
-      const rpc = getSolRpc();
-      const { Connection, PublicKey } = require('@solana/web3.js');
-      const conn = new Connection(rpc.url, { commitment: 'confirmed' });
-      const w = getWallets();
-      const accts = await conn.getTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) }, 'confirmed');
+    amountRaw = await _getTokenBalance(chain, tokenAddress);
+    if (!amountRaw || amountRaw === '0' || amountRaw === 0) {
+      return { chain, action: 'sell', success: false, error: '余额为0' };
+    }
+    console.log(`[dex_trader] 自动查余额: ${amountRaw}`);
+  }
+  return _withRetry(() => {
+    if (chain === 'solana') return solanaSell(tokenAddress, amountRaw);
+    return evmSell(chain, tokenAddress, amountRaw);
+  }, `卖出 ${chain} ${tokenAddress.slice(0, 8)}`);
+}
+
+// ============ 辅助 ============
+async function _getTokenBalance(chain, tokenAddress) {
+  if (chain === 'solana') {
+    const { conn } = getSolConn();
+    const w = getWallets();
+    try {
+      const accts = await conn.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
       let total = 0;
       for (const a of accts.value) {
         total += parseInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
       }
-      if (total === 0) return { chain, action: 'sell', success: false, error: '余额为0' };
-      amountRaw = total;
-      console.log(`[dex_trader] SOL自动查余额: ${amountRaw}`);
-    } else {
-      const provider = getProvider(chain);
-      const w = getWallets();
-      const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
-      amountRaw = (await erc20.balanceOf(w.evm.address)).toString();
-      if (amountRaw === '0') return { chain, action: 'sell', success: false, error: '余额为0' };
-      console.log(`[dex_trader] 自动查余额: ${amountRaw}`);
+      return total || 0;
+    } catch (e) {
+      // 429 → 切RPC重试一次
+      if (e.message?.includes('429')) {
+        const { conn: conn2 } = getSolConn();
+        const accts = await conn2.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
+        let total = 0;
+        for (const a of accts.value) {
+          total += parseInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+        }
+        return total || 0;
+      }
+      throw e;
+    }
+  } else {
+    const provider = getProvider(chain);
+    const w = getWallets();
+    const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+    return (await erc20.balanceOf(w.evm.address)).toString();
+  }
+}
+
+const RETRY_DELAYS = [1000, 2000, 3000];
+async function _withRetry(fn, label) {
+  for (let i = 0; i < 3; i++) {
+    try { return await fn(); }
+    catch (e) {
+      if (i === 2) throw e;
+      console.log(`⚠️ ${label} 失败(第${i + 1}次), ${RETRY_DELAYS[i] / 1000}秒后重试: ${e.message?.slice(0, 80)}`);
+      await sleep(RETRY_DELAYS[i]);
     }
   }
-  return withRetry(() => {
-    if (chain === 'solana') return solanaSell(tokenAddress, amountRaw);
-    return evmSell(chain, tokenAddress, amountRaw);
-  }, `卖出 ${chain} ${tokenAddress.slice(0,8)}`);
-}
-
-// Jito Bundle已移除 — OKX聚合器自带minReceiveAmount防夹保护
-
-// ============ 辅助 ============
-
-async function ensureWsolBalance(conn, kp, lamportsNeeded) {
-  const { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createSyncNativeInstruction, NATIVE_MINT } = require('@solana/spl-token');
-  const { SystemProgram, Transaction } = require('@solana/web3.js');
-  const wsolAta = await getAssociatedTokenAddress(NATIVE_MINT, kp.publicKey);
-  
-  const tx = new Transaction();
-  const info = await conn.getAccountInfo(wsolAta);
-  
-  if (!info) {
-    tx.add(createAssociatedTokenAccountInstruction(kp.publicKey, wsolAta, kp.publicKey, NATIVE_MINT));
-  }
-  
-  // 检查wSOL余额
-  let currentBalance = 0;
-  if (info) {
-    try {
-      const bal = await conn.getTokenAccountBalance(wsolAta);
-      currentBalance = parseInt(bal.value.amount);
-    } catch(e) {}
-  }
-  
-  const needed = lamportsNeeded - currentBalance;
-  if (needed <= 0) return; // 够了
-  
-  console.log(`[dex_trader] wrap ${needed/1e9} SOL → wSOL`);
-  tx.add(
-    SystemProgram.transfer({ fromPubkey: kp.publicKey, toPubkey: wsolAta, lamports: needed }),
-    createSyncNativeInstruction(wsolAta)
-  );
-  
-  tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
-  tx.feePayer = kp.publicKey;
-  tx.sign(kp);
-  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true });
-  await conn.confirmTransaction(sig, 'confirmed');
-}
-
-async function unwrapWsol(conn, kp) {
-  const { getAssociatedTokenAddress, createCloseAccountInstruction, NATIVE_MINT } = require('@solana/spl-token');
-  const { Transaction } = require('@solana/web3.js');
-  const wsolAta = await getAssociatedTokenAddress(NATIVE_MINT, kp.publicKey);
-  if (!(await conn.getAccountInfo(wsolAta))) return;
-  const tx = new Transaction().add(createCloseAccountInstruction(wsolAta, kp.publicKey, kp.publicKey));
-  tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
-  tx.feePayer = kp.publicKey;
-  tx.sign(kp);
-  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true });
-  await conn.confirmTransaction(sig, 'confirmed');
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

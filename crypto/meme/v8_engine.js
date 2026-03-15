@@ -713,19 +713,35 @@ async function parseSolanaSwap(result) {
   } catch(e) { log('WARN', `parseSolanaSwap异常: ${e.message}`); }
 }
 
-// 跟踪聪明钱卖出 — 积累到阈值触发跟卖
-const sellTracker = {}; // token -> [{wallet, ratio, time}]
+// 跟踪聪明钱卖出 — 积累到阈值触发跟卖（持久化到positions）
+const sellTracker = {}; // token -> [{wallet, time, source}]
+
+// 启动时从positions恢复sellTracker
+function restoreSellTracker() {
+  for (const [token, pos] of Object.entries(positions)) {
+    if (pos._sells && pos._sells.length > 0) {
+      sellTracker[token] = pos._sells;
+    }
+  }
+  const total = Object.values(sellTracker).reduce((s, a) => s + a.length, 0);
+  if (total > 0) log('INFO', `📦 恢复sellTracker: ${total}条卖出记录`);
+}
+
+function saveSellTracker(token) {
+  if (positions[token]) {
+    positions[token]._sells = sellTracker[token] || [];
+    saveJSON(POSITIONS_FILE, positions);
+  }
+}
 
 function trackSmartMoneySell(token, wallet, ratio) {
   if (!sellTracker[token]) sellTracker[token] = [];
-  sellTracker[token].push({ wallet, ratio, time: Date.now() });
-  // 清理60分钟前的（跟确认窗口一致）
-  const cutoff = Date.now() - CONFIG.confirmWindowMs;
-  sellTracker[token] = sellTracker[token].filter(s => s.time > cutoff);
+  if (sellTracker[token].some(s => s.wallet === wallet)) return; // 已记录
+  sellTracker[token].push({ wallet, time: Date.now(), source: 'ws' });
   
   const uniqueSellers = new Set(sellTracker[token].map(s => s.wallet)).size;
   log('INFO', `⚠️ SM卖出追踪: ${token.slice(0,8)}... ${uniqueSellers}个钱包在卖`);
-  // 实际跟卖由managePositions()驱动，这里只记录
+  saveSellTracker(token); // 持久化
 }
 
 // BSC/Base: WebSocket实时推送 — 订阅DEX Router的Transfer事件
@@ -945,7 +961,7 @@ async function handleSignal(signal) {
   // 通过审计 → 买入
   const bestRank = Math.min(...activeSignals.map(s => s.walletRank || 999));
   const confirmWallets = [...new Set(activeSignals.map(s => s.wallet))];
-  log('INFO', `✅ ${symbol}(${chain}) 通过审计! SM=${confirmCount}个钱包 最高#${bestRank}`);
+  log('INFO', `✅ ${symbol}(${chain}) 通过审计! 猎手=${confirmCount} 哨兵=${watchCount} 最高#${bestRank}`);
   await executeBuy(chain, token, symbol, confirmCount, confirmWallets);
 }
 
@@ -1128,11 +1144,11 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     
     if (chain === 'solana') {
       nativeAmount = Math.floor((size / price) * 1e9);
-      log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(nativeAmount/1e9).toFixed(4)} SOL SM确认=${confirmCount}`);
+      log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(nativeAmount/1e9).toFixed(4)} SOL 猎手=${confirmCount}`);
     } else {
       nativeAmount = BigInt(Math.floor((size / price) * 1e18)).toString();
       const unit = chain === 'bsc' ? 'BNB' : 'ETH';
-      log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(size/price).toFixed(6)} ${unit} SM确认=${confirmCount}`);
+      log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(size/price).toFixed(6)} ${unit} 猎手=${confirmCount}`);
     }
   } catch(e) {
     log('ERROR', `价格转换失败 ${symbol}(${chain}): ${e.message}`);
@@ -1353,6 +1369,7 @@ async function managePositions() {
                     if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
                     if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
                       sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                      saveSellTracker(tokenAddr);
                     }
                   }
                 }
