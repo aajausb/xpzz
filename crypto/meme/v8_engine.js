@@ -34,7 +34,7 @@ const CONFIG = {
   confirmWindowMs: 60 * 60 * 1000,          // 60分钟确认窗口
   minLiqMcRatio: 0.05,                     // Liq/MC ≥ 5%
   minMarketCap: 10000,                     // 最低市值$10K，太小的流动性差买卖滑点大
-  maxTokenAgeDays: 7,                      // 只买7天内创建的币，老币没alpha
+  maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
   
   // 交易 — 按SM确认数决定仓位
   positionSizeTop10: 200,                  // TOP10猎手确认: $200
@@ -370,13 +370,12 @@ function setupSolanaMonitor() {
   pollSolanaWallets();
 }
 
-// 官方RPC: WS只订阅猎手钱包（控制订阅数<50，哨兵靠轮询）
+// 官方RPC: WS订阅全部SOL钱包（猎手+哨兵+观察，测试QuickNode承载力）
 function setupOfficialSolWs() {
-  const solHunters = rankedWallets.filter(w => w.chain === 'solana' && w.status === 'hunter').map(w => w.address);
-  const walletList = solHunters.length > 0 ? solHunters : [...solWalletSet].slice(0, 40);
+  const walletList = [...solWalletSet];
   if (walletList.length === 0) return;
   
-  log('INFO', `🔌 [SOL] 官方RPC logsSubscribe ${walletList.length} 个猎手钱包 (单连接, 哨兵靠轮询)`);
+  log('INFO', `🔌 [SOL] 官方RPC logsSubscribe ${walletList.length} 个钱包 (全部WS实时)`);
   
   const ws = new WebSocket(SOL_WS_OFFICIAL);
   solOfficialWs = ws;
@@ -908,12 +907,8 @@ async function checkLiquidity(chain, tokenAddress) {
       if (mc > 0 && mc < CONFIG.minMarketCap) {
         return { ok: false, reason: `MC=$${Math.round(mc)}<$${CONFIG.minMarketCap}` };
       }
-      // 创建时间过滤：超过maxTokenAgeDays天的不买
-      if (pair?.pairCreatedAt) {
-        const ageDays = (Date.now() - pair.pairCreatedAt) / (24 * 3600 * 1000);
-        if (ageDays > CONFIG.maxTokenAgeDays) {
-          return { ok: false, reason: `创建${Math.round(ageDays)}天>7天` };
-        }
+      if (mc > CONFIG.maxMarketCap) {
+        return { ok: false, reason: `MC=$${Math.round(mc/1e6)}M>$50M 大币` };
       }
       const liq = parseFloat(pair?.liquidity?.usd || 0);
       const ratio = mc > 0 ? (liq / mc * 100).toFixed(1) + '%' : '内盘';
