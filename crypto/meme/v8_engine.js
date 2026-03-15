@@ -74,8 +74,8 @@ const CHAINS = {
   base:   { name: 'Base',   binanceId: '8453',   okxChainId: '8453' },
 };
 
-// SOL轮询用PublicNode（官方RPC留给WS订阅，互不抢）
-const SOL_PUBLIC_RPC = 'https://solana-rpc.publicnode.com';
+// QuickNode专属RPC（HTTP+WS全用这一个，不再抢公共资源）
+const SOL_PUBLIC_RPC = 'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
 // Helius Parse API（仅用于解析SOL swap交易详情，WS/RPC已全部用官方）
 const HELIUS_PARSE_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
 
@@ -318,7 +318,7 @@ const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a
 
 const solLastSigs = new Map(); // wallet -> lastSignature
 
-const SOL_WS_OFFICIAL = 'wss://api.mainnet-beta.solana.com';
+const SOL_WS_OFFICIAL = 'wss://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
 let solOfficialWs = null; // 单连接
 let solWsMode = 'none'; // 'official' | 'polling'
 
@@ -349,15 +349,18 @@ function setupOfficialSolWs() {
   let subscribed = 0;
   const idToAddr = {};
   
-  ws.on('open', () => {
-    walletList.forEach((addr, i) => {
+  ws.on('open', async () => {
+    // QuickNode限速15次/秒，每5个等1秒（~5 req/s，留余量给轮询）
+    for (let i = 0; i < walletList.length; i++) {
+      const addr = walletList[i];
       const id = i + 1;
       idToAddr[id] = addr;
       ws.send(JSON.stringify({
         jsonrpc: '2.0', id, method: 'logsSubscribe',
         params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
       }));
-    });
+      if ((i + 1) % 5 === 0) await new Promise(r => setTimeout(r, 1000));
+    }
   });
   
   const subIdToAddr = {};
@@ -411,7 +414,7 @@ async function pollSolanaWallets() {
   const interval = solOfficialWs ? 30000 : 10000; // WS连上了降频
   log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包 (${interval/1000}s)`);
   
-  // 初始化: 记录每个钱包当前最新签名（失败重试3次）
+  // 初始化: 记录每个钱包当前最新签名（失败重试3次，限速友好）
   for (const addr of solWalletSet) {
     for (let retry = 0; retry < 3; retry++) {
       try {
@@ -419,9 +422,9 @@ async function pollSolanaWallets() {
         const sigs = d.result || [];
         if (sigs.length > 0) solLastSigs.set(addr, sigs[0].signature);
         break;
-      } catch(e) { await sleep(500 * (retry + 1)); }
+      } catch(e) { await sleep(1000 * (retry + 1)); }
     }
-    await sleep(150);
+    await sleep(250); // QuickNode 15/s限速，留余量
   }
   log('INFO', `🔌 [SOL] 初始化完成, ${solLastSigs.size}/${solWalletSet.size} 钱包有历史签名`);
   

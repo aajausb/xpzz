@@ -13,7 +13,7 @@ const bs58 = require('bs58');
 // ============ 配置 ============
 // SOL交易RPC：官方为主（快），PublicNode备用（不429）
 // SOL交易专用RPC（跟引擎的官方RPC隔离，不互相抢）
-const SOL_RPC = 'https://solana-rpc.publicnode.com';
+const SOL_RPC = 'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
 const BSC_PRIVATE_RPC = 'https://bsc.rpc.blxrbdn.com';
