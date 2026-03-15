@@ -26,7 +26,7 @@ const CONFIG = {
   
   // 过滤
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
-  confirmWindowMs: 30 * 60 * 1000,         // 30分钟窗口内的确认算数
+  confirmWindowMs: 5 * 60 * 1000,           // 5分钟窗口内的确认算数
   minLiqMcRatio: 0.05,                     // Liq/MC ≥ 5%
   
   // 交易 — 按SM确认数决定仓位
@@ -73,6 +73,7 @@ const HELIUS_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dc
 const HELIUS_KEY2 = '824cb27b-0794-45ed-aa1c-0798658d8d80';
 const HELIUS_WS = `wss://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
 const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+const SOL_PUBLIC_RPC = 'https://api.mainnet-beta.solana.com'; // 验证用，省Helius额度
 
 const OKX_ENV = {
   ...process.env,
@@ -179,7 +180,8 @@ async function verifyWallets(wallets) {
     
     try {
       if (w.chain === 'solana') {
-        const d = await rpcPost(HELIUS_RPC, 'getBalance', [w.address]);
+        // 用公共RPC验证，省Helius额度给WebSocket
+        const d = await rpcPost(SOL_PUBLIC_RPC, 'getBalance', [w.address]);
         const bal = (d.result?.value || 0) / 1e9;
         if (bal > 0) { w.verifiedBal = bal; verified.push(w); }
       } else {
@@ -208,87 +210,350 @@ function rankWallets(wallets) {
   return wallets;
 }
 
-// ============ PHASE 2: 监控层 ============
+// ============ PHASE 2: 监控层 — 直接盯链上交易 ============
 let solWs = null;
+let solWsRetries = 0;
 const solWalletSet = new Set();
 const bscWalletSet = new Set();
 const baseWalletSet = new Set();
 
-function setupSolanaWebSocket() {
+// 已知DEX Router地址（检测swap用）
+const DEX_ROUTERS = {
+  bsc: new Set([
+    '0x10ed43c718714eb63d5aa57b78b54704e256024e', // PancakeSwap V2
+    '0x13f4ea83d0bd40e75c8222255bc855a974568dd4', // PancakeSwap V3
+    '0x1b81d678ffb9c0263ab9dfd4c89b4200bc0353d8', // PancakeSwap Universal
+    '0xb971ef87ede563556b2ed4b1c0b0019111dd85d2', // Four.meme Router
+  ]),
+  base: new Set([
+    '0x2626664c2603336e57b271c5c0b26f421741e481', // Uniswap V3
+    '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad', // Uniswap Universal
+    '0x6131b5fae19ea4f9d964eac0408e4408b66337b5', // Aerodrome
+  ]),
+};
+
+// ERC20 Transfer event topic
+const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+
+// SOL: 双模式 — Helius WS优先，fallback到公共RPC轮询
+const solLastSigs = new Map(); // wallet -> lastSignature
+
+function setupSolanaMonitor() {
   const solWallets = rankedWallets.filter(w => w.chain === 'solana');
   for (const w of solWallets) solWalletSet.add(w.address);
   
   if (solWalletSet.size === 0) return;
   
+  // 尝试Helius WebSocket
+  tryHeliusWs();
+  
+  // 同时启动轮询作为fallback（Helius连上后轮询自动降频）
+  pollSolanaWallets();
+}
+
+let heliusWsConnected = false;
+
+function tryHeliusWs() {
   solWs = new WebSocket(HELIUS_WS);
+  let heartbeatTimer = null;
+
   solWs.on('open', () => {
     solWs.send(JSON.stringify({
-      jsonrpc: '2.0', id: 1, method: 'accountSubscribe',
-      params: [[...solWalletSet], { encoding: 'jsonParsed', commitment: 'confirmed' }]
+      jsonrpc: '2.0', id: 1,
+      method: 'transactionSubscribe',
+      params: [{
+        accountInclude: [...solWalletSet],
+      }, {
+        commitment: 'confirmed',
+        encoding: 'jsonParsed',
+        transactionDetails: 'full',
+        maxSupportedTransactionVersion: 0,
+      }]
     }));
-    log('INFO', `🔌 [SOL] WebSocket监控 ${solWalletSet.size} 个钱包`);
+    heartbeatTimer = setInterval(() => {
+      if (solWs.readyState === WebSocket.OPEN) solWs.ping();
+    }, 30000);
   });
   
   solWs.on('message', async (data) => {
     try {
       const msg = JSON.parse(data);
-      if (msg.method === 'accountNotification') {
-        await handleSolanaTransaction(msg.params);
+      if (msg.id === 1 && msg.result) {
+        heliusWsConnected = true;
+        solWsRetries = 0;
+        log('INFO', `🔌 [SOL] Helius WS订阅成功! 实时模式`);
+        return;
+      }
+      if (msg.params?.result) {
+        await parseSolanaSwap(msg.params.result);
       }
     } catch(e) {}
   });
   
   solWs.on('close', () => {
-    log('WARN', '🔌 [SOL] WebSocket断开，5秒后重连');
-    setTimeout(setupSolanaWebSocket, 5000);
+    heliusWsConnected = false;
+    if (heartbeatTimer) clearInterval(heartbeatTimer);
+    solWsRetries = (solWsRetries || 0) + 1;
+    const delay = Math.min(5000 * solWsRetries, 120000); // 最长2分钟
+    if (solWsRetries <= 3) {
+      log('WARN', `🔌 [SOL] Helius WS断开，${delay/1000}秒后重试 (第${solWsRetries}次)`);
+    } // 超过3次不刷日志，静默重试
+    setTimeout(tryHeliusWs, delay);
   });
   
   solWs.on('error', () => {});
 }
 
-async function handleSolanaTransaction(params) {
-  // TODO: 解析Solana交易，检测买入/卖出
-  // Helius Enhanced API解析swap详情
+// 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
+async function pollSolanaWallets() {
+  log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包 (10s)`);
+  
+  // 初始化: 记录每个钱包当前最新签名
+  for (const addr of solWalletSet) {
+    try {
+      const d = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', [addr, { limit: 1 }]);
+      const sigs = d.result || [];
+      if (sigs.length > 0) solLastSigs.set(addr, sigs[0].signature);
+    } catch(e) {}
+    await sleep(100);
+  }
+  log('INFO', `🔌 [SOL] 初始化完成, ${solLastSigs.size}/${solWalletSet.size} 钱包有历史签名`);
+  
+  while (true) {
+    // Helius WS连上了就降频（30秒），否则10秒
+    const interval = heliusWsConnected ? 30000 : 10000;
+    await sleep(interval);
+    
+    for (const addr of solWalletSet) {
+      try {
+        const lastSig = solLastSigs.get(addr);
+        const params = lastSig ? [addr, { limit: 5, until: lastSig }] : [addr, { limit: 1 }];
+        const d = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', params);
+        const sigs = d.result || [];
+        
+        if (sigs.length === 0) continue;
+        
+        // 更新最新签名
+        solLastSigs.set(addr, sigs[0].signature);
+        
+        // 有新交易! 用Helius解析（单次调用额度很小）
+        for (const sig of sigs) {
+          if (sig.err) continue; // 跳过失败交易
+          await parseSolSignature(addr, sig.signature);
+        }
+      } catch(e) {}
+      await sleep(200); // 每个钱包间隔200ms，37个钱包一轮~7秒
+    }
+  }
 }
 
+// 解析单个签名 — 用Helius Parse Transaction API（免费，每天10万次够用）
+async function parseSolSignature(walletAddr, signature) {
+  try {
+    // 先试Helius Enhanced API
+    const d = await httpPost(`https://api.helius.xyz/v0/transactions/?api-key=${HELIUS_KEY}`, [signature]);
+    if (!Array.isArray(d) || d.length === 0) return;
+    
+    const tx = d[0];
+    if (tx.type !== 'SWAP') return; // 只关心swap
+    
+    const wallet = rankedWallets.find(w => w.address === walletAddr);
+    const rank = wallet?.rank || 999;
+    
+    // 从tokenTransfers中找买入的token
+    const transfers = tx.tokenTransfers || [];
+    for (const t of transfers) {
+      if (t.toUserAccount === walletAddr && t.fromUserAccount !== walletAddr) {
+        const mint = t.mint;
+        const WSOL = 'So11111111111111111111111111111111111111112';
+        if (mint === WSOL) continue;
+        
+        const amount = t.tokenAmount || 0;
+        log('INFO', `🔔 [SOL] swap检测! 钱包#${rank} ${walletAddr.slice(0,8)}... 买入 ${mint.slice(0,8)}... (${tx.source})`);
+        
+        await handleSignal({
+          chain: 'solana',
+          token: mint,
+          symbol: tx.tokenTransfers?.[0]?.tokenStandard || '?',
+          wallet: walletAddr,
+          walletRank: rank,
+          timestamp: Date.now(),
+        });
+      }
+      
+      // 检测卖出
+      if (t.fromUserAccount === walletAddr && t.toUserAccount !== walletAddr) {
+        const mint = t.mint;
+        const WSOL = 'So11111111111111111111111111111111111111112';
+        if (mint === WSOL) continue;
+        if (positions[mint]) {
+          trackSmartMoneySell(mint, walletAddr, 0.5); // 默认50%，精确比例需要更多解析
+        }
+      }
+    }
+  } catch(e) {
+    // Helius失败就跳过这笔，等下轮
+  }
+}
+
+// 解析Solana swap交易 — 从tokenTransfers提取买入信号
+async function parseSolanaSwap(result) {
+  const tx = result.transaction;
+  const meta = tx?.meta;
+  if (!tx || !meta || meta.err) return; // 失败交易跳过
+  
+  const sig = result.signature;
+  const accountKeys = tx.transaction?.message?.accountKeys || [];
+  const feePayer = accountKeys[0]?.pubkey;
+  if (!feePayer || !solWalletSet.has(feePayer)) return; // 不是我们的钱包发起的
+  
+  // 从tokenBalances变化中检测swap: SOL减少 + 某token增加 = 买入
+  const preBalances = meta.preBalances || [];
+  const postBalances = meta.postBalances || [];
+  const solChange = (postBalances[0] || 0) - (preBalances[0] || 0);
+  
+  // 从tokenTransfers中找到获得的token
+  const preTokenBals = meta.preTokenBalances || [];
+  const postTokenBals = meta.postTokenBalances || [];
+  
+  // 构建token余额变化map
+  const tokenChanges = {};
+  for (const post of postTokenBals) {
+    if (!post.owner || post.owner !== feePayer) continue;
+    const mint = post.mint;
+    const postAmt = parseFloat(post.uiTokenAmount?.uiAmountString || '0');
+    const pre = preTokenBals.find(p => p.mint === mint && p.owner === feePayer);
+    const preAmt = pre ? parseFloat(pre.uiTokenAmount?.uiAmountString || '0') : 0;
+    const delta = postAmt - preAmt;
+    if (delta > 0) tokenChanges[mint] = delta;
+  }
+  
+  // SOL减少 + token增加 = 买入swap
+  const WSOL = 'So11111111111111111111111111111111111111112';
+  if (solChange < -1000000 && Object.keys(tokenChanges).length > 0) { // >0.001 SOL花费
+    for (const [mint, amount] of Object.entries(tokenChanges)) {
+      if (mint === WSOL) continue; // wSOL不算
+      const solSpent = Math.abs(solChange) / 1e9;
+      const wallet = rankedWallets.find(w => w.address === feePayer);
+      const rank = wallet?.rank || 999;
+      log('INFO', `🔔 [SOL] 检测到买入! 钱包#${rank} ${feePayer.slice(0,8)}... 花${solSpent.toFixed(3)}SOL 买 ${mint.slice(0,8)}...`);
+      
+      await handleSignal({
+        chain: 'solana',
+        token: mint,
+        symbol: '?',
+        wallet: feePayer,
+        walletRank: rank,
+        solSpent,
+        timestamp: Date.now(),
+      });
+    }
+  }
+  
+  // 检测卖出: token减少 + SOL增加
+  for (const pre of preTokenBals) {
+    if (!pre.owner || pre.owner !== feePayer) continue;
+    const mint = pre.mint;
+    if (mint === WSOL) continue;
+    const preAmt = parseFloat(pre.uiTokenAmount?.uiAmountString || '0');
+    const post = postTokenBals.find(p => p.mint === mint && p.owner === feePayer);
+    const postAmt = post ? parseFloat(post.uiTokenAmount?.uiAmountString || '0') : 0;
+    if (preAmt > 0 && postAmt < preAmt && solChange > 1000000) {
+      const sellRatio = (preAmt - postAmt) / preAmt;
+      if (positions[mint] && sellRatio > 0.3) {
+        log('INFO', `🔔 [SOL] 检测到卖出! 钱包 ${feePayer.slice(0,8)}... 卖出 ${mint.slice(0,8)}... ${(sellRatio*100).toFixed(0)}%`);
+        trackSmartMoneySell(mint, feePayer, sellRatio);
+      }
+    }
+  }
+}
+
+// 跟踪聪明钱卖出 — 积累到阈值触发跟卖
+const sellTracker = {}; // token -> [{wallet, ratio, time}]
+
+function trackSmartMoneySell(token, wallet, ratio) {
+  if (!sellTracker[token]) sellTracker[token] = [];
+  sellTracker[token].push({ wallet, ratio, time: Date.now() });
+  // 清理5分钟前的
+  const cutoff = Date.now() - 5 * 60 * 1000;
+  sellTracker[token] = sellTracker[token].filter(s => s.time > cutoff);
+  
+  const uniqueSellers = new Set(sellTracker[token].map(s => s.wallet)).size;
+  const avgRatio = sellTracker[token].reduce((s, x) => s + x.ratio, 0) / sellTracker[token].length;
+  
+  if (uniqueSellers >= 2 && avgRatio >= 0.5) {
+    log('INFO', `⚠️ ${uniqueSellers}个聪明钱在卖 ${token.slice(0,8)}... 平均卖出${(avgRatio*100).toFixed(0)}%`);
+    executeSell(token, `跟卖: ${uniqueSellers}个SM卖出`);
+  }
+}
+
+// BSC/Base: 轮询区块 — 查我们钱包的ERC20 Transfer
 async function pollEvmChain(chainKey) {
   const chain = CHAINS[chainKey];
   const walletSet = chainKey === 'bsc' ? bscWalletSet : baseWalletSet;
+  const provider = chainKey === 'bsc' ? bscProvider : baseProvider;
   const wallets = rankedWallets.filter(w => w.chain === chainKey);
-  for (const w of wallets) walletSet.add(w.address);
+  for (const w of wallets) walletSet.add(w.address.toLowerCase());
   
   if (walletSet.size === 0) return;
-  log('INFO', `🔌 [${chain.name}] 轮询监控 ${walletSet.size} 个钱包 (${CONFIG.evmPollInterval/1000}s)`);
+  log('INFO', `🔌 [${chain.name}] 区块轮询监控 ${walletSet.size} 个钱包`);
+  
+  let lastBlock = await provider.getBlockNumber();
   
   while (true) {
     try {
-      // 用币安trading-signal检测最新买入
-      const d = await httpPost(
-        'https://web3.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/web/signal/smart-money',
-        { smartSignalType: '', page: 1, pageSize: 100, chainId: chain.binanceId },
-        { 'Content-Type': 'application/json' }
-      );
-      
-      const signals = d?.data || [];
-      const processed = new Set(); // 本轮去重
-      for (const sig of signals) {
-        const tokenAddr = (sig.contractAddress || '').toLowerCase();
-        if (!tokenAddr || blacklist.has(tokenAddr)) continue;
-        if (processed.has(tokenAddr)) continue;
-        if (positions[tokenAddr] || boughtTokens.has(tokenAddr)) continue;
-        processed.add(tokenAddr);
-        
-        const smCount = sig.smartMoneyCount || 0;
-        if (smCount >= CONFIG.minSmartMoneyConfirm) {
-          await handleSignal({
-            chain: chainKey,
-            token: tokenAddr,
-            symbol: sig.ticker || '?',
-            smartMoneyCount: smCount,
-            timestamp: Date.now(),
-          });
-        }
+      const currentBlock = await provider.getBlockNumber();
+      if (currentBlock <= lastBlock) {
+        await sleep(CONFIG.evmPollInterval);
+        continue;
       }
+      
+      // 查最近几个区块的ERC20 Transfer事件，收件人是我们的钱包 = 买入获得token
+      const fromBlock = lastBlock + 1;
+      const toBlock = Math.min(currentBlock, fromBlock + 5); // 每次最多查5个区块
+      
+      // 批量查: Transfer事件 from=DEX Router → to=任意地址，然后过滤我们的钱包
+      const routers = DEX_ROUTERS[chainKey] || new Set();
+      
+      for (const routerAddr of routers) {
+        try {
+          const logs = await provider.getLogs({
+            fromBlock,
+            toBlock,
+            topics: [
+              TRANSFER_TOPIC,
+              ethers.zeroPadValue(routerAddr, 32), // from: DEX router
+            ],
+          });
+          
+          for (const lg of logs) {
+            const toAddr = '0x' + lg.topics[2].slice(26).toLowerCase();
+            if (!walletSet.has(toAddr)) continue; // 不是我们的钱包，跳过
+            
+            const tokenAddr = lg.address.toLowerCase();
+            if (blacklist.has(tokenAddr)) continue;
+            
+            const wallet = rankedWallets.find(w => w.address.toLowerCase() === toAddr);
+            const rank = wallet?.rank || 999;
+            
+            log('INFO', `🔔 [${chain.name}] 检测到swap! 钱包#${rank} ${toAddr.slice(0,8)}... 获得 ${tokenAddr.slice(0,8)}...`);
+            
+            await handleSignal({
+              chain: chainKey,
+              token: tokenAddr,
+              symbol: '?',
+              wallet: toAddr,
+              walletRank: rank,
+              timestamp: Date.now(),
+            });
+          }
+        } catch(e) {
+          // 单个router查询失败不影响其他
+        }
+        await sleep(200); // 避免RPC限流
+      }
+      
+      lastBlock = toBlock;
     } catch(e) {
       log('WARN', `[${chain.name}] 轮询失败: ${e.message}`);
     }
@@ -299,7 +564,7 @@ async function pollEvmChain(chainKey) {
 
 // ============ PHASE 3: 过滤层 ============
 async function handleSignal(signal) {
-  const { chain, token, symbol, smartMoneyCount } = signal;
+  const { chain, token, wallet, walletRank } = signal;
   
   // 去重: 已持仓或已买过的不重复
   if (positions[token]) return;
@@ -309,20 +574,35 @@ async function handleSignal(signal) {
   const chainPositions = Object.values(positions).filter(p => p.chain === chain).length;
   if (chainPositions >= CONFIG.maxPerChain) return;
   
-  // 多钱包确认
+  // 多钱包确认 — 每个钱包只算1次，5分钟窗口
   if (!pendingSignals[token]) pendingSignals[token] = [];
-  pendingSignals[token].push(signal);
   
-  // 清理过期信号
+  // 同一钱包不重复计数
+  const alreadyCounted = pendingSignals[token].some(s => s.wallet === wallet);
+  if (!alreadyCounted) {
+    pendingSignals[token].push(signal);
+  }
+  
+  // 清理过期信号（5分钟窗口）
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
   
-  // 累计确认数
-  const totalConfirm = pendingSignals[token].reduce((sum, s) => sum + (s.smartMoneyCount || 1), 0);
-  if (totalConfirm < CONFIG.minSmartMoneyConfirm) {
-    log('INFO', `⏳ ${symbol}(${chain}) 确认中 ${totalConfirm}/${CONFIG.minSmartMoneyConfirm}`);
+  // 计数 = 不同钱包数
+  const uniqueWallets = new Set(pendingSignals[token].map(s => s.wallet));
+  const confirmCount = uniqueWallets.size;
+  
+  if (confirmCount < CONFIG.minSmartMoneyConfirm) {
+    const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
+    log('INFO', `⏳ ${token.slice(0,8)}...(${chain}) 确认中 ${confirmCount}/${CONFIG.minSmartMoneyConfirm} 最高排名#${bestRank}`);
     return;
   }
+  
+  // 拿token symbol
+  let symbol = '?';
+  try {
+    const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`);
+    symbol = d?.pairs?.[0]?.baseToken?.symbol || '?';
+  } catch(e) {}
   
   // 合约审计
   const audit = await auditToken(chain, token);
@@ -341,8 +621,12 @@ async function handleSignal(signal) {
   }
   
   // 通过所有过滤 → 买入
-  log('INFO', `✅ ${symbol}(${chain}) 通过过滤! SM=${totalConfirm} 审计=OK Liq=${liqCheck.ratio}`);
-  await executeBuy(chain, token, symbol, totalConfirm);
+  const bestRank = Math.min(...[...uniqueWallets].map(w => {
+    const sig = pendingSignals[token].find(s => s.wallet === w);
+    return sig?.walletRank || 999;
+  }));
+  log('INFO', `✅ ${symbol}(${chain}) 通过过滤! SM=${confirmCount}个钱包 最高#${bestRank} 审计=OK Liq=${liqCheck.ratio}`);
+  await executeBuy(chain, token, symbol, confirmCount);
 }
 
 async function auditToken(chain, tokenAddress) {
@@ -507,35 +791,17 @@ async function managePositions() {
           }
         }
         
-        // 跟卖: 检查聪明钱是否在卖 + 价格下跌确认
-        try {
-          const sigUrl = `https://web3.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/web/signal/smart-money`;
-          const chainId = CHAINS[pos.chain]?.binanceId;
-          if (chainId) {
-            const sigData = await httpPost(sigUrl, 
-              { smartSignalType: '', page: 1, pageSize: 100, chainId },
-              { 'Content-Type': 'application/json' }
-            );
-            const signals = sigData?.data || [];
-            for (const sig of signals) {
-              const sigToken = (sig.contractAddress || '').toLowerCase();
-              if (sigToken !== tokenAddr) continue;
-              
-              // 检查exitRate — 聪明钱卖出比例
-              const exitRate = parseFloat(sig.exitRate || 0);
-              if (exitRate >= 50 && pnlPercent < 0) {
-                // 聪明钱卖了50%+ 且 我们也在亏 → 跟卖
-                await executeSell(tokenAddr, `跟卖: SM卖出${exitRate}% + 当前${pnlPercent.toFixed(1)}%`);
-                continue;
-              }
-              if (exitRate >= 80) {
-                // 聪明钱卖了80%+ → 无论盈亏都跟卖
-                await executeSell(tokenAddr, `跟卖: SM卖出${exitRate}%`);
-                continue;
-              }
-            }
+        // 跟卖: 由链上监控层的sellTracker驱动（parseSolanaSwap/pollEvmChain检测卖出）
+        // 这里只做补充检查：如果sellTracker有累积但没触发阈值
+        const sells = sellTracker[tokenAddr];
+        if (sells && sells.length > 0) {
+          const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
+          // 1个聪明钱卖了+我们亏钱 → 也跟卖
+          if (uniqueSellers >= 1 && pnlPercent < -10) {
+            await executeSell(tokenAddr, `跟卖: ${uniqueSellers}个SM在卖 + 亏${pnlPercent.toFixed(1)}%`);
+            continue;
           }
-        } catch(e) {}
+        }
         
         saveJSON(POSITIONS_FILE, positions);
       } catch(e) {}
@@ -574,7 +840,7 @@ async function main() {
   saveJSON(WALLETS_FILE, rankedWallets.map(w => ({
     rank: w.rank, address: w.address, chain: w.chain,
     pnl: w.pnl, winRate: w.winRate, tokens: w.tokens,
-    score: w.score, topTokens: w.topTokens.map(t => t.tokenSymbol),
+    topTokens: (w.topTokens || []).map(t => t.tokenSymbol || t),
   })));
   
   const byChain = { solana: 0, bsc: 0, base: 0 };
@@ -583,7 +849,7 @@ async function main() {
   console.log(`💼 持仓: ${Object.keys(positions).length}个`);
   
   // Phase 2: 启动监控
-  setupSolanaWebSocket();
+  setupSolanaMonitor();
   pollEvmChain('bsc');
   pollEvmChain('base');
   
@@ -599,7 +865,7 @@ async function main() {
       rankedWallets = rankWallets(ver);
       saveJSON(WALLETS_FILE, rankedWallets.map(w => ({
         rank: w.rank, address: w.address, chain: w.chain,
-        pnl: w.pnl, winRate: w.winRate, tokens: w.tokens, score: w.score,
+        pnl: w.pnl, winRate: w.winRate, tokens: w.tokens,
       })));
       log('INFO', `  排名更新: ${rankedWallets.length}个钱包`);
     } catch(e) {

@@ -721,6 +721,15 @@
       "addedAt": "2026-03-14T23:55:43.495Z"
     },
     {
+      "symbol": "SOS",
+      "mint": "DcHFDSxW3c8fpToL8E5ge5btYxyKLhbCN51iwxFApPV8",
+      "fdv": 1252348,
+      "vol": 2792082.24,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T00:12:38.676Z"
+    },
+    {
       "symbol": "Wojak",
       "mint": "0x94d4BA7f6Fce9e8d149dddf4413427781b104444",
       "fdv": 596219,
@@ -1232,6 +1241,15 @@
       "ageD": 0,
       "chain": "solana",
       "addedAt": "2026-03-14T23:21:50.994Z"
+    },
+    {
+      "symbol": "AmberVibe",
+      "mint": "0xb5b0f722d6d4a803d3df94c9ed12a191603eab07",
+      "fdv": 505889.780775628,
+      "vol": 75881.9984521356,
+      "ageD": 38,
+      "chain": "base",
+      "addedAt": "2026-03-15T00:19:00.150Z"
     }
   ],
   "scanned": [
@@ -1365,6 +1383,8 @@
     "4fSWEw2wbYEUCcMtitzmeGUfqinoafXxkhqZrA9Gpump",
     "2cu5NurWgSv2uzDfB5CRtHp4uMWZW6TzRNcikg7cZUaC",
     "6UbcthN4LAC4XWuz4FC1bUdgAzjvjaVwnHhy4Zp4WuZ2",
-    "4UAYoJvB9pAjFrJULpqXGMpVzDXPeoTLdeDGgyBPfgBh"
+    "4UAYoJvB9pAjFrJULpqXGMpVzDXPeoTLdeDGgyBPfgBh",
+    "DcHFDSxW3c8fpToL8E5ge5btYxyKLhbCN51iwxFApPV8",
+    "0xb5b0f722d6d4a803d3df94c9ed12a191603eab07"
   ]
 }

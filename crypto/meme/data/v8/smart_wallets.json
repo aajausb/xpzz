@@ -1,570 +1,1098 @@
 [
   {
     "rank": 1,
+    "address": "0x4f2df6ab817e8154bddff8b4f07de3ae36967173",
+    "chain": "bsc",
+    "pnl": 122225.36868212782,
+    "winRate": 100,
+    "tokens": 4,
+    "topTokens": [
+      "比特币",
+      "Cake"
+    ]
+  },
+  {
+    "rank": 2,
     "address": "0x28d3bdece9a0c7f54687f734fa73fba04ecf5785",
     "chain": "base",
     "pnl": 55648.16549217856,
     "winRate": 100,
-    "tokens": 1
-  },
-  {
-    "rank": 2,
-    "address": "0x0d2510381586601f9d816b87b141c2f9c2c6b812",
-    "chain": "bsc",
-    "pnl": 42481.705597156004,
-    "winRate": 100,
-    "tokens": 7
+    "tokens": 1,
+    "topTokens": [
+      "EDGE"
+    ]
   },
   {
     "rank": 3,
+    "address": "0x0d2510381586601f9d816b87b141c2f9c2c6b812",
+    "chain": "bsc",
+    "pnl": 43284.729203956755,
+    "winRate": 100,
+    "tokens": 5,
+    "topTokens": [
+      "SIREN",
+      "HANA",
+      "BULLA"
+    ]
+  },
+  {
+    "rank": 4,
+    "address": "0xf07e74d42cdb5be001c21590716bf019c0587d83",
+    "chain": "bsc",
+    "pnl": 27178.22237698437,
+    "winRate": 100,
+    "tokens": 4,
+    "topTokens": [
+      "龙虾",
+      "MILADY",
+      "AGENT"
+    ]
+  },
+  {
+    "rank": 5,
     "address": "DsCLwbpYSy1yGYFU4mHBsRC9eU2cYcA9DABnPKHQkiEg",
     "chain": "solana",
     "pnl": 19590.69559981728,
     "winRate": 100,
-    "tokens": 43
+    "tokens": 43,
+    "topTokens": [
+      "IRAN",
+      "IRAN",
+      "BGOLD"
+    ]
   },
   {
-    "rank": 4,
+    "rank": 6,
     "address": "0x932b30bf9cf189aa10710e2d2b9ee07ece851572",
     "chain": "bsc",
     "pnl": 15293.848202272306,
     "winRate": 100,
-    "tokens": 9
+    "tokens": 9,
+    "topTokens": [
+      "龙虾",
+      "Fight",
+      "MOONDOGE"
+    ]
   },
   {
-    "rank": 5,
-    "address": "4GVoqTXYLRDyBZPVTeX6PeDsoJ4vJeP4gPdVPeqkeKXe",
+    "rank": 7,
+    "address": "ETAbGk5qFPP4tXyL182mE61u2RsayZbDt6rEJeiZVSzr",
     "chain": "solana",
-    "pnl": 13138.675401763248,
+    "pnl": 6008.07670897889,
     "winRate": 100,
-    "tokens": 1
+    "tokens": 12,
+    "topTokens": [
+      "Clude",
+      "01001000",
+      "Method"
+    ]
   },
   {
-    "rank": 6,
+    "rank": 8,
+    "address": "AyC5aMKf4F3TYypirhCiERj8HRj7M3wTuP52hjyCPLJu",
+    "chain": "solana",
+    "pnl": 5759.997586981204,
+    "winRate": 100,
+    "tokens": 47,
+    "topTokens": [
+      "UGOR",
+      "UGOR",
+      "UGOR"
+    ]
+  },
+  {
+    "rank": 9,
     "address": "0x11960d12811a406dd18a4fc3896b9821113e58dc",
     "chain": "base",
     "pnl": 718.1506372418919,
     "winRate": 100,
-    "tokens": 1
+    "tokens": 1,
+    "topTokens": [
+      "MOLT"
+    ]
   },
   {
-    "rank": 7,
+    "rank": 10,
     "address": "0x5ca12f79e4d33b0bd153b40df59f6db9ee03482e",
     "chain": "base",
     "pnl": 483.70797802991996,
     "winRate": 100,
-    "tokens": 2
+    "tokens": 2,
+    "topTokens": [
+      "Conway"
+    ]
   },
   {
-    "rank": 8,
+    "rank": 11,
     "address": "0x390f3d72b6e4621ae58f44e368b26c63d330e263",
     "chain": "base",
     "pnl": 466.0316856756807,
     "winRate": 100,
-    "tokens": 1
+    "tokens": 1,
+    "topTokens": [
+      "Conway"
+    ]
   },
   {
-    "rank": 9,
+    "rank": 12,
     "address": "0xa9b5aeb8eebe7d5884ea19453d85e8f09a703aac",
     "chain": "base",
     "pnl": 280.19711642538203,
     "winRate": 100,
-    "tokens": 5
-  },
-  {
-    "rank": 10,
-    "address": "0x36e58200ca908713e13a095b324147221f8859ea",
-    "chain": "base",
-    "pnl": 4305.099300151335,
-    "winRate": 88.89,
-    "tokens": 12
-  },
-  {
-    "rank": 11,
-    "address": "ik1fCERApPcHVQCt5TFKZwcfUjS7XiCFyJuQih6Gqqh",
-    "chain": "solana",
-    "pnl": 12052.183726836638,
-    "winRate": 85.71,
-    "tokens": 22
-  },
-  {
-    "rank": 12,
-    "address": "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
-    "chain": "solana",
-    "pnl": 74292.34416803613,
-    "winRate": 80,
-    "tokens": 31
+    "tokens": 5,
+    "topTokens": [
+      "CC",
+      "ETHR"
+    ]
   },
   {
     "rank": 13,
+    "address": "0x2f5eb3f35df41a6bfbd17faaf0130b3d4228759e",
+    "chain": "base",
+    "pnl": 155.5436292126446,
+    "winRate": 100,
+    "tokens": 18,
+    "topTokens": [
+      "SAMMY"
+    ]
+  },
+  {
+    "rank": 14,
+    "address": "32mRYcNZJfG8gFrn9gvqusUtaWekXVAVQpkc97j5M9iT",
+    "chain": "solana",
+    "pnl": 23562.990112336593,
+    "winRate": 91.18,
+    "tokens": 52,
+    "topTokens": [
+      "automaton",
+      "Punch",
+      "PsyopAnime"
+    ]
+  },
+  {
+    "rank": 15,
+    "address": "0x36e58200ca908713e13a095b324147221f8859ea",
+    "chain": "base",
+    "pnl": 4886.9308010577215,
+    "winRate": 88.89,
+    "tokens": 12,
+    "topTokens": [
+      "ROBOTMONEY",
+      "MOLT",
+      "STAKR"
+    ]
+  },
+  {
+    "rank": 16,
+    "address": "EU1bFxZ9oiUC2V6tme6gaPgTP6mvVm54q2oUKD27U3pm",
+    "chain": "solana",
+    "pnl": 5871.914990984597,
+    "winRate": 84.61999999999999,
+    "tokens": 14,
+    "topTokens": [
+      "ABANDON",
+      "VAMP",
+      "ABANDONED"
+    ]
+  },
+  {
+    "rank": 17,
+    "address": "6c2asHNf5gWgZvPXVYQ4ebJCUYspEbmaz2A7M7p84RcN",
+    "chain": "solana",
+    "pnl": 6476.213643133058,
+    "winRate": 83.33,
+    "tokens": 21,
+    "topTokens": [
+      "BILLY",
+      "abcdefg",
+      "WhiteHouse"
+    ]
+  },
+  {
+    "rank": 18,
+    "address": "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
+    "chain": "solana",
+    "pnl": 72643.3971224327,
+    "winRate": 80,
+    "tokens": 31,
+    "topTokens": [
+      "PsyopAnime",
+      "maxxing",
+      "HODL"
+    ]
+  },
+  {
+    "rank": 19,
     "address": "2cScMkV5L8sVV7vspG25FYd62FRXNSWXk5Spuk86fKPE",
     "chain": "solana",
     "pnl": 44088.22771351038,
     "winRate": 80,
-    "tokens": 8
+    "tokens": 8,
+    "topTokens": [
+      "Distorted",
+      "Sheep",
+      "Noorung"
+    ]
   },
   {
-    "rank": 14,
+    "rank": 20,
     "address": "0x443737e31fac04b39a112a6d2f7f92948b9c5ab9",
     "chain": "bsc",
     "pnl": 28827.4311749093,
     "winRate": 80,
-    "tokens": 6
+    "tokens": 6,
+    "topTokens": [
+      "龙虾",
+      "Freedom of Money"
+    ]
   },
   {
-    "rank": 15,
+    "rank": 21,
     "address": "0x2ce9d43d1cba6ae31d7f07bfe0098dfa2d833373",
     "chain": "bsc",
-    "pnl": 316319.0139504869,
-    "winRate": 79.7,
-    "tokens": 946
+    "pnl": 298145.9369035572,
+    "winRate": 79.31,
+    "tokens": 885,
+    "topTokens": [
+      "风浪越大，鱼越贵",
+      "红包女侠",
+      "无冕之王"
+    ]
   },
   {
-    "rank": 16,
-    "address": "6c2asHNf5gWgZvPXVYQ4ebJCUYspEbmaz2A7M7p84RcN",
-    "chain": "solana",
-    "pnl": 6586.835809501868,
-    "winRate": 77.27000000000001,
-    "tokens": 25
-  },
-  {
-    "rank": 17,
+    "rank": 22,
     "address": "0xe09152d99cc2ceb2ce9d73150f262e28ad403f35",
     "chain": "bsc",
     "pnl": 32558.674712829477,
     "winRate": 76.74,
-    "tokens": 47
+    "tokens": 47,
+    "topTokens": [
+      "AGENT",
+      "FVAULT",
+      "金库人生"
+    ]
   },
   {
-    "rank": 18,
+    "rank": 23,
+    "address": "ik1fCERApPcHVQCt5TFKZwcfUjS7XiCFyJuQih6Gqqh",
+    "chain": "solana",
+    "pnl": 27409.924769196936,
+    "winRate": 76.47,
+    "tokens": 69,
+    "topTokens": [
+      "SHAPE",
+      "gay",
+      "SCUBA"
+    ]
+  },
+  {
+    "rank": 24,
     "address": "8deJ9xeUvXSJwicYptA9mHsU2rN2pDx37KWzkDkEXhU6",
     "chain": "solana",
-    "pnl": 66498.10717228525,
-    "winRate": 76.12,
-    "tokens": 669
+    "pnl": 61412.410420409746,
+    "winRate": 75.61,
+    "tokens": 621,
+    "topTokens": [
+      "KIMCHI",
+      "我的刀盾",
+      "Punch"
+    ]
   },
   {
-    "rank": 19,
+    "rank": 25,
     "address": "0x044c1b6a32312a87fbf17946822f5933a27db925",
     "chain": "bsc",
     "pnl": 21619.98459822925,
     "winRate": 75,
-    "tokens": 7
+    "tokens": 7,
+    "topTokens": [
+      "抄泥马",
+      "MMGA"
+    ]
   },
   {
-    "rank": 20,
-    "address": "5vweNikgScdnGkZCC3ya2FoJrezJBrSrhZgp8kK8bbtg",
-    "chain": "solana",
-    "pnl": 18506.665329480315,
+    "rank": 26,
+    "address": "0xf71cbb7b368aacb550fdb7e198c8313b017dfd5c",
+    "chain": "bsc",
+    "pnl": 18490.978803580474,
     "winRate": 75,
-    "tokens": 34
+    "tokens": 4,
+    "topTokens": [
+      "龙虾"
+    ]
   },
   {
-    "rank": 21,
+    "rank": 27,
+    "address": "4zeVXCXXr4dZ14GqKUZLPFj6adAKd844xGVM92QwfYJZ",
+    "chain": "solana",
+    "pnl": 5618.60121245028,
+    "winRate": 75,
+    "tokens": 5,
+    "topTokens": [
+      "Unc",
+      "BlackSheep"
+    ]
+  },
+  {
+    "rank": 28,
     "address": "0xc2c6acd377458010713e733e1b21dd6f670d091c",
     "chain": "bsc",
-    "pnl": 36191.34922573317,
-    "winRate": 74.45,
-    "tokens": 246
+    "pnl": 34749.62580783386,
+    "winRate": 74.89,
+    "tokens": 240,
+    "topTokens": [
+      "无冕之王",
+      "躺͏平",
+      "万事币安"
+    ]
   },
   {
-    "rank": 22,
+    "rank": 29,
     "address": "0x8d5624fa29526c879a1ca7560961e4c5a08089ae",
     "chain": "bsc",
     "pnl": 135643.50924007417,
     "winRate": 74,
-    "tokens": 72
+    "tokens": 72,
+    "topTokens": [
+      "龙虾",
+      "Freedom of Money",
+      "哭哭马"
+    ]
   },
   {
-    "rank": 23,
-    "address": "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6",
+    "rank": 30,
+    "address": "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV",
     "chain": "solana",
-    "pnl": 8330.255195290072,
-    "winRate": 73.53,
-    "tokens": 51
+    "pnl": 24132.33590789711,
+    "winRate": 73.11999999999999,
+    "tokens": 1108,
+    "topTokens": [
+      "PIZZA",
+      "gemmy",
+      "API"
+    ]
   },
   {
-    "rank": 24,
-    "address": "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk",
-    "chain": "solana",
-    "pnl": 151848.87000559166,
-    "winRate": 73.04,
-    "tokens": 911
-  },
-  {
-    "rank": 25,
+    "rank": 31,
     "address": "0xb3f2b4d6718db553fe239d5e65423ee2891644fe",
     "chain": "bsc",
     "pnl": 23021.79264330421,
     "winRate": 72.92999999999999,
-    "tokens": 266
+    "tokens": 266,
+    "topTokens": [
+      "Good Coin",
+      "无冕之王",
+      "B 小将"
+    ]
   },
   {
-    "rank": 26,
+    "rank": 32,
+    "address": "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6",
+    "chain": "solana",
+    "pnl": 7938.424805579509,
+    "winRate": 72.72999999999999,
+    "tokens": 50,
+    "topTokens": [
+      "SHAPE",
+      "SCUBA",
+      "Rosie"
+    ]
+  },
+  {
+    "rank": 33,
+    "address": "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk",
+    "chain": "solana",
+    "pnl": 144283.2076733945,
+    "winRate": 72.25,
+    "tokens": 868,
+    "topTokens": [
+      "AICOIN",
+      "LOBSTER",
+      "Pixel"
+    ]
+  },
+  {
+    "rank": 34,
     "address": "6RiZZntbV9XFdRec6VhJTV5kZRijdsYV8BZEzGwmMbcB",
     "chain": "solana",
     "pnl": 80535.84702134701,
     "winRate": 71.43,
-    "tokens": 15
+    "tokens": 15,
+    "topTokens": [
+      "TripleT",
+      "Peace",
+      "ruck"
+    ]
   },
   {
-    "rank": 27,
+    "rank": 35,
     "address": "0xf001f55a301c0cba784960e0a8f9ae507740f7b6",
     "chain": "bsc",
     "pnl": 17872.59556289059,
     "winRate": 71.43,
-    "tokens": 7
+    "tokens": 7,
+    "topTokens": [
+      "Fight",
+      "龙虾",
+      "Freedom of Money"
+    ]
   },
   {
-    "rank": 28,
+    "rank": 36,
     "address": "ENkZtLj1onzQRGnEeRkQfFzBeeY2dCeiQMXDzh8XbQbj",
     "chain": "solana",
     "pnl": 13898.729545650323,
     "winRate": 71.43,
-    "tokens": 9
+    "tokens": 9,
+    "topTokens": [
+      "AVICI",
+      "CLAWDIUS",
+      "PURCH"
+    ]
   },
   {
-    "rank": 29,
+    "rank": 37,
     "address": "2GmtrUJRCzi33PuSbcU585Tgc4jU68WpACkBZ9BiMZwV",
     "chain": "solana",
-    "pnl": 13666.081122198444,
+    "pnl": 12647.84332420062,
     "winRate": 71.43,
-    "tokens": 9
+    "tokens": 8,
+    "topTokens": [
+      "Distorted",
+      "SMITH",
+      "Sheep"
+    ]
   },
   {
-    "rank": 30,
-    "address": "DxLmcz6DmrNXZ4Zn6qMR4Y4FKVk54GqpJiadGMT3Nmrk",
-    "chain": "solana",
-    "pnl": 9432.983851091098,
-    "winRate": 71.43,
-    "tokens": 12
-  },
-  {
-    "rank": 31,
+    "rank": 38,
     "address": "D3MuDmrs2dm6U9CiZur651CnPjLwUWjs9p1a3PoDs76H",
     "chain": "solana",
     "pnl": 11832.914311844193,
     "winRate": 70.59,
-    "tokens": 18
+    "tokens": 18,
+    "topTokens": [
+      "01001000",
+      "Distorted",
+      "Twin"
+    ]
   },
   {
-    "rank": 32,
+    "rank": 39,
     "address": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
     "chain": "bsc",
-    "pnl": 253990.2255744963,
-    "winRate": 70.54,
-    "tokens": 1324
+    "pnl": 243032.87429047065,
+    "winRate": 70.45,
+    "tokens": 1292,
+    "topTokens": [
+      "Freedom of Money",
+      "富个鸟",
+      "Freedom of Money,"
+    ]
   },
   {
-    "rank": 33,
-    "address": "ALJ4P5QNyHeLEjpKGmA1eUfJHSEGQMjY8HLnDkSgjczb",
-    "chain": "solana",
-    "pnl": 21286.51743593572,
-    "winRate": 70,
-    "tokens": 50
-  },
-  {
-    "rank": 34,
-    "address": "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9",
-    "chain": "solana",
-    "pnl": 238261.57599242555,
-    "winRate": 69.84,
-    "tokens": 4420
-  },
-  {
-    "rank": 35,
+    "rank": 40,
     "address": "0x8dbef7eee8c691dc802f8e563112eb3adcbb5b23",
     "chain": "bsc",
-    "pnl": 43252.75238001344,
-    "winRate": 69.76,
-    "tokens": 788
+    "pnl": 41977.080322966525,
+    "winRate": 69.84,
+    "tokens": 747,
+    "topTokens": [
+      "FLAPBALL",
+      "flapclaw",
+      "花生瓜子矿泉水"
+    ]
   },
   {
-    "rank": 36,
+    "rank": 41,
+    "address": "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9",
+    "chain": "solana",
+    "pnl": 227534.69460517535,
+    "winRate": 69.27,
+    "tokens": 4284,
+    "topTokens": [
+      "Corner",
+      "FRONKE",
+      "BEW"
+    ]
+  },
+  {
+    "rank": 42,
     "address": "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3",
     "chain": "solana",
-    "pnl": 49361.35828196444,
-    "winRate": 69.37,
-    "tokens": 503
+    "pnl": 49001.69360387748,
+    "winRate": 69.23,
+    "tokens": 501,
+    "topTokens": [
+      "我的刀盾",
+      "KIMCHI",
+      "哈基米"
+    ]
   },
   {
-    "rank": 37,
+    "rank": 43,
+    "address": "0xb3be60ebd9f429d73bacd682394193dfa58f1e05",
+    "chain": "bsc",
+    "pnl": 24419.468368166028,
+    "winRate": 69.23,
+    "tokens": 27,
+    "topTokens": [
+      "Freedom of Money",
+      "Fight",
+      "路飞"
+    ]
+  },
+  {
+    "rank": 44,
     "address": "0x92d693a469cee71422af071b70df6d24125da075",
     "chain": "bsc",
     "pnl": 128049.51504918333,
     "winRate": 69.05,
-    "tokens": 1601
-  },
-  {
-    "rank": 38,
-    "address": "0x94cf7ed19901eb7d487c779e6d1baa87157b2d01",
-    "chain": "bsc",
-    "pnl": 102481.95869159448,
-    "winRate": 68.56,
-    "tokens": 494
-  },
-  {
-    "rank": 39,
-    "address": "5fHJszey2UdB2nETS1y6NS2wSG4ic9byKtbgJzaYzGeV",
-    "chain": "solana",
-    "pnl": 8619.026267915177,
-    "winRate": 68.49,
-    "tokens": 530
-  },
-  {
-    "rank": 40,
-    "address": "0x104db8720a525b57c97a385facf6d87305802f8f",
-    "chain": "bsc",
-    "pnl": 39743.03782341233,
-    "winRate": 68.12,
-    "tokens": 212
-  },
-  {
-    "rank": 41,
-    "address": "0x7e8fb0392542812476d9f2d0d71c01d1fa0776c5",
-    "chain": "bsc",
-    "pnl": 58640.456764532304,
-    "winRate": 67.75,
-    "tokens": 443
-  },
-  {
-    "rank": 42,
-    "address": "0x1ef832120aa68c650e84df4769c5d9616d914014",
-    "chain": "bsc",
-    "pnl": 78472.356014583,
-    "winRate": 67.15,
-    "tokens": 2792
-  },
-  {
-    "rank": 43,
-    "address": "0x199776730d88cfa1aa54e7f41df386b80ac150c5",
-    "chain": "bsc",
-    "pnl": 24517.6958874718,
-    "winRate": 66.86,
-    "tokens": 528
-  },
-  {
-    "rank": 44,
-    "address": "0x10f6ac28c5beba848c638a7038944a5039f3a7a4",
-    "chain": "bsc",
-    "pnl": 65390.82539266592,
-    "winRate": 66.67,
-    "tokens": 3
+    "tokens": 1601,
+    "topTokens": [
+      "真相终将战胜一切",
+      "Bot v4.9",
+      "JOB"
+    ]
   },
   {
     "rank": 45,
-    "address": "0x6814c5a927314422d49976cae5143e13510ea7f1",
-    "chain": "bsc",
-    "pnl": 56780.459390779135,
-    "winRate": 66.67,
-    "tokens": 9
+    "address": "7zc5tFyTAHjtVeAiKvjU8Y7kDWn2zmjVnHVuhXuftBxh",
+    "chain": "solana",
+    "pnl": 7241.991135148559,
+    "winRate": 68.75,
+    "tokens": 16,
+    "topTokens": [
+      "TripleT",
+      "WIZARD",
+      "Whatif"
+    ]
   },
   {
     "rank": 46,
-    "address": "0xea0653d5dcdef577c024b7c935ea40359a461e9c",
+    "address": "0x94cf7ed19901eb7d487c779e6d1baa87157b2d01",
     "chain": "bsc",
-    "pnl": 27367.964864451482,
-    "winRate": 66.67,
-    "tokens": 9
+    "pnl": 98661.72703804218,
+    "winRate": 68.58,
+    "tokens": 472,
+    "topTokens": [
+      "AGENT",
+      "FVAULT",
+      "flapclaw"
+    ]
   },
   {
     "rank": 47,
-    "address": "0x03bd9740c08f7b8755b616a5058799f41346b875",
-    "chain": "base",
-    "pnl": 10336.64862437095,
-    "winRate": 66.67,
-    "tokens": 27
+    "address": "0x7e8fb0392542812476d9f2d0d71c01d1fa0776c5",
+    "chain": "bsc",
+    "pnl": 61138.83629222983,
+    "winRate": 67.94,
+    "tokens": 430,
+    "topTokens": [
+      "我踏马来了",
+      "Freedom of Money",
+      "宇宙所"
+    ]
   },
   {
     "rank": 48,
-    "address": "7zc5tFyTAHjtVeAiKvjU8Y7kDWn2zmjVnHVuhXuftBxh",
-    "chain": "solana",
-    "pnl": 6622.603128760273,
-    "winRate": 66.67,
-    "tokens": 18
+    "address": "0x104db8720a525b57c97a385facf6d87305802f8f",
+    "chain": "bsc",
+    "pnl": 48894.91937254149,
+    "winRate": 67.69,
+    "tokens": 202,
+    "topTokens": [
+      "龙虾",
+      "马年快乐",
+      "鸡气人"
+    ]
   },
   {
     "rank": 49,
-    "address": "0x811ebabacdaf293e860a66637e5049f8eb36e85e",
-    "chain": "base",
-    "pnl": 839.7468311573288,
-    "winRate": 66.67,
-    "tokens": 6
+    "address": "0xb6d9bc1dd56ed8d8b6f41d75a868c2f21602b80e",
+    "chain": "bsc",
+    "pnl": 16195.299812486586,
+    "winRate": 67.65,
+    "tokens": 37,
+    "topTokens": [
+      "龙虾",
+      "MILADY",
+      "Freedom of Money"
+    ]
   },
   {
     "rank": 50,
-    "address": "BAr5csYtpWoNpwhUjixX7ZPHXkUciFZzjBp9uNxZXJPh",
-    "chain": "solana",
-    "pnl": 63266.57659291598,
-    "winRate": 66.58,
-    "tokens": 1104
+    "address": "0xcef230f428ea2fe4850bf84718c1c166b20780e6",
+    "chain": "bsc",
+    "pnl": 14781.382280152297,
+    "winRate": 67.65,
+    "tokens": 46,
+    "topTokens": [
+      "Freedom of Money",
+      "龙虾",
+      "MILADY"
+    ]
   },
   {
     "rank": 51,
-    "address": "0x3080362af9ccbbcfab33acd5a2399f8f59c15ab4",
-    "chain": "bsc",
-    "pnl": 60294.49270126365,
-    "winRate": 66.39,
-    "tokens": 210
+    "address": "ALJ4P5QNyHeLEjpKGmA1eUfJHSEGQMjY8HLnDkSgjczb",
+    "chain": "solana",
+    "pnl": 17524.464104677198,
+    "winRate": 67.39,
+    "tokens": 46,
+    "topTokens": [
+      "YUNJU",
+      "SCIENCEROT",
+      "BUTTCOON"
+    ]
   },
   {
     "rank": 52,
-    "address": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
-    "chain": "solana",
-    "pnl": 672212.2920026332,
-    "winRate": 66.38,
-    "tokens": 6101
+    "address": "0x1ef832120aa68c650e84df4769c5d9616d914014",
+    "chain": "bsc",
+    "pnl": 76913.43843752918,
+    "winRate": 67.17,
+    "tokens": 2733,
+    "topTokens": [
+      "无冕之王",
+      "WIN",
+      "FIGHTLESS"
+    ]
   },
   {
     "rank": 53,
-    "address": "0xd57d105f1834579a467d4ed991962f3580665acf",
-    "chain": "bsc",
-    "pnl": 28757.244492908205,
-    "winRate": 65.67,
-    "tokens": 167
+    "address": "5vweNikgScdnGkZCC3ya2FoJrezJBrSrhZgp8kK8bbtg",
+    "chain": "solana",
+    "pnl": 26260.20768119096,
+    "winRate": 67.14,
+    "tokens": 73,
+    "topTokens": [
+      "SOS",
+      "USRNR",
+      "UXR"
+    ]
   },
   {
     "rank": 54,
     "address": "0x077b9981bc8a2ca417cea41861111da63266988b",
     "chain": "bsc",
-    "pnl": 42295.55912475615,
-    "winRate": 65.38000000000001,
-    "tokens": 78
+    "pnl": 41751.03366417003,
+    "winRate": 67.11,
+    "tokens": 76,
+    "topTokens": [
+      "futiure",
+      "币安小龙虾",
+      "WLFI"
+    ]
   },
   {
     "rank": 55,
+    "address": "0x10f6ac28c5beba848c638a7038944a5039f3a7a4",
+    "chain": "bsc",
+    "pnl": 63381.936396253295,
+    "winRate": 66.67,
+    "tokens": 3,
+    "topTokens": [
+      "龙虾"
+    ]
+  },
+  {
+    "rank": 56,
+    "address": "0x3080362af9ccbbcfab33acd5a2399f8f59c15ab4",
+    "chain": "bsc",
+    "pnl": 57270.773255599066,
+    "winRate": 66.67,
+    "tokens": 192,
+    "topTokens": [
+      "BSB",
+      "BTW",
+      "UP"
+    ]
+  },
+  {
+    "rank": 57,
+    "address": "0x6814c5a927314422d49976cae5143e13510ea7f1",
+    "chain": "bsc",
+    "pnl": 56780.459390779135,
+    "winRate": 66.67,
+    "tokens": 9,
+    "topTokens": [
+      "POWER"
+    ]
+  },
+  {
+    "rank": 58,
+    "address": "ZRn4Cx473CAtJLpVwCry94RzLShnqbpGc785jtM4TGQ",
+    "chain": "solana",
+    "pnl": 37036.89279095961,
+    "winRate": 66.67,
+    "tokens": 15,
+    "topTokens": [
+      "RETURN",
+      "MENCHO",
+      "PIZZA"
+    ]
+  },
+  {
+    "rank": 59,
+    "address": "EiqsrJKM4MQmUft1VPvtsnziSYLgszCzi9zVEQAA1p9w",
+    "chain": "solana",
+    "pnl": 24960.461344698608,
+    "winRate": 66.67,
+    "tokens": 9,
+    "topTokens": [
+      "Punch",
+      "GROKIUS",
+      "MUSHU"
+    ]
+  },
+  {
+    "rank": 60,
+    "address": "0xea0653d5dcdef577c024b7c935ea40359a461e9c",
+    "chain": "bsc",
+    "pnl": 23391.30004420526,
+    "winRate": 66.67,
+    "tokens": 9,
+    "topTokens": [
+      "龙虾",
+      "memes",
+      "Freedom of Money"
+    ]
+  },
+  {
+    "rank": 61,
+    "address": "0x03bd9740c08f7b8755b616a5058799f41346b875",
+    "chain": "base",
+    "pnl": 10336.64862437095,
+    "winRate": 66.67,
+    "tokens": 26,
+    "topTokens": [
+      "ROBOTMONEY",
+      "SONAR",
+      "LOOT"
+    ]
+  },
+  {
+    "rank": 62,
+    "address": "DxLmcz6DmrNXZ4Zn6qMR4Y4FKVk54GqpJiadGMT3Nmrk",
+    "chain": "solana",
+    "pnl": 8608.25828928472,
+    "winRate": 66.67,
+    "tokens": 11,
+    "topTokens": [
+      "SHAPE",
+      "SCUBA",
+      "Doom"
+    ]
+  },
+  {
+    "rank": 63,
+    "address": "0x811ebabacdaf293e860a66637e5049f8eb36e85e",
+    "chain": "base",
+    "pnl": 397.4540566812724,
+    "winRate": 66.67,
+    "tokens": 6,
+    "topTokens": [
+      "LITCOIN",
+      "STAKR",
+      "openagentmarket"
+    ]
+  },
+  {
+    "rank": 64,
+    "address": "BAr5csYtpWoNpwhUjixX7ZPHXkUciFZzjBp9uNxZXJPh",
+    "chain": "solana",
+    "pnl": 62886.552596240836,
+    "winRate": 66.45,
+    "tokens": 1094,
+    "topTokens": [
+      "MAYA",
+      "BRIAN",
+      "shelldon"
+    ]
+  },
+  {
+    "rank": 65,
+    "address": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+    "chain": "solana",
+    "pnl": 657924.8717652725,
+    "winRate": 66.35,
+    "tokens": 5895,
+    "topTokens": [
+      "Dogs",
+      "BUTTHOLE",
+      "MOSS"
+    ]
+  },
+  {
+    "rank": 66,
+    "address": "5fHJszey2UdB2nETS1y6NS2wSG4ic9byKtbgJzaYzGeV",
+    "chain": "solana",
+    "pnl": 32505.804204586544,
+    "winRate": 65.84,
+    "tokens": 1825,
+    "topTokens": [
+      "ZK",
+      "☊⍜⟟⋏",
+      "AGENC"
+    ]
+  },
+  {
+    "rank": 67,
     "address": "0xa05ec35f7d1eba823cff2ed26aeaed419683742f",
     "chain": "bsc",
     "pnl": 47614.93771410914,
     "winRate": 65.31,
-    "tokens": 404
+    "tokens": 404,
+    "topTokens": [
+      "Distorted",
+      "解药",
+      "躺͏平"
+    ]
   },
   {
-    "rank": 56,
-    "address": "0xb6d9bc1dd56ed8d8b6f41d75a868c2f21602b80e",
-    "chain": "bsc",
-    "pnl": 15271.82571379791,
-    "winRate": 64.86,
-    "tokens": 40
+    "rank": 68,
+    "address": "J485YzQjuJPLYoFEYjrjxd7NAoLHTiyUU63JwK7kLxRr",
+    "chain": "solana",
+    "pnl": 29925.66723419021,
+    "winRate": 65.29,
+    "tokens": 518,
+    "topTokens": [
+      "JORK",
+      "SOL人生",
+      "🟪"
+    ]
   },
   {
-    "rank": 57,
+    "rank": 69,
     "address": "GgSni7JWRCvzTDd7FhCUdNMb5HqfrhDxHzoXtj9E7wpw",
     "chain": "solana",
-    "pnl": 75870.69286756145,
-    "winRate": 64.81,
-    "tokens": 112
+    "pnl": 75628.77366476304,
+    "winRate": 65.09,
+    "tokens": 110,
+    "topTokens": [
+      "Punch",
+      "Slurmit",
+      "Lobstar"
+    ]
   },
   {
-    "rank": 58,
-    "address": "6rud1S5nYrUWh7SkftyZvhumwc8xzQ9UadJAhaYnSBng",
-    "chain": "solana",
-    "pnl": 6588.238082520379,
-    "winRate": 64.52,
-    "tokens": 32
-  },
-  {
-    "rank": 59,
-    "address": "0x38e47fece3ea323e864c65410f6458c820eaa897",
-    "chain": "bsc",
-    "pnl": 147102.3288620812,
-    "winRate": 64.39,
-    "tokens": 1284
-  },
-  {
-    "rank": 60,
+    "rank": 70,
     "address": "0xe7bc2a2a98382a4ec9097bc1dabc8c197a95f547",
     "chain": "base",
-    "pnl": 12466.747223971124,
+    "pnl": 10803.417317207168,
     "winRate": 64.29,
-    "tokens": 30
+    "tokens": 30,
+    "topTokens": [
+      "EDGE",
+      "BNKR",
+      "VVV"
+    ]
   },
   {
-    "rank": 61,
-    "address": "AutanKZsLpydgGV3RgDdijyWYgcGgjy6jxFY7WCxtu28",
-    "chain": "solana",
-    "pnl": 8135.46675906433,
-    "winRate": 63.160000000000004,
-    "tokens": 21
-  },
-  {
-    "rank": 62,
-    "address": "0xb77771e01bcb358f9468df78ddcb9f0cb062a772",
-    "chain": "base",
-    "pnl": 811.7814186924321,
-    "winRate": 63.160000000000004,
-    "tokens": 24
-  },
-  {
-    "rank": 63,
+    "rank": 71,
     "address": "4EsYuWFZAt1PfNJq8Jr7monip43gNqrQ7k2Kne1npqJx",
     "chain": "solana",
-    "pnl": 13575.45947082445,
-    "winRate": 63.1,
-    "tokens": 88
+    "pnl": 13285.296509266978,
+    "winRate": 64.2,
+    "tokens": 85,
+    "topTokens": [
+      "PumpLiquid",
+      "Life",
+      "Monk"
+    ]
   },
   {
-    "rank": 64,
+    "rank": 72,
+    "address": "0x38e47fece3ea323e864c65410f6458c820eaa897",
+    "chain": "bsc",
+    "pnl": 143229.91690049254,
+    "winRate": 64.14,
+    "tokens": 1252,
+    "topTokens": [
+      "哭哭马",
+      "Fight",
+      "Distorted"
+    ]
+  },
+  {
+    "rank": 73,
     "address": "0xd4367bfd77bb1eef476cb8e570ab1cb0a576a66d",
     "chain": "bsc",
-    "pnl": 66197.85124767531,
-    "winRate": 62.7,
-    "tokens": 2318
+    "pnl": 58951.325921818796,
+    "winRate": 62.82,
+    "tokens": 2130,
+    "topTokens": [
+      "TERRAFAB",
+      "逮“虾”户",
+      "LЕGОLОN"
+    ]
   },
   {
-    "rank": 65,
+    "rank": 74,
+    "address": "AutanKZsLpydgGV3RgDdijyWYgcGgjy6jxFY7WCxtu28",
+    "chain": "solana",
+    "pnl": 8462.735584462263,
+    "winRate": 62.5,
+    "tokens": 18,
+    "topTokens": [
+      "HeavyPulp",
+      "Research",
+      "Twin"
+    ]
+  },
+  {
+    "rank": 75,
     "address": "0x3f28e35986798ec7328c963036de762aa2cd870d",
     "chain": "base",
-    "pnl": 4131.82893874178,
+    "pnl": 1839.1438462209985,
     "winRate": 62.5,
-    "tokens": 11
+    "tokens": 11,
+    "topTokens": [
+      "LITCOIN",
+      "NOOK",
+      "ROBOTMONEY"
+    ]
   },
   {
-    "rank": 66,
+    "rank": 76,
     "address": "0xd5afbbb5cd64865a22da2c6c308e8ea4de09d6ab",
     "chain": "base",
     "pnl": 317.38644375496887,
     "winRate": 62.5,
-    "tokens": 8
+    "tokens": 8,
+    "topTokens": [
+      "ROBOTMONEY",
+      "agentcard",
+      "GLAZE"
+    ]
   },
   {
-    "rank": 67,
+    "rank": 77,
     "address": "G6fUXjMKPJzCY1rveAE6Qm7wy5U3vZgKDJmN1VPAdiZC",
     "chain": "solana",
-    "pnl": 125353.82723100843,
-    "winRate": 61.89,
-    "tokens": 433
+    "pnl": 125222.53962058562,
+    "winRate": 62.12,
+    "tokens": 425,
+    "topTokens": [
+      "HeavyPulp",
+      "Distorted",
+      "IMAGINE"
+    ]
   },
   {
-    "rank": 68,
+    "rank": 78,
+    "address": "6rud1S5nYrUWh7SkftyZvhumwc8xzQ9UadJAhaYnSBng",
+    "chain": "solana",
+    "pnl": 7108.369724214694,
+    "winRate": 62.07,
+    "tokens": 30,
+    "topTokens": [
+      "SIRI",
+      "Password",
+      "42"
+    ]
+  },
+  {
+    "rank": 79,
+    "address": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
+    "chain": "solana",
+    "pnl": 5760.135754078399,
+    "winRate": 61.82,
+    "tokens": 220,
+    "topTokens": [
+      "SMITH",
+      "HeavyPulp",
+      "SCUBA"
+    ]
+  },
+  {
+    "rank": 80,
+    "address": "0x23a6bb06cd1613cf9bc49497f6857dbe31dd990f",
+    "chain": "bsc",
+    "pnl": 19551.193161346233,
+    "winRate": 61.47,
+    "tokens": 327,
+    "topTokens": [
+      "Fight",
+      "懂个球",
+      "黄猫观山"
+    ]
+  },
+  {
+    "rank": 81,
+    "address": "0x24844ff2793ca76d671269aea1b1fc8b228f573e",
+    "chain": "bsc",
+    "pnl": 14696.589835107075,
+    "winRate": 61.39,
+    "tokens": 175,
+    "topTokens": [
+      "BTW",
+      "我的刀盾",
+      "BSB"
+    ]
+  },
+  {
+    "rank": 82,
     "address": "0x64b23c2987aca16b3d3c55ad6f694058783c72ea",
     "chain": "bsc",
     "pnl": 67681.09236538685,
     "winRate": 61.22,
-    "tokens": 1055
+    "tokens": 1055,
+    "topTokens": [
+      "AGENT",
+      "Freedom of Money",
+      "龙虾"
+    ]
   },
   {
-    "rank": 69,
+    "rank": 83,
     "address": "0x11db1321c3f926334eb155d5fe704f6b2ff6a2f9",
     "chain": "bsc",
-    "pnl": 79014.88287379108,
-    "winRate": 61.11,
-    "tokens": 1255
+    "pnl": 77536.40296978831,
+    "winRate": 61.07,
+    "tokens": 1233,
+    "topTokens": [
+      "懂个球",
+      "freedom of money",
+      "Freedom of Money"
+    ]
   },
   {
-    "rank": 70,
-    "address": "0x23a6bb06cd1613cf9bc49497f6857dbe31dd990f",
-    "chain": "bsc",
-    "pnl": 18908.74059320688,
-    "winRate": 60.84,
-    "tokens": 332
-  },
-  {
-    "rank": 71,
-    "address": "0xf71cbb7b368aacb550fdb7e198c8313b017dfd5c",
-    "chain": "bsc",
-    "pnl": 18467.110013245427,
+    "rank": 84,
+    "address": "3VCx8WYeP6dmWaUgChyvNEqTqaCn9bNDsYBgBVbHTZ68",
+    "chain": "solana",
+    "pnl": 36200.86546896018,
     "winRate": 60,
-    "tokens": 10
+    "tokens": 30,
+    "topTokens": [
+      "NoLimit ",
+      "TripleT",
+      "HODL"
+    ]
+  },
+  {
+    "rank": 85,
+    "address": "0x50fae72047f9714384c2e01a9ad47cc5b4571c6c",
+    "chain": "base",
+    "pnl": 25909.69689471709,
+    "winRate": 60,
+    "tokens": 16,
+    "topTokens": [
+      "Conway",
+      "FELIX",
+      "PERKOS"
+    ]
+  },
+  {
+    "rank": 86,
+    "address": "0x1b33b77c64bd13ea11fc40d5112373e3a8d91af3",
+    "chain": "bsc",
+    "pnl": 21579.243025248183,
+    "winRate": 60,
+    "tokens": 5,
+    "topTokens": [
+      "龙虾",
+      "InStreet"
+    ]
   }
 ]
