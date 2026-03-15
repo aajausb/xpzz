@@ -34,15 +34,15 @@ const NATIVE = {
 
 // ============ Solana (OKX聚合器) ============
 
-async function solanaBuy(tokenAddress, amountLamports, slippageBps = 300) {
+async function solanaBuy(tokenAddress, amountLamports, slippageBps = 500) {
   return solanaSwap(NATIVE.solana, tokenAddress, amountLamports, 'buy', slippageBps);
 }
 
-async function solanaSell(tokenAddress, amountRaw, slippageBps = 300) {
+async function solanaSell(tokenAddress, amountRaw, slippageBps = 500) {
   return solanaSwap(tokenAddress, NATIVE.solana, amountRaw, 'sell', slippageBps);
 }
 
-async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300) {
+async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500) {
   const w = getWallets();
   const kp = Keypair.fromSecretKey(w.solana.secretKey);
   // 交易用官方RPC
@@ -80,22 +80,21 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300)
     sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
   }
   
-  // 4. 轮询确认（1秒间隔，最多20秒）
-  for (let i = 0; i < 20; i++) {
-    await sleep(1000);
+  // 4. 确认（用blockhash超时，比轮询快）
+  try {
+    const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash('confirmed');
+    await conn.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
+  } catch(e) {
+    // 确认超时不一定是失败，检查一次
     const status = await conn.getSignatureStatus(sig);
-    if (status?.value) {
-      if (status.value.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
-      if (status.value.confirmationStatus === 'confirmed' || status.value.confirmationStatus === 'finalized') {
-        // 卖出后自动unwrap wSOL→SOL
-        if (toToken === NATIVE.solana) {
-          try { await unwrapWsol(conn, kp); } catch(e) { /* unwrap失败不影响主流程 */ }
-        }
-        return { chain: 'solana', action, txHash: sig, success: true, mev: 'jito' };
-      }
-    }
+    if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
+    if (!status?.value) return { chain: 'solana', action, txHash: sig, success: false, note: '超时未确认' };
   }
-  return { chain: 'solana', action, txHash: sig, success: false, note: '超时未确认，查TX: ' + sig };
+  // 卖出后自动unwrap wSOL→SOL
+  if (toToken === NATIVE.solana) {
+    try { await unwrapWsol(conn, kp); } catch(e) {} 
+  }
+  return { chain: 'solana', action, txHash: sig, success: true, mev: 'jito' };
 }
 
 // ============ EVM (OKX聚合器) ============
@@ -134,18 +133,21 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
     ...(gasPrice ? { gasPrice } : {})
   };
   
-  let tx, receipt;
+  let tx;
   try {
     tx = await privateWallet.sendTransaction(txParams);
-    receipt = await tx.wait();
   } catch(e) {
     console.log(`[dex_trader] 私有RPC失败(${chain}),回退:`, e.message?.slice(0, 60));
     tx = await wallet.sendTransaction(txParams);
-    receipt = await tx.wait();
   }
   
-  if (receipt.status !== 1) throw new Error(`交易revert: ${tx.hash}`);
-  return { chain, action: 'buy', txHash: tx.hash, success: true, block: receipt.blockNumber, mev: 'private' };
+  // 异步确认（不阻塞返回）
+  tx.wait().then(receipt => {
+    if (receipt.status !== 1) console.error(`[dex_trader] ❌ ${chain} 买入revert: ${tx.hash}`);
+    else console.log(`[dex_trader] ✅ ${chain} 买入确认 block=${receipt.blockNumber}`);
+  }).catch(e => console.error(`[dex_trader] ❌ ${chain} 确认失败: ${e.message?.slice(0,80)}`));
+  
+  return { chain, action: 'buy', txHash: tx.hash, success: true, pending: true, mev: 'private' };
 }
 
 async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
@@ -156,65 +158,57 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   const provider = new ethers.JsonRpcProvider(rpc);
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
   
-  // 1. Approve (授权DEX合约使用token)
-  try {
-    const approveCmd = `onchainos swap approve --chain ${chainName} --token ${tokenAddress} --amount ${amountRaw}`;
-    const ar = JSON.parse(execSync(approveCmd, { env: OKX_ENV, timeout: 10000 }).toString());
-    if (ar.ok && ar.data?.[0]?.data && ar.data[0].data !== '0x') {
-      const approveTx = await wallet.sendTransaction({
-        to: tokenAddress,
-        data: ar.data[0].data,
-        value: 0,
-        chainId,
-        gasLimit: BigInt(ar.data[0].gasLimit || '100000')
-      });
-      const approveReceipt = await approveTx.wait();
-      if (approveReceipt.status !== 1) throw new Error('approve交易revert');
-      // 等nonce同步
-      await sleep(2000);
-    }
-  } catch(e) {
-    // 如果是"已经approved"可以忽略，其他错误要抛出
-    if (e.message?.includes('revert')) throw e;
+  // 1. Approve + gas预取（并行，不阻塞后续swap报价）
+  const spenderAddr = '0x4409921Ae43a39a11D90F7B7F96cfd0B8093d9fC'; // OKX DEX Router
+  const erc20 = new ethers.Contract(tokenAddress, [
+    'function allowance(address,address) view returns (uint256)',
+    'function approve(address,uint256) returns (bool)'
+  ], wallet);
+  
+  const [currentAllowance, feeData] = await Promise.all([
+    erc20.allowance(wallet.address, spenderAddr),
+    provider.getFeeData()
+  ]);
+  
+  if (currentAllowance < BigInt(amountRaw)) {
+    console.log(`[dex_trader] ${chain} approve: ${currentAllowance} < ${amountRaw}, approving max...`);
+    const approveTx = await erc20.approve(spenderAddr, ethers.MaxUint256);
+    await approveTx.wait();
+    await sleep(1000);
   }
   
-  // 2. Swap（approve之后再获取，确保nonce正确）
+  const gasPrice = feeData.gasPrice ? feeData.gasPrice * 120n / 100n : undefined;
+  
+  // 2. Swap报价→立即发送（最小化延迟）
   const cmd = `onchainos swap swap --chain ${chainName} --from ${tokenAddress} --to ${NATIVE[chain]} --amount ${amountRaw} --wallet ${w.evm.address} --slippage ${slippage}`;
   const result = JSON.parse(execSync(cmd, { env: OKX_ENV, timeout: 15000, maxBuffer: 10*1024*1024 }).toString());
   if (!result.ok) throw new Error(`OKX swap失败: ${result.error || JSON.stringify(result)}`);
   
   const txData = result.data[0].tx;
   if (!txData.data || txData.data.length < 10) throw new Error('swap tx data为空');
+  const gasLimit = BigInt(txData.gas || '500000') * 120n / 100n;
   
   // 用私有RPC防夹
   const privateRpc = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
   const privateProvider = new ethers.JsonRpcProvider(privateRpc);
   const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
-  
-  let tx, receipt;
+
+  const sellTxParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, gasPrice };
+  let tx;
   try {
-    tx = await privateWallet.sendTransaction({
-      to: txData.to,
-      data: txData.data,
-      value: txData.value || '0',
-      chainId,
-      gasLimit: BigInt(txData.gas || '500000')
-    });
-    receipt = await tx.wait();
+    tx = await privateWallet.sendTransaction(sellTxParams);
   } catch(e) {
     console.log(`[dex_trader] 私有RPC卖出失败(${chain}),回退:`, e.message?.slice(0, 60));
-    tx = await wallet.sendTransaction({
-      to: txData.to,
-      data: txData.data,
-      value: txData.value || '0',
-      chainId,
-      gasLimit: BigInt(txData.gas || '500000')
-    });
-    receipt = await tx.wait();
+    tx = await wallet.sendTransaction(sellTxParams);
   }
   
-  if (receipt.status !== 1) throw new Error(`交易revert: ${tx.hash}`);
-  return { chain, action: 'sell', txHash: tx.hash, success: true, block: receipt.blockNumber, mev: 'private' };
+  // 异步确认
+  tx.wait().then(receipt => {
+    if (receipt.status !== 1) console.error(`[dex_trader] ❌ ${chain} 卖出revert: ${tx.hash}`);
+    else console.log(`[dex_trader] ✅ ${chain} 卖出确认 block=${receipt.blockNumber}`);
+  }).catch(e => console.error(`[dex_trader] ❌ ${chain} 卖出确认失败: ${e.message?.slice(0,80)}`));
+  
+  return { chain, action: 'sell', txHash: tx.hash, success: true, pending: true, mev: 'private' };
 }
 
 // ============ 统一接口 ============

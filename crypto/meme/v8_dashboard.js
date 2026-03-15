@@ -30,14 +30,25 @@ function saveJSON(file, data) {
 }
 
 // 查余额+价格（全部并行）
+async function fetchWithRetry(url, opts, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const r = await fetch(url, opts);
+      if (r.status === 429) { await new Promise(r => setTimeout(r, 1000 * (i + 1))); continue; }
+      return await r.json();
+    } catch(e) { if (i === retries - 1) return null; await new Promise(r => setTimeout(r, 1000)); }
+  }
+  return null;
+}
+
 async function getBalances() {
   const balances = {};
   
   const [solBal, bnbBal, ethBal, solR, bnbR, ethR] = await Promise.all([
-    fetch('https://api.mainnet-beta.solana.com', {
+    fetchWithRetry('https://api.mainnet-beta.solana.com', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
-    }).then(r => r.json()).catch(() => null),
+    }),
     fetch('https://bsc-dataseed1.binance.org', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })

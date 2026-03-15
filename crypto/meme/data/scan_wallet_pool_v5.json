@@ -4859,6 +4859,10 @@
         "0x65021a79aeef22b17cdc1b768f5e79a8618beba3": {
           "symbol": "ROBOTMONEY",
           "netTokens": 500000000
+        },
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 640161127
         }
       },
       "profitByMint": {
@@ -4867,6 +4871,12 @@
           "buys": 66,
           "sells": 2,
           "netTokens": 500000000
+        },
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 640161127
         }
       },
       "chain": "base",
@@ -7807,6 +7817,348 @@
       },
       "chain": "base",
       "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0xe388b2b84dad6c59df19097a928b8c6f2a90e9a6": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 1542967799
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 1542967799
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xb89c70e8efa86e184591744b11587c7ef7cb5e60": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 1508827908
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 1508827908
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x67cd9c3fe25739a189dfc1e52d3be65a9c60b7ba": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 782579525
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 7,
+          "sells": 0,
+          "netTokens": 782579525
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xf703fd64093b50797abdc9e450632240fa2ba5d4": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 646153789
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 646153789
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xca8323cb2b2cfd96963ecb34a7abc5ae172b37bb": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 549191254
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 549191254
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xc8d7ecda873c36eb2b186fee287cb4cd671ef85a": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 427625873
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 11,
+          "sells": 0,
+          "netTokens": 427625873
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xd7fcef68dd72b3c205e4e410023dceab1db9b281": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 420945663
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 420945663
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xcbaa21e461d7c061706f9f5a101aa38d99b71d29": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 416197758
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 416197758
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x7a9a8b1de19a24045fe9f0cabb6962bf9f3a29ea": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 394150039
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 23,
+          "sells": 0,
+          "netTokens": 394150039
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x11b0d2b19fc80f331418b4f5d61e38ed5bc7e517": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 376559227
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 376559227
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x5a202bccb293deb455e57ebdd1b4a1920fd7fe67": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 362593701
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 3,
+          "sells": 1,
+          "netTokens": 362593701
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xc6f80bf074fcd33cab3886211f31837e555e8a5b": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 353926130
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 353926130
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xd16cf6cc98e62786fb5a72b96d41fd1798241772": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 342987594
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 342987594
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x43266d5bc6f38e2744ca3fc47ddf1cb3db167cb3": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 304631466
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 304631466
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x4eb3d06c16f8e40b0f9585895b2d106c1104079f": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 298998013
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 5,
+          "sells": 0,
+          "netTokens": 298998013
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x41ca411f6a9889246ec8389a946bcdd5bd89a399": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 289094645
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 5,
+          "sells": 1,
+          "netTokens": 289094645
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xfbda9a3f0fd9f48678399e92cc3ba7fba926b3f0": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 232156030
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 24,
+          "sells": 4,
+          "netTokens": 232156030
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0x0862ce52bbe3b4c5489fe57255e9dfd2ddc61f42": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 222724960
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 3,
+          "sells": 1,
+          "netTokens": 222724960
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
+    },
+    "0xcc5cae2d8188d3001d05715d9ebc933fd60eb76f": {
+      "holdings": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "netTokens": 179424988
+        }
+      },
+      "profitByMint": {
+        "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3": {
+          "symbol": "cyb3rwr3n",
+          "buys": 4,
+          "sells": 0,
+          "netTokens": 179424988
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T05:13:20.251Z"
     }
   },
   "analyzed": [
@@ -7902,6 +8254,12 @@
     "0x9a13a9fac1644f02890a326d0fbef08302cb89e1",
     "0x6993f32bec7edef817be6db869a226572cfb919e",
     "0x60f7b1b6f666b87722ff53005b95e4dda10448a9",
-    "0xfea18be59b326917572fbb999410749b22f335bf"
+    "0xfea18be59b326917572fbb999410749b22f335bf",
+    "0x2ee75f74051c6cc4004216f24fa7b25886c28624",
+    "0xc84f14c250128357c82e1b737bf19e6efb1111bc",
+    "0xfa00a9ed787f3793db668bff3e6e6e7db0f92a1b",
+    "0xf135d75d1360c76dddc01394c82da76a172a00d8",
+    "0x391276932b5105c2db8ee928dfd8872564d6d246",
+    "0x2ea94a042461940fb59cc7260bb85342891fb5eb"
   ]
 }
