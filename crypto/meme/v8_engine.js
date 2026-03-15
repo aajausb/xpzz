@@ -33,6 +33,7 @@ const CONFIG = {
   confirmWindowMs: 60 * 60 * 1000,          // 60分钟确认窗口
   minLiqMcRatio: 0.05,                     // Liq/MC ≥ 5%
   minMarketCap: 10000,                     // 最低市值$10K，太小的流动性差买卖滑点大
+  maxTokenAgeDays: 7,                      // 只买7天内创建的币，老币没alpha
   
   // 交易 — 按SM确认数决定仓位
   positionSizeTop10: 10,                   // SM≥10: $10
@@ -93,7 +94,7 @@ const baseProvider = new ethers.JsonRpcProvider('https://mainnet.base.org');
 // OKX DEX链ID和原生代币
 const CHAIN_ID = { solana: '501', bsc: '56', base: '8453' };
 const NATIVE = {
-  solana: 'So11111111111111111111111111111111111111112',
+  solana: '11111111111111111111111111111111',  // OKX V6用原生SOL地址
   bsc: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
   base: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
 };
@@ -820,6 +821,11 @@ async function handleSignal(signal) {
   
   if (!liqCheck.ok) {
     log('WARN', `❌ ${symbol}(${chain}) 流动性不足: ${liqCheck.reason}`);
+    // OKX无路由的加黑名单（大币/死币），其他流动性问题不加（可能后续上外盘）
+    if (liqCheck.reason === 'OKX无路由' || liqCheck.reason === 'OKX报价=0') {
+      blacklist.add(token);
+      saveJSON(BLACKLIST_FILE, [...blacklist]);
+    }
     return;
   }
   
@@ -882,13 +888,20 @@ async function checkLiquidity(chain, tokenAddress) {
     const toAmount = parseFloat(quoteData.data[0].routerResult.toTokenAmount || 0);
     if (toAmount <= 0) return { ok: false, reason: 'OKX报价=0' };
     
-    // 补充DexScreener检查市值（有就查，没有不拦）
+    // 补充DexScreener检查市值+创建时间（有就查，没有不拦）
     try {
       const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`);
       const pair = d?.pairs?.[0];
       const mc = parseFloat(pair?.marketCap || 0);
       if (mc > 0 && mc < CONFIG.minMarketCap) {
         return { ok: false, reason: `MC=$${Math.round(mc)}<$${CONFIG.minMarketCap}` };
+      }
+      // 创建时间过滤：超过maxTokenAgeDays天的不买
+      if (pair?.pairCreatedAt) {
+        const ageDays = (Date.now() - pair.pairCreatedAt) / (24 * 3600 * 1000);
+        if (ageDays > CONFIG.maxTokenAgeDays) {
+          return { ok: false, reason: `创建${Math.round(ageDays)}天>7天` };
+        }
       }
       const liq = parseFloat(pair?.liquidity?.usd || 0);
       const ratio = mc > 0 ? (liq / mc * 100).toFixed(1) + '%' : '内盘';

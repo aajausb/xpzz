@@ -27,7 +27,7 @@ const OKX_SECRET = process.env.OKX_SECRET_KEY || '';
 const OKX_PASS = process.env.OKX_PASSPHRASE || '';
 
 const NATIVE = {
-  solana: 'So11111111111111111111111111111111111111112',
+  solana: '11111111111111111111111111111111',  // OKX V6用原生SOL地址（不是wSOL）
   bsc: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
   base: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 };

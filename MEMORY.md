@@ -124,6 +124,16 @@
 - 总计 **33 个 bug** found and fixed
 - **DEX-CEX策略已关闭**: $0收益后注释掉
 - **套利内存优化**: --expose-gc + 定时global.gc()，2.4GB→69MB
+- **v8流动性检查改OKX报价(2026-03-15)**: DexScreener查不到内盘→改为OKX报价验证(能报价=有路由=能买)
+- **Four.meme内盘OKX可路由**: OKX聚合器走Four.meme V2 DEX，内盘也能买卖
+- **Helius完全清除(2026-03-15)**: 全部改QuickNode(getTransaction jsonParsed解析swap)
+- **7天创建时间过滤**: CONFIG.maxTokenAgeDays=7，老币(CAKE等)自动过滤
+- **最低市值$10K**: CONFIG.minMarketCap=10000
+- **OKX无路由加黑名单**: 查过无路由永久拉黑不重复查
+- **BSC/Base监控修复(2026-03-15 15:10)**: Router订阅→钱包级Transfer订阅，修复前BSC监控完全瞎的
+- **来根华子漏单教训**: 10个SM买入(2猎手+8哨兵)，因BSC监控bug全漏
+- **QuickNode替换全部SOL RPC(2026-03-15)**: HTTP+WS全用QN，包括交易解析
+- **v8_refresh静默执行**: 不发消息给跑步哥，他自己点刷新
 - **v8跟单引擎(2026-03-15)**:
   - 钱包库持久化: wallet_db.json，验证通过的永久入库，连续3次没上榜+胜率<50%才踢
   - 三链全部WebSocket实时: BSC/Base用publicnode logs订阅，SOL用publicnode logsSubscribe
