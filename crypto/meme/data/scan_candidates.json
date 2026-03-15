@@ -523,6 +523,24 @@
       "addedAt": "2026-03-15T06:48:00.727Z"
     },
     {
+      "symbol": "MEME",
+      "mint": "DQ4LD25kbPi3mQMBsNEG1dKHjfF3mmvsWnoBJP5qnFFi",
+      "fdv": 1823981,
+      "vol": 53702.64,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T07:01:19.788Z"
+    },
+    {
+      "symbol": "Lobstar",
+      "mint": "AVF9F4C4j8b1Kh4BmNHqybDaHgnZpJ7W7yLvL7hUpump",
+      "fdv": 3393069.72481225,
+      "vol": 334886.150589273,
+      "ageD": 23,
+      "chain": "solana",
+      "addedAt": "2026-03-15T07:22:43.400Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -782,6 +800,33 @@
       "ageD": 0,
       "chain": "bsc",
       "addedAt": "2026-03-15T06:37:00.878Z"
+    },
+    {
+      "symbol": "Fight",
+      "mint": "AfwcwzNuhpXXUtBQeTDNHFLgZXGJaUDBjrSQMUkZXxDL",
+      "fdv": 364550125,
+      "vol": 51219.42,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T07:03:59.413Z"
+    },
+    {
+      "symbol": "R.S UGOR",
+      "mint": "G1sU1KHepzGrmuFEboHx3rZTQf5hsUNhZQ6qHNFhCzKg",
+      "fdv": 682846.177380628,
+      "vol": 40733717.7874008,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T07:07:25.786Z"
+    },
+    {
+      "symbol": "OpenClaw",
+      "mint": "0x0afcb00329f3a479747fc3092c0b9a439dfd4444",
+      "fdv": 500665.7335,
+      "vol": 38865646.1500627,
+      "ageD": 1,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T07:10:01.701Z"
     }
   ],
   "scanned": [
@@ -870,6 +915,11 @@
     "DogeP1Hzndj6KMyB2DggL6ghrVwpC4VvPAJAuNis9KWQ",
     "BfKPaK3xpDBGbY2rJBj8SG7VGSnrDoMhu2cWSU1E2tJ8",
     "0xff203c7279bbab7c238ee3bcbde43b397f26fb65",
-    "PE85tFDe19MhGLE7FrJEEEiFWPFsD2Zr16dGkhWgmQh"
+    "PE85tFDe19MhGLE7FrJEEEiFWPFsD2Zr16dGkhWgmQh",
+    "DQ4LD25kbPi3mQMBsNEG1dKHjfF3mmvsWnoBJP5qnFFi",
+    "AfwcwzNuhpXXUtBQeTDNHFLgZXGJaUDBjrSQMUkZXxDL",
+    "G1sU1KHepzGrmuFEboHx3rZTQf5hsUNhZQ6qHNFhCzKg",
+    "0x0afcb00329f3a479747fc3092c0b9a439dfd4444",
+    "AVF9F4C4j8b1Kh4BmNHqybDaHgnZpJ7W7yLvL7hUpump"
   ]
 }

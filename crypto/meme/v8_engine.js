@@ -609,20 +609,23 @@ function setupEvmWebSocket(chainKey) {
   
   ws.on("open", () => {
     let subId = 1;
-    for (const routerAddr of routers) {
-      // 买入: from=Router → to=我们的钱包（钱包收到token）
+    // 按钱包订阅: to=钱包（收到token=买入）+ from=钱包（发出token=卖出）
+    // 不限DEX Router，任何来源的Transfer都能捡到
+    for (const walletAddr of walletSet) {
+      const paddedWallet = ethers.zeroPadValue(walletAddr, 32);
+      // 买入: Transfer to=钱包
       ws.send(JSON.stringify({
         jsonrpc: "2.0", id: subId++, method: "eth_subscribe",
-        params: ["logs", { topics: [TRANSFER_TOPIC, ethers.zeroPadValue(routerAddr, 32)] }]
+        params: ["logs", { topics: [TRANSFER_TOPIC, null, paddedWallet] }]
       }));
-      // 卖出: from=任意 → to=Router（token流向Router=卖出swap）
+      // 卖出: Transfer from=钱包
       ws.send(JSON.stringify({
         jsonrpc: "2.0", id: subId++, method: "eth_subscribe",
-        params: ["logs", { topics: [TRANSFER_TOPIC, null, ethers.zeroPadValue(routerAddr, 32)] }]
+        params: ["logs", { topics: [TRANSFER_TOPIC, paddedWallet] }]
       }));
     }
     evmWsRetries[chainKey] = 0;
-    log("INFO", "🔌 [" + chain.name + "] WebSocket实时监控(买+卖) " + walletSet.size + " 个钱包 (" + routers.size + "个DEX)");
+    log("INFO", "🔌 [" + chain.name + "] WebSocket钱包级监控(买+卖) " + walletSet.size + " 个钱包");
   });
   
   ws.on("message", async (data) => {
@@ -634,10 +637,10 @@ function setupEvmWebSocket(chainKey) {
         const fromAddr = "0x" + logEntry.topics[1].slice(26).toLowerCase();
         const toAddr = "0x" + logEntry.topics[2].slice(26).toLowerCase();
         const tokenAddr = logEntry.address.toLowerCase();
-        const routerSet = new Set([...routers].map(r => r.toLowerCase()));
+        const nativeTokens = new Set(['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c','0x4200000000000000000000000000000000000006','0x55d398326f99059ff775485246999027b3197955','0x833589fcd6edb6e08f4c7c32d4f71b54bda02913']);
         
-        // 买入: from=Router, to=我们的钱包
-        if (routerSet.has(fromAddr) && walletSet.has(toAddr)) {
+        // 买入: to=我们的钱包（收到非native token）
+        if (walletSet.has(toAddr) && !walletSet.has(fromAddr) && !nativeTokens.has(tokenAddr)) {
           if (blacklist.has(tokenAddr)) return;
           const wallet = rankedWallets.find(w => w.address?.toLowerCase() === toAddr);
           const rank = wallet?.rank || 999;
@@ -645,8 +648,8 @@ function setupEvmWebSocket(chainKey) {
           await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now() });
         }
         
-        // 卖出检测: from=SM钱包发出token → 查receipt确认是swap还是转仓
-        if (walletSet.has(fromAddr) && !routerSet.has(fromAddr)) {
+        // 卖出检测: from=SM钱包发出token
+        if (walletSet.has(fromAddr) && !walletSet.has(toAddr)) {
           if (positions[tokenAddr]) {
             const txHash = logEntry.transactionHash;
             if (txHash) {
