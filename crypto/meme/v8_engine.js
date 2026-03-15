@@ -563,7 +563,7 @@ function setupOfficialSolWs() {
     setTimeout(() => setupOfficialSolWs(), 30000);
   });
   
-  ws.on('error', () => {});
+  ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS错误: ${e.message.slice(0,40)}`); });
   
   setInterval(() => {
     if (ws.readyState === WebSocket.OPEN) ws.ping();
@@ -613,7 +613,7 @@ async function pollSolanaWallets() {
           if (sig.err) continue; // 跳过失败交易
           await parseSolSignature(addr, sig.signature);
         }
-      } catch(e) {}
+      } catch(e) { if (e.message && !e.message.includes('429') && !e.message.includes('超时')) log('WARN', `SOL轮询 ${addr.slice(0,8)} 异常: ${e.message.slice(0,40)}`); }
       await sleep(200); // 每个钱包间隔200ms，37个钱包一轮~7秒
     }
   }
@@ -876,7 +876,7 @@ function setupEvmWebSocket(chainKey) {
     setTimeout(() => setupEvmWebSocket(chainKey), delay);
   });
   
-  ws.on("error", () => {});
+  ws.on("error", (e) => { if (e.message) log('WARN', `[${chain.name}] WS错误: ${e.message.slice(0,40)}`); });
   const ping = setInterval(() => { if (ws.readyState === WebSocket.OPEN) ws.ping(); else clearInterval(ping); }, 30000);
 }
 // 验证EVM卖出：查交易receipt，看有没有native token流入钱包（swap的标志）
