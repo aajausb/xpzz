@@ -604,6 +604,24 @@
       "addedAt": "2026-03-15T09:06:00.415Z"
     },
     {
+      "symbol": "Fight",
+      "mint": "0xe683A48Df543D68ed96d53Dd1fDa73ccbd144444",
+      "fdv": 2006294,
+      "vol": 2155129.58,
+      "ageD": 4,
+      "chain": "bsc",
+      "addedAt": "2026-03-15T10:38:41.349Z"
+    },
+    {
+      "symbol": "SMITH",
+      "mint": "6ACgbDmZbrUHpWzp9c7gnUfH4PHuABwbzvvjJvex6Tx7",
+      "fdv": 7624298,
+      "vol": 52055.63,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T10:41:41.360Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -1050,6 +1068,8 @@
     "0xb5b0f722d6d4a803d3df94c9ed12a191603eab07",
     "4qLpWYEVA8iUPJwoNvvCZCLhjNMdiudrXEVUdnajbiKQ",
     "0x22de4b81deda7989e078bc1932c89c091c594444",
-    "atVjZ7uM8sVrLFi5Xe1JiLGW6mW9pvQdTCWzhNFpump"
+    "atVjZ7uM8sVrLFi5Xe1JiLGW6mW9pvQdTCWzhNFpump",
+    "0xe683A48Df543D68ed96d53Dd1fDa73ccbd144444",
+    "6ACgbDmZbrUHpWzp9c7gnUfH4PHuABwbzvvjJvex6Tx7"
   ]
 }

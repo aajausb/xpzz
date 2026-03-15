@@ -20,7 +20,8 @@ const CONFIG = {
   // 数据刷新
   rankRefreshInterval: 4 * 3600 * 1000,  // 4小时刷新币安排名
   // 不限数量，验证通过的全部跟踪，排名只决定优先级
-  hunterMinWinRate: 60,                     // 猎手: 胜率≥60%
+  hunterMinWinRate: 60,                     // 猎手: 胜率60-85%
+  hunterMaxWinRate: 85,                     // >85%可能虚高，降哨兵
   scoutMinWinRate: 50,                      // 哨兵: 胜率50-60%
   // <50% = 观察(watcher)，30天没涨回50%就踢
   watcherEvictDays: 30,                     // 观察期30天
@@ -36,9 +37,9 @@ const CONFIG = {
   maxTokenAgeDays: 7,                      // 只买7天内创建的币，老币没alpha
   
   // 交易 — 按SM确认数决定仓位
-  positionSizeTop10: 10,                   // SM≥10: $10
-  positionSizeTop30: 7,                    // SM 5-9: $7
-  positionSizeDefault: 5,                  // SM 2-4: $5
+  positionSizeTop10: 200,                  // TOP10猎手确认: $200
+  positionSizeTop30: 100,                  // TOP30猎手确认: $100
+  positionSizeDefault: 50,                 // 其他猎手确认: $50
   maxPositions: 10,
   maxPerChain: 5,
   
@@ -278,9 +279,9 @@ function rankWallets(wallets) {
                       : 1.0;
     w.score = wr * sampleWeight * pnlWeight * activityMul;
     
-    // 三级状态: ≥60%=hunter(猎手), 50-60%=scout(哨兵), <50%=watcher(观察)
+    // 三级状态: 60-85%=hunter(猎手), 50-60%或>85%=scout(哨兵), <50%=watcher(观察)
     const winRate = w.winRate || 0;
-    if (winRate >= CONFIG.hunterMinWinRate) {
+    if (winRate >= CONFIG.hunterMinWinRate && winRate <= CONFIG.hunterMaxWinRate) {
       w.status = 'hunter';
     } else if (winRate >= CONFIG.scoutMinWinRate) {
       w.status = 'scout';

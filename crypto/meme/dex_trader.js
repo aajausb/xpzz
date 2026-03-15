@@ -101,14 +101,8 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500)
   const tx = VersionedTransaction.deserialize(decoded);
   tx.sign([kp]);
 
-  // 3. 发送（Jito优先，fallback普通）
-  let sig;
-  try {
-    sig = await sendViaJito(conn, kp, tx);
-  } catch(e) {
-    console.log('[dex_trader] Jito失败,回退:', e.message?.slice(0, 40));
-    sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
-  }
+  // 3. 直接发送（OKX聚合器自带minReceiveAmount防夹，不需要Jito）
+  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
 
   // 4. HTTP轮询确认（不用WS，PublicNode WS不稳定）
   for (let i = 0; i < 15; i++) {

@@ -159,5 +159,19 @@
     "isHoneypot": false,
     "sellTax": 0.01,
     "reason": "OK"
+  },
+  "0xe0d03a18e5c716c373f5b7005175836e96a60b07": {
+    "safe": true,
+    "riskLevel": "UNKNOWN",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "OK"
+  },
+  "0x30bdb27a024a9990ace82f8055fdb557b6a914ae": {
+    "safe": true,
+    "riskLevel": "LOW",
+    "isHoneypot": false,
+    "sellTax": 0,
+    "reason": "OK"
   }
 }
