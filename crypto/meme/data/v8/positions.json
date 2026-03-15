@@ -1,55 +1,37 @@
 {
-  "0xb8c861ad3fe4cf0893ec57f6dbb5ed88cc3e4444": {
+  "0xc0820faa1e8dd6dfad6884b1a1ef30e80c754444": {
     "chain": "bsc",
-    "token": "0xb8c861ad3fe4cf0893ec57f6dbb5ed88cc3e4444",
-    "symbol": "GEO",
-    "buyPrice": 0.00006512,
-    "buyAmount": 604196.9378369376,
-    "buyAmountRaw": 604196.9378369376,
-    "buyCost": 5,
-    "buyTime": 1773592255861,
+    "token": "0xc0820faa1e8dd6dfad6884b1a1ef30e80c754444",
+    "symbol": "Binancemаххіոɡ",
+    "buyPrice": 0.0001529,
+    "buyAmount": 260327.0983682946,
+    "buyAmountRaw": 260327.0983682946,
+    "buyCost": 55,
+    "buyTime": 1773597826201,
     "confirmCount": 2,
     "confirmWallets": [
-      "0x64b23c2987aca16b3d3c55ad6f694058783c72ea",
-      "0x8d5624fa29526c879a1ca7560961e4c5a08089ae",
-      "0xc2c6acd377458010713e733e1b21dd6f670d091c",
-      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
-      "0xb1e65ccc2f5d68e447bf321ba9bfba35a94f5ad5"
-    ]
-  },
-  "BBkUQdTDdVySDKXT4TngbmbpC2ktwBeymMSdn41ppump": {
-    "chain": "solana",
-    "token": "BBkUQdTDdVySDKXT4TngbmbpC2ktwBeymMSdn41ppump",
-    "symbol": "NETAINYAHU",
-    "buyPrice": 0.00006541,
-    "buyAmount": 0,
-    "buyAmountRaw": 0,
-    "buyCost": 66,
-    "buyTime": 1773597501134,
-    "confirmCount": 2,
-    "confirmWallets": [
-      "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
-      "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV",
-      "2fg5QD1eD7rzNNCsvnhmXFm5hqNgwTTG8p7kQ6f3rx6f",
-      "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB"
+      "0xd4367bfd77bb1eef476cb8e570ab1cb0a576a66d",
+      "0x61e1de40854cae288a11feb9b28a064df14d29ef",
+      "0x07d34e7d02811831165450fba08b86d0fd7aad68"
     ],
     "_transfers": {
-      "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB": {
-        "subWallet": "3Tu1Y9aNveLFN4WTAwnAwXL6tbUp5MMe3RxyybG4jTAS",
-        "time": 1773597566026
+      "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05": {
+        "subWallet": "0x07d34e7d02811831165450fba08b86d0fd7aad68",
+        "time": 1773597868320
       }
     },
     "_sells": [
       {
-        "wallet": "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB",
-        "time": 1773597566295,
-        "source": "sub-patrol"
+        "wallet": "0xd4367bfd77bb1eef476cb8e570ab1cb0a576a66d",
+        "time": 1773598507680,
+        "source": "patrol"
       },
       {
-        "wallet": "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV",
-        "time": 1773597591877,
-        "source": "ws"
+        "wallet": "0x61e1de40854cae288a11feb9b28a064df14d29ef",
+        "time": 1773599209854,
+        "source": "patrol"
       }
-    ]
+    ],
+    "soldRatio": 0.6666666666666666
   }
 }

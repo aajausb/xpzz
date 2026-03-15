@@ -148,13 +148,15 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const saveJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2));
 const loadJSON = (file, def) => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return def; } };
 
-function httpGet(url, headers = {}) {
+function httpGet(url, headers = {}, timeoutMs = 15000) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'Accept-Encoding': 'identity', 'User-Agent': 'binance-web3/2.0 (Skill)', ...headers } }, (res) => {
+    const req = https.get(url, { headers: { 'Accept-Encoding': 'identity', 'User-Agent': 'binance-web3/2.0 (Skill)', ...headers }, timeout: timeoutMs }, (res) => {
       let data = '';
       res.on('data', d => data += d);
       res.on('end', () => { try { resolve(JSON.parse(data)); } catch(e) { reject(e); } });
-    }).on('error', reject);
+    });
+    req.on('error', reject);
+    req.on('timeout', () => { req.destroy(); reject(new Error('HTTP超时')); });
   });
 }
 
@@ -298,10 +300,10 @@ function mergeToWalletDb(verifiedWallets) {
   // 不踢任何人，只通过rankWallets自动降级/升级（猎手↔哨兵）
   // 胜率低的自动降为哨兵，回升后自动升猎手
   
+  const totalBefore = Object.keys(walletDb).length;
   saveJSON(WALLET_DB_FILE, walletDb);
   const total = Object.keys(walletDb).length;
-  const newCount = verifiedWallets.filter(w => !walletDb[w.address + '_' + w.chain]?.addedAt || walletDb[w.address + '_' + w.chain]?.addedAt === now).length;
-  log('INFO', `📦 钱包库: ${total}个 (本轮新增${seenKeys.size - (total - newCount)}个)`);
+  log('INFO', `📦 钱包库: ${total}个 (本轮验证${seenKeys.size}个)`);
   
   return Object.values(walletDb);
 }
@@ -454,6 +456,7 @@ const solLastSigs = new Map(); // wallet -> lastSignature
 const SOL_WS_OFFICIAL = 'wss://api.mainnet-beta.solana.com'; // Solana官方WS（免费，限100订阅）
 let solOfficialWs = null; // 单连接
 let solWsMode = 'none'; // 'official' | 'polling'
+const solWsSubscribedAddrs = new Set(); // WS已订阅的钱包（轮询时跳过）
 
 function setupSolanaMonitor() {
   const solWallets = rankedWallets.filter(w => w.chain === 'solana');
@@ -478,6 +481,8 @@ function setupOfficialSolWs() {
     .sort((a, b) => (priorityOrder[a.status] || 2) - (priorityOrder[b.status] || 2) || (a.rank || 999) - (b.rank || 999));
   const walletList = sorted.slice(0, 100).map(w => w.address); // 官方WS限100
   if (walletList.length === 0) return;
+  solWsSubscribedAddrs.clear();
+  for (const a of walletList) solWsSubscribedAddrs.add(a);
   
   const wsWalletCount = walletList.length;
   const pollOnly = [...solWalletSet].filter(a => !walletList.includes(a));
@@ -573,6 +578,8 @@ async function pollSolanaWallets() {
     await sleep(interval);
     
     for (const addr of solWalletSet) {
+      // WS已订阅的钱包不轮询（避免重复信号）
+      if (solOfficialWs && solWsSubscribedAddrs.has(addr)) continue;
       try {
         const lastSig = solLastSigs.get(addr);
         const params = lastSig ? [addr, { limit: 5, until: lastSig }] : [addr, { limit: 1 }];
@@ -594,7 +601,15 @@ async function pollSolanaWallets() {
   }
 }
 
+const _processedSigs = new Set(); // SOL签名去重（防WS重复推送）
 async function parseSolSignature(walletAddr, signature) {
+  if (_processedSigs.has(signature)) return;
+  _processedSigs.add(signature);
+  // 控制内存：超过5000条清理旧的一半
+  if (_processedSigs.size > 5000) {
+    const arr = [..._processedSigs];
+    for (let i = 0; i < 2500; i++) _processedSigs.delete(arr[i]);
+  }
   try {
     // 用QuickNode getTransaction解析swap（不依赖Helius）
     const txData = await rpcPost(getSolRpc(), 'getTransaction', [signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
@@ -637,6 +652,7 @@ async function parseSolSignature(walletAddr, signature) {
       }
     }
   } catch(e) {
+    if (e.message && !e.message.includes('429')) log('WARN', `parseSolSig异常 ${walletAddr.slice(0,8)}: ${e.message.slice(0,50)}`);
   }
 }
 
@@ -814,7 +830,7 @@ function setupEvmWebSocket(chainKey) {
         
         // 买入: to=我们的钱包（收到非native token）
         if (walletSet.has(toAddr) && !walletSet.has(fromAddr) && !nativeTokens.has(tokenAddr)) {
-          // 已买过的跳过
+          // 已买过的跳过 + 已持仓的跳过（handleSignal会处理但减少无谓调用）
           if (boughtTokens.has(tokenAddr)) return;
           const wallet = rankedWallets.find(w => w.address?.toLowerCase() === toAddr);
           const rank = wallet?.rank || 999;
@@ -832,7 +848,7 @@ function setupEvmWebSocket(chainKey) {
           }
         }
       }
-    } catch(e) {}
+    } catch(e) { if (e.message) log('WARN', `EVM WS消息处理异常(${chainKey}): ${e.message.slice(0,50)}`); }
   });
   
   ws.on("close", () => {
@@ -1360,10 +1376,17 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
   } // end retry loop
 }
 
+const _sellLocks = new Set(); // 卖出锁（防同一token并发卖出）
 async function executeSell(tokenAddress, reason, ratio = 1.0) {
   const pos = positions[tokenAddress];
   if (!pos) return;
-  
+  if (_sellLocks.has(tokenAddress)) { log('INFO', `⏳ ${pos.symbol} 卖出中，跳过重复触发`); return; }
+  _sellLocks.add(tokenAddress);
+  try {
+    await _executeSellInner(tokenAddress, pos, reason, ratio);
+  } finally { _sellLocks.delete(tokenAddress); }
+}
+async function _executeSellInner(tokenAddress, pos, reason, ratio) {
   log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 原因:${reason}`);
   
   const MAX_RETRIES = 3;
@@ -1397,7 +1420,7 @@ async function executeSell(tokenAddress, reason, ratio = 1.0) {
           log('WARN', `查余额失败，改全卖: ${e.message}`);
           partialAmount = undefined;
         }
-        result = partialAmount ? await trader.sell(pos.chain, tokenAddress, partialAmount) : await trader.sell(pos.chain, tokenAddress);
+        result = (partialAmount && partialAmount !== '0') ? await trader.sell(pos.chain, tokenAddress, partialAmount) : await trader.sell(pos.chain, tokenAddress);
       } else {
         result = await trader.sell(pos.chain, tokenAddress);
       }
@@ -1556,9 +1579,13 @@ async function managePositions() {
             const alreadySold = pos.soldRatio || 0;
             const toSell = ourSellRatio - alreadySold;
             if (toSell > 0.05) { // 至少卖5%才执行（避免频繁小额卖出）
+              const beforeSell = Object.keys(positions).length;
               await executeSell(tokenAddr, `跟卖${(ourSellRatio*100).toFixed(0)}%(${uniqueSellers}/${totalConfirm}SM卖出)`, toSell / (1 - alreadySold));
-              pos.soldRatio = ourSellRatio;
-              saveJSON(POSITIONS_FILE, positions);
+              // 只在卖出成功（positions仍存在=部分卖出）或已删除（全卖）时更新soldRatio
+              if (positions[tokenAddr]) {
+                pos.soldRatio = ourSellRatio;
+                saveJSON(POSITIONS_FILE, positions);
+              }
             }
           }
           continue;
@@ -1587,7 +1614,7 @@ async function managePositions() {
         }
         
         saveJSON(POSITIONS_FILE, positions);
-      } catch(e) {}
+      } catch(e) { if (e.message) log('WARN', `巡检异常 ${pos?.symbol || tokenAddr?.slice(0,8)}: ${e.message.slice(0,60)}`); }
       await sleep(500);
     }
     await sleep(10000); // 10秒检查一轮

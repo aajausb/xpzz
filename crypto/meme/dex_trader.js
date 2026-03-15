@@ -288,10 +288,9 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
 
 // ============ 统一接口 ============
 async function buy(chain, tokenAddress, amountNative) {
-  return _withRetry(() => {
-    if (chain === 'solana') return solanaBuy(tokenAddress, amountNative);
-    return evmBuy(chain, tokenAddress, amountNative);
-  }, `买入 ${chain} ${tokenAddress.slice(0, 8)}`);
+  // 不在这里重试——v8_engine有自己的重试层
+  if (chain === 'solana') return solanaBuy(tokenAddress, amountNative);
+  return evmBuy(chain, tokenAddress, amountNative);
 }
 
 async function sell(chain, tokenAddress, amountRaw) {
@@ -303,10 +302,9 @@ async function sell(chain, tokenAddress, amountRaw) {
     }
     console.log(`[dex_trader] 自动查余额: ${amountRaw}`);
   }
-  return _withRetry(() => {
-    if (chain === 'solana') return solanaSell(tokenAddress, amountRaw);
-    return evmSell(chain, tokenAddress, amountRaw);
-  }, `卖出 ${chain} ${tokenAddress.slice(0, 8)}`);
+  // 不在这里重试——v8_engine有自己的重试层
+  if (chain === 'solana') return solanaSell(tokenAddress, amountRaw);
+  return evmSell(chain, tokenAddress, amountRaw);
 }
 
 // ============ 辅助 ============

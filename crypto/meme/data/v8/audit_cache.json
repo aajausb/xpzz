@@ -412,5 +412,19 @@
     "sellTax": 0,
     "riskLevel": "HIGH",
     "reason": "HIGH风险"
+  },
+  "0xc0820faa1e8dd6dfad6884b1a1ef30e80c754444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK"
+  },
+  "0xf4d17be2ee2040d2e5734ef53b0bb0cf53e74444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK"
   }
 }
