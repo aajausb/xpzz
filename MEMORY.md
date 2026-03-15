@@ -237,3 +237,13 @@
   - 支持 Solana(CT_501) / BSC(56) / Base(8453)
   - 首次拉取：100个顶级钱包 + 160个种子币
 - **新session启动后不能只看文件记忆** — 关键状态（引擎是否在跑、有无持仓、余额）必须查实际API/systemctl验证，文件可能是过期的
+- **SOL买入需wSOL ATA**: OKX V6走wSOL路由，Custom:3012=ATA不存在，Custom:1=余额0
+- **dex_trader ensureWsolBalance**: 买入前自动wrap，失败跳过（meme币一般不需要wSOL）
+- **SOL交易双RPC**: 官方优先(快)，429切PublicNode(solana-rpc.publicnode.com)
+- **Helius清理(3/15)**: dex_trader+看板全删Helius，只剩引擎Parse API（解析SOL交易详情无替代品）
+- **余额查询失败≠0**: 429返回null不能当0处理
+- **三链交易最终速度**: SOL 3秒(含wrap) / BSC 0.7秒 / Base 1.4秒（从5-26秒优化）
+- **onchainos CLI彻底移除(3/15)**: 全部改直接HTTP调OKX V6 API，零CLI依赖
+- **OKX V5废弃**: 返回50050，V6用chainIndex/slippagePercent
+- **EVM approve max**: 一次approve MaxUint256，以后卖出不再重复approve
+- **EVM卖出异步确认**: sendTransaction后不等tx.wait()，后台确认打日志

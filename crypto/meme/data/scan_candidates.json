@@ -478,6 +478,33 @@
       "addedAt": "2026-03-15T05:15:37.639Z"
     },
     {
+      "symbol": "DOGE",
+      "mint": "DogesYEofkdNd6FqbqoBRPBBj3gZzTgnTL5gDK5qx4rG",
+      "fdv": 2767505,
+      "vol": 80323.99,
+      "ageD": 54,
+      "chain": "solana",
+      "addedAt": "2026-03-15T06:01:44.880Z"
+    },
+    {
+      "symbol": "DOGE",
+      "mint": "DogeP1Hzndj6KMyB2DggL6ghrVwpC4VvPAJAuNis9KWQ",
+      "fdv": 2070311,
+      "vol": 60173.99,
+      "ageD": 33,
+      "chain": "solana",
+      "addedAt": "2026-03-15T06:08:11.303Z"
+    },
+    {
+      "symbol": "MEME",
+      "mint": "BfKPaK3xpDBGbY2rJBj8SG7VGSnrDoMhu2cWSU1E2tJ8",
+      "fdv": 1873258,
+      "vol": 50397.23,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T06:24:23.307Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -811,6 +838,9 @@
     "0x26e6e2e7a9289b6485c53cd498de510d3a8c8ba3",
     "0xf27b8ef47842e6445e37804896f1bc5e29381b07",
     "AWGCDT2gd8JadbYbYyZy1iKxfWokPNgrEQoU24zUpump",
-    "6Heo4qHRvHc3qyYMaCLcELpHVGXfisC97dg6YKqThXwC"
+    "6Heo4qHRvHc3qyYMaCLcELpHVGXfisC97dg6YKqThXwC",
+    "DogesYEofkdNd6FqbqoBRPBBj3gZzTgnTL5gDK5qx4rG",
+    "DogeP1Hzndj6KMyB2DggL6ghrVwpC4VvPAJAuNis9KWQ",
+    "BfKPaK3xpDBGbY2rJBj8SG7VGSnrDoMhu2cWSU1E2tJ8"
   ]
 }

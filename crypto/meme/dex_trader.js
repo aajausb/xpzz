@@ -11,8 +11,9 @@ const fetch = require('node-fetch');
 const bs58 = require('bs58');
 
 // ============ 配置 ============
-// 交易专用RPC（用Helius key3，不跟引擎的61个WS订阅抢官方RPC）
-const SOL_RPC = 'https://mainnet.helius-rpc.com/?api-key=8b6e701b-070a-498d-8ee3-5df1261c3149';
+// SOL交易RPC：官方为主（快），PublicNode备用（不429）
+const SOL_RPC_PRIMARY = 'https://api.mainnet-beta.solana.com';
+const SOL_RPC_BACKUP = 'https://solana-rpc.publicnode.com';
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
 const BSC_PRIVATE_RPC = 'https://bsc.rpc.blxrbdn.com';
@@ -83,11 +84,20 @@ async function solanaSell(tokenAddress, amountRaw, slippageBps = 500) {
 async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500) {
   const w = getWallets();
   const kp = Keypair.fromSecretKey(w.solana.secretKey);
-  const conn = new Connection(SOL_RPC, { commitment: 'confirmed', disableRetryOnRateLimit: false });
+  // 双RPC：先试官方（快），429就用PublicNode（慢但稳）
+  let conn;
+  try {
+    conn = new Connection(SOL_RPC_PRIMARY, { commitment: 'confirmed' });
+    await conn.getLatestBlockhash('confirmed'); // 快速测试能不能用
+  } catch(e) {
+    console.log('[dex_trader] 官方RPC 429, 用PublicNode');
+    conn = new Connection(SOL_RPC_BACKUP, { commitment: 'confirmed' });
+  }
 
-  // 0. 确保wSOL ATA存在且有余额（OKX聚合器从wSOL ATA扣款）
+  // 0. 尝试确保wSOL有余额（某些路由需要），失败不阻塞（meme币一般不需要）
   if (fromToken === NATIVE.solana) {
-    await ensureWsolBalance(conn, kp, parseInt(amount));
+    try { await ensureWsolBalance(conn, kp, parseInt(amount)); }
+    catch(e) { console.log('[dex_trader] wSOL wrap跳过:', e.message?.slice(0,50)); }
   }
 
   // 1. OKX报价（直接HTTP，~100ms）
@@ -108,14 +118,14 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500)
     sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
   }
 
-  // 4. 确认
-  try {
-    const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash('confirmed');
-    await conn.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
-  } catch(e) {
-    const status = await conn.getSignatureStatus(sig);
-    if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
-    if (!status?.value) return { chain: 'solana', action, txHash: sig, success: false, note: '超时未确认' };
+  // 4. HTTP轮询确认（不用WS，PublicNode WS不稳定）
+  for (let i = 0; i < 15; i++) {
+    await sleep(800);
+    try {
+      const status = await conn.getSignatureStatus(sig);
+      if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
+      if (status?.value?.confirmationStatus === 'confirmed' || status?.value?.confirmationStatus === 'finalized') break;
+    } catch(e) { if (e.message?.includes('交易失败')) throw e; }
   }
 
   // 不再close wSOL ATA —— 保留它，避免下次买入时3012错误

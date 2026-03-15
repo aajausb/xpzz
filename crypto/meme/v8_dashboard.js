@@ -49,8 +49,7 @@ async function getBalances() {
     (async () => {
       const rpcs = [
         'https://api.mainnet-beta.solana.com',
-        'https://mainnet.helius-rpc.com/?api-key=8b6e701b-070a-498d-8ee3-5df1261c3149',
-        'https://mainnet.helius-rpc.com/?api-key=ec0e9521-1962-4e4d-8a2f-8b0c615ce270',
+        'https://solana-rpc.publicnode.com',
       ];
       for (const rpc of rpcs) {
         try {
