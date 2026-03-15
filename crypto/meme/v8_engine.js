@@ -5,7 +5,7 @@
  * 数据层: 币安PnL Rank → 验证(合约/空地址) → WR≥60%筛选 → 动态排名
  * 监控层: SOL WebSocket(毫秒) + BSC/Base轮询(5s)
  * 过滤层: 多钱包确认(≥2) + 合约审计 + 流动性检查
- * 交易层: OKX聚合器 + Jito加速 + 分阶段止损
+ * 交易层: OKX聚合器 + 私有RPC防夹 + 跟卖止损
  */
 
 const fs = require('fs');
@@ -246,7 +246,7 @@ async function verifyWallets(wallets) {
   for (const w of wallets) {
     try {
       if (w.chain === 'solana') {
-        const info = await rpcPost(SOL_PUBLIC_RPC, 'getAccountInfo', [w.address, { encoding: 'jsonParsed' }]);
+        const info = await rpcPost(getSolRpc(), 'getAccountInfo', [w.address, { encoding: 'jsonParsed' }]);
         const acct = info.result?.value;
         if (!acct) continue; // 账户不存在
         const bal = (acct.lamports || 0) / 1e9;
@@ -551,14 +551,13 @@ function setupOfficialSolWs() {
 
 // 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
 async function pollSolanaWallets() {
-  const interval = solOfficialWs ? 30000 : 10000; // WS连上了降频
-  log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包 (${interval/1000}s)`);
+  log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包`);
   
   // 初始化: 记录每个钱包当前最新签名（失败重试3次，限速友好）
   for (const addr of solWalletSet) {
     for (let retry = 0; retry < 3; retry++) {
       try {
-        const d = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', [addr, { limit: 1 }]);
+        const d = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [addr, { limit: 1 }]);
         const sigs = d.result || [];
         if (sigs.length > 0) solLastSigs.set(addr, sigs[0].signature);
         break;
@@ -569,13 +568,14 @@ async function pollSolanaWallets() {
   log('INFO', `🔌 [SOL] 初始化完成, ${solLastSigs.size}/${solWalletSet.size} 钱包有历史签名`);
   
   while (true) {
+    const interval = solOfficialWs ? 30000 : 10000; // WS连上降频，断了提频
     await sleep(interval);
     
     for (const addr of solWalletSet) {
       try {
         const lastSig = solLastSigs.get(addr);
         const params = lastSig ? [addr, { limit: 5, until: lastSig }] : [addr, { limit: 1 }];
-        const d = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', params);
+        const d = await rpcPost(getSolRpc(), 'getSignaturesForAddress', params);
         const sigs = d.result || [];
         
         if (sigs.length === 0) continue;
@@ -596,7 +596,7 @@ async function pollSolanaWallets() {
 async function parseSolSignature(walletAddr, signature) {
   try {
     // 用QuickNode getTransaction解析swap（不依赖Helius）
-    const txData = await rpcPost(SOL_PUBLIC_RPC, 'getTransaction', [signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
+    const txData = await rpcPost(getSolRpc(), 'getTransaction', [signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
     const meta = txData.result?.meta;
     if (!meta || meta.err) return;
     
@@ -877,7 +877,8 @@ async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
             const pos = positions[tokenAddr];
             if (pos && pos.confirmWallets && !pos.confirmWallets.includes(to)) {
               pos.confirmWallets.push(to);
-              walletSet.add(to);
+              const ws = chainKey === 'bsc' ? bscWalletSet : baseWalletSet;
+              ws.add(to);
               saveJSON(POSITIONS_FILE, positions);
               log('INFO', `🔄 [${chain.name}] 转仓 ${walletAddr.slice(0,8)}→${to.slice(0,8)} 已加入跟踪`);
             }
@@ -891,7 +892,9 @@ async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
 
 // ============ PHASE 3: 过滤层 ============
 async function handleSignal(signal) {
-  const { chain, token, wallet, walletRank } = signal;
+  const { chain, wallet, walletRank } = signal;
+  // EVM地址统一小写，SOL保持原样（base58区分大小写）
+  const token = chain === 'solana' ? signal.token : signal.token.toLowerCase();
   
   // 去重: 已持仓或已买过的不重复
   if (positions[token]) return;
@@ -903,7 +906,7 @@ async function handleSignal(signal) {
   
   // 检查钱包状态: watch的只记录不算确认
   const walletInfo = rankedWallets.find(w => w.address === wallet || w.address?.toLowerCase() === wallet);
-  const walletStatus = walletInfo?.status || 'scout';
+  const walletStatus = walletInfo?.status || 'watcher';
   
   // 多钱包确认 — 每个钱包只算1次，5分钟窗口
   if (!pendingSignals[token]) pendingSignals[token] = [];
@@ -914,7 +917,7 @@ async function handleSignal(signal) {
     pendingSignals[token].push({ ...signal, walletStatus });
   }
   
-  // 清理过期信号（5分钟窗口）
+  // 清理过期信号（60分钟窗口）
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
   
@@ -955,13 +958,15 @@ async function handleSignal(signal) {
   
   if (!audit.safe) {
     log('WARN', `❌ ${symbol}(${chain}) 审计不通过: ${audit.reason}`);
+    delete pendingSignals[token]; // 审计不过清掉，不重复查
     return;
   }
   
   // 通过审计 → 买入
   const bestRank = Math.min(...activeSignals.map(s => s.walletRank || 999));
-  const confirmWallets = [...new Set(activeSignals.map(s => s.wallet))];
+  const confirmWallets = [...new Set([...activeSignals, ...watchSignals].map(s => s.wallet))];
   log('INFO', `✅ ${symbol}(${chain}) 通过审计! 猎手=${confirmCount} 哨兵=${watchCount} 最高#${bestRank}`);
+  delete pendingSignals[token]; // 清理确认池（买入后不再需要）
   await executeBuy(chain, token, symbol, confirmCount, confirmWallets);
 }
 
@@ -1080,8 +1085,13 @@ async function getNativePrice(chain) {
 // ============ PHASE 4: 交易层 ============
 let buyLock = false;
 async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = []) {
-  // 并发锁 — 防止同时买入超过上限
-  if (buyLock) { log('WARN', `⏳ 买入锁定中，跳过 ${symbol}`); return; }
+  // 并发锁 — 等前一个完成再执行（不丢信号）
+  const maxWait = 30000; // 最多等30秒
+  const start = Date.now();
+  while (buyLock && Date.now() - start < maxWait) {
+    await sleep(500);
+  }
+  if (buyLock) { log('WARN', `⏳ 买入锁等待超时，跳过 ${symbol}`); return; }
   buyLock = true;
   try {
     return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets);
@@ -1103,7 +1113,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     // 查链上余额
     let balUsd = 0;
     if (chain === 'solana') {
-      const balData = await rpcPost(SOL_PUBLIC_RPC, 'getBalance', [require('./dex_trader.js').getWalletAddress('solana')]);
+      const balData = await rpcPost(getSolRpc(), 'getBalance', [require('./dex_trader.js').getWalletAddress('solana')]);
       balUsd = (balData.result?.value || 0) / 1e9 * price;
     } else {
       const { ethers } = require('ethers');
@@ -1174,8 +1184,8 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         buyPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
         
         if (chain === 'solana') {
-          // 查token余额
-          const balData = await rpcPost(SOL_PUBLIC_RPC, 'getTokenAccountsByOwner', [
+          // 查token余额（用动态RPC避免429）
+          const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
             require('./dex_trader.js').getWalletAddress('solana'),
             { mint: tokenAddress },
             { encoding: 'jsonParsed' }
@@ -1228,7 +1238,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       log('INFO', `✅ 买入成功 ${symbol} | $${size} | 数量=${buyAmount} | 价格=$${buyPrice} | tx: ${result.txHash || '?'}`);
       
       // 通知
-      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | SM×${confirmCount}\n🔗 ${result.txHash || ''}`);
+      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}\n🔗 ${result.txHash || ''}`);
     } else {
       log('WARN', `❌ 买入失败 ${symbol}: ${result.error}`);
       if (attempt < MAX_RETRIES) {
@@ -1251,62 +1261,56 @@ async function executeSell(tokenAddress, reason, ratio = 1.0) {
   const pos = positions[tokenAddress];
   if (!pos) return;
   
-  // 查链上实际余额，不依赖记录的buyAmount（可能不准）
-  let sellAmount;
-  try {
-    if (pos.chain === 'solana') {
-      const balData = await rpcPost(SOL_PUBLIC_RPC, 'getTokenAccountsByOwner', [
-        require('./dex_trader.js').getWalletAddress('solana'),
-        { mint: tokenAddress },
-        { encoding: 'jsonParsed' }
-      ]);
-      let onChainBal = 0;
-      for (const a of (balData.result?.value || [])) {
-        onChainBal += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.amount || 0);
-      }
-      sellAmount = ratio >= 0.99 ? onChainBal.toString() : Math.floor(onChainBal * ratio).toString();
-    } else {
-      const { ethers } = require('ethers');
-      const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
-      const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
-      const bal = await erc20.balanceOf(require('./dex_trader.js').getWalletAddress('evm'));
-      sellAmount = ratio >= 0.99 ? bal.toString() : (bal * BigInt(Math.floor(ratio * 100)) / 100n).toString();
-    }
-    if (!sellAmount || sellAmount === '0') {
-      // 链上查不到余额可能是节点缓存延迟，用记录值兜底
-      log('WARN', `${pos.symbol} 链上余额为0，改用记录值 ${pos.buyAmount}`);
-      if (!pos.buyAmount || pos.buyAmount <= 0) {
-        log('WARN', `${pos.symbol} 记录值也为0，跳过卖出`);
-        delete positions[tokenAddress];
-        saveJSON(POSITIONS_FILE, positions);
-        return;
-      }
-      sellAmount = pos.chain === 'solana' 
-        ? Math.floor(pos.buyAmount * ratio).toString() 
-        : BigInt(Math.floor(pos.buyAmount * ratio)).toString();
-    }
-  } catch(e) {
-    log('WARN', `查余额失败 ${pos.symbol}: ${e.message}，用记录值`);
-    sellAmount = pos.chain === 'solana' ? Math.floor(pos.buyAmount * ratio).toString() : BigInt(Math.floor(pos.buyAmount * ratio)).toString();
-  }
-  log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 数量=${sellAmount} 原因:${reason}`);
+  log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 原因:${reason}`);
   
   const MAX_RETRIES = 3;
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
       const trader = require('./dex_trader.js');
       if (attempt > 1) log('INFO', `🔄 重试卖出 ${pos.symbol}(${pos.chain}) 第${attempt}次...`);
-      const result = await trader.sell(pos.chain, tokenAddress, sellAmount);
+      // ratio<1时部分卖出：查链上余额×ratio，ratio≥0.99全卖
+      let result;
+      if (ratio < 0.99) {
+        // 查链上余额算部分数量
+        let partialAmount;
+        try {
+          if (pos.chain === 'solana') {
+            const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+              trader.getWalletAddress('solana'), { mint: tokenAddress }, { encoding: 'jsonParsed' }
+            ]);
+            const onChainBal = (balData.result?.value || []).reduce((s, a) => 
+              s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.amount || 0), 0);
+            partialAmount = Math.floor(onChainBal * ratio).toString();
+          } else {
+            const { ethers } = require('ethers');
+            const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+            const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+            const bal = await erc20.balanceOf(trader.getWalletAddress('evm'));
+            partialAmount = (bal * BigInt(Math.floor(ratio * 1000)) / 1000n).toString();
+          }
+        } catch(e) {
+          log('WARN', `查余额失败，改全卖: ${e.message}`);
+          partialAmount = undefined;
+        }
+        result = partialAmount ? await trader.sell(pos.chain, tokenAddress, partialAmount) : await trader.sell(pos.chain, tokenAddress);
+      } else {
+        result = await trader.sell(pos.chain, tokenAddress);
+      }
       
       if (result.success) {
         if (ratio >= 0.99) {
           delete positions[tokenAddress];
-        } else {
-          pos.buyAmount -= sellAmount;
         }
         saveJSON(POSITIONS_FILE, positions);
-        log('INFO', `✅ 卖出成功 ${pos.symbol} | tx: ${result.txHash || '?'}`);
-        await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain})\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
+        const pctStr = ratio < 0.99 ? `${(ratio*100).toFixed(0)}%` : '全部';
+        log('INFO', `✅ 卖出成功 ${pos.symbol}(${pctStr}) | tx: ${result.txHash || '?'}`);
+        await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
+        break;
+      } else if (result.error === '余额为0') {
+        // 链上确认没余额了 → 清理持仓（可能已经被手动卖了）
+        log('WARN', `${pos.symbol} 链上余额为0，清理持仓`);
+        delete positions[tokenAddress];
+        saveJSON(POSITIONS_FILE, positions);
         break;
       } else if (attempt < MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
@@ -1325,20 +1329,13 @@ async function executeSell(tokenAddress, reason, ratio = 1.0) {
 // ============ 持仓管理 ============
 async function managePositions() {
   while (true) {
+    const posKeys = Object.keys(positions);
+    if (posKeys.length > 0) log('INFO', `🔍 巡检持仓 ${posKeys.length}个...`);
     for (const [tokenAddr, pos] of Object.entries(positions)) {
       try {
-        // 查当前价格
-        const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddr}`);
-        const pair = d?.pairs?.[0];
-        if (!pair) continue;
-        
-        const currentPrice = parseFloat(pair.priceUsd || 0);
-        if (!currentPrice || !pos.buyPrice) continue;
-        
-        const pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
         const holdTime = Date.now() - pos.buyTime;
         
-        // 跟卖：查SM钱包是否还持有该token（余额=0→验证是卖出还是转仓）
+        // 跟卖优先：查SM钱包是否还持有该token（不依赖价格）
         if (pos.confirmWallets) {
           try {
             for (const smWallet of pos.confirmWallets) {
@@ -1346,7 +1343,7 @@ async function managePositions() {
               
               if (pos.chain === 'solana') {
                 // SOL: 查token余额
-                const balData = await rpcPost(SOL_PUBLIC_RPC, 'getTokenAccountsByOwner', [
+                const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
                   smWallet, { mint: tokenAddr }, { encoding: 'jsonParsed' }
                 ]);
                 // 必须区分"查到余额=0"和"查询失败"
@@ -1392,6 +1389,7 @@ async function managePositions() {
                     if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
                     if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
                       sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                      saveSellTracker(tokenAddr);
                     }
                   }
                 }
@@ -1414,6 +1412,7 @@ async function managePositions() {
                   log('INFO', `🔴 小号 ${sub.slice(0,10)}... 已清仓 ${pos.symbol}(${pos.chain}) — SM${smWallet.slice(0,10)}的小号也卖了`);
                   if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
                   sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'sub-patrol' });
+                  saveSellTracker(tokenAddr);
                 }
               } else {
                 const { ethers } = require('ethers');
@@ -1424,6 +1423,7 @@ async function managePositions() {
                   log('INFO', `🔴 小号 ${sub.slice(0,10)}... 已清仓 ${pos.symbol}(${pos.chain}) — SM${smWallet.slice(0,10)}的小号也卖了`);
                   if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
                   sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'sub-patrol' });
+                  saveSellTracker(tokenAddr);
                 }
               }
             } catch {}
@@ -1432,10 +1432,10 @@ async function managePositions() {
         
         const sells = sellTracker[tokenAddr] || [];
         const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
-        const totalConfirm = pos.confirmCount || 2;
+        const totalConfirm = (pos.confirmWallets || []).length || pos.confirmCount || 2;
         const sellRatio = uniqueSellers / totalConfirm; // SM卖出比例
         
-        if (sellRatio >= CONFIG.sellThreshold && pos.buyAmount > 0) {
+        if (sellRatio >= CONFIG.sellThreshold) {
           // 我们的卖出比例 = SM卖出比例
           const ourSellRatio = Math.min(sellRatio, 1.0);
           if (ourSellRatio >= 0.99) {
@@ -1450,6 +1450,22 @@ async function managePositions() {
               saveJSON(POSITIONS_FILE, positions);
             }
           }
+          continue;
+        }
+        
+        // 查当前价格（止损用，查不到跳过止损但不影响跟卖）
+        let pnlPercent = 0;
+        try {
+          const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddr}`);
+          const currentPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
+          if (currentPrice > 0 && pos.buyPrice > 0) {
+            pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
+          }
+        } catch {}
+        
+        // 兜底止损（跌超30%直接卖，不等SM）
+        if (pos.buyPrice > 0 && pnlPercent <= CONFIG.stopLoss) {
+          await executeSell(tokenAddr, `止损 PnL=${pnlPercent.toFixed(1)}%<${CONFIG.stopLoss}%`);
           continue;
         }
         
@@ -1468,11 +1484,15 @@ async function managePositions() {
 }
 
 // ============ 通知 ============
-function notifyTelegram(msg) {
+async function notifyTelegram(msg) {
+  console.log('📢 ' + msg.replace(/\n/g, ' | '));
   try {
-    // 用引擎内部通知，不烧token
-    console.log('📢 ' + msg.replace(/\n/g, ' | '));
-  } catch(e) {}
+    const botToken = process.env.TELEGRAM_BOT_TOKEN || '8174376151:AAGwlYJTSgxAShUOZ3A40jsKd5NsS8Erpmo';
+    const chatId = process.env.TELEGRAM_CHAT_ID || '877233818';
+    await httpPost(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      chat_id: chatId, text: msg, parse_mode: 'HTML', disable_web_page_preview: true
+    });
+  } catch(e) { /* TG通知失败不影响交易 */ }
 }
 
 // ============ MAIN ============
@@ -1484,6 +1504,7 @@ async function main() {
   
   // 加载状态
   positions = loadJSON(POSITIONS_FILE, {});
+  restoreSellTracker(); // 从positions恢复SM卖出记录（重启不丢）
   // 黑名单已废弃，不再加载
   auditCache = loadJSON(AUDIT_CACHE_FILE, {});
   // 已买过的token（含当前持仓）
