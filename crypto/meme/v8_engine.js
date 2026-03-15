@@ -144,8 +144,25 @@ async function okxGet(fullUrl) {
 
 // ============ UTILS ============
 const log = (level, msg) => console.log(`${new Date().toLocaleTimeString('zh-CN')} [${level}] ${msg}`);
+
+// DexScreener价格缓存（10秒有效，减少API调用）
+const _dexCache = {};
+async function dexScreenerGet(tokenAddr) {
+  const cached = _dexCache[tokenAddr];
+  if (cached && Date.now() - cached.time < 10000) return cached.data;
+  const data = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddr}`).catch(() => null);
+  if (data) _dexCache[tokenAddr] = { data, time: Date.now() };
+  // 清理过期缓存（防内存泄漏）
+  const now = Date.now();
+  for (const k in _dexCache) { if (now - _dexCache[k].time > 60000) delete _dexCache[k]; }
+  return data;
+}
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const saveJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2));
+const saveJSON = (file, data) => {
+  const tmp = file + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
+  fs.renameSync(tmp, file); // rename是原子操作
+};
 const loadJSON = (file, def) => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return def; } };
 
 function httpGet(url, headers = {}, timeoutMs = 15000) {
@@ -160,12 +177,12 @@ function httpGet(url, headers = {}, timeoutMs = 15000) {
   });
 }
 
-function httpPost(url, body, headers = {}) {
+function httpPost(url, body, headers = {}, timeoutMs = 15000) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
     const postData = JSON.stringify(body);
     const req = https.request({
-      hostname: u.hostname, path: u.pathname + u.search, method: 'POST',
+      hostname: u.hostname, path: u.pathname + u.search, method: 'POST', timeout: timeoutMs,
       headers: { 'Content-Type': 'application/json', 'Accept-Encoding': 'identity',
                  'User-Agent': 'binance-web3/2.0 (Skill)', 'Content-Length': Buffer.byteLength(postData), ...headers }
     }, (res) => {
@@ -174,6 +191,7 @@ function httpPost(url, body, headers = {}) {
       res.on('end', () => { try { resolve(JSON.parse(data)); } catch(e) { reject(e); } });
     });
     req.on('error', reject);
+    req.on('timeout', () => { req.destroy(); reject(new Error('HTTP超时')); });
     req.write(postData);
     req.end();
   });
@@ -934,10 +952,10 @@ async function handleSignal(signal) {
   // EVM地址统一小写，SOL保持原样（base58区分大小写）
   const token = chain === 'solana' ? signal.token : signal.token.toLowerCase();
   
-  // 已持仓 → 不买但把新SM加入confirmWallets（跟卖追踪）
+  // 已持仓 → 不买但把新SM加入confirmWallets（跟卖追踪，上限20个防巡检爆炸）
   if (positions[token]) {
     const pos = positions[token];
-    if (pos.confirmWallets && !pos.confirmWallets.includes(wallet)) {
+    if (pos.confirmWallets && !pos.confirmWallets.includes(wallet) && pos.confirmWallets.length < 20) {
       pos.confirmWallets.push(wallet);
       saveJSON(POSITIONS_FILE, positions);
       log('INFO', `📎 ${pos.symbol}(${chain}) 新增SM跟踪: ${wallet.slice(0,10)} (共${pos.confirmWallets.length}个)`);
@@ -966,6 +984,8 @@ async function handleSignal(signal) {
   // 清理过期信号（60分钟窗口）
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
+  // 过期后清空的key直接删除（防内存泄漏）
+  if (pendingSignals[token].length === 0) { delete pendingSignals[token]; return; }
   
   // 三级计数: 猎手=确认, 哨兵=佐证, 观察=只记录不算
   const activeSignals = pendingSignals[token].filter(s => s.walletStatus === "hunter");
@@ -994,7 +1014,7 @@ async function handleSignal(signal) {
   const realConfirmWallets = [];
   let dexData = null;
   try {
-    dexData = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`).catch(() => null);
+    dexData = await dexScreenerGet(token);
     const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
     if (price > 0) {
       for (const sig of [...activeSignals, ...watchSignals]) {
@@ -1067,8 +1087,13 @@ async function handleSignal(signal) {
 }
 
 async function auditToken(chain, tokenAddress) {
-  // 检查缓存
-  if (auditCache[tokenAddress]) return auditCache[tokenAddress];
+  // 检查缓存（safe结果24小时过期，unsafe永久缓存）
+  const cached = auditCache[tokenAddress];
+  if (cached) {
+    if (!cached.safe) return cached; // unsafe永久缓存
+    if (cached._time && Date.now() - cached._time < 24 * 3600 * 1000) return cached; // safe 24h有效
+    // 过期了，重新审计
+  }
   
   // SOL暂无审计API，直接通过（靠确认门槛过滤）
   if (chain === 'solana') {
@@ -1086,7 +1111,7 @@ async function auditToken(chain, tokenAddress) {
     if (b.sellTax > 10) reasons.push(`卖出税${b.sellTax}%`);
     if (b.riskLevel === 'HIGH') reasons.push('HIGH风险');
     
-    const result = { safe, isHoneypot: b.isHoneypot, sellTax: b.sellTax, riskLevel: b.riskLevel, reason: safe ? 'OK' : reasons.join('+') };
+    const result = { safe, isHoneypot: b.isHoneypot, sellTax: b.sellTax, riskLevel: b.riskLevel, reason: safe ? 'OK' : reasons.join('+'), _time: Date.now() };
     auditCache[tokenAddress] = result;
     saveJSON(AUDIT_CACHE_FILE, auditCache);
     return result;
@@ -1137,7 +1162,7 @@ async function _unused_checkLiquidity(chain, tokenAddress) {
     
     // 补充DexScreener检查市值+创建时间（有就查，没有不拦）
     try {
-      const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`);
+      const d = await dexScreenerGet(tokenAddress);
       const pair = d?.pairs?.[0];
       const mc = parseFloat(pair?.marketCap || 0);
       if (mc > 0 && mc < CONFIG.minMarketCap) {
@@ -1298,7 +1323,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       let buyPrice = 0, buyAmount = 0;
       try {
         await sleep(3000); // 等链上确认
-        const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`);
+        const d = await dexScreenerGet(tokenAddress);
         buyPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
         
         if (chain === 'solana') {
@@ -1594,7 +1619,7 @@ async function managePositions() {
         // 查当前价格（止损用，查不到跳过止损但不影响跟卖）
         let pnlPercent = 0;
         try {
-          const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddr}`);
+          const d = await dexScreenerGet(tokenAddr);
           const currentPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
           if (currentPrice > 0 && pos.buyPrice > 0) {
             pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
