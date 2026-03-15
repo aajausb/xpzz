@@ -361,6 +361,42 @@
       "addedAt": "2026-03-15T02:47:01.426Z"
     },
     {
+      "symbol": "SMITH",
+      "mint": "AJK2g21GSwBSsZAGbCxoFkFjic6KCiEexBVe3nNToYaj",
+      "fdv": 5964089,
+      "vol": 51763.39,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T03:16:32.571Z"
+    },
+    {
+      "symbol": "FELIX",
+      "mint": "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07",
+      "fdv": 3807250.28389809,
+      "vol": 261930.508665343,
+      "ageD": 40,
+      "chain": "base",
+      "addedAt": "2026-03-15T03:17:01.042Z"
+    },
+    {
+      "symbol": "NOOK",
+      "mint": "0xb233bdffd437e60fa451f62c6c09d3804d285ba3",
+      "fdv": 2184667.535,
+      "vol": 132233.820056625,
+      "ageD": 18,
+      "chain": "base",
+      "addedAt": "2026-03-15T03:17:01.042Z"
+    },
+    {
+      "symbol": "FUN",
+      "mint": "0x16ee7ecac70d1028e7712751e2ee6ba808a7dd92",
+      "fdv": 38127859.4381613,
+      "vol": 191621.196509368,
+      "ageD": 59,
+      "chain": "base",
+      "addedAt": "2026-03-15T03:17:01.042Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -512,6 +548,24 @@
       "ageD": 1,
       "chain": "bsc",
       "addedAt": "2026-03-15T02:47:01.426Z"
+    },
+    {
+      "symbol": "MWXT",
+      "mint": "0x93918567cdd1bc845be955325a43419a7c56d66f",
+      "fdv": 90534518.4733208,
+      "vol": 275870.343988853,
+      "ageD": 83,
+      "chain": "base",
+      "addedAt": "2026-03-15T03:17:01.042Z"
+    },
+    {
+      "symbol": "LMTS",
+      "mint": "0x9eadbe35f3ee3bf3e28180070c429298a1b02f93",
+      "fdv": 148674872.09549,
+      "vol": 1613582.09868047,
+      "ageD": 2,
+      "chain": "base",
+      "addedAt": "2026-03-15T03:17:01.042Z"
     }
   ],
   "scanned": [
@@ -571,6 +625,12 @@
     "0x1e458f709b32bcf79e0e8f9d9afdd0ad18a81f6c",
     "0x63d3001f2420a09fcae5822723167e857adf04ab",
     "0xbe796a46c9e1d0e4666795777f5cfb1ba4ebc7f1",
-    "0xdbb5cf12408a3ac17d668037ce289f9ea75439d7"
+    "0xdbb5cf12408a3ac17d668037ce289f9ea75439d7",
+    "0x9eadbe35f3ee3bf3e28180070c429298a1b02f93",
+    "0x93918567cdd1bc845be955325a43419a7c56d66f",
+    "0x16ee7ecac70d1028e7712751e2ee6ba808a7dd92",
+    "AJK2g21GSwBSsZAGbCxoFkFjic6KCiEexBVe3nNToYaj",
+    "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07",
+    "0xb233bdffd437e60fa451f62c6c09d3804d285ba3"
   ]
 }

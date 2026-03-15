@@ -14,6 +14,12 @@ const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
 
+// 防夹RPC（私有交易，MEV bot看不到）
+const JITO_BUNDLE_API = 'https://mainnet.block-engine.jito.wtf/api/v1/bundles';
+const JITO_TIP_LAMPORTS = 1_000_000; // 0.001 SOL tip
+const BSC_PRIVATE_RPC = 'https://bsc.rpc.blxrbdn.com'; // bloXroute私有交易
+const BASE_PRIVATE_RPC = 'https://rpc.flashbots.net';    // Flashbots Protect
+
 const OKX_ENV = {
   ...process.env,
   OKX_API_KEY: '03f0b376-251c-4618-862e-ae92929e0416',
@@ -64,8 +70,15 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300)
   const tx = VersionedTransaction.deserialize(decoded);
   tx.sign([kp]);
   
-  // 3. 发送
-  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
+  // 3. 通过Jito Bundle发送（防夹+更快确认）
+  let sig;
+  try {
+    sig = await sendViaJito(conn, kp, tx);
+  } catch(e) {
+    // Jito失败回退到普通发送
+    console.log('[dex_trader] Jito失败,回退普通发送:', e.message);
+    sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
+  }
   
   // 4. 轮询确认
   for (let i = 0; i < 30; i++) {
@@ -78,7 +91,7 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300)
         if (toToken === NATIVE.solana) {
           try { await unwrapWsol(conn, kp); } catch(e) { /* unwrap失败不影响主流程 */ }
         }
-        return { chain: 'solana', action, txHash: sig, success: true };
+        return { chain: 'solana', action, txHash: sig, success: true, mev: 'jito' };
       }
     }
   }
@@ -100,20 +113,39 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   const txData = result.data[0].tx;
   if (!txData.data || txData.data.length < 10) throw new Error('swap tx data为空');
   
+  // 用私有RPC防夹（bloXroute for BSC, Flashbots for Base）
+  const privateRpc = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
   const provider = new ethers.JsonRpcProvider(rpc);
+  const privateProvider = new ethers.JsonRpcProvider(privateRpc);
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
+  const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
   
-  const tx = await wallet.sendTransaction({
-    to: txData.to,
-    data: txData.data,
-    value: txData.value || '0',
-    chainId,
-    gasLimit: BigInt(txData.gas || '500000')
-  });
+  let tx, receipt;
+  try {
+    // 通过私有RPC发送
+    tx = await privateWallet.sendTransaction({
+      to: txData.to,
+      data: txData.data,
+      value: txData.value || '0',
+      chainId,
+      gasLimit: BigInt(txData.gas || '500000')
+    });
+    receipt = await tx.wait();
+  } catch(e) {
+    // 私有RPC失败回退普通RPC
+    console.log(`[dex_trader] 私有RPC失败(${chain}),回退:`, e.message?.slice(0, 60));
+    tx = await wallet.sendTransaction({
+      to: txData.to,
+      data: txData.data,
+      value: txData.value || '0',
+      chainId,
+      gasLimit: BigInt(txData.gas || '500000')
+    });
+    receipt = await tx.wait();
+  }
   
-  const receipt = await tx.wait();
   if (receipt.status !== 1) throw new Error(`交易revert: ${tx.hash}`);
-  return { chain, action: 'buy', txHash: tx.hash, success: true, block: receipt.blockNumber };
+  return { chain, action: 'buy', txHash: tx.hash, success: true, block: receipt.blockNumber, mev: 'private' };
 }
 
 async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
@@ -154,17 +186,35 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   const txData = result.data[0].tx;
   if (!txData.data || txData.data.length < 10) throw new Error('swap tx data为空');
   
-  const tx = await wallet.sendTransaction({
-    to: txData.to,
-    data: txData.data,
-    value: txData.value || '0',
-    chainId,
-    gasLimit: BigInt(txData.gas || '500000')
-  });
+  // 用私有RPC防夹
+  const privateRpc = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
+  const privateProvider = new ethers.JsonRpcProvider(privateRpc);
+  const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
   
-  const receipt = await tx.wait();
+  let tx, receipt;
+  try {
+    tx = await privateWallet.sendTransaction({
+      to: txData.to,
+      data: txData.data,
+      value: txData.value || '0',
+      chainId,
+      gasLimit: BigInt(txData.gas || '500000')
+    });
+    receipt = await tx.wait();
+  } catch(e) {
+    console.log(`[dex_trader] 私有RPC卖出失败(${chain}),回退:`, e.message?.slice(0, 60));
+    tx = await wallet.sendTransaction({
+      to: txData.to,
+      data: txData.data,
+      value: txData.value || '0',
+      chainId,
+      gasLimit: BigInt(txData.gas || '500000')
+    });
+    receipt = await tx.wait();
+  }
+  
   if (receipt.status !== 1) throw new Error(`交易revert: ${tx.hash}`);
-  return { chain, action: 'sell', txHash: tx.hash, success: true, block: receipt.blockNumber };
+  return { chain, action: 'sell', txHash: tx.hash, success: true, block: receipt.blockNumber, mev: 'private' };
 }
 
 // ============ 统一接口 ============
@@ -183,6 +233,54 @@ async function sell(chain, tokenAddress, amountRaw) {
   } else {
     return evmSell(chain, tokenAddress, amountRaw);
   }
+}
+
+// ============ Jito Bundle (SOL防夹) ============
+
+async function sendViaJito(conn, kp, swapTx) {
+  const fetch = require('node-fetch');
+  const { SystemProgram, Transaction, ComputeBudgetProgram } = require('@solana/web3.js');
+  
+  // 获取tip account
+  const tipRes = await fetch(JITO_BUNDLE_API, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTipAccounts', params: [] })
+  });
+  const tipData = await tipRes.json();
+  const tipAccounts = tipData.result || [];
+  if (tipAccounts.length === 0) throw new Error('无Jito tip accounts');
+  const tipAccount = new PublicKey(tipAccounts[Math.floor(Math.random() * tipAccounts.length)]);
+  
+  // 创建tip交易
+  const tipTx = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: kp.publicKey,
+      toPubkey: tipAccount,
+      lamports: JITO_TIP_LAMPORTS,
+    })
+  );
+  tipTx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
+  tipTx.feePayer = kp.publicKey;
+  tipTx.sign(kp);
+  
+  // 提交bundle: [swap交易, tip交易]
+  const swapB64 = Buffer.from(swapTx.serialize()).toString('base64');
+  const tipB64 = Buffer.from(tipTx.serialize()).toString('base64');
+  
+  const bundleRes = await fetch(JITO_BUNDLE_API, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0', id: 1, method: 'sendBundle',
+      params: [[swapB64, tipB64]]
+    })
+  });
+  const bundleData = await bundleRes.json();
+  
+  if (bundleData.error) throw new Error(`Jito bundle错误: ${bundleData.error.message || JSON.stringify(bundleData.error)}`);
+  
+  // 返回swap交易的signature
+  const sig = bs58.encode(swapTx.signatures[0]);
+  return sig;
 }
 
 // ============ 辅助函数 ============

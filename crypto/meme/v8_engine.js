@@ -989,8 +989,11 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
     return;
   }
   
+  const MAX_RETRIES = 3;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
   try {
     const trader = require('./dex_trader.js');
+    if (attempt > 1) log('INFO', `🔄 重试买入 ${symbol}(${chain}) 第${attempt}次...`);
     const result = await trader.buy(chain, tokenAddress, nativeAmount);
     
     if (result.success) {
@@ -1040,16 +1043,39 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
       };
       boughtTokens.add(tokenAddress);
       saveJSON(POSITIONS_FILE, positions);
+      
+      // 把EVM token加入known_tokens（看板扫描用）
+      if (chain !== 'solana') {
+        const ktFile = path.join(DATA_DIR, 'known_tokens.json');
+        try {
+          const kt = JSON.parse(fs.readFileSync(ktFile, 'utf8'));
+          if (!kt.find(t => t.address.toLowerCase() === tokenAddress.toLowerCase())) {
+            kt.push({ chain: chain, address: tokenAddress, symbol });
+            fs.writeFileSync(ktFile, JSON.stringify(kt, null, 2));
+          }
+        } catch { fs.writeFileSync(ktFile, JSON.stringify([{ chain, address: tokenAddress, symbol }], null, 2)); }
+      }
+      
       log('INFO', `✅ 买入成功 ${symbol} | $${size} | 数量=${buyAmount} | 价格=$${buyPrice} | tx: ${result.txHash || '?'}`);
       
       // 通知
       notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | SM×${confirmCount}\n🔗 ${result.txHash || ''}`);
     } else {
       log('WARN', `❌ 买入失败 ${symbol}: ${result.error}`);
+      if (attempt < MAX_RETRIES) {
+        await new Promise(r => setTimeout(r, 2000 * attempt)); // 递增等待
+        continue;
+      }
     }
+    break; // 成功或最后一次失败，退出循环
   } catch(e) {
-    log('ERROR', `买入异常 ${symbol}: ${e.message}`);
+    log('ERROR', `买入异常 ${symbol}(第${attempt}次): ${e.message}`);
+    if (attempt < MAX_RETRIES) {
+      await new Promise(r => setTimeout(r, 2000 * attempt));
+      continue;
+    }
   }
+  } // end retry loop
 }
 
 async function executeSell(tokenAddress, reason, ratio = 1.0) {
@@ -1059,22 +1085,34 @@ async function executeSell(tokenAddress, reason, ratio = 1.0) {
   const sellAmount = pos.buyAmount * ratio;
   log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 原因:${reason}`);
   
-  try {
-    const trader = require('./dex_trader.js');
-    const result = await trader.sell(pos.chain, tokenAddress, sellAmount);
-    
-    if (result.success) {
-      if (ratio >= 0.99) {
-        delete positions[tokenAddress];
-      } else {
-        pos.buyAmount -= sellAmount;
+  const MAX_RETRIES = 3;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const trader = require('./dex_trader.js');
+      if (attempt > 1) log('INFO', `🔄 重试卖出 ${pos.symbol}(${pos.chain}) 第${attempt}次...`);
+      const result = await trader.sell(pos.chain, tokenAddress, sellAmount);
+      
+      if (result.success) {
+        if (ratio >= 0.99) {
+          delete positions[tokenAddress];
+        } else {
+          pos.buyAmount -= sellAmount;
+        }
+        saveJSON(POSITIONS_FILE, positions);
+        log('INFO', `✅ 卖出成功 ${pos.symbol} | tx: ${result.txHash || '?'}`);
+        notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain})\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
+        break;
+      } else if (attempt < MAX_RETRIES) {
+        await new Promise(r => setTimeout(r, 2000 * attempt));
+        continue;
       }
-      saveJSON(POSITIONS_FILE, positions);
-      log('INFO', `✅ 卖出成功 ${pos.symbol} | tx: ${result.txHash || '?'}`);
-      notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain})\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
+    } catch(e) {
+      log('ERROR', `卖出异常 ${pos.symbol}(第${attempt}次): ${e.message}`);
+      if (attempt < MAX_RETRIES) {
+        await new Promise(r => setTimeout(r, 2000 * attempt));
+        continue;
+      }
     }
-  } catch(e) {
-    log('ERROR', `卖出异常 ${pos.symbol}: ${e.message}`);
   }
 }
 

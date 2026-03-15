@@ -80,6 +80,77 @@ async function getBalances() {
   return balances;
 }
 
+// 扫描钱包所有token持仓（链上真实数据）
+async function scanWalletTokens() {
+  const tokens = [];
+  
+  // SOL: 查所有token账户
+  try {
+    const r = await fetch('https://api.mainnet-beta.solana.com', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner', params: [
+        SOL_WALLET, { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }, { encoding: 'jsonParsed' }
+      ]})
+    });
+    const d = await r.json();
+    for (const a of (d.result?.value || [])) {
+      const info = a.account?.data?.parsed?.info;
+      const amt = parseFloat(info?.tokenAmount?.uiAmount || 0);
+      const mint = info?.mint || '';
+      // 跳过已知的稳定币和wSOL
+      if (amt > 0 && !['So11111111111111111111111111111111111111112',
+        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'].includes(mint)) {
+        // 查symbol和价格
+        try {
+          const dr = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`);
+          const dd = await dr.json();
+          const pair = dd?.pairs?.[0];
+          tokens.push({
+            chain: 'SOL', symbol: pair?.baseToken?.symbol || mint.slice(0, 8),
+            amount: amt, price: parseFloat(pair?.priceUsd || 0),
+            value: amt * parseFloat(pair?.priceUsd || 0),
+          });
+        } catch { tokens.push({ chain: 'SOL', symbol: mint.slice(0, 8), amount: amt, price: 0, value: 0 }); }
+      }
+    }
+  } catch {}
+
+  // BSC/Base: 没有通用API扫全部token，查已知持仓
+  // 用v8 positions + 缓存的已知token地址
+  const knownTokensFile = path.join(DATA_DIR, 'known_tokens.json');
+  let knownTokens = [];
+  try { knownTokens = JSON.parse(fs.readFileSync(knownTokensFile, 'utf8')); } catch {}
+  
+  const { ethers } = require('ethers');
+  const bscProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
+  const baseProvider = new ethers.JsonRpcProvider('https://mainnet.base.org');
+
+  for (const kt of knownTokens) {
+    try {
+      const provider = kt.chain === 'bsc' ? bscProvider : baseProvider;
+      const erc20 = new ethers.Contract(kt.address, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+      const [bal, dec] = await Promise.all([erc20.balanceOf(EVM_WALLET), erc20.decimals()]);
+      const amt = parseFloat(ethers.formatUnits(bal, dec));
+      if (amt > 0) {
+        let price = 0;
+        try {
+          const dr = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${kt.address}`);
+          const dd = await dr.json();
+          price = parseFloat(dd?.pairs?.[0]?.priceUsd || 0);
+        } catch {}
+        tokens.push({
+          chain: kt.chain === 'bsc' ? 'BSC' : 'Base',
+          symbol: kt.symbol || kt.address.slice(0, 8),
+          amount: amt, price, value: amt * price,
+        });
+      }
+    } catch {}
+  }
+
+  return tokens;
+}
+
 async function buildDashboard() {
   const walletDb = loadJSON(path.join(DATA_DIR, 'wallet_db.json'), {});
   const positions = loadJSON(path.join(DATA_DIR, 'positions.json'), {});
@@ -102,7 +173,10 @@ async function buildDashboard() {
   const ethUsd = (bal.eth * bal.ethPrice).toFixed(2);
   const totalUsd = (parseFloat(solUsd) + parseFloat(bnbUsd) + parseFloat(ethUsd)).toFixed(2);
 
-  // 持仓详情
+  // 钱包实际token持仓（链上扫描）
+  const walletTokens = await scanWalletTokens();
+  
+  // 持仓详情（v8引擎管理的）
   const posEntries = Object.entries(positions);
   let posText = '';
   let totalPnl = 0;
@@ -143,12 +217,17 @@ async function buildDashboard() {
   let uptime = '';
   try {
     const { execSync } = require('child_process');
-    const out = execSync('systemctl show meme-v8 --property=ActiveEnterTimestamp').toString().trim();
-    const startTime = new Date(out.split('=')[1]);
-    const uptimeMs = Date.now() - startTime.getTime();
-    const hours = Math.floor(uptimeMs / 3600000);
-    const mins = Math.floor((uptimeMs % 3600000) / 60000);
-    uptime = `${hours}h${mins}m`;
+    const out = execSync('systemctl show meme-v8 --property=ActiveEnterTimestampMonotonic').toString().trim();
+    const mono = parseInt(out.split('=')[1]) || 0; // 微秒
+    const nowMono = parseInt(execSync('cat /proc/uptime').toString().split(' ')[0] * 1e6);
+    const uptimeMs = (nowMono - mono) / 1000;
+    if (uptimeMs > 0) {
+      const hours = Math.floor(uptimeMs / 3600000);
+      const mins = Math.floor((uptimeMs % 3600000) / 60000);
+      uptime = `${hours}h${mins}m`;
+    } else {
+      uptime = '刚启动';
+    }
   } catch { uptime = '?'; }
 
   const now2 = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
@@ -167,6 +246,8 @@ async function buildDashboard() {
    观察中: ${totalWatch}个 (SOL=${watch.solana} BSC=${watch.bsc} Base=${watch.base})
 
 📊 持仓 (${posEntries.length}/${10}) PnL: $${totalPnl.toFixed(2)}${posText}
+
+🎒 钱包持仓:${walletTokens.length > 0 ? walletTokens.map(t => `\n   ${t.chain} ${t.symbol}: ${t.amount.toFixed(2)} ($${t.value.toFixed(2)})`).join('') : ' 无'}
 
 📡 信号: 1h内${recentSigs}个 | 黑名单${blacklist.length}个
 ⏱ 运行: ${uptime} | 更新: ${now2}`;
@@ -192,6 +273,7 @@ async function sendOrEdit(text) {
       });
       const d = await r.json();
       if (d.ok) return state.messageId;
+      console.error('editMessage失败:', JSON.stringify(d));
       // 消息不存在了，发新的
     } catch {}
   }
@@ -247,10 +329,7 @@ refresh().then(id => {
   console.log('📊 看板已发送 messageId=' + id);
 });
 
-// 每60秒自动刷新
-setInterval(() => {
-  refresh().catch(e => console.error('看板刷新失败:', e.message));
-}, 60000);
+// 不自动刷新，只在点按钮或curl时刷新
 
 // 处理callback_query（刷新按钮）
 async function pollUpdates() {
