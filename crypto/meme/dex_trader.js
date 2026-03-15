@@ -104,19 +104,25 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500)
   // 3. 直接发送（OKX聚合器自带minReceiveAmount防夹，不需要Jito）
   const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
 
-  // 4. HTTP轮询确认（不用WS，PublicNode WS不稳定）
+  // 4. HTTP轮询确认
+  let confirmed = false;
   for (let i = 0; i < 15; i++) {
     await sleep(800);
     try {
       const status = await conn.getSignatureStatus(sig);
       if (status?.value?.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
-      if (status?.value?.confirmationStatus === 'confirmed' || status?.value?.confirmationStatus === 'finalized') break;
+      if (status?.value?.confirmationStatus === 'confirmed' || status?.value?.confirmationStatus === 'finalized') {
+        confirmed = true;
+        break;
+      }
     } catch(e) { if (e.message?.includes('交易失败')) throw e; }
   }
 
-  // 不再close wSOL ATA —— 保留它，避免下次买入时3012错误
-  // wSOL余额会自动在下次swap时使用
-  return { chain: 'solana', action, txHash: sig, success: true, mev: 'jito' };
+  if (!confirmed) {
+    return { chain: 'solana', action, txHash: sig, success: false, error: 'SOL确认超时12s' };
+  }
+
+  return { chain: 'solana', action, txHash: sig, success: true };
 }
 
 // ============ EVM (BSC/Base) ============
@@ -141,8 +147,8 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   const txData = quote.data[0].tx;
   if (!txData?.data || txData.data.length < 10) throw new Error('swap tx data为空');
 
-  const gasPrice = feeData.gasPrice ? feeData.gasPrice * 120n / 100n : undefined;
-  const gasLimit = BigInt(txData.gas || '500000') * 120n / 100n;
+  const gasPrice = feeData.gasPrice ? feeData.gasPrice * 150n / 100n : undefined;
+  const gasLimit = BigInt(txData.gas || '500000') * 150n / 100n;
   const txParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
   let tx;
@@ -152,12 +158,20 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
     tx = await wallet.sendTransaction(txParams);
   }
 
-  tx.wait().then(r => {
-    if (r.status !== 1) console.error(`[dex_trader] ❌ ${chain} 买入revert: ${tx.hash}`);
-    else console.log(`[dex_trader] ✅ ${chain} 买入确认 block=${r.blockNumber}`);
-  }).catch(e => console.error(`[dex_trader] ❌ ${chain} 确认失败: ${e.message?.slice(0,60)}`));
+  // 等确认（最多15秒），确认失败返回失败
+  try {
+    const receipt = await tx.wait(1);  // 等1个确认
+    if (receipt.status !== 1) {
+      console.error(`[dex_trader] ❌ ${chain} 买入revert: ${tx.hash}`);
+      return { chain, action: 'buy', txHash: tx.hash, success: false, error: 'revert' };
+    }
+    console.log(`[dex_trader] ✅ ${chain} 买入确认 block=${receipt.blockNumber}`);
+  } catch(e) {
+    console.error(`[dex_trader] ❌ ${chain} 确认失败: ${e.message?.slice(0,60)}`);
+    return { chain, action: 'buy', txHash: tx.hash, success: false, error: e.message?.slice(0,60) };
+  }
 
-  return { chain, action: 'buy', txHash: tx.hash, success: true, pending: true, mev: 'private' };
+  return { chain, action: 'buy', txHash: tx.hash, success: true, mev: 'private' };
 }
 
 async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
@@ -198,8 +212,8 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   const txData = quote.data[0].tx;
   if (!txData?.data || txData.data.length < 10) throw new Error('swap tx data为空');
 
-  const gasPrice = feeData.gasPrice ? feeData.gasPrice * 120n / 100n : undefined;
-  const gasLimit = BigInt(txData.gas || '500000') * 120n / 100n;
+  const gasPrice = feeData.gasPrice ? feeData.gasPrice * 150n / 100n : undefined;
+  const gasLimit = BigInt(txData.gas || '500000') * 150n / 100n;
   const sellTxParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
   let tx;
@@ -209,12 +223,20 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
     tx = await wallet.sendTransaction(sellTxParams);
   }
 
-  tx.wait().then(r => {
-    if (r.status !== 1) console.error(`[dex_trader] ❌ ${chain} 卖出revert: ${tx.hash}`);
-    else console.log(`[dex_trader] ✅ ${chain} 卖出确认 block=${r.blockNumber}`);
-  }).catch(e => console.error(`[dex_trader] ❌ ${chain} 卖出确认失败: ${e.message?.slice(0,60)}`));
+  // 等确认
+  try {
+    const receipt = await tx.wait(1);
+    if (receipt.status !== 1) {
+      console.error(`[dex_trader] ❌ ${chain} 卖出revert: ${tx.hash}`);
+      return { chain, action: 'sell', txHash: tx.hash, success: false, error: 'revert' };
+    }
+    console.log(`[dex_trader] ✅ ${chain} 卖出确认 block=${receipt.blockNumber}`);
+  } catch(e) {
+    console.error(`[dex_trader] ❌ ${chain} 卖出确认失败: ${e.message?.slice(0,60)}`);
+    return { chain, action: 'sell', txHash: tx.hash, success: false, error: e.message?.slice(0,60) };
+  }
 
-  return { chain, action: 'sell', txHash: tx.hash, success: true, pending: true, mev: 'private' };
+  return { chain, action: 'sell', txHash: tx.hash, success: true, mev: 'private' };
 }
 
 // ============ 统一接口 ============
@@ -247,33 +269,7 @@ async function sell(chain, tokenAddress, amountRaw) {
   }, `卖出 ${chain} ${tokenAddress.slice(0,8)}`);
 }
 
-// ============ Jito Bundle ============
-
-async function sendViaJito(conn, kp, swapTx) {
-  const { SystemProgram, Transaction } = require('@solana/web3.js');
-  const tipRes = await fetch(JITO_BUNDLE_API, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTipAccounts', params: [] })
-  });
-  const tipData = await tipRes.json();
-  const tipAccounts = tipData.result || [];
-  if (tipAccounts.length === 0) throw new Error('无Jito tip accounts');
-
-  const tipTx = new Transaction().add(
-    SystemProgram.transfer({ fromPubkey: kp.publicKey, toPubkey: new PublicKey(tipAccounts[Math.floor(Math.random() * tipAccounts.length)]), lamports: JITO_TIP_LAMPORTS })
-  );
-  tipTx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
-  tipTx.feePayer = kp.publicKey;
-  tipTx.sign(kp);
-
-  const bundleRes = await fetch(JITO_BUNDLE_API, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'sendBundle', params: [[Buffer.from(swapTx.serialize()).toString('base64'), Buffer.from(tipTx.serialize()).toString('base64')]] })
-  });
-  const bundleData = await bundleRes.json();
-  if (bundleData.error) throw new Error(`Jito: ${bundleData.error.message || JSON.stringify(bundleData.error)}`);
-  return bs58.encode(swapTx.signatures[0]);
-}
+// Jito Bundle已移除 — OKX聚合器自带minReceiveAmount防夹保护
 
 // ============ 辅助 ============
 

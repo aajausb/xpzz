@@ -960,14 +960,16 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     log('WARN', `持仓已满(${CONFIG.maxPositions}个)，跳过 ${symbol}`);
     return;
   }
-  // 确定仓位大小
+  // 确定仓位大小 — 按确认钱包中最高排名决定
   let size = CONFIG.positionSizeDefault;
-  // 找参与的最高排名钱包
-  const relatedWallets = rankedWallets.filter(w => w.chain === chain);
-  // TODO: 精确匹配哪个钱包买了这个token
-  // 暂用confirmCount加权
-  if (confirmCount >= 5) size = CONFIG.positionSizeTop10;
-  else if (confirmCount >= 3) size = CONFIG.positionSizeTop30;
+  const bestRank = confirmWallets.length > 0 
+    ? Math.min(...confirmWallets.map(addr => {
+        const w = rankedWallets.find(rw => rw.address === addr);
+        return w ? w.rank : 999;
+      }))
+    : 999;
+  if (bestRank <= 10) size = CONFIG.positionSizeTop10;
+  else if (bestRank <= 30) size = CONFIG.positionSizeTop30;
   
   // 美元转原生代币单位（用缓存价格，30秒刷新）
   let nativeAmount;
@@ -1081,8 +1083,38 @@ async function executeSell(tokenAddress, reason, ratio = 1.0) {
   const pos = positions[tokenAddress];
   if (!pos) return;
   
-  const sellAmount = pos.buyAmount * ratio;
-  log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 原因:${reason}`);
+  // 查链上实际余额，不依赖记录的buyAmount（可能不准）
+  let sellAmount;
+  try {
+    if (pos.chain === 'solana') {
+      const balData = await rpcPost(SOL_PUBLIC_RPC, 'getTokenAccountsByOwner', [
+        require('./dex_trader.js').getWalletAddress('solana'),
+        { mint: tokenAddress },
+        { encoding: 'jsonParsed' }
+      ]);
+      let onChainBal = 0;
+      for (const a of (balData.result?.value || [])) {
+        onChainBal += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.amount || 0);
+      }
+      sellAmount = ratio >= 0.99 ? onChainBal.toString() : Math.floor(onChainBal * ratio).toString();
+    } else {
+      const { ethers } = require('ethers');
+      const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+      const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+      const bal = await erc20.balanceOf(require('./dex_trader.js').getWalletAddress('evm'));
+      sellAmount = ratio >= 0.99 ? bal.toString() : (bal * BigInt(Math.floor(ratio * 100)) / 100n).toString();
+    }
+    if (!sellAmount || sellAmount === '0') {
+      log('WARN', `${pos.symbol} 链上余额为0，跳过卖出`);
+      delete positions[tokenAddress];
+      saveJSON(POSITIONS_FILE, positions);
+      return;
+    }
+  } catch(e) {
+    log('WARN', `查余额失败 ${pos.symbol}: ${e.message}，用记录值`);
+    sellAmount = pos.chain === 'solana' ? Math.floor(pos.buyAmount * ratio).toString() : BigInt(Math.floor(pos.buyAmount * ratio)).toString();
+  }
+  log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 数量=${sellAmount} 原因:${reason}`);
   
   const MAX_RETRIES = 3;
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
