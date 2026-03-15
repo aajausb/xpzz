@@ -568,6 +568,33 @@
       "addedAt": "2026-03-15T08:28:00.566Z"
     },
     {
+      "symbol": "RNBW",
+      "mint": "0xa53887f7e7c1bf5010b8627f1c1ba94fe7a5d6e0",
+      "fdv": 19044836.8601995,
+      "vol": 83429.7098046914,
+      "ageD": 38,
+      "chain": "base",
+      "addedAt": "2026-03-15T08:47:01.735Z"
+    },
+    {
+      "symbol": "cyb3rwr3n",
+      "mint": "0xc264769e038c52437fd14f897504a40d973c7d06",
+      "fdv": 5383215.836,
+      "vol": 2835329.10530286,
+      "ageD": 0,
+      "chain": "base",
+      "addedAt": "2026-03-15T08:50:00.639Z"
+    },
+    {
+      "symbol": "DRONE",
+      "mint": "DE1VxBy6YCQ4CTQAQTtN3dYgfH7sSyprQyekVFavJsX",
+      "fdv": 1398946,
+      "vol": 57289.91,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T08:55:02.060Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -863,6 +890,15 @@
       "ageD": 10,
       "chain": "solana",
       "addedAt": "2026-03-15T07:57:41.691Z"
+    },
+    {
+      "symbol": "Fight",
+      "mint": "6tcjXx4oAt5ZTMfi52Pnre2vvXUyTAc9iuaqiuwpRXiM",
+      "fdv": 466061824,
+      "vol": 50807.62,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T08:46:18.695Z"
     }
   ],
   "scanned": [
@@ -960,6 +996,10 @@
     "9yWFUKC2TNzZs6e1PzGg4kLx9yYrqiTfoT1qcsNNpump",
     "6iA73gWCKkLWKbVr8rgibV57MMRxzsaqS9cWpgKBpump",
     "3s6dYvFK3PbSN1A1A7nqVx1CqSNXbFwhfFD15xLdHHMd",
-    "0x0d6d9dc870c74439a0ea736ce73ef8e1d322c678"
+    "0x0d6d9dc870c74439a0ea736ce73ef8e1d322c678",
+    "6tcjXx4oAt5ZTMfi52Pnre2vvXUyTAc9iuaqiuwpRXiM",
+    "0xa53887f7e7c1bf5010b8627f1c1ba94fe7a5d6e0",
+    "0xc264769e038c52437fd14f897504a40d973c7d06",
+    "DE1VxBy6YCQ4CTQAQTtN3dYgfH7sSyprQyekVFavJsX"
   ]
 }
