@@ -369,6 +369,65 @@ const DEX_ROUTERS = {
   ]),
 };
 
+// 转仓追踪：SM转到小号 → 追踪小号
+// { tokenAddr: { smWallet: { subWallet, time } } }
+const transferTracker = {};
+
+// 检查EVM最后一笔Transfer是转给Router(卖出)还是普通地址(转仓)
+async function checkEvmTransferTarget(chain, tokenAddr, smWallet) {
+  try {
+    const provider = chain === 'bsc' ? bscProvider : baseProvider;
+    const routers = DEX_ROUTERS[chain] || new Set();
+    const latestBlock = await provider.getBlockNumber();
+    // 查最近5000块的Transfer事件（~4小时BSC）
+    const logs = await provider.getLogs({
+      address: tokenAddr,
+      topics: [TRANSFER_TOPIC, '0x000000000000000000000000' + smWallet.slice(2).toLowerCase()],
+      fromBlock: Math.max(0, latestBlock - 5000),
+      toBlock: latestBlock,
+    });
+    if (logs.length === 0) return { type: 'unknown' };
+    const last = logs[logs.length - 1];
+    const toAddr = '0x' + last.topics[2].slice(26).toLowerCase();
+    if (routers.has(toAddr)) return { type: 'sell', to: toAddr };
+    return { type: 'transfer', to: toAddr };
+  } catch { return { type: 'unknown' }; }
+}
+
+// 检查SOL最后一笔交易是swap(卖出)还是transfer(转仓)
+async function checkSolTransferTarget(tokenAddr, smWallet) {
+  try {
+    const sigs = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [smWallet, { limit: 3 }]);
+    if (!sigs?.result?.length) return { type: 'unknown' };
+    // 用Helius Parse API解析交易类型（判断是SWAP还是TRANSFER）
+    for (const sig of sigs.result) {
+      const tx = await rpcPost(getSolRpc(), 'getTransaction', [sig.signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
+      if (!tx?.result) continue;
+      const instructions = tx.result.transaction?.message?.instructions || [];
+      // Jupiter/Raydium等DEX program常见ID
+      const dexPrograms = new Set([
+        'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', // Jupiter v6
+        'JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB', // Jupiter v4
+        '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', // Raydium AMM
+        'CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', // Raydium CLMM
+        'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', // Orca Whirlpool
+      ]);
+      const isDex = instructions.some(i => dexPrograms.has(i.programId));
+      if (isDex) return { type: 'sell', sig: sig.signature };
+      // 查token transfer的目标地址
+      const innerInstructions = tx.result.meta?.innerInstructions || [];
+      for (const inner of innerInstructions) {
+        for (const inst of (inner.instructions || [])) {
+          if (inst.parsed?.type === 'transfer' && inst.parsed?.info?.source) {
+            return { type: 'transfer', to: inst.parsed.info.destination };
+          }
+        }
+      }
+    }
+    return { type: 'unknown' };
+  } catch { return { type: 'unknown' }; }
+}
+
 // ERC20 Transfer event topic
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
@@ -1254,14 +1313,27 @@ async function managePositions() {
                 const balData = await rpcPost(SOL_PUBLIC_RPC, 'getTokenAccountsByOwner', [
                   smWallet, { mint: tokenAddr }, { encoding: 'jsonParsed' }
                 ]);
-                const bal = balData.result?.value?.reduce((s, a) => 
-                  s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0) || 0;
+                // 必须区分"查到余额=0"和"查询失败"
+                if (!balData?.result || balData.error) continue; // RPC失败跳过，不误判
+                const accounts = balData.result.value || [];
+                const bal = accounts.reduce((s, a) => 
+                  s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
                 if (bal === 0) {
-                  // 余额=0 → 直接算卖出（不再只查签名，防漏）
-                  log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已清仓 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检发现`);
-                  if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
-                  if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
-                    sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                  // 余额=0 → 查最后一笔是卖出还是转仓
+                  const check = await checkSolTransferTarget(tokenAddr, smWallet);
+                  if (check.type === 'transfer' && check.to) {
+                    // 转到小号 → 追踪小号
+                    log('INFO', `🔄 SM ${smWallet.slice(0,10)}... 转仓到 ${check.to.slice(0,10)}(${pos.chain}) — 追踪小号`);
+                    if (!transferTracker[tokenAddr]) transferTracker[tokenAddr] = {};
+                    transferTracker[tokenAddr][smWallet] = { subWallet: check.to, time: Date.now() };
+                    // 不标记为卖出
+                  } else {
+                    // 卖出或未知 → 标记卖出
+                    log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检确认${check.type === 'sell' ? '(DEX)' : ''}`);
+                    if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                    if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
+                      sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                    }
                   }
                 }
               } else {
@@ -1269,18 +1341,56 @@ async function managePositions() {
                 const { ethers } = require('ethers');
                 const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
                 const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
-                const bal = await erc20.balanceOf(smWallet);
+                let bal;
+                try { bal = await erc20.balanceOf(smWallet); } catch { continue; } // RPC失败跳过
                 if (bal.toString() === '0') {
-                  // 余额=0 → 直接算卖出（不再等WS，防漏）
-                  log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已清仓 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检发现`);
-                  if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
-                  if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
-                    sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                  // 余额=0 → 查最后一笔是卖出还是转仓
+                  const check = await checkEvmTransferTarget(pos.chain, tokenAddr, smWallet);
+                  if (check.type === 'transfer' && check.to) {
+                    log('INFO', `🔄 SM ${smWallet.slice(0,10)}... 转仓到 ${check.to.slice(0,10)}(${pos.chain}) — 追踪小号`);
+                    if (!transferTracker[tokenAddr]) transferTracker[tokenAddr] = {};
+                    transferTracker[tokenAddr][smWallet] = { subWallet: check.to, time: Date.now() };
+                  } else {
+                    log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检确认${check.type === 'sell' ? '(DEX)' : ''}`);
+                    if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                    if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
+                      sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                    }
                   }
                 }
               }
             }
           } catch(e) {}
+        }
+        
+        // 追踪转仓小号：检查小号是否也清仓了（真正卖出）
+        if (transferTracker[tokenAddr]) {
+          for (const [smWallet, info] of Object.entries(transferTracker[tokenAddr])) {
+            if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) continue; // 已确认卖出
+            try {
+              const sub = info.subWallet;
+              if (pos.chain === 'solana') {
+                const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [sub, { mint: tokenAddr }, { encoding: 'jsonParsed' }]);
+                if (!balData?.result || balData.error) continue;
+                const bal = (balData.result.value || []).reduce((s, a) => s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
+                if (bal === 0) {
+                  log('INFO', `🔴 小号 ${sub.slice(0,10)}... 已清仓 ${pos.symbol}(${pos.chain}) — SM${smWallet.slice(0,10)}的小号也卖了`);
+                  if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                  sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'sub-patrol' });
+                }
+              } else {
+                const { ethers } = require('ethers');
+                const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
+                let bal; try { bal = await erc20.balanceOf(sub); } catch { continue; }
+                if (bal.toString() === '0') {
+                  log('INFO', `🔴 小号 ${sub.slice(0,10)}... 已清仓 ${pos.symbol}(${pos.chain}) — SM${smWallet.slice(0,10)}的小号也卖了`);
+                  if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                  sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'sub-patrol' });
+                }
+              }
+            } catch {}
+          }
         }
         
         const sells = sellTracker[tokenAddr] || [];

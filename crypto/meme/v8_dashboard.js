@@ -45,14 +45,11 @@ async function getBalances() {
   const balances = {};
   
   const [solBal, bnbBal, ethBal, solR, bnbR, ethR] = await Promise.all([
-    // SOL: QuickNode优先，fallback官方
-    fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
+    // SOL: publicnode（不依赖QuickNode/官方限额）
+    fetchWithRetry('https://solana-rpc.publicnode.com', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
-    }).then(r => (r?.result?.value != null) ? r : fetchWithRetry('https://api.mainnet-beta.solana.com', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
-    })),
+    }),
     fetch('https://bsc-dataseed1.binance.org', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })
@@ -85,14 +82,9 @@ async function scanWalletTokens() {
     const solRpcBody = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner', params: [
       SOL_WALLET, { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }, { encoding: 'jsonParsed' }
     ]});
-    let d = await fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
+    const d = await fetchWithRetry('https://solana-rpc.publicnode.com', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: solRpcBody
     });
-    if (!d?.result?.value) {
-      d = await fetchWithRetry('https://api.mainnet-beta.solana.com', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: solRpcBody
-      });
-    }
     for (const a of (d.result?.value || [])) {
       const info = a.account?.data?.parsed?.info;
       const amt = parseFloat(info?.tokenAmount?.uiAmount || 0);
