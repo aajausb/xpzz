@@ -188,13 +188,17 @@ async function buildDashboard() {
         curPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
       } catch {}
       
-      const pnl = pos.buyPrice > 0 ? ((curPrice - pos.buyPrice) / pos.buyPrice * 100) : 0;
-      const pnlUsd = pos.buyCost ? (pos.buyCost * pnl / 100) : 0;
+      const curVal = parseFloat((pos.buyAmount * curPrice).toFixed(2));
+      const cost = pos.buyCost || 0;
+      // PnL按成本回报率算（更准确）
+      const pnlUsd = curVal - cost;
+      const pnlPct = cost > 0 ? (pnlUsd / cost * 100) : 0;
       totalPnl += pnlUsd;
-      const emoji = pnl >= 0 ? '🟢' : '🔴';
+      const emoji = pnlPct >= 0 ? '🟢' : '🔴';
       const smSold = pos.soldRatio ? `已卖${(pos.soldRatio * 100).toFixed(0)}%` : '';
-      const curVal = (pos.buyAmount * curPrice).toFixed(2);
-      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) $${pos.buyCost || '?'}→$${curVal}\n   均价$${pos.buyPrice?.toFixed(8) || '?'} 现$${curPrice.toFixed(8)} ${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}% SM×${pos.confirmCount || '?'} ${smSold}`;
+      const smCount = (pos.confirmWallets || []).length || pos.confirmCount || '?';
+      const returnX = cost > 0 && curVal > cost ? ` ${(curVal/cost).toFixed(1)}x` : '';
+      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) $${cost}→$${curVal}${returnX}\n   PnL ${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}% ($${pnlUsd >= 0 ? '+' : ''}${pnlUsd.toFixed(2)}) SM×${smCount} ${smSold}`;
     }
   } else {
     posText = '\n   空仓，等信号...';
