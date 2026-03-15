@@ -20,10 +20,10 @@ const CONFIG = {
   // 数据刷新
   rankRefreshInterval: 4 * 3600 * 1000,  // 4小时刷新币安排名
   // 不限数量，验证通过的全部跟踪，排名只决定优先级
-  activeWinRateMin: 60,                     // 猎手: 胜率60-80%
-  activeWinRateMax: 80,                     // >80%或<60%进哨兵状态
-  evictMissCount: 3,                        // 连续3次(12h)没上榜
-  evictMinWinRate: 50,                      // 且胜率<50%才踢出库
+  hunterMinWinRate: 60,                     // 猎手: 胜率≥60%
+  scoutMinWinRate: 50,                      // 哨兵: 胜率50-60%
+  // <50% = 观察(watcher)，30天没涨回50%就踢
+  watcherEvictDays: 30,                     // 观察期30天
 
   // 监控
   evmPollInterval: 3000,                   // BSC/Base 3秒轮询（接近区块时间）
@@ -240,16 +240,9 @@ function mergeToWalletDb(verifiedWallets) {
     seenKeys.add(key);
     
     if (walletDb[key]) {
-      // 已有 → 更新数据，保留入库时间
-      walletDb[key].pnl = w.pnl;
-      walletDb[key].winRate = w.winRate;
-      walletDb[key].tokens = w.tokens;
-      walletDb[key].txCount = w.txCount;
-      walletDb[key].balance = w.balance;
-      walletDb[key].lastActivity = w.lastActivity;
-      walletDb[key].topTokens = w.topTokens;
+      // 已有 → 只更新lastSeen，不覆盖排名数据（入库后靠自己跟踪评判）
       walletDb[key].lastSeen = now;
-      walletDb[key].missCount = 0; // 出现了，重置未命中计数
+      walletDb[key].missCount = 0;
     } else {
       // 新钱包 → 入库
       walletDb[key] = {
@@ -261,17 +254,8 @@ function mergeToWalletDb(verifiedWallets) {
     }
   }
   
-  // 淘汰: 这次没出现的钱包，missCount+1
-  for (const [key, w] of Object.entries(walletDb)) {
-    if (!seenKeys.has(key)) {
-      w.missCount = (w.missCount || 0) + 1;
-      // 连续N次没上榜 + 胜率低于阈值 → 踢出
-      if (w.missCount >= CONFIG.evictMissCount && (w.winRate || 0) < CONFIG.evictMinWinRate) {
-        log('INFO', `🗑 踢出钱包 ${w.address.slice(0,8)}...(${w.chain}) miss=${w.missCount} WR=${w.winRate}%`);
-        delete walletDb[key];
-      }
-    }
-  }
+  // 不踢任何人，只通过rankWallets自动降级/升级（猎手↔哨兵）
+  // 胜率低的自动降为哨兵，回升后自动升猎手
   
   saveJSON(WALLET_DB_FILE, walletDb);
   const total = Object.keys(walletDb).length;
@@ -294,22 +278,47 @@ function rankWallets(wallets) {
                       : 1.0;
     w.score = wr * sampleWeight * pnlWeight * activityMul;
     
-    // 状态: 60-80%胜率=hunter(猎手), 其他=scout(哨兵)
+    // 三级状态: ≥60%=hunter(猎手), 50-60%=scout(哨兵), <50%=watcher(观察)
     const winRate = w.winRate || 0;
-    w.status = (winRate >= CONFIG.activeWinRateMin && winRate <= CONFIG.activeWinRateMax) ? 'hunter' : 'scout';
+    if (winRate >= CONFIG.hunterMinWinRate) {
+      w.status = 'hunter';
+    } else if (winRate >= CONFIG.scoutMinWinRate) {
+      w.status = 'scout';
+    } else {
+      w.status = 'watcher';
+      // 观察期：记录降级时间，超过30天没涨回50%就踢
+      const key = w.address + '_' + w.chain;
+      if (walletDb[key] && !walletDb[key].watcherSince) {
+        walletDb[key].watcherSince = Date.now();
+      }
+    }
   }
   wallets.sort((a, b) => b.score - a.score);
   wallets.forEach((w, i) => w.rank = i + 1);
   
-  // 持久化status/score/rank到walletDb
+  // 持久化status/score/rank到walletDb + 观察期淘汰
+  const evictKeys = [];
   for (const w of wallets) {
     const key = w.address + '_' + w.chain;
     if (walletDb[key]) {
       walletDb[key].status = w.status;
       walletDb[key].score = w.score;
       walletDb[key].rank = w.rank;
+      // 脱离观察状态 → 清除watcherSince
+      if (w.status !== 'watcher') {
+        delete walletDb[key].watcherSince;
+      }
+      // 观察超过30天 → 踢出
+      if (w.status === 'watcher' && walletDb[key].watcherSince) {
+        const days = (Date.now() - walletDb[key].watcherSince) / (24 * 3600 * 1000);
+        if (days >= CONFIG.watcherEvictDays) {
+          log('INFO', `🗑 踢出观察钱包 ${w.address.slice(0,10)}...(${w.chain}) WR=${w.winRate}% 观察${Math.round(days)}天`);
+          evictKeys.push(key);
+        }
+      }
     }
   }
+  for (const k of evictKeys) delete walletDb[k];
   saveJSON(WALLET_DB_FILE, walletDb);
   
   return wallets;
@@ -785,11 +794,13 @@ async function handleSignal(signal) {
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
   
-  // 计数 = 只算猎手钱包（哨兵的记录但不算确认数）
+  // 三级计数: 猎手=确认, 哨兵=佐证, 观察=只记录不算
   const activeSignals = pendingSignals[token].filter(s => s.walletStatus === "hunter");
   const watchSignals = pendingSignals[token].filter(s => s.walletStatus === 'scout');
+  const watcherSignals = pendingSignals[token].filter(s => s.walletStatus === 'watcher');
   const confirmCount = new Set(activeSignals.map(s => s.wallet)).size;
   const watchCount = new Set(watchSignals.map(s => s.wallet)).size;
+  const watcherCount = new Set(watcherSignals.map(s => s.wallet)).size;
   
   // 分级确认:
   // ≥2个猎手 → 买
@@ -798,7 +809,7 @@ async function handleSignal(signal) {
   const confirmed = confirmCount >= 2 || (confirmCount >= 1 && watchCount >= 2);
   if (!confirmed) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
-    const extra = watchCount > 0 ? ` (+${watchCount}哨兵)` : '';
+    const extra = (watchCount > 0 ? ` +${watchCount}哨兵` : '') + (watcherCount > 0 ? ` +${watcherCount}观察` : '');
     log('INFO', `⏳ ${token}(${chain}) 确认中 猎手=${confirmCount} 哨兵=${watchCount}${extra} 最高#${bestRank}`);
     return;
   }
@@ -1239,16 +1250,20 @@ async function main() {
     topTokens: (w.topTokens || []).map(t => t.tokenSymbol || t),
   })));
   
-  const activeByChain = { solana: 0, bsc: 0, base: 0 };
-  const watchByChain = { solana: 0, bsc: 0, base: 0 };
+  const hunterByChain = { solana: 0, bsc: 0, base: 0 };
+  const scoutByChain = { solana: 0, bsc: 0, base: 0 };
+  const watcherByChain = { solana: 0, bsc: 0, base: 0 };
   for (const w of rankedWallets) {
-    if (w.status === 'hunter') activeByChain[w.chain]++;
-    else watchByChain[w.chain]++;
+    if (w.status === 'hunter') hunterByChain[w.chain]++;
+    else if (w.status === 'scout') scoutByChain[w.chain]++;
+    else watcherByChain[w.chain]++;
   }
-  const totalActive = Object.values(activeByChain).reduce((a,b) => a+b, 0);
-  const totalWatch = Object.values(watchByChain).reduce((a,b) => a+b, 0);
-  console.log(`📋 🔥猎手(${totalActive}): SOL=${activeByChain.solana} BSC=${activeByChain.bsc} Base=${activeByChain.base}`);
-  console.log(`👀 👁️哨兵(${totalWatch}): SOL=${watchByChain.solana} BSC=${watchByChain.bsc} Base=${watchByChain.base}`);
+  const totalHunter = Object.values(hunterByChain).reduce((a,b) => a+b, 0);
+  const totalScout = Object.values(scoutByChain).reduce((a,b) => a+b, 0);
+  const totalWatcher = Object.values(watcherByChain).reduce((a,b) => a+b, 0);
+  console.log(`📋 🔥猎手(${totalHunter}): SOL=${hunterByChain.solana} BSC=${hunterByChain.bsc} Base=${hunterByChain.base}`);
+  console.log(`👁️哨兵(${totalScout}): SOL=${scoutByChain.solana} BSC=${scoutByChain.bsc} Base=${scoutByChain.base}`);
+  console.log(`👀观察(${totalWatcher}): SOL=${watcherByChain.solana} BSC=${watcherByChain.bsc} Base=${watcherByChain.base}`);
   console.log(`💼 持仓: ${Object.keys(positions).length}个`);
   
   // Phase 2: 启动监控
