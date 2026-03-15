@@ -193,7 +193,8 @@ async function buildDashboard() {
       totalPnl += pnlUsd;
       const emoji = pnl >= 0 ? '🟢' : '🔴';
       const smSold = pos.soldRatio ? `已卖${(pos.soldRatio * 100).toFixed(0)}%` : '';
-      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) $${pos.buyCost || '?'}\n   ${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}% ($${pnlUsd.toFixed(2)}) SM×${pos.confirmCount || '?'} ${smSold}`;
+      const curVal = (pos.buyAmount * curPrice).toFixed(2);
+      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) $${pos.buyCost || '?'}→$${curVal}\n   均价$${pos.buyPrice?.toFixed(8) || '?'} 现$${curPrice.toFixed(8)} ${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}% SM×${pos.confirmCount || '?'} ${smSold}`;
     }
   } else {
     posText = '\n   空仓，等信号...';

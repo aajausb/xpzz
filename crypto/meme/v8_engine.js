@@ -965,28 +965,54 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     log('WARN', `持仓已满(${CONFIG.maxPositions}个)，跳过 ${symbol}`);
     return;
   }
-  // 确定仓位大小 — 按确认钱包中最高排名决定
-  let size = CONFIG.positionSizeDefault;
-  const bestRank = confirmWallets.length > 0 
-    ? Math.min(...confirmWallets.map(addr => {
-        const w = rankedWallets.find(rw => rw.address === addr);
-        return w ? w.rank : 999;
-      }))
-    : 999;
-  if (bestRank <= 10) size = CONFIG.positionSizeTop10;
-  else if (bestRank <= 30) size = CONFIG.positionSizeTop30;
-  
-  // 美元转原生代币单位（用缓存价格，30秒刷新）
+  // 动态仓位 — 按余额百分比 + 猎手排名加成
   let nativeAmount;
   try {
     const price = await getNativePrice(chain);
     if (!price || isNaN(price) || price <= 0) throw new Error(`${chain}价格异常: ${price}`);
     
+    // 查链上余额
+    let balUsd = 0;
     if (chain === 'solana') {
-      nativeAmount = Math.floor((size / price) * 1e9); // lamports
+      const balData = await rpcPost(SOL_PUBLIC_RPC, 'getBalance', [require('./dex_trader.js').getWalletAddress('solana')]);
+      balUsd = (balData.result?.value || 0) / 1e9 * price;
+    } else {
+      const { ethers } = require('ethers');
+      const provider = chain === 'bsc' ? bscProvider : baseProvider;
+      const bal = await provider.getBalance(require('./dex_trader.js').getWalletAddress('evm'));
+      balUsd = parseFloat(ethers.formatEther(bal)) * price;
+    }
+    
+    // 留10%给gas
+    const available = balUsd * 0.9;
+    if (available < 5) {
+      log('WARN', `❌ ${chain}余额$${balUsd.toFixed(0)}太低，跳过 ${symbol}`);
+      await notifyTelegram(`⚠️ ${chain}余额不足$${balUsd.toFixed(0)}，错过 ${symbol} 请充值！`);
+      return;
+    }
+    
+    // 按猎手排名决定仓位百分比
+    const bestRank = confirmWallets.length > 0 
+      ? Math.min(...confirmWallets.map(addr => {
+          const w = rankedWallets.find(rw => rw.address === addr);
+          return w ? w.rank : 999;
+        }))
+      : 999;
+    
+    // TOP10: 20%余额, TOP30: 15%, 其他: 10%
+    let pct = 0.10;
+    if (bestRank <= 10) pct = 0.20;
+    else if (bestRank <= 30) pct = 0.15;
+    
+    let size = Math.floor(available * pct);
+    // 最低$5，最高$200
+    size = Math.max(5, Math.min(200, size));
+    
+    if (chain === 'solana') {
+      nativeAmount = Math.floor((size / price) * 1e9);
       log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(nativeAmount/1e9).toFixed(4)} SOL SM确认=${confirmCount}`);
     } else {
-      nativeAmount = BigInt(Math.floor((size / price) * 1e18)).toString(); // wei
+      nativeAmount = BigInt(Math.floor((size / price) * 1e18)).toString();
       const unit = chain === 'bsc' ? 'BNB' : 'ETH';
       log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(size/price).toFixed(6)} ${unit} SM确认=${confirmCount}`);
     }
