@@ -1,12 +1,15 @@
 {
   "lastChecks": {
-    "engine": 1742072760,
-    "memory": 1742072760,
-    "walletCheck": 1742072760
+    "engine": 1742074600,
+    "memory": 1742074600,
+    "walletCheck": 1742074600
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T05:06Z",
-    "verdict": "三链WS正常，SOL恢复活跃(52/h)，BSC正常(7/h)，Base凌晨静默正常，0错误"
+    "time": "2026-03-16T05:36Z",
+    "SOL": "活跃，05:30有信号，WS正常",
+    "BSC": "活跃，05:22有信号，WS正常",
+    "Base": "90min无信号，凌晨低频属正常",
+    "verdict": "三链正常，无断线无漏单"
   },
-  "notes": "05:06 引擎active, SOL信号恢复正常, 内存5249MB, 无异常"
+  "notes": "05:36 引擎active, 三链WS正常, 内存5239MB, SOL恢复正常频率(上次04:08稀疏已恢复)"
 }
