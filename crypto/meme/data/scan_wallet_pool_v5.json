@@ -1197,6 +1197,10 @@
         "0xeccbb861c0dda7efd964010085488b69317e4444": {
           "symbol": "龙虾",
           "netTokens": 403015
+        },
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 455900
         }
       },
       "profitByMint": {
@@ -1205,6 +1209,12 @@
           "buys": 8,
           "sells": 0,
           "netTokens": 403015
+        },
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 39,
+          "sells": 0,
+          "netTokens": 455900
         }
       },
       "chain": "bsc",
@@ -4057,6 +4067,10 @@
         "0xf30bf00edd0c22db54c9274b90d2a4c21fc09b07": {
           "symbol": "FELIX",
           "netTokens": 524498074
+        },
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 1904768
         }
       },
       "profitByMint": {
@@ -4071,6 +4085,12 @@
           "buys": 14,
           "sells": 0,
           "netTokens": 524498074
+        },
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 126,
+          "sells": 0,
+          "netTokens": 1904768
         }
       },
       "chain": "base",
@@ -4081,6 +4101,10 @@
         "0xb695559b26bb2c9703ef1935c37aeae9526bab07": {
           "symbol": "MOLT",
           "netTokens": 281168154
+        },
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 172729
         }
       },
       "profitByMint": {
@@ -4089,6 +4113,12 @@
           "buys": 49,
           "sells": 64,
           "netTokens": 281168154
+        },
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 79,
+          "sells": 10,
+          "netTokens": 172729
         }
       },
       "chain": "base",
@@ -7471,6 +7501,312 @@
       },
       "chain": "bsc",
       "firstSeen": "2026-03-15T03:39:32.095Z"
+    },
+    "0x7c5874a11b4dd3aba411fa8b942ae90d1d662705": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 2879945
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 23,
+          "sells": 0,
+          "netTokens": 2879945
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x22e484ecaaa970be6330a3214a71ff136c64fb78": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 2215560
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 2215560
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0xab782bc7d4a2b306825de5a7730034f8f63ee1bc": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 826391
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 32,
+          "sells": 28,
+          "netTokens": 826391
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x8d4a5b65892018171e41036e474f2a8cfe2af7be": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 603845
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 13,
+          "sells": 0,
+          "netTokens": 603845
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x039ac6fbcebf02b54259bc690e13540693d9eb8d": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 499847
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 119,
+          "sells": 0,
+          "netTokens": 499847
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x85fc606d2e4bdfaa5eba92f79dc5616e77b3afc9": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 469917
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 469917
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x1bc0e3b77972ba5090e0e2428543ce01df5ad2ec": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 396854
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 396854
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0xfec3a995588a4bc72bed6a47f6c3a61946030001": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 119050
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 24,
+          "sells": 0,
+          "netTokens": 119050
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0xf430e6efcaf0bc8e849713830e51c6b2fdb47317": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 58548
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 16,
+          "sells": 12,
+          "netTokens": 58548
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0xd0be1fded5d964619b92b3672c08c43305529be0": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 56327
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 7,
+          "sells": 0,
+          "netTokens": 56327
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x5dec283d9b7b0859a19a616b5f84ea02499638eb": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 40176
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 3,
+          "sells": 0,
+          "netTokens": 40176
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x1606e5a91d3d5ecdc74d5f48b89ec12093dfec7b": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 23500
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 23500
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x5602f3b76aa5a8a68e9cc9560e740a854222bcb4": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 21836
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 27,
+          "sells": 0,
+          "netTokens": 21836
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x8e92d28216ac924bbf01f2e7fe4fffd575ec3f17": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 19531
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 51,
+          "sells": 12,
+          "netTokens": 19531
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0xb604ed4dc6282ed0445ffcfa7f16bdea22d4bc28": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 11848
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 11848
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x0174e262dfba869695aa108f10fa78452cc5ed0d": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 9413
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 9413
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
+    },
+    "0x5069bff74f1c4a4f78887c36353abaa2e72f5f80": {
+      "holdings": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "netTokens": 8955
+        }
+      },
+      "profitByMint": {
+        "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b": {
+          "symbol": "UP",
+          "buys": 2,
+          "sells": 0,
+          "netTokens": 8955
+        }
+      },
+      "chain": "base",
+      "firstSeen": "2026-03-15T04:29:27.948Z"
     }
   },
   "analyzed": [

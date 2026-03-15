@@ -433,6 +433,33 @@
       "addedAt": "2026-03-15T03:36:00.923Z"
     },
     {
+      "symbol": "UP",
+      "mint": "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b",
+      "fdv": 10087085.9175898,
+      "vol": 815342.561768633,
+      "ageD": 32,
+      "chain": "base",
+      "addedAt": "2026-03-15T04:29:01.067Z"
+    },
+    {
+      "symbol": "OSO",
+      "mint": "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e",
+      "fdv": 1002803.134,
+      "vol": 68173.6238630032,
+      "ageD": 40,
+      "chain": "base",
+      "addedAt": "2026-03-15T04:29:01.067Z"
+    },
+    {
+      "symbol": "CLAWD",
+      "mint": "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07",
+      "fdv": 5029158.27005535,
+      "vol": 158583.925711625,
+      "ageD": 47,
+      "chain": "base",
+      "addedAt": "2026-03-15T04:29:01.067Z"
+    },
+    {
       "symbol": "BIRB",
       "mint": "G7vQWurMkMMm2dU3iZpXYFTHT9Biio4F4gZCrwFpKNwG",
       "fdv": 173345839,
@@ -721,6 +748,9 @@
     "0xf74548802f4c700315f019fde17178b392ee4444",
     "8Cnu4bSHjzXxgfwCRrS9BP5ac2EqnrosNz9DJRZnyz9Y",
     "6q3Vg1Kvxq7GVXsM9u5y3t6EWmbkhmSHSN9vQJR3pump",
-    "7oXNE1dbpHUp6dn1JF8pRgCtzfCy4P2FuBneWjZHpump"
+    "7oXNE1dbpHUp6dn1JF8pRgCtzfCy4P2FuBneWjZHpump",
+    "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b",
+    "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07",
+    "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e"
   ]
 }
