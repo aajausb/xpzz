@@ -124,6 +124,12 @@
 - 总计 **33 个 bug** found and fixed
 - **DEX-CEX策略已关闭**: $0收益后注释掉
 - **套利内存优化**: --expose-gc + 定时global.gc()，2.4GB→69MB
+- **v8跟单引擎(2026-03-15)**:
+  - 钱包库持久化: wallet_db.json，验证通过的永久入库，连续3次没上榜+胜率<50%才踢
+  - 三链全部WebSocket实时: BSC/Base用publicnode logs订阅，SOL用publicnode logsSubscribe
+  - 钱包只从币安PnL Rank获取，OKX没有类似API
+  - 备份: /opt/wallet_backup/v8/（cron每4小时）
+  - 旧v1-v7已清理到.trash/
 - **套利系统全部清退(2026-03-14 22:55)**: 跑步哥决定专注土狗
   - 四所API Key已删，systemd服务已停+禁用，引擎文件移到.trash
   - .env只剩 Helius RPC + 钱包地址注释，immutable锁定
