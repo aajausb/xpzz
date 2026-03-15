@@ -74,7 +74,8 @@ const CHAINS = {
   base:   { name: 'Base',   binanceId: '8453',   okxChainId: '8453' },
 };
 
-const SOL_PUBLIC_RPC = 'https://api.mainnet-beta.solana.com';
+// SOL轮询用PublicNode（官方RPC留给WS订阅，互不抢）
+const SOL_PUBLIC_RPC = 'https://solana-rpc.publicnode.com';
 // Helius Parse API（仅用于解析SOL swap交易详情，WS/RPC已全部用官方）
 const HELIUS_PARSE_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
 
@@ -275,6 +276,18 @@ function rankWallets(wallets) {
   }
   wallets.sort((a, b) => b.score - a.score);
   wallets.forEach((w, i) => w.rank = i + 1);
+  
+  // 持久化status/score/rank到walletDb
+  for (const w of wallets) {
+    const key = w.address + '_' + w.chain;
+    if (walletDb[key]) {
+      walletDb[key].status = w.status;
+      walletDb[key].score = w.score;
+      walletDb[key].rank = w.rank;
+    }
+  }
+  saveJSON(WALLET_DB_FILE, walletDb);
+  
   return wallets;
 }
 
@@ -323,12 +336,13 @@ function setupSolanaMonitor() {
   pollSolanaWallets();
 }
 
-// 官方RPC: 1个WS连接订阅所有SOL钱包
+// 官方RPC: WS只订阅猎手钱包（控制订阅数<50，哨兵靠轮询）
 function setupOfficialSolWs() {
-  const walletList = [...solWalletSet];
+  const solHunters = rankedWallets.filter(w => w.chain === 'solana' && w.status === 'hunter').map(w => w.address);
+  const walletList = solHunters.length > 0 ? solHunters : [...solWalletSet].slice(0, 40);
   if (walletList.length === 0) return;
   
-  log('INFO', `🔌 [SOL] 官方RPC logsSubscribe ${walletList.length} 个钱包 (单连接)`);
+  log('INFO', `🔌 [SOL] 官方RPC logsSubscribe ${walletList.length} 个猎手钱包 (单连接, 哨兵靠轮询)`);
   
   const ws = new WebSocket(SOL_WS_OFFICIAL);
   solOfficialWs = ws;
@@ -397,14 +411,17 @@ async function pollSolanaWallets() {
   const interval = solOfficialWs ? 30000 : 10000; // WS连上了降频
   log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包 (${interval/1000}s)`);
   
-  // 初始化: 记录每个钱包当前最新签名
+  // 初始化: 记录每个钱包当前最新签名（失败重试3次）
   for (const addr of solWalletSet) {
-    try {
-      const d = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', [addr, { limit: 1 }]);
-      const sigs = d.result || [];
-      if (sigs.length > 0) solLastSigs.set(addr, sigs[0].signature);
-    } catch(e) {}
-    await sleep(100);
+    for (let retry = 0; retry < 3; retry++) {
+      try {
+        const d = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', [addr, { limit: 1 }]);
+        const sigs = d.result || [];
+        if (sigs.length > 0) solLastSigs.set(addr, sigs[0].signature);
+        break;
+      } catch(e) { await sleep(500 * (retry + 1)); }
+    }
+    await sleep(150);
   }
   log('INFO', `🔌 [SOL] 初始化完成, ${solLastSigs.size}/${solWalletSet.size} 钱包有历史签名`);
   

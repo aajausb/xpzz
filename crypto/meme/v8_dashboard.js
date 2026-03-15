@@ -45,25 +45,10 @@ async function getBalances() {
   const balances = {};
   
   const [solBal, bnbBal, ethBal, solR, bnbR, ethR] = await Promise.all([
-    // SOL用多个RPC轮流查，避免被引擎WS抢占
-    (async () => {
-      const rpcs = [
-        'https://api.mainnet-beta.solana.com',
-        'https://solana-rpc.publicnode.com',
-      ];
-      for (const rpc of rpcs) {
-        try {
-          const r = await fetch(rpc, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
-          });
-          if (r.status === 429) continue;
-          const d = await r.json();
-          if (d.result) return d;
-        } catch(e) {}
-      }
-      return null;
-    })(),
+    fetchWithRetry('https://solana-rpc.publicnode.com', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
+    }),
     fetch('https://bsc-dataseed1.binance.org', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })

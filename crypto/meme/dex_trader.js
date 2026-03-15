@@ -12,8 +12,8 @@ const bs58 = require('bs58');
 
 // ============ 配置 ============
 // SOL交易RPC：官方为主（快），PublicNode备用（不429）
-const SOL_RPC_PRIMARY = 'https://api.mainnet-beta.solana.com';
-const SOL_RPC_BACKUP = 'https://solana-rpc.publicnode.com';
+// SOL交易专用RPC（跟引擎的官方RPC隔离，不互相抢）
+const SOL_RPC = 'https://solana-rpc.publicnode.com';
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
 const BSC_PRIVATE_RPC = 'https://bsc.rpc.blxrbdn.com';
@@ -84,15 +84,7 @@ async function solanaSell(tokenAddress, amountRaw, slippageBps = 500) {
 async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500) {
   const w = getWallets();
   const kp = Keypair.fromSecretKey(w.solana.secretKey);
-  // 双RPC：先试官方（快），429就用PublicNode（慢但稳）
-  let conn;
-  try {
-    conn = new Connection(SOL_RPC_PRIMARY, { commitment: 'confirmed' });
-    await conn.getLatestBlockhash('confirmed'); // 快速测试能不能用
-  } catch(e) {
-    console.log('[dex_trader] 官方RPC 429, 用PublicNode');
-    conn = new Connection(SOL_RPC_BACKUP, { commitment: 'confirmed' });
-  }
+  const conn = new Connection(SOL_RPC, { commitment: 'confirmed' });
 
   // 0. 尝试确保wSOL有余额（某些路由需要），失败不阻塞（meme币一般不需要）
   if (fromToken === NATIVE.solana) {
