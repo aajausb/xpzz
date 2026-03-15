@@ -69,7 +69,7 @@ let pendingSignals = {};   // tokenAddress -> [{wallet, chain, timestamp}]
 let boughtTokens = new Set(); // 已买过的token（防重复）
 const lowBalNotified = {};    // 低余额通知去重（chain → timestamp）
 // 稳定币/大币过滤（symbol级别，不走审计直接跳过）
-const SKIP_SYMBOLS = new Set(['USDT','USDC','BUSD','DAI','TUSD','FDUSD','USD1','WBNB','WETH','WBTC','BNB','ETH','BTC','SOL','WSOL']);
+const SKIP_SYMBOLS = new Set(['USDT','USDC','BUSD','DAI','TUSD','FDUSD','USD1','WBNB','WETH','WBTC','CBBTC','CBETH','STETH','RETH','BNB','ETH','BTC','SOL','WSOL']);
 let blacklist = {};  // tokenAddress -> { reason, timestamp, permanent }
 let auditCache = {};
 
@@ -80,8 +80,17 @@ const CHAINS = {
   base:   { name: 'Base',   binanceId: '8453',   okxChainId: '8453' },
 };
 
-// QuickNode专属RPC（HTTP+WS全用这一个，不再抢公共资源）
-const SOL_PUBLIC_RPC = 'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
+// SOL RPC: QuickNode优先，429/限额自动fallback官方
+const SOL_QN_RPC = 'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
+const SOL_OFFICIAL_RPC = 'https://api.mainnet-beta.solana.com';
+let solQnDown = false;
+let solQnDownUntil = 0;
+function getSolRpc() {
+  if (solQnDown && Date.now() < solQnDownUntil) return SOL_OFFICIAL_RPC;
+  if (solQnDown && Date.now() >= solQnDownUntil) { solQnDown = false; } // 1小时后重试QN
+  return SOL_QN_RPC;
+}
+const SOL_PUBLIC_RPC = SOL_QN_RPC; // 兼容旧引用
 // Helius Parse API（仅用于解析SOL swap交易详情，WS/RPC已全部用官方）
 const HELIUS_PARSE_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
 
@@ -152,8 +161,18 @@ function httpPost(url, body, headers = {}) {
   });
 }
 
-function rpcPost(url, method, params) {
-  return httpPost(url, { jsonrpc: '2.0', id: 1, method, params });
+async function rpcPost(url, method, params) {
+  // SOL RPC自动fallback
+  const actualUrl = (url === SOL_QN_RPC || url === SOL_PUBLIC_RPC) ? getSolRpc() : url;
+  const result = await httpPost(actualUrl, { jsonrpc: '2.0', id: 1, method, params });
+  if (result?.error?.code === -32003 && actualUrl === SOL_QN_RPC) {
+    // QuickNode限额到了，切换到官方1小时
+    solQnDown = true;
+    solQnDownUntil = Date.now() + 3600000;
+    log('WARN', '🔌 QuickNode日限额到了，切换Solana官方RPC 1小时');
+    return httpPost(SOL_OFFICIAL_RPC, { jsonrpc: '2.0', id: 1, method, params });
+  }
+  return result;
 }
 
 // ============ PHASE 1: 数据层 — 币安PnL Rank ============
@@ -1238,10 +1257,11 @@ async function managePositions() {
                 const bal = balData.result?.value?.reduce((s, a) => 
                   s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0) || 0;
                 if (bal === 0) {
-                  // 查最近签名看是不是swap
-                  const sigs = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', [smWallet, { limit: 3 }]);
-                  for (const sig of (sigs.result || [])) {
-                    if (!sig.err) await parseSolSignature(smWallet, sig.signature);
+                  // 余额=0 → 直接算卖出（不再只查签名，防漏）
+                  log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已清仓 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检发现`);
+                  if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                  if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
+                    sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
                   }
                 }
               } else {
@@ -1251,13 +1271,12 @@ async function managePositions() {
                 const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
                 const bal = await erc20.balanceOf(smWallet);
                 if (bal.toString() === '0') {
-                  // 余额=0，查最近一笔涉及该token的交易验证
-                  // 这里不直接算卖出，WebSocket的verifyEvmSell会处理
-                  // 但如果WS漏掉了，查一次该钱包最近交易
-                  const txCount = await provider.getTransactionCount(smWallet);
-                  // 无法直接查ERC20 transfer历史，依赖WS检测
-                  // 标记为"待确认离场"
-                  log('INFO', `⏳ SM ${smWallet.slice(0,8)}... 余额=0 ${tokenAddr.slice(0,8)}... 等WS确认是卖出还是转仓`);
+                  // 余额=0 → 直接算卖出（不再等WS，防漏）
+                  log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已清仓 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检发现`);
+                  if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                  if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
+                    sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                  }
                 }
               }
             }
