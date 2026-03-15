@@ -11,13 +11,50 @@ const fetch = require('node-fetch');
 const bs58 = require('bs58');
 
 // ============ 配置 ============
-// SOL交易RPC：官方为主（快），PublicNode备用（不429）
-// SOL交易专用RPC（跟引擎的官方RPC隔离，不互相抢）
-const SOL_RPC = 'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
+// SOL RPC: 三级fallback（QuickNode→官方→PublicNode）
+const SOL_RPCS = [
+  'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/',
+  'https://api.mainnet-beta.solana.com',
+  'https://solana-rpc.publicnode.com',
+];
+let solRpcIndex = 0;
+let solRpcDownUntil = [0, 0, 0];
+function getSolRpc() {
+  const now = Date.now();
+  // 从当前index开始找可用的
+  for (let i = 0; i < SOL_RPCS.length; i++) {
+    const idx = (solRpcIndex + i) % SOL_RPCS.length;
+    if (now >= solRpcDownUntil[idx]) return { url: SOL_RPCS[idx], idx };
+  }
+  // 全挂了用最后一个
+  return { url: SOL_RPCS[SOL_RPCS.length - 1], idx: SOL_RPCS.length - 1 };
+}
+function markSolRpcDown(idx) {
+  solRpcDownUntil[idx] = Date.now() + 600000; // 10分钟冷却
+  solRpcIndex = (idx + 1) % SOL_RPCS.length;
+  console.log(`[dex_trader] ⚠️ SOL RPC #${idx} 限速，切换到 #${solRpcIndex}`);
+}
+const SOL_RPC = SOL_RPCS[0]; // 兼容旧引用
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
 const BSC_PRIVATE_RPC = 'https://bsc.rpc.blxrbdn.com';
 const BASE_PRIVATE_RPC = 'https://mainnet.base.org';
+
+// Provider单例复用（不每次new）
+const _providers = {};
+function getProvider(chain) {
+  const rpc = chain === 'bsc' ? BSC_RPC : BASE_RPC;
+  if (!_providers[rpc]) _providers[rpc] = new ethers.JsonRpcProvider(rpc);
+  return _providers[rpc];
+}
+function getPrivateProvider(chain) {
+  const rpc = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
+  if (!_providers['p_'+rpc]) _providers['p_'+rpc] = new ethers.JsonRpcProvider(rpc);
+  return _providers['p_'+rpc];
+}
+
+// approve缓存：token→已approve过就跳过检查
+const _approvedTokens = new Set();
 
 const JITO_BUNDLE_API = 'https://mainnet.block-engine.jito.wtf/api/v1/bundles';
 const JITO_TIP_LAMPORTS = 1_000_000;
@@ -84,7 +121,8 @@ async function solanaSell(tokenAddress, amountRaw, slippageBps = 500) {
 async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500) {
   const w = getWallets();
   const kp = Keypair.fromSecretKey(w.solana.secretKey);
-  const conn = new Connection(SOL_RPC, { commitment: 'confirmed' });
+  const rpc = getSolRpc();
+  let conn = new Connection(rpc.url, { commitment: 'confirmed' });
 
   // 0. 尝试确保wSOL有余额（某些路由需要），失败不阻塞（meme币一般不需要）
   if (fromToken === NATIVE.solana) {
@@ -101,8 +139,18 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500)
   const tx = VersionedTransaction.deserialize(decoded);
   tx.sign([kp]);
 
-  // 3. 发送 + 确认
-  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
+  // 3. 发送 + 确认（429自动切RPC）
+  let sig;
+  try {
+    sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
+  } catch(e) {
+    if (e.message?.includes('429') || e.message?.includes('Too Many')) {
+      markSolRpcDown(rpc.idx);
+      const fallback = getSolRpc();
+      conn = new Connection(fallback.url, { commitment: 'confirmed' });
+      sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
+    } else throw e;
+  }
 
   // 4. 用confirmTransaction等确认（比手动轮询更可靠）
   const latestBh = await conn.getLatestBlockhash('confirmed');
@@ -140,12 +188,10 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 500)
 // ============ EVM (BSC/Base) ============
 
 async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
-  const rpc = chain === 'bsc' ? BSC_RPC : BASE_RPC;
   const chainId = chain === 'bsc' ? 56 : 8453;
   const w = getWallets();
-  const provider = new ethers.JsonRpcProvider(rpc);
-  const privateRpc = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
-  const privateProvider = new ethers.JsonRpcProvider(privateRpc);
+  const provider = getProvider(chain);
+  const privateProvider = getPrivateProvider(chain);
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
   const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
 
@@ -194,34 +240,35 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
 }
 
 async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
-  const rpc = chain === 'bsc' ? BSC_RPC : BASE_RPC;
   const chainId = chain === 'bsc' ? 56 : 8453;
   const w = getWallets();
-  const provider = new ethers.JsonRpcProvider(rpc);
+  const provider = getProvider(chain);
+  const privateProvider = getPrivateProvider(chain);
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
-  const privateRpc = chain === 'bsc' ? BSC_PRIVATE_RPC : BASE_PRIVATE_RPC;
-  const privateProvider = new ethers.JsonRpcProvider(privateRpc);
   const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
 
-  // 1. 检查链上allowance（自己查，OKX API不查）
-  const approveResult = await okxApprove(CHAIN_ID[chain], tokenAddress, amountRaw.toString());
-  const spender = approveResult.data?.[0]?.dexContractAddress;
-  
-  if (spender) {
-    const erc20 = new ethers.Contract(tokenAddress, [
-      'function allowance(address,address) view returns (uint256)',
-      'function approve(address,uint256) returns (bool)'
-    ], wallet);
-    const allowance = await erc20.allowance(wallet.address, spender);
-    if (allowance < BigInt(amountRaw)) {
-      console.log(`[dex_trader] ${chain} approve max to ${spender}...`);
-      const approveTx = await erc20.approve(spender, ethers.MaxUint256);
-      await approveTx.wait();
-      await new Promise(r => setTimeout(r, 1000)); // 等nonce同步，防止swap revert
+  // 1. approve检查（有缓存就跳过）
+  const approveKey = `${chain}_${tokenAddress}`;
+  if (!_approvedTokens.has(approveKey)) {
+    const approveResult = await okxApprove(CHAIN_ID[chain], tokenAddress, amountRaw.toString());
+    const spender = approveResult.data?.[0]?.dexContractAddress;
+    if (spender) {
+      const erc20 = new ethers.Contract(tokenAddress, [
+        'function allowance(address,address) view returns (uint256)',
+        'function approve(address,uint256) returns (bool)'
+      ], wallet);
+      const allowance = await erc20.allowance(wallet.address, spender);
+      if (allowance < BigInt(amountRaw)) {
+        console.log(`[dex_trader] ${chain} approve max to ${spender}...`);
+        const approveTx = await erc20.approve(spender, ethers.MaxUint256);
+        await approveTx.wait();
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      _approvedTokens.add(approveKey); // 缓存：后续卖出跳过approve
     }
   }
 
-  // 2. gas + swap报价并行（approve之后再报价，确保nonce对）
+  // 2. gas + swap报价并行
   const [feeData, quote] = await Promise.all([
     provider.getFeeData(),
     okxSwapQuote(CHAIN_ID[chain], tokenAddress, NATIVE[chain], amountRaw.toString(), w.evm.address, slippage)
@@ -288,6 +335,30 @@ async function buy(chain, tokenAddress, amountNative) {
 }
 
 async function sell(chain, tokenAddress, amountRaw) {
+  // 没传数量 → 查链上余额全卖
+  if (!amountRaw) {
+    if (chain === 'solana') {
+      const rpc = getSolRpc();
+      const { Connection, PublicKey } = require('@solana/web3.js');
+      const conn = new Connection(rpc.url, { commitment: 'confirmed' });
+      const w = getWallets();
+      const accts = await conn.getTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) }, 'confirmed');
+      let total = 0;
+      for (const a of accts.value) {
+        total += parseInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+      }
+      if (total === 0) return { chain, action: 'sell', success: false, error: '余额为0' };
+      amountRaw = total;
+      console.log(`[dex_trader] SOL自动查余额: ${amountRaw}`);
+    } else {
+      const provider = getProvider(chain);
+      const w = getWallets();
+      const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+      amountRaw = (await erc20.balanceOf(w.evm.address)).toString();
+      if (amountRaw === '0') return { chain, action: 'sell', success: false, error: '余额为0' };
+      console.log(`[dex_trader] 自动查余额: ${amountRaw}`);
+    }
+  }
   return withRetry(() => {
     if (chain === 'solana') return solanaSell(tokenAddress, amountRaw);
     return evmSell(chain, tokenAddress, amountRaw);

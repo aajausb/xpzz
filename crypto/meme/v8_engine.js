@@ -80,17 +80,32 @@ const CHAINS = {
   base:   { name: 'Base',   binanceId: '8453',   okxChainId: '8453' },
 };
 
-// SOL RPC: QuickNode优先，429/限额自动fallback官方
-const SOL_QN_RPC = 'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
-const SOL_OFFICIAL_RPC = 'https://api.mainnet-beta.solana.com';
-let solQnDown = false;
-let solQnDownUntil = 0;
+// SOL RPC: 三级fallback（QuickNode→官方→PublicNode）
+const SOL_RPCS = [
+  'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/',
+  'https://api.mainnet-beta.solana.com',
+  'https://solana-rpc.publicnode.com',
+];
+let solRpcIdx = 0;
+const solRpcCooldown = [0, 0, 0];
 function getSolRpc() {
-  if (solQnDown && Date.now() < solQnDownUntil) return SOL_OFFICIAL_RPC;
-  if (solQnDown && Date.now() >= solQnDownUntil) { solQnDown = false; } // 1小时后重试QN
-  return SOL_QN_RPC;
+  const now = Date.now();
+  for (let i = 0; i < SOL_RPCS.length; i++) {
+    const idx = (solRpcIdx + i) % SOL_RPCS.length;
+    if (now >= solRpcCooldown[idx]) return SOL_RPCS[idx];
+  }
+  return SOL_RPCS[SOL_RPCS.length - 1]; // 全挂用最后一个
 }
-const SOL_PUBLIC_RPC = SOL_QN_RPC; // 兼容旧引用
+function markSolRpcDown(url) {
+  const idx = SOL_RPCS.indexOf(url);
+  if (idx >= 0) {
+    solRpcCooldown[idx] = Date.now() + 600000; // 10分钟冷却
+    solRpcIdx = (idx + 1) % SOL_RPCS.length;
+    log('WARN', `🔌 SOL RPC #${idx} 限速，切换到 #${solRpcIdx}`);
+  }
+}
+const SOL_QN_RPC = SOL_RPCS[0];
+const SOL_PUBLIC_RPC = SOL_RPCS[0]; // 兼容旧引用
 // Helius Parse API（仅用于解析SOL swap交易详情，WS/RPC已全部用官方）
 const HELIUS_PARSE_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
 
@@ -163,14 +178,16 @@ function httpPost(url, body, headers = {}) {
 
 async function rpcPost(url, method, params) {
   // SOL RPC自动fallback
-  const actualUrl = (url === SOL_QN_RPC || url === SOL_PUBLIC_RPC) ? getSolRpc() : url;
+  const isSol = SOL_RPCS.includes(url);
+  const actualUrl = isSol ? getSolRpc() : url;
   const result = await httpPost(actualUrl, { jsonrpc: '2.0', id: 1, method, params });
-  if (result?.error?.code === -32003 && actualUrl === SOL_QN_RPC) {
-    // QuickNode限额到了，切换到官方1小时
-    solQnDown = true;
-    solQnDownUntil = Date.now() + 3600000;
-    log('WARN', '🔌 QuickNode日限额到了，切换Solana官方RPC 1小时');
-    return httpPost(SOL_OFFICIAL_RPC, { jsonrpc: '2.0', id: 1, method, params });
+  // 429或限额错误 → 标记down，换下一个重试
+  if (isSol && result?.error && (result.error.code === -32003 || result.error.code === 429 || result.error.message?.includes('429'))) {
+    markSolRpcDown(actualUrl);
+    const fallbackUrl = getSolRpc();
+    if (fallbackUrl !== actualUrl) {
+      return httpPost(fallbackUrl, { jsonrpc: '2.0', id: 1, method, params });
+    }
   }
   return result;
 }
@@ -1062,7 +1079,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     return;
   }
   // 动态仓位 — 按余额百分比 + 猎手排名加成
-  let nativeAmount;
+  let nativeAmount, size = 0;
   try {
     const price = await getNativePrice(chain);
     if (!price || isNaN(price) || price <= 0) throw new Error(`${chain}价格异常: ${price}`);
@@ -1105,7 +1122,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     if (bestRank <= 10) pct = 0.20;
     else if (bestRank <= 30) pct = 0.15;
     
-    let size = Math.floor(available * pct);
+    size = Math.floor(available * pct);
     // 最低$5，最高$200
     size = Math.max(5, Math.min(200, size));
     
@@ -1123,13 +1140,16 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
   }
   
   const MAX_RETRIES = 3;
+  let txSucceeded = false; // 交易已上链成功的标记
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
   try {
     const trader = require('./dex_trader.js');
+    if (txSucceeded) { log('INFO', `交易已成功但保存失败，不再重发交易`); break; }
     if (attempt > 1) log('INFO', `🔄 重试买入 ${symbol}(${chain}) 第${attempt}次...`);
     const result = await trader.buy(chain, tokenAddress, nativeAmount);
     
     if (result.success) {
+      txSucceeded = true; // 标记交易已上链，后续异常不再重发
       // 查实际获得的token数量和价格
       let buyPrice = 0, buyAmount = 0;
       try {
