@@ -9,8 +9,7 @@ const { getWallets } = require('../wallet_runtime');
 const { execSync } = require('child_process');
 const bs58 = require('bs58');
 
-const HELIUS_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
-const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+const SOL_RPC = 'https://api.mainnet-beta.solana.com';
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
 
@@ -18,13 +17,13 @@ const BASE_RPC = 'https://mainnet.base.org';
 const JITO_BUNDLE_API = 'https://mainnet.block-engine.jito.wtf/api/v1/bundles';
 const JITO_TIP_LAMPORTS = 1_000_000; // 0.001 SOL tip
 const BSC_PRIVATE_RPC = 'https://bsc.rpc.blxrbdn.com'; // bloXroute私有交易
-const BASE_PRIVATE_RPC = 'https://rpc.flashbots.net';    // Flashbots Protect
+const BASE_PRIVATE_RPC = 'https://mainnet.base.org';      // Base MEV不严重，用公共RPC
 
 const OKX_ENV = {
   ...process.env,
-  OKX_API_KEY: '03f0b376-251c-4618-862e-ae92929e0416',
-  OKX_SECRET_KEY: '652ECE8FF13210065B0851FFDA9191F7',
-  OKX_PASSPHRASE: 'onchainOS#666'
+  OKX_API_KEY: process.env.OKX_API_KEY || '',
+  OKX_SECRET_KEY: process.env.OKX_SECRET_KEY || '',
+  OKX_PASSPHRASE: process.env.OKX_PASSPHRASE || ''
 };
 
 const NATIVE = {
@@ -46,18 +45,19 @@ async function solanaSell(tokenAddress, amountRaw, slippageBps = 300) {
 async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300) {
   const w = getWallets();
   const kp = Keypair.fromSecretKey(w.solana.secretKey);
-  const conn = new Connection(HELIUS_RPC, 'confirmed');
+  // 交易用官方RPC
+  const TRADE_RPC = 'https://api.mainnet-beta.solana.com';
+  const conn = new Connection(TRADE_RPC, { commitment: 'confirmed', disableRetryOnRateLimit: false });
   const slippage = (slippageBps / 100).toString();
   
-  // 0. OKX合约要求wSOL ATA有余额，买入时自动wrap（用户无感知）
+  // 余额检查用key3（不跟引擎抢额度）
   if (fromToken === NATIVE.solana) {
-    const solBal = await conn.getBalance(kp.publicKey);
+    const checkConn = new Connection(SOL_RPC, 'confirmed');
+    const solBal = await checkConn.getBalance(kp.publicKey);
     const needed = parseInt(amount);
-    // 保留0.01 SOL作为gas（rent + priority fee）
     if (solBal < needed + 10000000) {
-      throw new Error(`SOL余额不足: 需要${needed/1e9} SOL, 当前${solBal/1e9} SOL (需预留0.01 SOL gas)`);
+      throw new Error(`SOL余额不足: 需要${needed/1e9} SOL, 当前${solBal/1e9} SOL`);
     }
-    await ensureWsolBalance(conn, kp, needed);
   }
   
   // 1. 获取swap交易数据
@@ -80,9 +80,9 @@ async function solanaSwap(fromToken, toToken, amount, action, slippageBps = 300)
     sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 5 });
   }
   
-  // 4. 轮询确认
-  for (let i = 0; i < 30; i++) {
-    await sleep(1500);
+  // 4. 轮询确认（1秒间隔，最多20秒）
+  for (let i = 0; i < 20; i++) {
+    await sleep(1000);
     const status = await conn.getSignatureStatus(sig);
     if (status?.value) {
       if (status.value.err) throw new Error(`交易失败: ${JSON.stringify(status.value.err)}`);
@@ -120,27 +120,27 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   const wallet = new ethers.Wallet(w.evm.privateKey, provider);
   const privateWallet = new ethers.Wallet(w.evm.privateKey, privateProvider);
   
+  // gas溢价20%防止因gas不足revert
+  const feeData = await provider.getFeeData();
+  const gasPrice = feeData.gasPrice ? feeData.gasPrice * 120n / 100n : undefined;
+  const gasLimit = BigInt(txData.gas || '500000') * 120n / 100n;
+  
+  const txParams = {
+    to: txData.to,
+    data: txData.data,
+    value: txData.value || '0',
+    chainId,
+    gasLimit,
+    ...(gasPrice ? { gasPrice } : {})
+  };
+  
   let tx, receipt;
   try {
-    // 通过私有RPC发送
-    tx = await privateWallet.sendTransaction({
-      to: txData.to,
-      data: txData.data,
-      value: txData.value || '0',
-      chainId,
-      gasLimit: BigInt(txData.gas || '500000')
-    });
+    tx = await privateWallet.sendTransaction(txParams);
     receipt = await tx.wait();
   } catch(e) {
-    // 私有RPC失败回退普通RPC
     console.log(`[dex_trader] 私有RPC失败(${chain}),回退:`, e.message?.slice(0, 60));
-    tx = await wallet.sendTransaction({
-      to: txData.to,
-      data: txData.data,
-      value: txData.value || '0',
-      chainId,
-      gasLimit: BigInt(txData.gas || '500000')
-    });
+    tx = await wallet.sendTransaction(txParams);
     receipt = await tx.wait();
   }
   
@@ -220,7 +220,7 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
 // ============ 统一接口 ============
 
 const MAX_RETRIES = 3;
-const RETRY_DELAYS = [2000, 4000, 6000]; // 递增等待
+const RETRY_DELAYS = [1000, 2000, 3000]; // 快速重试（每次重新报价）
 
 async function withRetry(fn, label) {
   for (let i = 0; i <= MAX_RETRIES; i++) {

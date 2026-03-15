@@ -52,7 +52,7 @@ const DATA_DIR = path.join(__dirname, 'data', 'v8');
 const WALLETS_FILE = path.join(DATA_DIR, 'smart_wallets.json');  // 排名快照（展示用）
 const WALLET_DB_FILE = path.join(DATA_DIR, 'wallet_db.json');   // 钱包库（持久化）
 const POSITIONS_FILE = path.join(DATA_DIR, 'positions.json');
-const SIGNALS_FILE = path.join(DATA_DIR, 'signals.json');
+// signals.json已废弃，信号记录在日志中
 const BLACKLIST_FILE = path.join(DATA_DIR, 'blacklist.json');
 const AUDIT_CACHE_FILE = path.join(DATA_DIR, 'audit_cache.json');
 
@@ -74,17 +74,15 @@ const CHAINS = {
   base:   { name: 'Base',   binanceId: '8453',   okxChainId: '8453' },
 };
 
-const HELIUS_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
-const HELIUS_KEY2 = '824cb27b-0794-45ed-aa1c-0798658d8d80';
-const HELIUS_WS = `wss://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
-const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
-const SOL_PUBLIC_RPC = 'https://api.mainnet-beta.solana.com'; // 验证用，省Helius额度
+const SOL_PUBLIC_RPC = 'https://api.mainnet-beta.solana.com';
+// Helius Parse API（仅用于解析SOL swap交易详情，WS/RPC已全部用官方）
+const HELIUS_PARSE_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
 
 const OKX_ENV = {
   ...process.env,
-  OKX_API_KEY: process.env.OKX_API_KEY || '03f0b376-251c-4618-862e-ae92929e0416',
-  OKX_SECRET_KEY: process.env.OKX_SECRET_KEY || '652ECE8FF13210065B0851FFDA9191F7',
-  OKX_PASSPHRASE: process.env.OKX_PASSPHRASE || 'onchainOS#666',
+  OKX_API_KEY: process.env.OKX_API_KEY || '',
+  OKX_SECRET_KEY: process.env.OKX_SECRET_KEY || '',
+  OKX_PASSPHRASE: process.env.OKX_PASSPHRASE || '',
 };
 
 const bscProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
@@ -183,7 +181,6 @@ async function verifyWallets(wallets) {
   for (const w of wallets) {
     try {
       if (w.chain === 'solana') {
-        // 用公共RPC验证，省Helius额度给WebSocket
         const info = await rpcPost(SOL_PUBLIC_RPC, 'getAccountInfo', [w.address, { encoding: 'jsonParsed' }]);
         const acct = info.result?.value;
         if (!acct) continue; // 账户不存在
@@ -306,12 +303,11 @@ const DEX_ROUTERS = {
 // ERC20 Transfer event topic
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
-// SOL: 双模式 — Helius WS优先，fallback到公共RPC轮询
 const solLastSigs = new Map(); // wallet -> lastSignature
 
 const SOL_WS_OFFICIAL = 'wss://api.mainnet-beta.solana.com';
 let solOfficialWs = null; // 单连接
-let solWsMode = 'none'; // 'helius' | 'official' | 'polling'
+let solWsMode = 'none'; // 'official' | 'polling'
 
 function setupSolanaMonitor() {
   const solWallets = rankedWallets.filter(w => w.chain === 'solana');
@@ -322,8 +318,6 @@ function setupSolanaMonitor() {
   // 优先: 官方RPC logsSubscribe（1个WS连接，全部钱包）
   setupOfficialSolWs();
   
-  // 备用: Helius transactionSubscribe
-  tryHeliusWs();
   
   // 兜底: 轮询（最慢但最稳）
   pollSolanaWallets();
@@ -396,61 +390,7 @@ function setupOfficialSolWs() {
 }
 
 
-let heliusWsConnected = false;
 
-function tryHeliusWs() {
-  solWs = new WebSocket(HELIUS_WS);
-  let heartbeatTimer = null;
-
-  solWs.on('open', () => {
-    solWs.send(JSON.stringify({
-      jsonrpc: '2.0', id: 1,
-      method: 'transactionSubscribe',
-      params: [{
-        accountInclude: [...solWalletSet],
-      }, {
-        commitment: 'confirmed',
-        encoding: 'jsonParsed',
-        transactionDetails: 'full',
-        maxSupportedTransactionVersion: 0,
-      }]
-    }));
-    heartbeatTimer = setInterval(() => {
-      if (solWs.readyState === WebSocket.OPEN) solWs.ping();
-    }, 30000);
-  });
-  
-  solWs.on('message', async (data) => {
-    try {
-      const msg = JSON.parse(data);
-      if (msg.id === 1 && msg.result) {
-        heliusWsConnected = true;
-        solWsRetries = 0;
-        solWsMode = 'helius';
-        log('INFO', `🔌 [SOL] Helius WS订阅成功! 切换到Helius实时模式`);
-        // 关闭官方RPC连接
-        if (solOfficialWs) { try { solOfficialWs.close(); } catch(e) {} solOfficialWs = null; }
-        return;
-      }
-      if (msg.params?.result) {
-        await parseSolanaSwap(msg.params.result);
-      }
-    } catch(e) {}
-  });
-  
-  solWs.on('close', () => {
-    heliusWsConnected = false;
-    if (heartbeatTimer) clearInterval(heartbeatTimer);
-    solWsRetries = (solWsRetries || 0) + 1;
-    const delay = Math.min(5000 * solWsRetries, 120000); // 最长2分钟
-    if (solWsRetries <= 3) {
-      log('WARN', `🔌 [SOL] Helius WS断开，${delay/1000}秒后重试 (第${solWsRetries}次)`);
-    } // 超过3次不刷日志，静默重试
-    setTimeout(tryHeliusWs, delay);
-  });
-  
-  solWs.on('error', () => {});
-}
 
 // 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
 async function pollSolanaWallets() {
@@ -468,9 +408,6 @@ async function pollSolanaWallets() {
   log('INFO', `🔌 [SOL] 初始化完成, ${solLastSigs.size}/${solWalletSet.size} 钱包有历史签名`);
   
   while (true) {
-    // Helius WS连上了就降频（30秒），否则10秒
-    // Helius或logsSubscribe连上后轮询降频，只作兜底
-    const interval = (heliusWsConnected || solWsMode === 'official') ? 60000 : 5000;
     await sleep(interval);
     
     for (const addr of solWalletSet) {
@@ -485,7 +422,6 @@ async function pollSolanaWallets() {
         // 更新最新签名
         solLastSigs.set(addr, sigs[0].signature);
         
-        // 有新交易! 用Helius解析（单次调用额度很小）
         for (const sig of sigs) {
           if (sig.err) continue; // 跳过失败交易
           await parseSolSignature(addr, sig.signature);
@@ -496,11 +432,9 @@ async function pollSolanaWallets() {
   }
 }
 
-// 解析单个签名 — 用Helius Parse Transaction API（免费，每天10万次够用）
 async function parseSolSignature(walletAddr, signature) {
   try {
-    // 先试Helius Enhanced API
-    const d = await httpPost(`https://api.helius.xyz/v0/transactions/?api-key=${HELIUS_KEY}`, [signature]);
+    const d = await httpPost(`https://api.helius.xyz/v0/transactions/?api-key=${HELIUS_PARSE_KEY}`, [signature]);
     if (!Array.isArray(d) || d.length === 0) return;
     
     const tx = d[0];
@@ -542,12 +476,12 @@ async function parseSolSignature(walletAddr, signature) {
       }
     }
   } catch(e) {
-    // Helius失败就跳过这笔，等下轮
   }
 }
 
 // 解析Solana swap交易 — 从tokenTransfers提取买入信号
 async function parseSolanaSwap(result) {
+  try {
   const tx = result.transaction;
   const meta = tx?.meta;
   if (!tx || !meta || meta.err) return; // 失败交易跳过
@@ -616,6 +550,7 @@ async function parseSolanaSwap(result) {
       }
     }
   }
+  } catch(e) { log('WARN', `parseSolanaSwap异常: ${e.message}`); }
 }
 
 // 跟踪聪明钱卖出 — 积累到阈值触发跟卖
@@ -899,7 +834,7 @@ async function checkLiquidity(chain, tokenAddress) {
     
     return { ok: ratio >= CONFIG.minLiqMcRatio, ratio: (ratio * 100).toFixed(1) + '%', reason: ratio < CONFIG.minLiqMcRatio ? `Liq/MC=${(ratio*100).toFixed(1)}%<5%` : 'OK' };
   } catch(e) {
-    return { ok: true, reason: 'check_failed_allow' };
+    return { ok: false, reason: 'check_failed_block' };
   }
 }
 
@@ -926,7 +861,22 @@ async function getNativePrice(chain) {
 }
 
 // ============ PHASE 4: 交易层 ============
+let buyLock = false;
 async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = []) {
+  // 并发锁 — 防止同时买入超过上限
+  if (buyLock) { log('WARN', `⏳ 买入锁定中，跳过 ${symbol}`); return; }
+  buyLock = true;
+  try {
+    return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets);
+  } finally { buyLock = false; }
+}
+
+async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets) {
+  // 二次检查持仓上限（防并发穿透）
+  if (Object.keys(positions).length >= CONFIG.maxPositions) {
+    log('WARN', `持仓已满(${CONFIG.maxPositions}个)，跳过 ${symbol}`);
+    return;
+  }
   // 确定仓位大小
   let size = CONFIG.positionSizeDefault;
   // 找参与的最高排名钱包
@@ -940,7 +890,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   let nativeAmount;
   try {
     const price = await getNativePrice(chain);
-    if (!price) throw new Error(`无法获取${chain}原生代币价格`);
+    if (!price || isNaN(price) || price <= 0) throw new Error(`${chain}价格异常: ${price}`);
     
     if (chain === 'solana') {
       nativeAmount = Math.floor((size / price) * 1e9); // lamports
@@ -1025,7 +975,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
       log('INFO', `✅ 买入成功 ${symbol} | $${size} | 数量=${buyAmount} | 价格=$${buyPrice} | tx: ${result.txHash || '?'}`);
       
       // 通知
-      notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | SM×${confirmCount}\n🔗 ${result.txHash || ''}`);
+      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | SM×${confirmCount}\n🔗 ${result.txHash || ''}`);
     } else {
       log('WARN', `❌ 买入失败 ${symbol}: ${result.error}`);
       if (attempt < MAX_RETRIES) {
@@ -1066,7 +1016,7 @@ async function executeSell(tokenAddress, reason, ratio = 1.0) {
         }
         saveJSON(POSITIONS_FILE, positions);
         log('INFO', `✅ 卖出成功 ${pos.symbol} | tx: ${result.txHash || '?'}`);
-        notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain})\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
+        await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain})\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
         break;
       } else if (attempt < MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
@@ -1112,7 +1062,6 @@ async function managePositions() {
                 const bal = balData.result?.value?.reduce((s, a) => 
                   s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0) || 0;
                 if (bal === 0) {
-                  // SOL卖出由Helius SWAP检测确认，这里只做补充
                   // 查最近签名看是不是swap
                   const sigs = await rpcPost(SOL_PUBLIC_RPC, 'getSignaturesForAddress', [smWallet, { limit: 3 }]);
                   for (const sig of (sigs.result || [])) {

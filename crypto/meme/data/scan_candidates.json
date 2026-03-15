@@ -674,6 +674,24 @@
       "ageD": 9,
       "chain": "solana",
       "addedAt": "2026-03-15T04:01:44.135Z"
+    },
+    {
+      "symbol": "R.S UGOR",
+      "mint": "6UbcthN4LAC4XWuz4FC1bUdgAzjvjaVwnHhy4Zp4WuZ2",
+      "fdv": 335666065.585161,
+      "vol": 42142209.9689607,
+      "ageD": 0,
+      "chain": "solana",
+      "addedAt": "2026-03-15T04:35:32.042Z"
+    },
+    {
+      "symbol": "Life",
+      "mint": "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump",
+      "fdv": 504291.264722009,
+      "vol": 1431065.01479455,
+      "ageD": 6,
+      "chain": "solana",
+      "addedAt": "2026-03-15T04:43:46.237Z"
     }
   ],
   "scanned": [
@@ -751,6 +769,8 @@
     "7oXNE1dbpHUp6dn1JF8pRgCtzfCy4P2FuBneWjZHpump",
     "0x5b2193fdc451c1f847be09ca9d13a4bf60f8c86b",
     "0x9f86db9fc6f7c9408e8fda3ff8ce4e78ac7a6b07",
-    "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e"
+    "0xc78fabc2cb5b9cf59e0af3da8e3bc46d47753a4e",
+    "6UbcthN4LAC4XWuz4FC1bUdgAzjvjaVwnHhy4Zp4WuZ2",
+    "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump"
   ]
 }
