@@ -67,6 +67,9 @@ let rankedWallets = [];    // 排名后的钱包列表（从walletDb生成）
 let positions = {};        // tokenAddress -> position
 let pendingSignals = {};   // tokenAddress -> [{wallet, chain, timestamp}]
 let boughtTokens = new Set(); // 已买过的token（防重复）
+const lowBalNotified = {};    // 低余额通知去重（chain → timestamp）
+// 稳定币/大币过滤（symbol级别，不走审计直接跳过）
+const SKIP_SYMBOLS = new Set(['USDT','USDC','BUSD','DAI','TUSD','FDUSD','USD1','WBNB','WETH','WBTC','BNB','ETH','BTC','SOL','WSOL']);
 let blacklist = {};  // tokenAddress -> { reason, timestamp, permanent }
 let auditCache = {};
 
@@ -352,7 +355,7 @@ const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a
 
 const solLastSigs = new Map(); // wallet -> lastSignature
 
-const SOL_WS_OFFICIAL = 'wss://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
+const SOL_WS_OFFICIAL = 'wss://api.mainnet-beta.solana.com'; // Solana官方WS（免费，限100订阅）
 let solOfficialWs = null; // 单连接
 let solWsMode = 'none'; // 'official' | 'polling'
 
@@ -362,7 +365,7 @@ function setupSolanaMonitor() {
   
   if (solWalletSet.size === 0) return;
   
-  // 优先: 官方RPC logsSubscribe（1个WS连接，全部钱包）
+  // Solana官方WS最多100个订阅，猎手+哨兵优先，观察走轮询
   setupOfficialSolWs();
   
   
@@ -370,12 +373,19 @@ function setupSolanaMonitor() {
   pollSolanaWallets();
 }
 
-// 官方RPC: WS订阅全部SOL钱包（猎手+哨兵+观察，测试QuickNode承载力）
+// Solana官方WS: 最多100个订阅，猎手+哨兵优先
 function setupOfficialSolWs() {
-  const walletList = [...solWalletSet];
+  // 按优先级排序: hunter > scout > watcher
+  const priorityOrder = { hunter: 0, scout: 1, watcher: 2 };
+  const sorted = rankedWallets
+    .filter(w => w.chain === 'solana')
+    .sort((a, b) => (priorityOrder[a.status] || 2) - (priorityOrder[b.status] || 2) || (a.rank || 999) - (b.rank || 999));
+  const walletList = sorted.slice(0, 100).map(w => w.address); // 官方WS限100
   if (walletList.length === 0) return;
   
-  log('INFO', `🔌 [SOL] 官方RPC logsSubscribe ${walletList.length} 个钱包 (全部WS实时)`);
+  const wsWalletCount = walletList.length;
+  const pollOnly = [...solWalletSet].filter(a => !walletList.includes(a));
+  log('INFO', `🔌 [SOL] 官方WS订阅${wsWalletCount}个(猎手+哨兵优先) + 轮询${pollOnly.length}个观察`);
   
   const ws = new WebSocket(SOL_WS_OFFICIAL);
   solOfficialWs = ws;
@@ -383,8 +393,9 @@ function setupOfficialSolWs() {
   const idToAddr = {};
   
   ws.on('open', async () => {
-    // QuickNode限速15次/秒，每5个等1秒（~5 req/s，留余量给轮询）
+    // Solana官方WS: 每批5个等1秒（稳定，30秒订完100个）
     for (let i = 0; i < walletList.length; i++) {
+      if (ws.readyState !== WebSocket.OPEN) break;
       const addr = walletList[i];
       const id = i + 1;
       idToAddr[id] = addr;
@@ -426,10 +437,11 @@ function setupOfficialSolWs() {
   });
   
   ws.on('close', () => {
-    log('WARN', '🔌 [SOL] 官方RPC WS断开，10秒后重连');
+    log('WARN', '🔌 [SOL] 官方RPC WS断开，30秒后重连');
     solOfficialWs = null;
     solWsMode = 'polling';
-    setTimeout(() => setupOfficialSolWs(), 10000);
+    // 30秒重连间隔，给QuickNode限速窗口恢复
+    setTimeout(() => setupOfficialSolWs(), 30000);
   });
   
   ws.on('error', () => {});
@@ -824,6 +836,12 @@ async function handleSignal(signal) {
   
   const symbol = symbolData?.pairs?.[0]?.baseToken?.symbol || '?';
   
+  // 稳定币/大币直接跳过
+  if (SKIP_SYMBOLS.has(symbol.toUpperCase())) {
+    log('INFO', `⏭️ ${symbol}(${chain}) 是稳定币/大币，跳过`);
+    return;
+  }
+  
   if (!audit.safe) {
     log('WARN', `❌ ${symbol}(${chain}) 审计不通过: ${audit.reason}`);
     return;
@@ -987,7 +1005,12 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     const available = balUsd * 0.9;
     if (available < 5) {
       log('WARN', `❌ ${chain}余额$${balUsd.toFixed(0)}太低，跳过 ${symbol}`);
-      await notifyTelegram(`⚠️ ${chain}余额不足$${balUsd.toFixed(0)}，错过 ${symbol} 请充值！`);
+      // 每条链10分钟内只通知一次
+      const notifyKey = `lowbal_${chain}`;
+      if (!lowBalNotified[notifyKey] || Date.now() - lowBalNotified[notifyKey] > 600000) {
+        lowBalNotified[notifyKey] = Date.now();
+        await notifyTelegram(`⚠️ ${chain}余额不足$${balUsd.toFixed(0)}，错过 ${symbol} 请充值！`);
+      }
       return;
     }
     
