@@ -135,11 +135,24 @@
 - **QuickNode替换全部SOL RPC(2026-03-15)**: HTTP+WS全用QN，包括交易解析
 - **v8_refresh静默执行**: 不发消息给跑步哥，他自己点刷新
 - **v8跟单引擎(2026-03-15)**:
-  - 钱包库持久化: wallet_db.json，验证通过的永久入库，连续3次没上榜+胜率<50%才踢
-  - 三链全部WebSocket实时: BSC/Base用publicnode logs订阅，SOL用publicnode logsSubscribe
+  - 钱包库持久化: wallet_db.json，验证通过的永久入库，只进不出（只降级不踢）
+  - 三链全部WebSocket实时: BSC/Base用publicnode logs订阅，SOL用QuickNode logsSubscribe
   - 钱包只从币安PnL Rank获取，OKX没有类似API
   - 备份: /opt/wallet_backup/v8/（cron每4小时）
   - 旧v1-v7已清理到.trash/
+- **三级钱包制度(2026-03-15 18:20)**:
+  - 🔥猎手: 60-85%胜率（触发买入）hunterMaxWinRate=85
+  - 👁️哨兵: 50-60% 或 >85%（当佐证）
+  - 👀观察: <50%（只监控，30天踢）
+  - 确认逻辑: ≥2猎手→买，1猎手+≥2哨兵→买，观察不算
+- **仓位调整(2026-03-15 18:36)**: $5/$7/$10 → $50/$100/$200
+  - TOP10猎手: $200, TOP30: $100, 其他: $50
+  - 最大敞口$2000（10仓满仓）
+  - 跑步哥准备三链各充$500
+- **去掉Jito Bundle(2026-03-15 18:58)**: 一直被限流白等1-2s
+  - OKX聚合器自带minReceiveAmount+slippage+priceImpactProtection三层防夹
+  - BSC保留bloXroute（BSC夹子多）
+  - SOL/Base直接发送即可
 - **套利系统全部清退(2026-03-14 22:55)**: 跑步哥决定专注土狗
   - 四所API Key已删，systemd服务已停+禁用，引擎文件移到.trash
   - .env只剩 Helius RPC + 钱包地址注释，immutable锁定

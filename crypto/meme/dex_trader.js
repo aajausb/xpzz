@@ -184,6 +184,7 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
       console.log(`[dex_trader] ${chain} approve max to ${spender}...`);
       const approveTx = await erc20.approve(spender, ethers.MaxUint256);
       await approveTx.wait();
+      await new Promise(r => setTimeout(r, 1000)); // 等nonce同步，防止swap revert
     }
   }
 

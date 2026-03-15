@@ -152,12 +152,16 @@ async function buildDashboard() {
   const wallets = Object.values(walletDb);
   const active = { solana: 0, bsc: 0, base: 0 };
   const watch = { solana: 0, bsc: 0, base: 0 };
+  const watcher = { solana: 0, bsc: 0, base: 0 };
   for (const w of wallets) {
-    if (w.winRate >= 60 && w.winRate <= 80) active[w.chain]++;
-    else watch[w.chain]++;
+    const wr = w.winRate || 0;
+    if (wr >= 60 && wr <= 85) active[w.chain]++;
+    else if (wr >= 50) watch[w.chain]++;
+    else watcher[w.chain]++;
   }
   const totalActive = Object.values(active).reduce((a, b) => a + b, 0);
   const totalWatch = Object.values(watch).reduce((a, b) => a + b, 0);
+  const totalWatcher = Object.values(watcher).reduce((a, b) => a + b, 0);
 
   // 并行：余额+价格+钱包token扫描（一次性全拉）
   const [bal, walletTokens] = await Promise.all([
@@ -238,6 +242,7 @@ async function buildDashboard() {
 📋 钱包库 (${wallets.length}个)
    🔥猎手: ${totalActive}个 (SOL=${active.solana} BSC=${active.bsc} Base=${active.base})
    👁️哨兵: ${totalWatch}个 (SOL=${watch.solana} BSC=${watch.bsc} Base=${watch.base})
+   👀观察: ${totalWatcher}个 (SOL=${watcher.solana} BSC=${watcher.bsc} Base=${watcher.base})
 
 📊 持仓 (${posEntries.length}/${10}) PnL: $${totalPnl.toFixed(2)}${posText}
 
