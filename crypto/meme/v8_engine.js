@@ -20,8 +20,8 @@ const CONFIG = {
   // 数据刷新
   rankRefreshInterval: 4 * 3600 * 1000,  // 4小时刷新币安排名
   // 不限数量，验证通过的全部跟踪，排名只决定优先级
-  activeWinRateMin: 60,                     // 实盘跟单: 胜率60-80%
-  activeWinRateMax: 80,                     // >80%或<60%进观察状态
+  activeWinRateMin: 60,                     // 猎手: 胜率60-80%
+  activeWinRateMax: 80,                     // >80%或<60%进哨兵状态
   evictMissCount: 3,                        // 连续3次(12h)没上榜
   evictMinWinRate: 50,                      // 且胜率<50%才踢出库
 
@@ -172,7 +172,7 @@ async function fetchBinanceRank() {
   }
   
   const wallets = [...unique.values()];
-  log('INFO', `  拉取 ${wallets.length} 个钱包`);
+  log('INFO', `  📡 候选池: ${wallets.length} 个钱包`);
   return wallets;
 }
 
@@ -272,9 +272,9 @@ function rankWallets(wallets) {
                       : 1.0;
     w.score = wr * sampleWeight * pnlWeight * activityMul;
     
-    // 状态: 60-80%胜率=active(实盘跟单), 其他=watch(观察)
+    // 状态: 60-80%胜率=hunter(猎手), 其他=scout(哨兵)
     const winRate = w.winRate || 0;
-    w.status = (winRate >= CONFIG.activeWinRateMin && winRate <= CONFIG.activeWinRateMax) ? 'active' : 'watch';
+    w.status = (winRate >= CONFIG.activeWinRateMin && winRate <= CONFIG.activeWinRateMax) ? 'hunter' : 'scout';
   }
   wallets.sort((a, b) => b.score - a.score);
   wallets.forEach((w, i) => w.rank = i + 1);
@@ -788,7 +788,7 @@ async function handleSignal(signal) {
   
   // 检查钱包状态: watch的只记录不算确认
   const walletInfo = rankedWallets.find(w => w.address === wallet || w.address?.toLowerCase() === wallet);
-  const walletStatus = walletInfo?.status || 'watch';
+  const walletStatus = walletInfo?.status || 'scout';
   
   // 多钱包确认 — 每个钱包只算1次，5分钟窗口
   if (!pendingSignals[token]) pendingSignals[token] = [];
@@ -803,21 +803,21 @@ async function handleSignal(signal) {
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
   
-  // 计数 = 只算active钱包（watch的记录但不算确认数）
-  const activeSignals = pendingSignals[token].filter(s => s.walletStatus === 'active');
-  const watchSignals = pendingSignals[token].filter(s => s.walletStatus === 'watch');
+  // 计数 = 只算猎手钱包（哨兵的记录但不算确认数）
+  const activeSignals = pendingSignals[token].filter(s => s.walletStatus === "hunter");
+  const watchSignals = pendingSignals[token].filter(s => s.walletStatus === 'scout');
   const confirmCount = new Set(activeSignals.map(s => s.wallet)).size;
   const watchCount = new Set(watchSignals.map(s => s.wallet)).size;
   
   // 分级确认:
-  // ≥2个实盘 → 买
-  // 1个实盘 + ≥2个观察 → 买（观察当佐证）
+  // ≥2个猎手 → 买
+  // 1个猎手 + ≥2个哨兵 → 买（哨兵当佐证）
   // 其他 → 等
   const confirmed = confirmCount >= 2 || (confirmCount >= 1 && watchCount >= 2);
   if (!confirmed) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
-    const extra = watchCount > 0 ? ` (+${watchCount}观察)` : '';
-    log('INFO', `⏳ ${token.slice(0,8)}...(${chain}) 确认中 实盘=${confirmCount} 观察=${watchCount}${extra} 最高#${bestRank}`);
+    const extra = watchCount > 0 ? ` (+${watchCount}哨兵)` : '';
+    log('INFO', `⏳ ${token.slice(0,8)}...(${chain}) 确认中 猎手=${confirmCount} 哨兵=${watchCount}${extra} 最高#${bestRank}`);
     return;
   }
   
@@ -1217,13 +1217,13 @@ async function main() {
   const activeByChain = { solana: 0, bsc: 0, base: 0 };
   const watchByChain = { solana: 0, bsc: 0, base: 0 };
   for (const w of rankedWallets) {
-    if (w.status === 'active') activeByChain[w.chain]++;
+    if (w.status === 'hunter') activeByChain[w.chain]++;
     else watchByChain[w.chain]++;
   }
   const totalActive = Object.values(activeByChain).reduce((a,b) => a+b, 0);
   const totalWatch = Object.values(watchByChain).reduce((a,b) => a+b, 0);
-  console.log(`📋 可触发跟单买入(${totalActive}): SOL=${activeByChain.solana} BSC=${activeByChain.bsc} Base=${activeByChain.base}`);
-  console.log(`👀 观察(${totalWatch}): SOL=${watchByChain.solana} BSC=${watchByChain.bsc} Base=${watchByChain.base}`);
+  console.log(`📋 🔥猎手(${totalActive}): SOL=${activeByChain.solana} BSC=${activeByChain.bsc} Base=${activeByChain.base}`);
+  console.log(`👀 👁️哨兵(${totalWatch}): SOL=${watchByChain.solana} BSC=${watchByChain.bsc} Base=${watchByChain.base}`);
   console.log(`💼 持仓: ${Object.keys(positions).length}个`);
   
   // Phase 2: 启动监控

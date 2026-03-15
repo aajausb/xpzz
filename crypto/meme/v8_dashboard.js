@@ -225,8 +225,8 @@ async function buildDashboard() {
    总计: $${totalUsd}
 
 📋 钱包库 (${wallets.length}个)
-   可跟单: ${totalActive}个 (SOL=${active.solana} BSC=${active.bsc} Base=${active.base})
-   观察中: ${totalWatch}个 (SOL=${watch.solana} BSC=${watch.bsc} Base=${watch.base})
+   🔥猎手: ${totalActive}个 (SOL=${active.solana} BSC=${active.bsc} Base=${active.base})
+   👁️哨兵: ${totalWatch}个 (SOL=${watch.solana} BSC=${watch.bsc} Base=${watch.base})
 
 📊 持仓 (${posEntries.length}/${10}) PnL: $${totalPnl.toFixed(2)}${posText}
 

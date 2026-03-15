@@ -219,20 +219,34 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
 
 // ============ 统一接口 ============
 
-async function buy(chain, tokenAddress, amountNative) {
-  if (chain === 'solana') {
-    return solanaBuy(tokenAddress, amountNative);
-  } else {
-    return evmBuy(chain, tokenAddress, amountNative);
+const MAX_RETRIES = 3;
+const RETRY_DELAYS = [2000, 4000, 6000]; // 递增等待
+
+async function withRetry(fn, label) {
+  for (let i = 0; i <= MAX_RETRIES; i++) {
+    try {
+      return await fn();
+    } catch(e) {
+      if (i === MAX_RETRIES) throw e;
+      const delay = RETRY_DELAYS[i] || 6000;
+      console.log(`⚠️ ${label} 失败(第${i+1}次), ${delay/1000}秒后重试: ${e.message}`);
+      await sleep(delay);
+    }
   }
 }
 
+async function buy(chain, tokenAddress, amountNative) {
+  return withRetry(() => {
+    if (chain === 'solana') return solanaBuy(tokenAddress, amountNative);
+    return evmBuy(chain, tokenAddress, amountNative);
+  }, `买入 ${chain} ${tokenAddress.slice(0,8)}`);
+}
+
 async function sell(chain, tokenAddress, amountRaw) {
-  if (chain === 'solana') {
-    return solanaSell(tokenAddress, amountRaw);
-  } else {
+  return withRetry(() => {
+    if (chain === 'solana') return solanaSell(tokenAddress, amountRaw);
     return evmSell(chain, tokenAddress, amountRaw);
-  }
+  }, `卖出 ${chain} ${tokenAddress.slice(0,8)}`);
 }
 
 // ============ Jito Bundle (SOL防夹) ============
