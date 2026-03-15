@@ -45,10 +45,26 @@ async function getBalances() {
   const balances = {};
   
   const [solBal, bnbBal, ethBal, solR, bnbR, ethR] = await Promise.all([
-    fetchWithRetry('https://api.mainnet-beta.solana.com', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
-    }),
+    // SOL用多个RPC轮流查，避免被引擎WS抢占
+    (async () => {
+      const rpcs = [
+        'https://api.mainnet-beta.solana.com',
+        'https://mainnet.helius-rpc.com/?api-key=8b6e701b-070a-498d-8ee3-5df1261c3149',
+        'https://mainnet.helius-rpc.com/?api-key=ec0e9521-1962-4e4d-8a2f-8b0c615ce270',
+      ];
+      for (const rpc of rpcs) {
+        try {
+          const r = await fetch(rpc, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
+          });
+          if (r.status === 429) continue;
+          const d = await r.json();
+          if (d.result) return d;
+        } catch(e) {}
+      }
+      return null;
+    })(),
     fetch('https://bsc-dataseed1.binance.org', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })

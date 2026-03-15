@@ -394,7 +394,8 @@ function setupOfficialSolWs() {
 
 // 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
 async function pollSolanaWallets() {
-  log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包 (10s)`);
+  const interval = solOfficialWs ? 30000 : 10000; // WS连上了降频
+  log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包 (${interval/1000}s)`);
   
   // 初始化: 记录每个钱包当前最新签名
   for (const addr of solWalletSet) {
