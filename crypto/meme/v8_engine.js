@@ -58,6 +58,7 @@ const POSITIONS_FILE = path.join(DATA_DIR, 'positions.json');
 // signals.json已废弃，信号记录在日志中
 const BLACKLIST_FILE = path.join(DATA_DIR, 'blacklist.json');
 const AUDIT_CACHE_FILE = path.join(DATA_DIR, 'audit_cache.json');
+const BOUGHT_TOKENS_FILE = path.join(DATA_DIR, 'bought_tokens.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -640,7 +641,8 @@ async function parseSolSignature(walletAddr, signature) {
 }
 
 // 解析Solana swap交易 — 从tokenTransfers提取买入信号
-async function parseSolanaSwap(result) {
+// [已废弃] parseSolanaSwap — 由parseSolSignature替代
+async function _unused_parseSolanaSwap(result) {
   try {
   const tx = result.transaction;
   const meta = tx?.meta;
@@ -854,14 +856,18 @@ async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
     
     // 检查同一笔交易的所有logs
     // swap特征: 有WBNB/WETH的Transfer to=钱包（卖token换到了native）
-    const WBNB = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
-    const WETH_BASE = '0x4200000000000000000000000000000000000006';
-    const nativeToken = chainKey === 'bsc' ? WBNB : WETH_BASE;
+    // 检查swap特征：native/稳定币流入SM钱包
+    const swapTokens = new Set([
+      '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', // WBNB
+      '0x4200000000000000000000000000000000000006', // WETH(Base)
+      '0x55d398326f99059ff775485246999027b3197955', // USDT(BSC)
+      '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC(Base)
+      '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // USDC(BSC)
+    ]);
     
     let isSwap = false;
     for (const lg of receipt.logs) {
-      // 检查有没有native token Transfer to=该钱包
-      if (lg.address.toLowerCase() === nativeToken &&
+      if (swapTokens.has(lg.address.toLowerCase()) &&
           lg.topics[0] === TRANSFER_TOPIC &&
           lg.topics.length >= 3) {
         const toAddr = '0x' + lg.topics[2].slice(26).toLowerCase();
@@ -970,9 +976,10 @@ async function handleSignal(signal) {
   const MIN_SM_HOLDING_USD = 1; // SM至少持有$1才算有效
   let realHunters = 0, realScouts = 0;
   const realConfirmWallets = [];
+  let dexData = null;
   try {
-    const tokenPrice = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`).catch(() => null);
-    const price = parseFloat(tokenPrice?.pairs?.[0]?.priceUsd || 0);
+    dexData = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`).catch(() => null);
+    const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
     if (price > 0) {
       for (const sig of [...activeSignals, ...watchSignals]) {
         try {
@@ -1019,13 +1026,9 @@ async function handleSignal(signal) {
     return;
   }
   
-  // 并行查: symbol + 审计
-  const [symbolData, audit] = await Promise.all([
-    httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`).catch(() => null),
-    auditToken(chain, token),
-  ]);
-  
-  const symbol = symbolData?.pairs?.[0]?.baseToken?.symbol || '?';
+  // symbol复用空投验证时已查的DexScreener数据（省API调用）
+  const symbol = dexData?.pairs?.[0]?.baseToken?.symbol || '?';
+  const audit = await auditToken(chain, token);
   
   // 稳定币/大币直接跳过
   if (SKIP_SYMBOLS.has(symbol.toUpperCase())) {
@@ -1099,7 +1102,8 @@ async function auditBinance(chain, tokenAddress) {
 
 
 
-async function checkLiquidity(chain, tokenAddress) {
+// [已废弃] checkLiquidity — 跑步哥要求删除
+async function _unused_checkLiquidity(chain, tokenAddress) {
   try {
     // OKX报价验证：能报价=有路由=能买卖（覆盖内盘/外盘）
     const chainIndex = CHAIN_ID[chain];
@@ -1148,15 +1152,31 @@ const NATIVE_SYMBOLS = { solana: 'SOL', bsc: 'WBNB', base: 'WETH' };
 async function getNativePrice(chain) {
   const cached = nativePriceCache[chain];
   if (cached && Date.now() - cached.time < 30000) return cached.price;
-  const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${NATIVE_TOKENS[chain]}`);
-  // 匹配symbol+地址，避免DexScreener把别的币排第一
-  const sym = NATIVE_SYMBOLS[chain];
-  const pair = d?.pairs?.find(p => p.baseToken?.symbol === sym && parseFloat(p.priceUsd) > 1)
-    || d?.pairs?.find(p => parseFloat(p.liquidity?.usd || 0) > 1000000) // 退而求其次找高流动性的
-    || d?.pairs?.[0];
-  const price = parseFloat(pair?.priceUsd || 0);
-  if (price > 0) nativePriceCache[chain] = { price, time: Date.now() };
-  return price;
+  
+  // CoinGecko优先（大币价格最准）
+  const cgIds = { solana: 'solana', bsc: 'binancecoin', base: 'ethereum' };
+  try {
+    const cg = await httpGet(`https://api.coingecko.com/api/v3/simple/price?ids=${cgIds[chain]}&vs_currencies=usd`);
+    const price = cg?.[cgIds[chain]]?.usd;
+    if (price && price > 0) {
+      nativePriceCache[chain] = { price, time: Date.now() };
+      return price;
+    }
+  } catch {}
+  
+  // DexScreener fallback
+  try {
+    const d = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${NATIVE_TOKENS[chain]}`);
+    const sym = NATIVE_SYMBOLS[chain];
+    const pair = d?.pairs?.find(p => p.baseToken?.symbol === sym && parseFloat(p.priceUsd) > 1)
+      || d?.pairs?.find(p => parseFloat(p.liquidity?.usd || 0) > 1000000)
+      || d?.pairs?.[0];
+    const price = parseFloat(pair?.priceUsd || 0);
+    if (price > 0) nativePriceCache[chain] = { price, time: Date.now() };
+    return price;
+  } catch {}
+  
+  return cached?.price || 0;
 }
 
 // ============ PHASE 4: 交易层 ============
@@ -1215,7 +1235,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     // 按猎手排名决定仓位百分比
     const bestRank = confirmWallets.length > 0 
       ? Math.min(...confirmWallets.map(addr => {
-          const w = rankedWallets.find(rw => rw.address === addr);
+          const w = rankedWallets.find(rw => rw.address === addr || rw.address?.toLowerCase() === addr?.toLowerCase());
           return w ? w.rank : 999;
         }))
       : 999;
@@ -1249,6 +1269,11 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     const trader = require('./dex_trader.js');
     if (txSucceeded) { log('INFO', `交易已成功但保存失败，不再重发交易`); break; }
     if (attempt > 1) log('INFO', `🔄 重试买入 ${symbol}(${chain}) 第${attempt}次...`);
+    // 发交易前就标记已买，防止重启/崩溃后重复买
+    if (!boughtTokens.has(tokenAddress)) {
+      boughtTokens.add(tokenAddress);
+      saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+    }
     const result = await trader.buy(chain, tokenAddress, nativeAmount);
     
     if (result.success) {
@@ -1299,6 +1324,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       };
       boughtTokens.add(tokenAddress);
       saveJSON(POSITIONS_FILE, positions);
+      saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]); // 持久化防重启重复买
       
       // 把EVM token加入known_tokens（看板扫描用）
       if (chain !== 'solana') {
@@ -1460,7 +1486,7 @@ async function managePositions() {
                 const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
                 const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
                 let bal;
-                try { bal = await erc20.balanceOf(smWallet); } catch { continue; } // RPC失败跳过
+                try { bal = await erc20.balanceOf(smWallet); } catch(e) { log('WARN', `查SM ${smWallet.slice(0,10)} ${pos.symbol} 余额失败: ${e.message?.slice(0,40)}`); continue; }
                 if (bal.toString() === '0') {
                   // 余额=0 → 查最后一笔是卖出还是转仓
                   const check = await checkEvmTransferTarget(pos.chain, tokenAddr, smWallet);
@@ -1480,7 +1506,7 @@ async function managePositions() {
                 }
               }
             }
-          } catch(e) {}
+          } catch(e) { if(e.message) log("WARN", `巡检SM余额异常 ${pos.symbol}: ${e.message?.slice(0,50)}`); }
         }
         
         // 追踪转仓小号：检查小号是否也清仓了（真正卖出）
@@ -1503,7 +1529,7 @@ async function managePositions() {
                 const { ethers } = require('ethers');
                 const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
                 const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
-                let bal; try { bal = await erc20.balanceOf(sub); } catch { continue; }
+                let bal; try { bal = await erc20.balanceOf(sub); } catch(e) { log('WARN', `查小号 ${sub.slice(0,10)} 余额失败: ${e.message?.slice(0,40)}`); continue; }
                 if (bal.toString() === '0') {
                   log('INFO', `🔴 小号 ${sub.slice(0,10)}... 已清仓 ${pos.symbol}(${pos.chain}) — SM${smWallet.slice(0,10)}的小号也卖了`);
                   if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
@@ -1592,8 +1618,9 @@ async function main() {
   restoreSellTracker(); // 从positions恢复SM卖出记录（重启不丢）
   // 黑名单已废弃，不再加载
   auditCache = loadJSON(AUDIT_CACHE_FILE, {});
-  // 已买过的token（含当前持仓）
-  boughtTokens = new Set(Object.keys(positions));
+  // 已买过的token（从持仓+历史记录双重加载）
+  const savedBought = loadJSON(BOUGHT_TOKENS_FILE, []);
+  boughtTokens = new Set([...Object.keys(positions), ...savedBought]);
   
   // 加载钱包库
   walletDb = loadJSON(WALLET_DB_FILE, {});

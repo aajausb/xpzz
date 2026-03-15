@@ -16,5 +16,40 @@
       "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
       "0xb1e65ccc2f5d68e447bf321ba9bfba35a94f5ad5"
     ]
+  },
+  "BBkUQdTDdVySDKXT4TngbmbpC2ktwBeymMSdn41ppump": {
+    "chain": "solana",
+    "token": "BBkUQdTDdVySDKXT4TngbmbpC2ktwBeymMSdn41ppump",
+    "symbol": "NETAINYAHU",
+    "buyPrice": 0.00006541,
+    "buyAmount": 0,
+    "buyAmountRaw": 0,
+    "buyCost": 66,
+    "buyTime": 1773597501134,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+      "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV",
+      "2fg5QD1eD7rzNNCsvnhmXFm5hqNgwTTG8p7kQ6f3rx6f",
+      "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB"
+    ],
+    "_transfers": {
+      "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB": {
+        "subWallet": "3Tu1Y9aNveLFN4WTAwnAwXL6tbUp5MMe3RxyybG4jTAS",
+        "time": 1773597566026
+      }
+    },
+    "_sells": [
+      {
+        "wallet": "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB",
+        "time": 1773597566295,
+        "source": "sub-patrol"
+      },
+      {
+        "wallet": "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV",
+        "time": 1773597591877,
+        "source": "ws"
+      }
+    ]
   }
 }

@@ -316,21 +316,21 @@ async function _getTokenBalance(chain, tokenAddress) {
     const w = getWallets();
     try {
       const accts = await conn.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
-      let total = 0;
+      let total = 0n;
       for (const a of accts.value) {
-        total += parseInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+        total += BigInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
       }
-      return total || 0;
+      return total.toString();
     } catch (e) {
       // 429 → 切RPC重试一次
       if (e.message?.includes('429')) {
         const { conn: conn2 } = getSolConn();
         const accts = await conn2.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
-        let total = 0;
+        let total = 0n;
         for (const a of accts.value) {
-          total += parseInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+          total += BigInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
         }
-        return total || 0;
+        return total.toString();
       }
       throw e;
     }
