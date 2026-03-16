@@ -665,8 +665,8 @@ async function parseSolSignature(walletAddr, signature) {
         });
       } else if (diff < 0 && positions[p.mint]) {
         // 卖出: 余额减少 + 我们持有该币
-        log('INFO', `📉 [SOL] 卖出! 钱包#${rank} ${walletAddr.slice(0,10)}... 卖出 ${p.mint}`);
-        trackSmartMoneySell(p.mint, walletAddr, 1.0);
+        // SOL不直接标sellTracker（可能是转仓），只打日志，让巡检查余额+区分转仓/卖出
+        log('INFO', `📉 [SOL] 卖出信号! 钱包#${rank} ${walletAddr.slice(0,10)}... 减持 ${p.mint} (待巡检确认)`);
       }
     }
   } catch(e) {
@@ -1374,9 +1374,9 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
           const kt = JSON.parse(fs.readFileSync(ktFile, 'utf8'));
           if (!kt.find(t => t.address.toLowerCase() === tokenAddress.toLowerCase())) {
             kt.push({ chain: chain, address: tokenAddress, symbol });
-            fs.writeFileSync(ktFile, JSON.stringify(kt, null, 2));
+            saveJSON(ktFile, kt);
           }
-        } catch { fs.writeFileSync(ktFile, JSON.stringify([{ chain, address: tokenAddress, symbol }], null, 2)); }
+        } catch { saveJSON(ktFile, [{ chain, address: tokenAddress, symbol }]); }
       }
       
       log('INFO', `✅ 买入成功 ${symbol} | $${size} | 数量=${buyAmount} | 价格=$${buyPrice} | tx: ${result.txHash || '?'}`);
@@ -1623,11 +1623,15 @@ async function managePositions() {
           const currentPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
           if (currentPrice > 0 && pos.buyPrice > 0) {
             pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
+          } else if (currentPrice > 0 && pos.buyAmount > 0 && pos.buyCost > 0) {
+            // buyPrice=0时用当前价值vs买入成本估算PnL
+            const currentValue = currentPrice * pos.buyAmount;
+            pnlPercent = ((currentValue - pos.buyCost) / pos.buyCost) * 100;
           }
         } catch {}
         
         // 兜底止损（跌超30%直接卖，不等SM）
-        if (pos.buyPrice > 0 && pnlPercent <= CONFIG.stopLoss) {
+        if (pnlPercent <= CONFIG.stopLoss && pnlPercent !== 0) {
           await executeSell(tokenAddr, `止损 PnL=${pnlPercent.toFixed(1)}%<${CONFIG.stopLoss}%`);
           continue;
         }
@@ -1635,6 +1639,12 @@ async function managePositions() {
         // 时间止损（>4小时无SM动作且盈亏在±10%内 → 平掉腾仓位）
         if (holdTime > CONFIG.timeLimitMs && Math.abs(pnlPercent) < CONFIG.timeLimitPnlRange && uniqueSellers === 0) {
           await executeSell(tokenAddr, `时间止损 ${(holdTime/3600000).toFixed(1)}h PnL=${pnlPercent.toFixed(1)}%`);
+          continue;
+        }
+        
+        // 超时全清（>24小时且部分已卖 → 残余仓位全清，腾仓位）
+        if (holdTime > 24 * 3600000 && (pos.soldRatio || 0) > 0) {
+          await executeSell(tokenAddr, `超时全清 ${(holdTime/3600000).toFixed(0)}h 已卖${((pos.soldRatio||0)*100).toFixed(0)}%`);
           continue;
         }
         
