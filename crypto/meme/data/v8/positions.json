@@ -35,11 +35,12 @@
     "soldRatio": 0.6666666666666666,
     "sellRevenue": 49.04,
     "busCost": 55,
-    "currentPrice": 0.0001093,
-    "currentValue": 9.484583950551535,
-    "pnlPercent": -28.515369522563766,
-    "totalPnl": 3.5245839505515306,
-    "totalPnlPercent": 6.408334455548237
+    "currentPrice": 0.0001294,
+    "currentValue": 11.228775509619108,
+    "pnlPercent": -15.369522563767168,
+    "totalPnl": 5.268775509619104,
+    "totalPnlPercent": 9.5795918356711,
+    "_lastLoggedSellRatio": 0.6666666666666666
   },
   "0xe78251421e10596dc2812cb02665f8794a6b4444": {
     "chain": "bsc",
@@ -63,11 +64,13 @@
       }
     ],
     "soldRatio": 0.5,
-    "currentPrice": 0.00002617,
-    "currentValue": 108.9837559478647,
-    "pnlPercent": 205.26070220459576,
-    "totalPnl": 29.983755947864694,
-    "totalPnlPercent": 37.954121452993284
+    "currentPrice": 0.00002538,
+    "currentValue": 105.69383744580841,
+    "pnlPercent": 196.04572495042575,
+    "totalPnl": 162.496675866132,
+    "totalPnlPercent": 205.6919947672557,
+    "_lastLoggedSellRatio": 0.5,
+    "sellRevenue": 135.80283842032358
   },
   "0xcb20965ac329b0107d8f723f778bf0ca2c144444": {
     "chain": "bsc",
@@ -114,11 +117,13 @@
       }
     ],
     "soldRatio": 0.6,
-    "currentPrice": 0.0001721,
-    "currentValue": 15.738642259010442,
-    "pnlPercent": 60.5410447761194,
-    "totalPnl": -11.261357740989558,
-    "totalPnlPercent": -41.7087323740354
+    "currentPrice": 0.0001615,
+    "currentValue": 14.769266268623975,
+    "pnlPercent": 50.652985074626855,
+    "totalPnl": 11.349794487600398,
+    "totalPnlPercent": 42.036275880001476,
+    "_lastLoggedSellRatio": 0.6,
+    "sellRevenue": 23.580528218976422
   },
   "0x423e58eef8298812f5f6ba5c8a4cb5267d5e4444": {
     "chain": "bsc",
@@ -142,11 +147,13 @@
       }
     ],
     "soldRatio": 0.5,
-    "currentPrice": 0.00001459,
-    "currentValue": 8.63560415534315,
-    "pnlPercent": -40.13130898645876,
-    "totalPnl": -26.364395844656848,
-    "totalPnlPercent": -75.32684527044815
+    "currentPrice": 0.00001135,
+    "currentValue": 6.717896310016776,
+    "pnlPercent": -53.426343865408285,
+    "totalPnl": -21.28010251399217,
+    "totalPnlPercent": -60.80029289712048,
+    "_lastLoggedSellRatio": 0.5,
+    "sellRevenue": 7.0020011759910545
   },
   "0xa818853a06040a6ba9fb98ab34bbf56fe8444444": {
     "chain": "bsc",
@@ -170,11 +177,12 @@
         "source": "patrol"
       }
     ],
-    "currentPrice": 0.00002569,
-    "currentValue": 34.135543122240165,
-    "pnlPercent": 52.55344418052255,
-    "totalPnl": 12.135543122240165,
-    "totalPnlPercent": 55.1615596465462
+    "currentPrice": 0.00002424,
+    "currentValue": 32.20885812701835,
+    "pnlPercent": 43.942992874109244,
+    "totalPnl": 10.208858127018352,
+    "totalPnlPercent": 46.40390057735615,
+    "_lastLoggedSellRatio": 0.3333333333333333
   },
   "0x8306d5723b68228e934b63f5efc2c571eeb14444": {
     "chain": "bsc",
@@ -210,11 +218,13 @@
       }
     ],
     "soldRatio": 0.6666666666666666,
-    "currentPrice": 0.00000484,
-    "currentValue": 2.8319115105900203,
-    "pnlPercent": -45.78245771255741,
-    "totalPnl": -30.16808848940998,
-    "totalPnlPercent": -91.41844996790903
+    "currentPrice": 0.000004819,
+    "currentValue": 2.8196242912258898,
+    "pnlPercent": -46.017699115044245,
+    "totalPnl": -24.54112712632233,
+    "totalPnlPercent": -74.36705189794645,
+    "_lastLoggedSellRatio": 0.6666666666666666,
+    "sellRevenue": 5.639248582451779
   },
   "0x9005b2a2cd5b9e6b461acbbed51f0ceec2474444": {
     "chain": "bsc",
@@ -253,11 +263,13 @@
     "unsellable": true,
     "unsellableReason": "transaction execution reverted (action=\"sendTransaction\", data=null, reason=null, invocation=null, revert=null, transaction={ \"data\": \"\", \"from\": \"0xe00ca1d766f329eFfC05E704499f10dB1F14FD47\", \"to\": \"0",
     "unsellableSince": 1773649949600,
-    "currentPrice": 0.00002606,
-    "currentValue": 6.976863981894483,
-    "pnlPercent": 6.193969030154859,
-    "totalPnl": -15.023136018105518,
-    "totalPnlPercent": -68.28698190047963
+    "currentPrice": 0.00002504,
+    "currentValue": 6.703786420055174,
+    "pnlPercent": 2.0374898125509455,
+    "totalPnl": -1.0372812823354636,
+    "totalPnlPercent": -4.714914919706652,
+    "_lastLoggedSellRatio": 0.6666666666666666,
+    "sellRevenue": 14.258932297609364
   },
   "0xa9e67c5e1254eb6b8c4e79fb55c316ac77a24444": {
     "chain": "bsc",
@@ -281,11 +293,13 @@
       }
     ],
     "soldRatio": 0.5,
-    "currentPrice": 0.00001298,
-    "currentValue": 6.764309013322683,
-    "pnlPercent": 156.16735741069667,
-    "totalPnl": -6.235690986677317,
-    "totalPnlPercent": -47.96685374367166
+    "currentPrice": 0.00001569,
+    "currentValue": 8.176580001466327,
+    "pnlPercent": 209.65068087625815,
+    "totalPnl": 2.3734295757333737,
+    "totalPnlPercent": 18.257150582564414,
+    "_lastLoggedSellRatio": 0.5,
+    "sellRevenue": 7.196849574267047
   },
   "0x5c92aa834ef64762d8883f4ee345368c65b5fb07": {
     "chain": "bsc",
@@ -326,7 +340,8 @@
         "time": 1773655071276
       }
     },
-    "soldRatio": 0.75
+    "soldRatio": 0.75,
+    "_lastLoggedSellRatio": 0.75
   },
   "0x97ffcf57db501f7b4b2609b5c05a718593477777": {
     "chain": "bsc",
@@ -369,11 +384,13 @@
       }
     },
     "soldRatio": 0.6,
-    "currentPrice": 0.0000279,
-    "currentValue": 1.3329202565273526,
-    "pnlPercent": -35.84732122326971,
-    "totalPnl": -8.667079743472648,
-    "totalPnlPercent": -86.67079743472648
+    "currentPrice": 0.00003022,
+    "currentValue": 1.4437580699733545,
+    "pnlPercent": -30.51276155438032,
+    "totalPnl": -6.4866324134400895,
+    "totalPnlPercent": -64.8663241344009,
+    "_lastLoggedSellRatio": 0.6,
+    "sellRevenue": 2.069609516586556
   },
   "0xc2fe9990501474f37b27a07672d7eb7904574444": {
     "chain": "bsc",
@@ -421,11 +438,13 @@
       }
     },
     "soldRatio": 0.8,
-    "currentPrice": 0.00003469,
-    "currentValue": 0.3627434947646166,
-    "pnlPercent": -42.028743315508024,
-    "totalPnl": -4.637256505235383,
-    "totalPnlPercent": -92.74513010470767
+    "currentPrice": 0.00002441,
+    "currentValue": 0.25524844932846036,
+    "pnlPercent": -59.20788770053477,
+    "totalPnl": -3.5330272447238955,
+    "totalPnlPercent": -70.66054489447791,
+    "_lastLoggedSellRatio": 0.8,
+    "sellRevenue": 1.2117243059476441
   },
   "0x735b7ca78176d93b8c506626bcd7507ccaf74444": {
     "chain": "bsc",
@@ -462,11 +481,13 @@
       }
     ],
     "soldRatio": 0.5,
-    "currentPrice": 0.0002741,
-    "currentValue": 2.4193861649826567,
-    "pnlPercent": -9.567799406136588,
-    "totalPnl": -3.5806138350173433,
-    "totalPnlPercent": -59.67689725028905
+    "currentPrice": 0.0001865,
+    "currentValue": 1.6461711775602534,
+    "pnlPercent": -38.469152095018146,
+    "totalPnl": -2.507292573937843,
+    "totalPnlPercent": -41.788209565630716,
+    "_lastLoggedSellRatio": 0.5,
+    "sellRevenue": 1.8465362485019035
   },
   "0x9528df8ca26e9c3550cf57e482b807405bf44444": {
     "chain": "bsc",
@@ -483,9 +504,9 @@
       "0x7852346c77b3a622fa73607ee35cc784e53f326b",
       "0xfb4e4fa492217d8401aa9e893c78707b61923953"
     ],
-    "currentPrice": 0.000004184,
-    "currentValue": 0.5318536401871243,
-    "pnlPercent": -62.70944741532977,
+    "currentPrice": 0.000004169,
+    "currentValue": 0.529946899125268,
+    "pnlPercent": -62.84313725490196,
     "_sells": [
       {
         "wallet": "0xfb4e4fa492217d8401aa9e893c78707b61923953",
@@ -499,7 +520,39 @@
       }
     ],
     "soldRatio": 0.6666666666666666,
-    "totalPnl": -4.4681463598128754,
-    "totalPnlPercent": -89.36292719625752
+    "totalPnl": -3.410159302624196,
+    "totalPnlPercent": -68.20318605248391,
+    "_lastLoggedSellRatio": 0.6666666666666666,
+    "sellRevenue": 1.0598937982505359
+  },
+  "0x23eaefabebff05c43fe27628064739a344304444": {
+    "chain": "bsc",
+    "token": "0x23eaefabebff05c43fe27628064739a344304444",
+    "symbol": "KIMIAI",
+    "buyPrice": 0.00003548,
+    "buyAmount": 38516.01290457307,
+    "buyAmountRaw": 38516.01290457307,
+    "buyCost": 7,
+    "buyTime": 1773665911223,
+    "confirmCount": 1,
+    "confirmWallets": [
+      "0x61e1de40854cae288a11feb9b28a064df14d29ef",
+      "0x81d5d84039f973584755a4805282ef94e2123302",
+      "0xa83b73f5644cde337b61da79589f10ea15548811",
+      "0x93c883963af898ab7c41ef9250f9eed71506eb52"
+    ],
+    "currentPrice": 0.0001336,
+    "currentValue": 5.145739324050962,
+    "pnlPercent": 276.55016910935734,
+    "totalPnl": -1.854260675949038,
+    "totalPnlPercent": -26.489438227843404,
+    "_sells": [
+      {
+        "wallet": "0x93c883963af898ab7c41ef9250f9eed71506eb52",
+        "time": 1773665924330,
+        "source": "patrol"
+      }
+    ],
+    "_lastLoggedSellRatio": 0.25
   }
 }

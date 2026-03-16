@@ -2,13 +2,14 @@
   "lastChecks": {
     "engine": 1773662887,
     "memory": 1773662887,
-    "walletCheck": 1742143300
+    "walletCheck": 1773665919
   },
   "lastWalletCheck": {
-    "time": 1773662887,
-    "sol_ok": true,
-    "bsc_ok": true,
-    "notes": "SOL猎手最近交易16:01, BSC猎手暂无活动(正常)"
+    "time": 1773665919,
+    "sol": "RPC限速无法查询，引擎WS在运行",
+    "bsc": "信号正常检测中(#45,#18,#98,#10等)",
+    "base": "猎手7个，信号少但正常",
+    "issue": "none"
   },
   "notes": "19:41 引擎active, 持仓13个, 内存6360MB, 三链正常, SOL WS刚重新初始化"
 }

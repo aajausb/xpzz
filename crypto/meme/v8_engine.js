@@ -1612,9 +1612,11 @@ async function managePositions() {
         
         // 跟卖优先：查SM钱包是否还持有该token（不依赖价格）
         if (pos.confirmWallets) {
+          let checkedCount = 0, skippedCount = 0;
           try {
             for (const smWallet of pos.confirmWallets) {
-              if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) continue; // 已确认过
+              if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) { skippedCount++; continue; } // 已确认过
+              checkedCount++;
               
               if (pos.chain === 'solana') {
                 // SOL: 查token余额
@@ -1673,6 +1675,9 @@ async function managePositions() {
               }
             }
           } catch(e) { if(e.message) log("WARN", `巡检SM余额异常 ${pos.symbol}: ${e.message?.slice(0,50)}`); }
+          if (checkedCount > 0 || skippedCount > 0) {
+            log('INFO', `📋 ${pos.symbol} SM检查: ${checkedCount}查询 ${skippedCount}跳过 sellTracker=${(sellTracker[tokenAddr]||[]).length}条`);
+          }
         }
         
         // 追踪转仓小号：检查小号是否也清仓了（真正卖出）
@@ -1711,6 +1716,12 @@ async function managePositions() {
         const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
         const totalConfirm = (pos.confirmWallets || []).length || pos.confirmCount || 2;
         const sellRatio = uniqueSellers / totalConfirm; // SM卖出比例
+        
+        // 调试：SM卖出比例变化时输出
+        if (sellRatio > 0 && sellRatio !== (pos._lastLoggedSellRatio || 0)) {
+          log('INFO', `📊 ${pos.symbol} SM卖出比例: ${uniqueSellers}/${totalConfirm}=${(sellRatio*100).toFixed(0)}% soldRatio=${((pos.soldRatio||0)*100).toFixed(0)}%`);
+          pos._lastLoggedSellRatio = sellRatio;
+        }
         
         if (sellRatio >= CONFIG.sellThreshold) {
           // 我们的卖出比例 = SM卖出比例
