@@ -1036,8 +1036,25 @@ async function handleSignal(signal) {
     return;
   }
   
+  // Bug fix: 审计锁（防同一token并发审计+买入）
+  if (!handleSignal._auditLock) handleSignal._auditLock = new Set();
+  if (handleSignal._auditLock.has(token)) { log('INFO', `${token.slice(0,10)} 审计进行中，跳过`); return; }
+  handleSignal._auditLock.add(token);
+  try {
+  
   // symbol复用空投验证时已查的DexScreener数据（省API调用）
-  const symbol = dexData?.pairs?.[0]?.baseToken?.symbol || '?';
+  let symbol = dexData?.pairs?.[0]?.baseToken?.symbol || '?';
+  
+  // Bug fix: symbol为?时尝试从合约查name
+  if (symbol === '?' && chain !== 'solana') {
+    try {
+      const provider = chain === 'bsc' ? bscProvider : baseProvider;
+      const erc20 = new ethers.Contract(token, ['function symbol() view returns (string)'], provider);
+      const onChainSymbol = await erc20.symbol();
+      if (onChainSymbol) symbol = onChainSymbol;
+    } catch {}
+  }
+  
   const audit = await auditToken(chain, token);
   
   // 稳定币/大币直接跳过
@@ -1061,7 +1078,38 @@ async function handleSignal(signal) {
   if (boughtTokens.has(token)) { log('INFO', `${symbol} 已在买入中，跳过`); return; }
   boughtTokens.add(token);
   saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+  
+  // Bug fix: 买入前再次检查SM是否还持有（防龙虾问题：SM已卖我们才买）
+  try {
+    const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
+    if (price > 0) {
+      let stillHolding = 0;
+      for (const smWallet of confirmWallets.slice(0, 5)) { // 最多查5个
+        try {
+          if (chain === 'solana') {
+            const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [smWallet, { mint: token }, { encoding: 'jsonParsed' }]);
+            const bal = (balData.result?.value || []).reduce((s, a) => s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
+            if (bal * price >= 1) stillHolding++;
+          } else {
+            const provider = chain === 'bsc' ? bscProvider : baseProvider;
+            const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+            const [bal, dec] = await Promise.all([erc20.balanceOf(smWallet), erc20.decimals()]);
+            if (parseFloat(ethers.formatUnits(bal, dec)) * price >= 1) stillHolding++;
+          }
+        } catch { stillHolding++; } // 查询失败算持有
+      }
+      if (stillHolding === 0) {
+        log('WARN', `🚫 ${symbol}(${chain}) SM已全部卖出，取消买入`);
+        boughtTokens.delete(token);
+        saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+        return;
+      }
+      log('INFO', `✅ ${symbol} SM仍持有(${stillHolding}/${Math.min(confirmWallets.length,5)})，执行买入`);
+    }
+  } catch(e) { log('WARN', `买前SM检查异常: ${e.message?.slice(0,40)}，继续买入`); }
+  
   await executeBuy(chain, token, symbol, realHunters, confirmWallets);
+  } finally { handleSignal._auditLock.delete(token); }
 }
 
 async function auditToken(chain, tokenAddress) {
@@ -1529,6 +1577,24 @@ async function managePositions() {
       try {
         const holdTime = Date.now() - pos.buyTime;
         
+        // 先查价格（独立于SM检查，确保每轮都能更新）
+        try {
+          const d = await dexScreenerGet(tokenAddr);
+          const currentPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
+          if (currentPrice > 0) {
+            pos.currentPrice = currentPrice;
+            const remaining = pos.buyAmount * (1 - (pos.soldRatio || 0));
+            pos.currentValue = currentPrice * remaining;
+            if (pos.buyPrice > 0) {
+              pos.pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
+            }
+            // symbol为?时尝试修复
+            if (pos.symbol === '?' && d?.pairs?.[0]?.baseToken?.symbol) {
+              pos.symbol = d.pairs[0].baseToken.symbol;
+            }
+          }
+        } catch {}
+        
         // 跟卖优先：查SM钱包是否还持有该token（不依赖价格）
         if (pos.confirmWallets) {
           try {
@@ -1653,37 +1719,7 @@ async function managePositions() {
           continue;
         }
         
-        // 查当前价格（止损用，查不到跳过止损但不影响跟卖）
-        let pnlPercent = 0;
-        try {
-          const d = await dexScreenerGet(tokenAddr);
-          const currentPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
-          if (currentPrice > 0 && pos.buyPrice > 0) {
-            pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
-          } else if (currentPrice > 0 && pos.buyAmount > 0 && pos.buyCost > 0) {
-            // buyPrice=0时用当前价值vs买入成本估算PnL
-            const currentValue = currentPrice * pos.buyAmount;
-            pnlPercent = ((currentValue - pos.buyCost) / pos.buyCost) * 100;
-          }
-        } catch {}
-        
-        // 兜底止损（跌超30%直接卖，不等SM）
-        if (pnlPercent <= CONFIG.stopLoss && pnlPercent !== 0) {
-          await executeSell(tokenAddr, `止损 PnL=${pnlPercent.toFixed(1)}%<${CONFIG.stopLoss}%`);
-          continue;
-        }
-        
-        // 时间止损（>4小时无SM动作且盈亏在±10%内 → 平掉腾仓位）
-        if (holdTime > CONFIG.timeLimitMs && Math.abs(pnlPercent) < CONFIG.timeLimitPnlRange && uniqueSellers === 0) {
-          await executeSell(tokenAddr, `时间止损 ${(holdTime/3600000).toFixed(1)}h PnL=${pnlPercent.toFixed(1)}%`);
-          continue;
-        }
-        
-        // 超时全清（>24小时且部分已卖 → 残余仓位全清，腾仓位）
-        if (holdTime > 24 * 3600000 && (pos.soldRatio || 0) > 0) {
-          await executeSell(tokenAddr, `超时全清 ${(holdTime/3600000).toFixed(0)}h 已卖${((pos.soldRatio||0)*100).toFixed(0)}%`);
-          continue;
-        }
+        // 不做自动止损，完全跟随聪明钱卖出
         
         saveJSON(POSITIONS_FILE, positions);
       } catch(e) { if (e.message) log('WARN', `巡检异常 ${pos?.symbol || tokenAddr?.slice(0,8)}: ${e.message.slice(0,60)}`); }

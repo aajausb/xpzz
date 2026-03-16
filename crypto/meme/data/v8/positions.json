@@ -149,7 +149,10 @@
         "time": 1773642612943,
         "source": "patrol"
       }
-    ]
+    ],
+    "currentPrice": 0.00002385,
+    "currentValue": 31.69064630071732,
+    "pnlPercent": 41.62707838479809
   },
   "0x8306d5723b68228e934b63f5efc2c571eeb14444": {
     "chain": "bsc",
@@ -273,6 +276,11 @@
         "wallet": "0xa83b73f5644cde337b61da79589f10ea15548811",
         "time": 1773655123880,
         "source": "patrol"
+      },
+      {
+        "wallet": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
+        "time": 1773660991734,
+        "source": "patrol"
       }
     ],
     "_transfers": {
@@ -281,7 +289,7 @@
         "time": 1773655071276
       }
     },
-    "soldRatio": 0.5
+    "soldRatio": 0.75
   },
   "0x2b1901fa8502c66cdbb28fe25346ea2f5d2b4444": {
     "chain": "bsc",
@@ -467,27 +475,36 @@
     ],
     "soldRatio": 0.5
   },
-  "0xbc21b0e0d99c36d7122344eba727f43b35774444": {
+  "0x9528df8ca26e9c3550cf57e482b807405bf44444": {
     "chain": "bsc",
-    "token": "0xbc21b0e0d99c36d7122344eba727f43b35774444",
-    "symbol": "?",
-    "buyPrice": 0.00001238,
-    "buyAmount": 672217.541182244,
-    "buyAmountRaw": 672217.541182244,
-    "buyCost": 8,
-    "buyTime": 1773660562349,
-    "confirmCount": 2,
+    "token": "0x9528df8ca26e9c3550cf57e482b807405bf44444",
+    "symbol": "地瓜机器人",
+    "buyPrice": 0.00001122,
+    "buyAmount": 381348.212371265,
+    "buyAmountRaw": 381348.212371265,
+    "buyCost": 5,
+    "buyTime": 1773661830951,
+    "confirmCount": 1,
     "confirmWallets": [
-      "0x38e47fece3ea323e864c65410f6458c820eaa897",
-      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
-      "0x7420416a0893575eac9ab7443e9ee5717fe804da"
+      "0x11db1321c3f926334eb155d5fe704f6b2ff6a2f9",
+      "0x7852346c77b3a622fa73607ee35cc784e53f326b",
+      "0xfb4e4fa492217d8401aa9e893c78707b61923953"
     ],
+    "currentPrice": 0.0000112,
+    "currentValue": 4.271099978558167,
+    "pnlPercent": -0.17825311942958832,
     "_sells": [
       {
-        "wallet": "0x7420416a0893575eac9ab7443e9ee5717fe804da",
-        "time": 1773660573967,
+        "wallet": "0xfb4e4fa492217d8401aa9e893c78707b61923953",
+        "time": 1773661911878,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0x7852346c77b3a622fa73607ee35cc784e53f326b",
+        "time": 1773662158079,
         "source": "patrol"
       }
-    ]
+    ],
+    "soldRatio": 0.6666666666666666
   }
 }

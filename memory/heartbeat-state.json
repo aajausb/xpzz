@@ -1,17 +1,16 @@
 {
   "lastChecks": {
-    "engine": 1742148280,
-    "memory": 1742148280,
-    "walletCheck": 1742148280
+    "engine": 1742143300,
+    "memory": 1742143300,
+    "walletCheck": 1742143300
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T19:05+08",
-    "SOL_W1_CyaE1V": "活跃(08:01UTC最新交易)",
-    "SOL_W2_G6fUXj": "05:50UTC最新，无新交易",
-    "BSC_W1_0x8d56": "nonce=3002(+16)",
-    "BSC_W2_0x2ce9": "nonce=20958(+327，非常活跃)",
-    "BASE_W1_0x03bd": "nonce=3563(无变化)",
-    "verdict": "三链WS正常。BSC 1h 407信号，SOL 1h 57信号。持仓11个巡检中。无漏单。"
+    "time": "2026-03-16T19:41+08",
+    "SOL_W1_CyaE1V": "最新交易08:01UTC，正常",
+    "SOL_W2_G6fUXj": "最新交易03:43UTC",
+    "BSC_W1_0x8d56": "nonce=3002(+16 since 04:08)",
+    "BASE_W1_0x03bd": "nonce=3563(不变)",
+    "verdict": "三链WS正常，SOL刚完成100WS+218轮询初始化，BSC活跃检测中，持仓13个"
   },
-  "notes": "19:05 引擎active, 三链信号活跃, 内存6297MB充裕, 持仓11个"
+  "notes": "19:41 引擎active, 持仓13个, 内存6360MB, 三链正常, SOL WS刚重新初始化"
 }
