@@ -28,7 +28,7 @@
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
-      "currentSpread": 0,
+      "currentSpread": 0.00005245333333333332,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
@@ -72,7 +72,7 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.0005496666666666659,
+      "currentSpread": 0.000465946666666667,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
@@ -116,7 +116,7 @@
       "settlementAligned": true,
       "longOrderId": 933623125,
       "shortOrderId": "1416472683204976642",
-      "currentSpread": 0.0006357866666666666,
+      "currentSpread": 0.0006809244444444444,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
@@ -144,7 +144,7 @@
       "settlementAligned": true,
       "longOrderId": "930af558-887b-4dbb-acfa-83b2fd4a8fd2",
       "shortOrderId": "1416499854602543105",
-      "currentSpread": -0.00006533333333333334,
+      "currentSpread": -0.00008133333333333334,
       "unrealizedPnl": 0
     }
   ],
@@ -207,7 +207,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773625019389,
+  "_lastEarnedCheck": 1773626818781,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,

@@ -42,7 +42,7 @@
 - OKX Web3 钱包地址（Solana）：jLVNxrQ6QX8neHx8bFeEvcTgRed4e4YXiePpfcPHosK
 - 旧自建钱包已废弃（私钥曾明文暴露，已shred销毁）
 - 服务器安全加固：fail2ban + ufw防火墙（22/80/443）
-- Helius Solana RPC x2（已配置）
+- **Helius全部废弃不用**: 5个key全废(max usage reached)，跑步哥明确说不要用了
 - 三条链：Solana/BSC/Base，全部WebSocket毫秒级监听
 - "人呢"必须立刻回复+报告在干什么
 - SOUL.md规则："跑步哥说做就做"

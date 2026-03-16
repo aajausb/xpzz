@@ -33,5 +33,40 @@
       }
     ],
     "soldRatio": 0.6666666666666666
+  },
+  "0xf35c2cfe8208f73fa8ae05019361ddaca9b94444": {
+    "chain": "bsc",
+    "token": "0xf35c2cfe8208f73fa8ae05019361ddaca9b94444",
+    "symbol": "?",
+    "buyPrice": 0,
+    "buyAmount": 14551146.276213057,
+    "buyAmountRaw": 14551146.276213057,
+    "buyCost": 77,
+    "buyTime": 1773627843224,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0x1ef832120aa68c650e84df4769c5d9616d914014",
+      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
+      "0x5c952063c7fc8610ffdb798152d69f0b9550762b"
+    ],
+    "_sells": [
+      {
+        "wallet": "0x1ef832120aa68c650e84df4769c5d9616d914014",
+        "time": 1773627845419,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
+        "time": 1773627996322,
+        "source": "patrol"
+      }
+    ],
+    "soldRatio": 0.6666666666666666,
+    "_transfers": {
+      "0xd216cf8ee73da8438a3e57dc63703043cfb6e075": {
+        "subWallet": "0x5c952063c7fc8610ffdb798152d69f0b9550762b",
+        "time": 1773627872546
+      }
+    }
   }
 }

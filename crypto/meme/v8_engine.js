@@ -78,12 +78,16 @@ const SOL_RPCS = [
   'https://solana-rpc.publicnode.com',
 ];
 let solRpcIdx = 0;
-const solRpcCooldown = [0, 0, 0];
+const solRpcCooldown = new Array(SOL_RPCS.length).fill(0);
 function getSolRpc() {
   const now = Date.now();
+  // 轮转：每次取下一个可用的RPC，均匀分散请求
   for (let i = 0; i < SOL_RPCS.length; i++) {
     const idx = (solRpcIdx + i) % SOL_RPCS.length;
-    if (now >= solRpcCooldown[idx]) return SOL_RPCS[idx];
+    if (now >= solRpcCooldown[idx]) {
+      solRpcIdx = (idx + 1) % SOL_RPCS.length; // 下次从下一个开始
+      return SOL_RPCS[idx];
+    }
   }
   return SOL_RPCS[SOL_RPCS.length - 1]; // 全挂用最后一个
 }
@@ -546,11 +550,10 @@ function setupOfficialSolWs() {
   });
   
   ws.on('close', () => {
-    log('WARN', '🔌 [SOL] 官方RPC WS断开，30秒后重连');
+    log('WARN', '🔌 [SOL] 官方WS断开，5秒后重连');
     solOfficialWs = null;
     solWsMode = 'polling';
-    // 30秒重连间隔，给QuickNode限速窗口恢复
-    setTimeout(() => setupOfficialSolWs(), 30000);
+    setTimeout(() => setupOfficialSolWs(), 5000);
   });
   
   ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS错误: ${e.message.slice(0,40)}`); });
@@ -749,7 +752,8 @@ function setupEvmWebSocket(chainKey) {
     try { _evmWsRefs[chainKey].removeAllListeners(); _evmWsRefs[chainKey].terminate(); } catch {}
   }
   
-  const wsUrl = EVM_WS_ENDPOINTS[chainKey];
+  const endpoints = EVM_WS_ENDPOINTS[chainKey];
+  const wsUrl = endpoints[evmWsIdx[chainKey] % endpoints.length];
   const ws = new WebSocket(wsUrl);
   _evmWsRefs[chainKey] = ws;
   
@@ -810,8 +814,11 @@ function setupEvmWebSocket(chainKey) {
   
   ws.on("close", () => {
     evmWsRetries[chainKey] = (evmWsRetries[chainKey] || 0) + 1;
-    const delay = Math.min(3000 * evmWsRetries[chainKey], 60000);
-    if (evmWsRetries[chainKey] <= 3) log("WARN", "🔌 [" + chain.name + "] WS断开，" + delay/1000 + "秒后重连");
+    // 断连切备用endpoint
+    evmWsIdx[chainKey] = (evmWsIdx[chainKey] + 1) % endpoints.length;
+    const delay = Math.min(2000 * Math.ceil(evmWsRetries[chainKey] / endpoints.length), 30000);
+    const nextUrl = endpoints[evmWsIdx[chainKey] % endpoints.length].replace('wss://','');
+    if (evmWsRetries[chainKey] <= 5) log("WARN", "🔌 [" + chain.name + "] WS断开，" + delay/1000 + "秒后切" + nextUrl);
     setTimeout(() => setupEvmWebSocket(chainKey), delay);
   });
   

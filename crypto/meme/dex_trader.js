@@ -12,9 +12,9 @@ const bs58 = require('bs58');
 
 // ============ 配置 ============
 const SOL_RPCS = [
-  'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/',
-  'https://api.mainnet-beta.solana.com',
-  'https://solana-rpc.publicnode.com',
+  "https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/",
+  "https://api.mainnet-beta.solana.com",
+  "https://solana-rpc.publicnode.com",
 ];
 const BSC_RPC = 'https://bsc-dataseed1.binance.org';
 const BASE_RPC = 'https://mainnet.base.org';
@@ -34,13 +34,16 @@ const CHAIN_ID = { solana: '501', bsc: '56', base: '8453' };
 
 // ============ SOL RPC管理 ============
 let solRpcIdx = 0;
-const solRpcCooldown = [0, 0, 0];
+const solRpcCooldown = new Array(SOL_RPCS.length).fill(0);
 
 function getSolRpc() {
   const now = Date.now();
   for (let i = 0; i < SOL_RPCS.length; i++) {
     const idx = (solRpcIdx + i) % SOL_RPCS.length;
-    if (now >= solRpcCooldown[idx]) return { url: SOL_RPCS[idx], idx };
+    if (now >= solRpcCooldown[idx]) {
+      solRpcIdx = (idx + 1) % SOL_RPCS.length; // 轮转
+      return { url: SOL_RPCS[idx], idx };
+    }
   }
   return { url: SOL_RPCS[SOL_RPCS.length - 1], idx: SOL_RPCS.length - 1 };
 }
