@@ -961,5 +961,10 @@
     "riskLevel": "HIGH",
     "reason": "HIGH风险",
     "_time": 1773685643028
+  },
+  "0x1a2f19e8afca3dcc62272d4a1bb36c7d10937545": {
+    "safe": false,
+    "reason": "buy_reverted_3x",
+    "_time": 1773703331295
   }
 }
