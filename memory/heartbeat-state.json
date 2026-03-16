@@ -1,15 +1,16 @@
 {
   "lastChecks": {
-    "engine": 1742115120,
-    "memory": 1742115120,
-    "walletCheck": 1742115120
+    "engine": 1742131440,
+    "memory": 1742131440,
+    "walletCheck": 1742131440
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T07:52Z",
-    "SOL_CyaE1V": "活跃(05:50UTC有交易)",
-    "BSC_0x8d56": "nonce 2986→3001(+15笔), 引擎15:26检测到",
-    "BASE_0x03bd": "nonce不变(3563)",
-    "verdict": "三链正常，1h内236条信号，BSC有1笔买入revert(libra)属正常"
+    "time": "2026-03-16T08:24Z",
+    "SOL_W1_CyaE1V": "活跃(08:01UTC)",
+    "SOL_W2_G6fUXj": "活跃(03:43UTC)",
+    "BSC_nonces": "W1=2986, W2=20631",
+    "BASE_nonce": "W1=3563",
+    "verdict": "三链正常, SOL 1h 14条信号, BSC/Base 10min 80条, 引擎在实盘交易中"
   },
-  "notes": "15:52 引擎active, 内存5923MB, 三链WS正常, 1h 236信号"
+  "notes": "16:24 引擎active+实盘交易, 内存6056MB, 11个ERROR均为BSC tx revert(重试成功), 买卖正常"
 }
