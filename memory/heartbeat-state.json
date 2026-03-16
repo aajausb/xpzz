@@ -1,17 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1742155500,
-    "memory": 1742155500,
-    "walletCheck": 1742155500
+    "engine": 1742155400,
+    "memory": 1742155400,
+    "walletCheck": 1742155400
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T21:25+08",
-    "SOL_W1_CyaE1V": "活跃(12:23UTC swap)",
+    "time": "2026-03-16T22:03+08",
+    "SOL_W1_CyaE1V": "活跃(12:23UTC有FlashX交易)，引擎同时段有SOL信号但未捡到此钱包(FlashX非标准program)",
     "SOL_W2_G6fUXj": "活跃(03:43UTC)",
-    "BSC_W1_0x8d56": "nonce=3002(上次2986，+16)",
-    "BSC_W2_0x2ce9": "nonce=21035(上次20631，+404)",
-    "BASE_W1_0x03bd": "nonce=3563(无变化)",
-    "verdict": "三链WS正常，SOL 1h内127条信号，BSC/Base活跃。砖头(BSC)卖出失败已标unsellable。"
+    "BSC_W1_0x8d56": "nonce=3007(+21 since 04:08)",
+    "BSC_W2_0x2ce9": "nonce=21053(+422 since 04:08)",
+    "BASE_W1_0x03bd": "nonce=3563(不变)",
+    "verdict": "三链WS正常，1h信号=97SOL+293BSC+4Base。无漏单迹象。CyaE1V用FlashX属已知非标program。"
   },
-  "notes": "21:25 引擎active, 三链信号正常, 内存6148MB, 砖头卖出revert已自动处理"
+  "notes": "22:03 引擎active, 三链WS正常, 内存6276MB充裕, 1h共398信号"
 }

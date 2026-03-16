@@ -37,9 +37,6 @@ const CONFIG = {
   maxPerChain: 999,
   
   // 止损/止盈
-  stopLoss: -30,                            // 兜底止损-30%（防SM没动但币崩了）
-  timeLimitMs: 4 * 3600 * 1000,            // 持仓>4小时无SM动作且±10%内→平掉
-  timeLimitPnlRange: 10,                   // 时间止损的盈亏范围±10%
   sellThreshold: 0.5,                      // SM卖出比例≥50%才触发跟卖
 };
 
@@ -101,8 +98,6 @@ function markSolRpcDown(url) {
 }
 const SOL_QN_RPC = SOL_RPCS[0];
 const SOL_PUBLIC_RPC = SOL_RPCS[0]; // 兼容旧引用
-// Helius Parse API（仅用于解析SOL swap交易详情，WS/RPC已全部用官方）
-const HELIUS_PARSE_KEY = process.env.HELIUS_API_KEY || '2504e0b9-253e-4cfc-a2ce-3721dce8538d';
 
 const OKX_ENV = {
   ...process.env,
@@ -123,18 +118,6 @@ const NATIVE = {
 };
 
 // OKX签名GET请求
-async function okxGet(fullUrl) {
-  const urlObj = new URL(fullUrl);
-  const pathWithQuery = urlObj.pathname + urlObj.search;
-  const ts = new Date().toISOString();
-  const sign = require('crypto').createHmac('sha256', OKX_ENV.OKX_SECRET_KEY).update(ts + 'GET' + pathWithQuery).digest('base64');
-  return httpGet(fullUrl, {
-    'OK-ACCESS-KEY': OKX_ENV.OKX_API_KEY,
-    'OK-ACCESS-SIGN': sign,
-    'OK-ACCESS-TIMESTAMP': ts,
-    'OK-ACCESS-PASSPHRASE': OKX_ENV.OKX_PASSPHRASE,
-  });
-}
 
 // ============ UTILS ============
 const log = (level, msg) => console.log(`${new Date().toLocaleTimeString('zh-CN')} [${level}] ${msg}`);
@@ -450,7 +433,6 @@ async function checkSolTransferTarget(tokenAddr, smWallet) {
   try {
     const sigs = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [smWallet, { limit: 3 }]);
     if (!sigs?.result?.length) return { type: 'unknown' };
-    // 用Helius Parse API解析交易类型（判断是SWAP还是TRANSFER）
     for (const sig of sigs.result) {
       const tx = await rpcPost(getSolRpc(), 'getTransaction', [sig.signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
       if (!tx?.result) continue;
@@ -1612,12 +1594,9 @@ async function managePositions() {
         
         // 跟卖优先：查SM钱包是否还持有该token（不依赖价格）
         if (pos.confirmWallets) {
-          let checkedCount = 0, skippedCount = 0;
           try {
             for (const smWallet of pos.confirmWallets) {
-              if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) { skippedCount++; continue; } // 已确认过
-              checkedCount++;
-              
+              if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) continue; // 已确认过
               if (pos.chain === 'solana') {
                 // SOL: 查token余额
                 const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
@@ -1675,9 +1654,6 @@ async function managePositions() {
               }
             }
           } catch(e) { if(e.message) log("WARN", `巡检SM余额异常 ${pos.symbol}: ${e.message?.slice(0,50)}`); }
-          if (checkedCount > 0 || skippedCount > 0) {
-            log('INFO', `📋 ${pos.symbol} SM检查: ${checkedCount}查询 ${skippedCount}跳过 sellTracker=${(sellTracker[tokenAddr]||[]).length}条`);
-          }
         }
         
         // 追踪转仓小号：检查小号是否也清仓了（真正卖出）
@@ -1716,12 +1692,6 @@ async function managePositions() {
         const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
         const totalConfirm = (pos.confirmWallets || []).length || pos.confirmCount || 2;
         const sellRatio = uniqueSellers / totalConfirm; // SM卖出比例
-        
-        // 调试：SM卖出比例变化时输出
-        if (sellRatio > 0 && sellRatio !== (pos._lastLoggedSellRatio || 0)) {
-          log('INFO', `📊 ${pos.symbol} SM卖出比例: ${uniqueSellers}/${totalConfirm}=${(sellRatio*100).toFixed(0)}% soldRatio=${((pos.soldRatio||0)*100).toFixed(0)}%`);
-          pos._lastLoggedSellRatio = sellRatio;
-        }
         
         if (sellRatio >= CONFIG.sellThreshold) {
           // 我们的卖出比例 = SM卖出比例
