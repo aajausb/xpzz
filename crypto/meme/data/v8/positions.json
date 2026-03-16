@@ -36,39 +36,42 @@
     "sellRevenue": 49.04,
     "busCost": 55
   },
-  "0xb6c63a4e1d00687097b6a4ad1b54d55276e94444": {
+  "0xe78251421e10596dc2812cb02665f8794a6b4444": {
     "chain": "bsc",
-    "token": "0xb6c63a4e1d00687097b6a4ad1b54d55276e94444",
-    "symbol": "火马",
-    "buyPrice": 0.00001499,
-    "buyAmount": 6083488.957952335,
-    "buyAmountRaw": 6083488.957952335,
-    "buyCost": 84,
-    "buyTime": 1773632123963,
+    "token": "0xe78251421e10596dc2812cb02665f8794a6b4444",
+    "symbol": "G1",
+    "buyPrice": 0.000008573,
+    "buyAmount": 8328907.600142507,
+    "buyAmountRaw": 8328907.600142507,
+    "buyCost": 79,
+    "buyTime": 1773636377104,
     "confirmCount": 2,
     "confirmWallets": [
-      "0x38e47fece3ea323e864c65410f6458c820eaa897",
       "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
-      "0x5c952063c7fc8610ffdb798152d69f0b9550762b"
+      "0xa05ec35f7d1eba823cff2ed26aeaed419683742f"
+    ]
+  },
+  "0x77d6f48413e3b599d01f0e9b6ee8dd28cce04444": {
+    "chain": "bsc",
+    "token": "0x77d6f48413e3b599d01f0e9b6ee8dd28cce04444",
+    "symbol": "弓头鲸",
+    "buyPrice": 0.000008939,
+    "buyAmount": 5058084.67914634,
+    "buyAmountRaw": 5058084.67914634,
+    "buyCost": 48,
+    "buyTime": 1773636638332,
+    "confirmCount": 1,
+    "confirmWallets": [
+      "0xa05ec35f7d1eba823cff2ed26aeaed419683742f",
+      "0xb1e65ccc2f5d68e447bf321ba9bfba35a94f5ad5",
+      "0xfb4e4fa492217d8401aa9e893c78707b61923953"
     ],
-    "_transfers": {
-      "0x38e47fece3ea323e864c65410f6458c820eaa897": {
-        "subWallet": "0x5c952063c7fc8610ffdb798152d69f0b9550762b",
-        "time": 1773632149232
-      }
-    },
     "_sells": [
       {
-        "wallet": "0x38e47fece3ea323e864c65410f6458c820eaa897",
-        "time": 1773632151080,
-        "source": "patrol"
-      },
-      {
-        "wallet": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
-        "time": 1773632151120,
+        "wallet": "0xfb4e4fa492217d8401aa9e893c78707b61923953",
+        "time": 1773636731007,
         "source": "patrol"
       }
-    ],
-    "soldRatio": 0.6666666666666666
+    ]
   }
 }

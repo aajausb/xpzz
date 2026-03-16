@@ -393,13 +393,32 @@ const DEX_ROUTERS = {
     '0x13f4ea83d0bd40e75c8222255bc855a974568dd4', // PancakeSwap V3
     '0x1b81d678ffb9c0263ab9dfd4c89b4200bc0353d8', // PancakeSwap Universal
     '0xb971ef87ede563556b2ed4b1c0b0019111dd85d2', // Four.meme Router
+    '0x5c952063c7fc8610ffdb798152d69f0b9550762b', // OKX DEX Router 1
+    '0x4409921ae43a39a11d90f7b7f96cfd0b8093d9fc', // OKX DEX Router 2
+    '0x2c34a2fb1d0b4f55de51e1d0bdefaddce6b7cdd6', // OKX DEX Router 3
   ]),
   base: new Set([
     '0x2626664c2603336e57b271c5c0b26f421741e481', // Uniswap V3
     '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad', // Uniswap Universal
     '0x6131b5fae19ea4f9d964eac0408e4408b66337b5', // Aerodrome
+    '0x5c952063c7fc8610ffdb798152d69f0b9550762b', // OKX DEX Router 1
+    '0x4409921ae43a39a11d90f7b7f96cfd0b8093d9fc', // OKX DEX Router 2
+    '0x2c34a2fb1d0b4f55de51e1d0bdefaddce6b7cdd6', // OKX DEX Router 3
   ]),
 };
+// 所有链共用的合约/Router地址，不能当作SM钱包
+const ALL_ROUTERS = new Set([
+  ...DEX_ROUTERS.bsc, ...DEX_ROUTERS.base,
+  // 我们自己的钱包也排除
+  '0xe00ca1d766f329effc05e704499f10db1f14fd47',
+  // SOL DEX Programs
+  'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4',
+  'JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB',
+  '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
+  'CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK',
+  'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc',
+  'BubdLnFR8AX7nXuJtEXwHa3xyX1G4ufx2FYSaJ8kSgVQ', // 我们的SOL钱包
+]);
 
 // 转仓追踪：SM转到小号 → 追踪小号
 // { tokenAddr: { smWallet: { subWallet, time } } }
@@ -871,8 +890,8 @@ async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
             lg.topics.length >= 3) {
           const from = '0x' + lg.topics[1].slice(26).toLowerCase();
           const to = '0x' + lg.topics[2].slice(26).toLowerCase();
-          if (from === walletAddr.toLowerCase() && to !== walletAddr.toLowerCase()) {
-            // 把转仓目标加入confirmWallets、walletSet和transferTracker
+          if (from === walletAddr.toLowerCase() && to !== walletAddr.toLowerCase() && !ALL_ROUTERS.has(to)) {
+            // 把转仓目标加入confirmWallets、walletSet和transferTracker（排除Router/合约地址）
             const pos = positions[tokenAddr];
             if (pos && pos.confirmWallets && !pos.confirmWallets.includes(to)) {
               pos.confirmWallets.push(to);
@@ -901,7 +920,9 @@ async function handleSignal(signal) {
   // 已持仓 → 不买但把新SM加入confirmWallets（跟卖追踪，上限20个防巡检爆炸）
   if (positions[token]) {
     const pos = positions[token];
-    if (pos.confirmWallets && !pos.confirmWallets.includes(wallet) && pos.confirmWallets.length < 20) {
+    const walletLower = chain === 'solana' ? wallet : wallet.toLowerCase();
+    if (pos.confirmWallets && !pos.confirmWallets.includes(wallet) && pos.confirmWallets.length < 20
+        && !ALL_ROUTERS.has(walletLower)) {
       pos.confirmWallets.push(wallet);
       saveJSON(POSITIONS_FILE, positions);
       log('INFO', `📎 ${pos.symbol}(${chain}) 新增SM跟踪: ${wallet.slice(0,10)} (共${pos.confirmWallets.length}个)`);
