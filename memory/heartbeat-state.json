@@ -1,15 +1,14 @@
 {
   "lastChecks": {
-    "engine": 1742139960,
-    "memory": 1742139960,
-    "walletCheck": 1742139960
+    "engine": 1742135640,
+    "memory": 1742135640,
+    "walletCheck": 1742135640
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T15:06Z",
-    "SOL_CyaE1V": "活跃(15:06UTC刚有交易), 引擎未记录(可能非标DEX或持仓<$1过滤)",
-    "BSC_0x8d56": "nonce=3009(+23 since 04:08)",
-    "BASE_0x03bd": "nonce=3563(不变)",
-    "verdict": "三链WS正常, SOL 10min/25信号, BSC/Base持续检测, 持仓19个, 钱包库412个(103猎手/124哨兵/185观察)"
+    "time": "2026-03-17T00:35+08",
+    "SOL_CyaE1V": "活跃(16:34UTC有交易)",
+    "BSC_0x8d56": "nonce=3011(+25 since 04:08)",
+    "verdict": "三链正常，SOL/BSC均活跃检测中"
   },
-  "notes": "23:06 引擎active, 持仓19个, 内存6294MB, 三链信号正常, 钱包库412个"
+  "notes": "00:35 引擎active, 三链信号正常(SOL+BSC持续检测), 内存6269MB充裕, 无异常"
 }
