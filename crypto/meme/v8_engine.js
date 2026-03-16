@@ -1688,6 +1688,29 @@ async function managePositions() {
           }
         }
         
+        // 止盈：2x回本，剩余利润跟SM走
+        if (pos.currentPrice > 0 && pos.buyPrice > 0 && !pos._tpDone) {
+          const multiple = pos.currentPrice / pos.buyPrice;
+          if (multiple >= 2.0) {
+            // 回本：卖50%（收回本金），剩下50%纯利润跟SM
+            const alreadySold = pos.soldRatio || 0;
+            if (alreadySold < 0.49) { // 还没卖过回本仓
+              const toSell = 0.5 - alreadySold;
+              log('INFO', `🎯 ${pos.symbol}(${pos.chain}) 翻倍${multiple.toFixed(1)}x! 卖50%回本`);
+              await executeSell(tokenAddr, `止盈回本(${multiple.toFixed(1)}x)`, toSell / (1 - alreadySold));
+              if (positions[tokenAddr]) {
+                // 只有卖出成功才标记（unsellable=失败，不标记，下轮重试）
+                if (!pos.unsellable) {
+                  pos.soldRatio = 0.5;
+                  pos._tpDone = true;
+                }
+                saveJSON(POSITIONS_FILE, positions);
+              }
+              continue;
+            }
+          }
+        }
+
         const sells = sellTracker[tokenAddr] || [];
         const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
         const totalConfirm = (pos.confirmWallets || []).length || pos.confirmCount || 2;
@@ -1728,19 +1751,17 @@ async function managePositions() {
 // ============ 通知 ============
 async function notifyTelegram(msg) {
   console.log('📢 ' + msg.replace(/\n/g, ' | '));
+  // 写入本地通知队列文件，由OpenClaw heartbeat转发给跑步哥
   try {
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-    if (!botToken || !chatId) return;
-    // 用fetch替代httpPost（httpPost的https.request有DNS/TLS问题）
-    const resp = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: 'HTML', disable_web_page_preview: true }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!resp.ok) log('WARN', `TG通知HTTP ${resp.status}`);
-  } catch(e) { log('WARN', `TG通知失败: ${e.message?.slice(0,60)}`); }
+    const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
+    let queue = [];
+    try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
+    queue.push({ ts: Date.now(), msg });
+    // 原子写入
+    const tmp = queueFile + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(queue));
+    fs.renameSync(tmp, queueFile);
+  } catch(e) { log('WARN', `通知队列写入失败: ${e.message?.slice(0,60)}`); }
 }
 
 // ============ MAIN ============

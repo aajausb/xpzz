@@ -17,6 +17,12 @@
 4. 抽查结果记入 `memory/heartbeat-state.json` 的 `lastWalletCheck`
 5. **不要跳过这步**——SOL之前只连上1/61，漏了整条链
 
+## 引擎通知转发（每次heartbeat执行）
+1. 读取 `crypto/meme/data/v8/notify_queue.json`
+2. 如果有消息，逐条用 `message` 工具发给跑步哥
+3. 发完后清空文件（写入 `[]`）
+4. **不要跳过**——引擎直连TG API被墙，所有买卖通知都靠这个转发
+
 ## 进程存活检查（每次heartbeat执行）
 1. 只检查 `meme-v8`（跟单引擎）
 2. 挂了用 `systemctl restart meme-v8` 拉起
