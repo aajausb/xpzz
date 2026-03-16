@@ -1,17 +1,15 @@
 {
   "lastChecks": {
-    "engine": 1742155400,
-    "memory": 1742155400,
-    "walletCheck": 1742155400
+    "engine": 1742139960,
+    "memory": 1742139960,
+    "walletCheck": 1742139960
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T22:03+08",
-    "SOL_W1_CyaE1V": "活跃(12:23UTC有FlashX交易)，引擎同时段有SOL信号但未捡到此钱包(FlashX非标准program)",
-    "SOL_W2_G6fUXj": "活跃(03:43UTC)",
-    "BSC_W1_0x8d56": "nonce=3007(+21 since 04:08)",
-    "BSC_W2_0x2ce9": "nonce=21053(+422 since 04:08)",
-    "BASE_W1_0x03bd": "nonce=3563(不变)",
-    "verdict": "三链WS正常，1h信号=97SOL+293BSC+4Base。无漏单迹象。CyaE1V用FlashX属已知非标program。"
+    "time": "2026-03-16T15:06Z",
+    "SOL_CyaE1V": "活跃(15:06UTC刚有交易), 引擎未记录(可能非标DEX或持仓<$1过滤)",
+    "BSC_0x8d56": "nonce=3009(+23 since 04:08)",
+    "BASE_0x03bd": "nonce=3563(不变)",
+    "verdict": "三链WS正常, SOL 10min/25信号, BSC/Base持续检测, 持仓19个, 钱包库412个(103猎手/124哨兵/185观察)"
   },
-  "notes": "22:03 引擎active, 三链WS正常, 内存6276MB充裕, 1h共398信号"
+  "notes": "23:06 引擎active, 持仓19个, 内存6294MB, 三链信号正常, 钱包库412个"
 }
