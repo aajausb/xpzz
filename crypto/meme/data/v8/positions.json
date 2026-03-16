@@ -341,5 +341,47 @@
     "unsellableReason": "transaction execution reverted (action=\"sendTransaction\", data=null, reason=null, invocation=null, revert=null, transaction={ \"data\": \"\", \"from\": \"0xe00ca1d766f329eFfC05E704499f10dB1F14FD47\", \"to\": \"0",
     "unsellableSince": 1773656620992,
     "soldRatio": 0.8
+  },
+  "0x97ffcf57db501f7b4b2609b5c05a718593477777": {
+    "chain": "bsc",
+    "token": "0x97ffcf57db501f7b4b2609b5c05a718593477777",
+    "symbol": "?",
+    "buyPrice": 0.00004349,
+    "buyAmount": 119437.298971985,
+    "buyAmountRaw": 119437.298971985,
+    "buyCost": 10,
+    "buyTime": 1773657580377,
+    "confirmCount": 1,
+    "confirmWallets": [
+      "0x38e47fece3ea323e864c65410f6458c820eaa897",
+      "0xa83b73f5644cde337b61da79589f10ea15548811",
+      "0x58d3cf89a1fc1ed034e9d816d63f6f702fff16e3",
+      "0x7420416a0893575eac9ab7443e9ee5717fe804da",
+      "0x97ffcf57db501f7b4b2609b5c05a718593477777"
+    ],
+    "_sells": [
+      {
+        "wallet": "0x7420416a0893575eac9ab7443e9ee5717fe804da",
+        "time": 1773657608463,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0xa83b73f5644cde337b61da79589f10ea15548811",
+        "time": 1773657852648,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0x58d3cf89a1fc1ed034e9d816d63f6f702fff16e3",
+        "time": 1773657864446,
+        "source": "patrol"
+      }
+    ],
+    "_transfers": {
+      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6": {
+        "subWallet": "0x97ffcf57db501f7b4b2609b5c05a718593477777",
+        "time": 1773657657347
+      }
+    },
+    "soldRatio": 0.6
   }
 }
