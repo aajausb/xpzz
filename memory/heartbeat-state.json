@@ -1,15 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1742168640,
-    "memory": 1742168640,
-    "walletCheck": 1742168640
+    "engine": 1742135820,
+    "memory": 1742135820,
+    "walletCheck": 1742135820
   },
   "lastWalletCheck": {
-    "time": "2026-03-17T01:04+08",
-    "SOL": "活跃，01:03-01:04连续多条swap检测",
-    "BSC": "活跃，01:03-01:04有新信号",
-    "BASE": "正常",
-    "verdict": "三链WS在线正常，0错误，钱包库413个(H104/S124)，持仓0个，内存6277MB"
+    "time": "2026-03-17T01:57+08",
+    "SOL_W1_CyaE1V": "活跃(17:56UTC), 引擎23:44+00:55检测过, nonce+25",
+    "BSC_W1_0x8d56": "nonce=3011(+25 since 04:08)",
+    "BASE_W1_0x03bd": "nonce=3566(+3 since 04:08)",
+    "signalVolume_1h": "SOL:140 BSC:77 Base:12",
+    "walletDb": "414 total (hunter:104, scout:124, watcher:186)",
+    "verdict": "三链WS正常，信号量健康，无漏单迹象"
   },
-  "notes": "01:04 引擎active, 三链活跃, 0错误, 钱包库增长到413(+94), 持仓0"
+  "notes": "01:57 引擎active, 三链WS正常, 内存6159MB, 信号量SOL140/BSC77/Base12每小时"
 }
