@@ -150,5 +150,40 @@
         "source": "patrol"
       }
     ]
+  },
+  "0x8306d5723b68228e934b63f5efc2c571eeb14444": {
+    "chain": "bsc",
+    "token": "0x8306d5723b68228e934b63f5efc2c571eeb14444",
+    "symbol": "libra",
+    "buyPrice": 0.000008927,
+    "buyAmount": 1755317.0520186073,
+    "buyAmountRaw": 1755317.0520186073,
+    "buyCost": 33,
+    "buyTime": 1773647498712,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0x38e47fece3ea323e864c65410f6458c820eaa897",
+      "0x64b23c2987aca16b3d3c55ad6f694058783c72ea",
+      "0x89abf233e6e3c9294d5b3cb80912d190b07a8986"
+    ],
+    "_transfers": {
+      "0xd216cf8ee73da8438a3e57dc63703043cfb6e075": {
+        "subWallet": "0x89abf233e6e3c9294d5b3cb80912d190b07a8986",
+        "time": 1773647504666
+      }
+    },
+    "_sells": [
+      {
+        "wallet": "0x38e47fece3ea323e864c65410f6458c820eaa897",
+        "time": 1773647509825,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0x64b23c2987aca16b3d3c55ad6f694058783c72ea",
+        "time": 1773647509862,
+        "source": "patrol"
+      }
+    ],
+    "soldRatio": 0.6666666666666666
   }
 }
