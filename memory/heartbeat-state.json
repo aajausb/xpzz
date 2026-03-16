@@ -1,14 +1,15 @@
 {
   "lastChecks": {
-    "engine": 1742148420,
-    "memory": 1742148420,
-    "walletCheck": 1742148420
+    "engine": 1742150220,
+    "memory": 1742150220,
+    "walletCheck": 1742150220
   },
   "lastWalletCheck": {
-    "time": "2026-03-17T02:27+08",
-    "SOL_W1_CyaE1V": "活跃(18:24UTC,4min前)",
-    "BSC_W1_0x8d56": "nonce=3011(上次2986,+25笔)",
-    "verdict": "三链WS正常，引擎信号活跃，钱包库414个(hunter104/scout124/watcher186)"
+    "time": "2026-03-17T02:57Z",
+    "SOL_CyaE1V": "活跃(18:57UTC新交易FlashX),引擎02:01检测过swap,FlashX交易可能不被识别",
+    "BSC_0x8d56": "nonce=2986",
+    "BASE_0x03bd": "nonce=3563",
+    "verdict": "三链WS正常运行,SOL/BSC最近5min均有信号检测,内存6121MB充裕,无异常"
   },
-  "notes": "02:27 引擎active, 三链信号活跃, 内存6151MB, 钱包库从319→414"
+  "notes": "02:57 引擎active, 三链信号正常, 内存充裕, SOL RPC偶有限速已自动切换"
 }
