@@ -82,6 +82,8 @@ async function okxGet(path, params) {
   const qs = new URLSearchParams(params).toString();
   const fullPath = path + (qs ? '?' + qs : '');
   const ts = new Date().toISOString();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
   const r = await fetch('https://web3.okx.com' + fullPath, {
     headers: {
       'OK-ACCESS-KEY': OKX_API_KEY,
@@ -89,8 +91,10 @@ async function okxGet(path, params) {
       'OK-ACCESS-TIMESTAMP': ts,
       'OK-ACCESS-PASSPHRASE': OKX_PASS,
       'OK-ACCESS-PROJECT': '',
-    }
+    },
+    signal: controller.signal,
   });
+  clearTimeout(timeout);
   return r.json();
 }
 

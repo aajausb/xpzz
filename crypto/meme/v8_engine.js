@@ -27,19 +27,16 @@ const CONFIG = {
   watcherEvictDays: 30,                     // 观察期30天
 
   // 监控
-  evmPollInterval: 3000,                   // BSC/Base 3秒轮询（接近区块时间）
+  // evmPollInterval已废弃(EVM改为WS监控)
   
   // 过滤
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
   confirmWindowMs: 60 * 60 * 1000,          // 60分钟确认窗口
-  minLiqMcRatio: 0.05,                     // Liq/MC ≥ 5%
+  // minLiqMcRatio已废弃(流动性比率不作拦截条件)
   minMarketCap: 10000,                     // 最低市值$10K，太小的流动性差买卖滑点大
   maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
   
-  // 交易 — 按SM确认数决定仓位
-  positionSizeTop10: 200,                  // TOP10猎手确认: $200
-  positionSizeTop30: 100,                  // TOP30猎手确认: $100
-  positionSizeDefault: 50,                 // 其他猎手确认: $50
+  // 交易 — 动态仓位(余额×百分比): TOP10=20% TOP30=15% 其他=10% min$5 max$200
   maxPositions: 10,
   maxPerChain: 5,
   
@@ -56,7 +53,7 @@ const WALLETS_FILE = path.join(DATA_DIR, 'smart_wallets.json');  // 排名快照
 const WALLET_DB_FILE = path.join(DATA_DIR, 'wallet_db.json');   // 钱包库（持久化）
 const POSITIONS_FILE = path.join(DATA_DIR, 'positions.json');
 // signals.json已废弃，信号记录在日志中
-const BLACKLIST_FILE = path.join(DATA_DIR, 'blacklist.json');
+// blacklist已废弃（跑步哥要求不要黑名单）
 const AUDIT_CACHE_FILE = path.join(DATA_DIR, 'audit_cache.json');
 const BOUGHT_TOKENS_FILE = path.join(DATA_DIR, 'bought_tokens.json');
 
@@ -71,7 +68,7 @@ let boughtTokens = new Set(); // 已买过的token（防重复）
 const lowBalNotified = {};    // 低余额通知去重（chain → timestamp）
 // 稳定币/大币过滤（symbol级别，不走审计直接跳过）
 const SKIP_SYMBOLS = new Set(['USDT','USDC','BUSD','DAI','TUSD','FDUSD','USD1','WBNB','WETH','WBTC','CBBTC','CBETH','STETH','RETH','BNB','ETH','BTC','SOL','WSOL']);
-let blacklist = {};  // tokenAddress -> { reason, timestamp, permanent }
+// blacklist变量已废弃
 let auditCache = {};
 
 // Chain config
@@ -565,8 +562,26 @@ function setupOfficialSolWs() {
   
   ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS错误: ${e.message.slice(0,40)}`); });
   
-  setInterval(() => {
-    if (ws.readyState === WebSocket.OPEN) ws.ping();
+  // 活跃度检测：5分钟没收到任何消息→静默断连→主动重连
+  let lastMsgTime = Date.now();
+  const origOnMsg = ws.listeners('message')[0];
+  if (origOnMsg) {
+    ws.removeListener('message', origOnMsg);
+    ws.on('message', (data) => { lastMsgTime = Date.now(); origOnMsg(data); });
+  }
+  
+  const healthCheck = setInterval(() => {
+    if (ws.readyState !== WebSocket.OPEN) { clearInterval(healthCheck); return; }
+    ws.ping();
+    // 5分钟无消息→判定静默断连
+    if (Date.now() - lastMsgTime > 300000) {
+      log('WARN', '🔌 [SOL] WS静默断连(5分钟无消息)，主动重连');
+      clearInterval(healthCheck);
+      try { ws.removeAllListeners(); ws.terminate(); } catch {}
+      solOfficialWs = null;
+      solWsMode = 'polling';
+      setTimeout(() => setupOfficialSolWs(), 5000);
+    }
   }, 30000);
 }
 
@@ -800,6 +815,7 @@ const EVM_WS_ENDPOINTS = {
 };
 const evmWsRetries = { bsc: 0, base: 0 };
 
+const _evmWsRefs = {}; // 存WS引用，重连前关旧的
 function setupEvmWebSocket(chainKey) {
   const chain = CHAINS[chainKey];
   const walletSet = chainKey === "bsc" ? bscWalletSet : baseWalletSet;
@@ -811,8 +827,14 @@ function setupEvmWebSocket(chainKey) {
   const routers = DEX_ROUTERS[chainKey] || new Set();
   if (routers.size === 0) return;
   
+  // 关闭旧WS
+  if (_evmWsRefs[chainKey]) {
+    try { _evmWsRefs[chainKey].removeAllListeners(); _evmWsRefs[chainKey].terminate(); } catch {}
+  }
+  
   const wsUrl = EVM_WS_ENDPOINTS[chainKey];
   const ws = new WebSocket(wsUrl);
+  _evmWsRefs[chainKey] = ws;
   
   ws.on("open", () => {
     let subId = 1;
@@ -1317,8 +1339,10 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     }
     const result = await trader.buy(chain, tokenAddress, nativeAmount);
     
+    // 有txHash说明交易已发送到链上，不管确认结果都不能重发
+    if (result.txHash) txSucceeded = true;
+    
     if (result.success) {
-      txSucceeded = true; // 标记交易已上链，后续异常不再重发
       // 查实际获得的token数量和价格
       let buyPrice = 0, buyAmount = 0;
       try {
@@ -1327,15 +1351,20 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         buyPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
         
         if (chain === 'solana') {
-          // 查token余额（用动态RPC避免429）
-          const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-            require('./dex_trader.js').getWalletAddress('solana'),
-            { mint: tokenAddress },
-            { encoding: 'jsonParsed' }
-          ]);
-          const accts = balData.result?.value || [];
-          for (const a of accts) {
-            buyAmount += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
+          // 查token余额（三次重试不同RPC）
+          for (let _try = 0; _try < 3 && buyAmount === 0; _try++) {
+            try {
+              if (_try > 0) await sleep(2000);
+              const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+                require('./dex_trader.js').getWalletAddress('solana'),
+                { mint: tokenAddress },
+                { encoding: 'jsonParsed' }
+              ]);
+              const accts = balData.result?.value || [];
+              for (const a of accts) {
+                buyAmount += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
+              }
+            } catch(e) { if (_try < 2) log('WARN', `查SOL余额第${_try+1}次失败: ${e.message?.slice(0,40)}`); }
           }
         } else {
           // EVM查ERC20余额
@@ -1383,6 +1412,36 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       
       // 通知
       await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}\n🔗 ${result.txHash || ''}`);
+    } else if (result.error === 'SOL确认超时' && result.txHash) {
+      // 交易已发送但确认超时→可能已上链，查余额确认
+      log('WARN', `⚠️ ${symbol} 确认超时，查链上余额...`);
+      await sleep(5000);
+      let actualAmount = 0;
+      try {
+        const trader2 = require('./dex_trader.js');
+        if (chain === 'solana') {
+          const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+            trader2.getWalletAddress('solana'), { mint: tokenAddress }, { encoding: 'jsonParsed' }
+          ]);
+          for (const a of (balData.result?.value || [])) {
+            actualAmount += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
+          }
+        }
+      } catch {}
+      if (actualAmount > 0) {
+        log('INFO', `✅ ${symbol} 确认超时但链上有余额(${actualAmount})，记录持仓`);
+        const d = await dexScreenerGet(tokenAddress).catch(() => null);
+        const buyPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
+        positions[tokenAddress] = {
+          chain, token: tokenAddress, symbol, buyPrice, buyAmount: actualAmount,
+          buyAmountRaw: actualAmount, buyCost: size, buyTime: Date.now(),
+          confirmCount, confirmWallets,
+        };
+        saveJSON(POSITIONS_FILE, positions);
+        await notifyTelegram(`🟢 v8买入 ${symbol}(${chain}) [确认超时但成功]\n💰 $${size} | 猎手${confirmCount}\n🔗 ${result.txHash}`);
+      } else {
+        log('WARN', `❌ ${symbol} 确认超时且链上无余额，买入失败`);
+      }
     } else {
       log('WARN', `❌ 买入失败 ${symbol}: ${result.error}`);
       if (attempt < MAX_RETRIES) {
@@ -1455,6 +1514,9 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
           delete transferTracker[tokenAddress];
+          // 清仓后解锁，允许SM再次买入时跟进
+          boughtTokens.delete(tokenAddress);
+          saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
         }
         saveJSON(POSITIONS_FILE, positions);
         const pctStr = ratio < 0.99 ? `${(ratio*100).toFixed(0)}%` : '全部';
@@ -1467,6 +1529,8 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         delete positions[tokenAddress];
         delete sellTracker[tokenAddress];
         delete transferTracker[tokenAddress];
+        boughtTokens.delete(tokenAddress);
+        saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
         saveJSON(POSITIONS_FILE, positions);
         break;
       } else if (attempt < MAX_RETRIES) {
@@ -1743,7 +1807,12 @@ async function main() {
         else if (w.chain === 'base' && !baseWalletSet.has(w.address.toLowerCase())) { baseWalletSet.add(w.address.toLowerCase()); newBase++; }
         else if (w.chain === 'solana' && !solWalletSet.has(w.address)) { solWalletSet.add(w.address); newSol++; }
       }
-      if (newBsc + newBase + newSol > 0) log('INFO', `  新增监控钱包: SOL+${newSol} BSC+${newBsc} Base+${newBase}`);
+      if (newBsc + newBase + newSol > 0) {
+        log('INFO', `  新增监控钱包: SOL+${newSol} BSC+${newBsc} Base+${newBase}`);
+        // 有新EVM钱包→重连WS以订阅新地址
+        if (newBsc > 0) { log('INFO', '  🔌 BSC WS重连(新钱包)'); setupEvmWebSocket('bsc'); }
+        if (newBase > 0) { log('INFO', '  🔌 Base WS重连(新钱包)'); setupEvmWebSocket('base'); }
+      }
       log('INFO', `  排名更新: ${rankedWallets.length}个钱包 (库${Object.keys(walletDb).length}个)`);
     } catch(e) {
       log('ERROR', `排名刷新失败: ${e.message}`);
