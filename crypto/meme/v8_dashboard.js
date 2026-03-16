@@ -174,23 +174,45 @@ async function buildDashboard() {
   const ethUsd = (bal.eth * bal.ethPrice).toFixed(2);
   const totalUsd = (parseFloat(solUsd) + parseFloat(bnbUsd) + parseFloat(ethUsd)).toFixed(2);
   
-  // 持仓详情（v8引擎管理的）
+  // 持仓详情（链上余额 + DexScreener价格 + 引擎记录合并）
   const posEntries = Object.entries(positions);
   let posText = '';
   let totalPnl = 0;
   
   if (posEntries.length > 0) {
     for (const [token, pos] of posEntries) {
+      // 查链上真实余额
+      let onChainAmount = 0;
+      try {
+        if (pos.chain === 'solana') {
+          const balData = await fetchWithRetry('https://solana-rpc.publicnode.com', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner',
+              params: [SOL_WALLET, { mint: token }, { encoding: 'jsonParsed' }] })
+          }).then(r => r.json());
+          for (const a of (balData.result?.value || [])) {
+            onChainAmount += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
+          }
+        } else {
+          const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+          const { ethers } = require('ethers');
+          const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+          const [bal, dec] = await Promise.all([erc20.balanceOf(EVM_WALLET), erc20.decimals()]);
+          onChainAmount = parseFloat(ethers.formatUnits(bal, dec));
+        }
+      } catch {}
+      
       // 查当前价
       let curPrice = 0;
       try {
-        const d = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${token}`).then(r => r.json());
+        const d = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${token}`, {headers:{'User-Agent':'Mozilla/5.0'}}).then(r => r.json());
         curPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
       } catch {}
       
-      const curVal = parseFloat((pos.buyAmount * curPrice).toFixed(2));
+      // 用链上余额算现值（链上余额为0时用positions记录兜底）
+      const amount = onChainAmount > 0 ? onChainAmount : pos.buyAmount;
+      const curVal = parseFloat((amount * curPrice).toFixed(2));
       const cost = pos.buyCost || 0;
-      // PnL按成本回报率算（更准确）
       const pnlUsd = curVal - cost;
       const pnlPct = cost > 0 ? (pnlUsd / cost * 100) : 0;
       totalPnl += pnlUsd;
@@ -198,7 +220,9 @@ async function buildDashboard() {
       const smSold = pos.soldRatio ? `已卖${(pos.soldRatio * 100).toFixed(0)}%` : '';
       const smCount = (pos.confirmWallets || []).length || pos.confirmCount || '?';
       const returnX = cost > 0 && curVal > cost ? ` ${(curVal/cost).toFixed(1)}x` : '';
-      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) $${cost}→$${curVal}${returnX}\n   PnL ${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}% ($${pnlUsd >= 0 ? '+' : ''}${pnlUsd.toFixed(2)}) SM×${smCount} ${smSold}`;
+      const amountStr = onChainAmount > 1000 ? `${(onChainAmount/1000).toFixed(1)}K` : onChainAmount > 0 ? onChainAmount.toFixed(1) : '0';
+      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) $${cost}→$${curVal}${returnX}`;
+      posText += `\n   ${amountStr}个 PnL ${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}% ($${pnlUsd >= 0 ? '+' : ''}${pnlUsd.toFixed(2)}) SM×${smCount} ${smSold}`;
     }
   } else {
     posText = '\n   空仓，等信号...';
@@ -250,8 +274,6 @@ async function buildDashboard() {
    👀观察: ${totalWatcher}个 (SOL=${watcher.solana} BSC=${watcher.bsc} Base=${watcher.base})
 
 📊 持仓 (${posEntries.length}/${10}) PnL: $${totalPnl.toFixed(2)}${posText}
-
-🎒 钱包持仓:${walletTokens.length > 0 ? walletTokens.map(t => `\n   ${t.chain} ${t.symbol}: ${t.amount.toFixed(2)} ($${t.value.toFixed(2)})`).join('') : ' 无'}
 
 📡 信号: 1h内${recentSigs}个
 ⏱ 运行: ${uptime} | 更新: ${now2}`;

@@ -1756,4 +1756,8 @@ async function main() {
   if (global.gc) setInterval(() => global.gc(), 300000);
 }
 
+// 全局错误处理（防崩溃丢信号）
+process.on('uncaughtException', (e) => { console.error(`[FATAL] 未捕获异常: ${e.message}\n${e.stack}`); });
+process.on('unhandledRejection', (e) => { console.error(`[FATAL] 未处理Promise: ${e?.message || e}`); });
+
 main().catch(e => { console.error('启动失败:', e); process.exit(1); });

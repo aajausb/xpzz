@@ -1,15 +1,16 @@
 {
   "lastChecks": {
-    "engine": 1742080000,
+    "engine": 1773619500,
     "memory": 1742080000,
-    "walletCheck": 1742080000
+    "walletCheck": 1773619500
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T07:07Z",
-    "SOL": "21条信号/1h，07:06有最新检测(#168)",
-    "BSC": "2条信号/1h，nonce=2986(未变，凌晨低频正常)",
-    "BASE": "1条信号/1h，nonce=3563(未变)",
-    "verdict": "三链WS正常，SOL最活跃，无断线/错误"
+    "time": "2026-03-16T08:05Z",
+    "SOL": "⚠️ 发现SOL WS静默断连！rank#1 CyaE1V有链上买入(07:58)但引擎0检测。过去1h只有#181/#221/#247(轮询)能检测，WS订阅的100个hunter+scout全部失灵。已重启引擎，重启后#34/#21/#110等高优钱包立即恢复检测。",
+    "BSC": "正常，#44/#63/#95/#193均有检测记录",
+    "BASE": "正常，低频",
+    "action": "已重启 meme-v8 (PID 1066590)，WS恢复正常",
+    "verdict": "SOL WS静默断连已修复。根因：Solana官方WS连接存活但不推送消息，引擎无法感知（没有close/error事件），导致WS订阅的hunter+scout钱包全部漏检。轮询因solOfficialWs对象未null而被跳过。"
   },
-  "notes": "07:07 引擎active(PID 982908同进程自02:42), 三链正常, 内存5319MB, SOL活跃BSC/Base凌晨低频"
+  "notes": "08:05 发现SOL WS静默断连, 重启修复. PID 1066590. 钱包336个(猎手88/哨兵101/观察147). 内存5271MB ok."
 }

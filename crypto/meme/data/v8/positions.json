@@ -33,5 +33,65 @@
       }
     ],
     "soldRatio": 0.6666666666666666
+  },
+  "7TF6FMMFLoxPckmuZNpoCthjEhDPpQvm2PPQjccnpump": {
+    "chain": "solana",
+    "token": "7TF6FMMFLoxPckmuZNpoCthjEhDPpQvm2PPQjccnpump",
+    "symbol": "herm",
+    "buyPrice": 0.0001201,
+    "buyAmount": 0,
+    "buyAmountRaw": 0,
+    "buyCost": 72,
+    "buyTime": 1773619825881,
+    "confirmCount": 1,
+    "confirmWallets": [
+      "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+      "B32QbbdDAyhvUQzjcaM5j6ZVKwjCxAwGH5Xgvb9SJqnC",
+      "99i9uVA7Q56bY22ajKKUfTZTgTeP5yCtVGsrG9J4pDYQ",
+      "2fg5QD1eD7rzNNCsvnhmXFm5hqNgwTTG8p7kQ6f3rx6f",
+      "6S8GezkxYUfZy9JPtYnanbcZTMB87Wjt1qx3c6ELajKC",
+      "EaVboaPxFCYanjoNWdkxTbPvt57nhXGu5i6m9m6ZS2kK"
+    ],
+    "_transfers": {
+      "2fg5QD1eD7rzNNCsvnhmXFm5hqNgwTTG8p7kQ6f3rx6f": {
+        "subWallet": "ECDrSz47nXihe5kyK4oWEePPsPi9qz6u5d6Fa2sDj3uM",
+        "time": 1773619861798
+      },
+      "B32QbbdDAyhvUQzjcaM5j6ZVKwjCxAwGH5Xgvb9SJqnC": {
+        "subWallet": "3PvqoztjnRxaAiFmLuEfqZkU4GSbjUareks8S2xCZaTa",
+        "time": 1773620290802
+      },
+      "EaVboaPxFCYanjoNWdkxTbPvt57nhXGu5i6m9m6ZS2kK": {
+        "subWallet": "5vPNE6VFyXmCmzmWotdxmRk57LEWiXxuAfZL3hKbi2LH",
+        "time": 1773620451729
+      },
+      "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o": {
+        "subWallet": "HkJYryz2BNeMQfuuSWDYktWt5fZLV26eK6nqu7EJycoG",
+        "time": 1773620826135
+      }
+    },
+    "_sells": [
+      {
+        "wallet": "2fg5QD1eD7rzNNCsvnhmXFm5hqNgwTTG8p7kQ6f3rx6f",
+        "time": 1773619861803,
+        "source": "sub-patrol"
+      },
+      {
+        "wallet": "B32QbbdDAyhvUQzjcaM5j6ZVKwjCxAwGH5Xgvb9SJqnC",
+        "time": 1773620291020,
+        "source": "sub-patrol"
+      },
+      {
+        "wallet": "EaVboaPxFCYanjoNWdkxTbPvt57nhXGu5i6m9m6ZS2kK",
+        "time": 1773620451738,
+        "source": "sub-patrol"
+      },
+      {
+        "wallet": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+        "time": 1773620826147,
+        "source": "sub-patrol"
+      }
+    ],
+    "soldRatio": 0.6666666666666666
   }
 }
