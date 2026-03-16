@@ -1,17 +1,16 @@
 {
   "lastChecks": {
-    "engine": 1742110600,
-    "memory": 1742110600,
-    "walletCheck": 1742110600
+    "engine": 1742112860,
+    "memory": 1742112860,
+    "walletCheck": 1742112860
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T05:37Z",
-    "SOL_W1_CyaE1V": "活跃(05:24UTC有交易), 引擎正常检测SOL 33信号/h",
+    "time": "2026-03-16T06:14Z",
+    "SOL_W1_CyaE1V": "活跃(05:50UTC), FlashX交易引擎不识别(非标DEX)",
     "SOL_W2_G6fUXj": "活跃(03:43UTC)",
-    "BSC_W1_0x8d56": "nonce=2996(+10 since 04:08)",
-    "BSC_W2_0x2ce9": "nonce=20727(+96 since 04:08)",
-    "BASE_W1_0x03bd": "nonce=3563(未变)",
-    "verdict": "三链WS正常, BSC最活跃(473信号/h), SOL正常(33信号/h), 无漏单迹象"
+    "BSC_W1_0x8d56": "nonce=2998(+12)",
+    "BASE_W1_0x03bd": "nonce=3563(不变)",
+    "verdict": "三链正常，SOL信号持续检测中，BSC实盘买卖正常执行"
   },
-  "notes": "13:37 引擎active, 持仓3个, 三链WS正常, 内存5092MB, BSC信号密集"
+  "notes": "14:14 引擎active, 实盘运行中(4个持仓,刚卖出1个BSC亏$50), 内存6195MB, 三链WS正常"
 }
