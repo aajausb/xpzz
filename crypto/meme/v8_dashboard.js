@@ -12,7 +12,7 @@ const http = require('http');
 const https = require('https');
 const fetch = require('node-fetch');
 
-const CHAT_ID = '877233818';
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID || '877233818';
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const DATA_DIR = path.join(__dirname, 'data', 'v8');
 const DASHBOARD_STATE = path.join(DATA_DIR, 'dashboard_state.json');

@@ -1105,6 +1105,10 @@ async function handleSignal(signal) {
   const confirmWallets = [...new Set(realConfirmWallets)];
   log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}`);
   delete pendingSignals[token];
+  // 提前标记boughtTokens（防另一个handleSignal并发通过检查→重复买入）
+  if (boughtTokens.has(token)) { log('INFO', `${symbol} 已在买入中，跳过`); return; }
+  boughtTokens.add(token);
+  saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
   await executeBuy(chain, token, symbol, realHunters, confirmWallets);
 }
 
@@ -1251,11 +1255,27 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   while (buyLock && Date.now() - start < maxWait) {
     await sleep(500);
   }
-  if (buyLock) { log('WARN', `⏳ 买入锁等待超时，跳过 ${symbol}`); return; }
+  if (buyLock) {
+    log('WARN', `⏳ 买入锁等待超时，跳过 ${symbol}`);
+    // 超时也要解锁boughtTokens
+    if (boughtTokens.has(tokenAddress) && !positions[tokenAddress]) {
+      boughtTokens.delete(tokenAddress);
+      saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+    }
+    return;
+  }
   buyLock = true;
   try {
     return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets);
-  } finally { buyLock = false; }
+  } finally {
+    buyLock = false;
+    // 兜底：如果买入没成功且没记录持仓→解锁boughtTokens
+    if (boughtTokens.has(tokenAddress) && !positions[tokenAddress]) {
+      boughtTokens.delete(tokenAddress);
+      saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+      log('INFO', `🔓 ${symbol} executeBuy结束无持仓，解锁boughtTokens`);
+    }
+  }
 }
 
 async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets) {
@@ -1458,6 +1478,13 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     }
   }
   } // end retry loop
+  
+  // 买入完全失败（3次重试+无链上余额）→解锁boughtTokens
+  if (!txSucceeded && !positions[tokenAddress]) {
+    boughtTokens.delete(tokenAddress);
+    saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+    log('INFO', `🔓 ${symbol} 买入失败，解锁boughtTokens`);
+  }
 }
 
 const _sellLocks = new Set(); // 卖出锁（防同一token并发卖出）
@@ -1724,8 +1751,9 @@ async function managePositions() {
 async function notifyTelegram(msg) {
   console.log('📢 ' + msg.replace(/\n/g, ' | '));
   try {
-    const botToken = process.env.TELEGRAM_BOT_TOKEN || '8174376151:AAGwlYJTSgxAShUOZ3A40jsKd5NsS8Erpmo';
-    const chatId = process.env.TELEGRAM_CHAT_ID || '877233818';
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    if (!botToken || !chatId) return; // env未配置则静默跳过
     await httpPost(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       chat_id: chatId, text: msg, parse_mode: 'HTML', disable_web_page_preview: true
     });
