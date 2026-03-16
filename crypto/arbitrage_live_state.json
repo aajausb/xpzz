@@ -6,7 +6,7 @@
   "realizedPnl": -772.0631393923411,
   "unrealizedPnl": 0,
   "dailyPnl": 0,
-  "dailyPnlDate": "2026-03-14",
+  "dailyPnlDate": "2026-03-16",
   "trades": 11,
   "wins": 3,
   "losses": 25,
@@ -72,7 +72,7 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": -0.0025359199999999992,
+      "currentSpread": 0.0005496666666666659,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
@@ -116,7 +116,7 @@
       "settlementAligned": true,
       "longOrderId": 933623125,
       "shortOrderId": "1416472683204976642",
-      "currentSpread": 0.0029969422222222214,
+      "currentSpread": 0.0006357866666666666,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
@@ -144,7 +144,7 @@
       "settlementAligned": true,
       "longOrderId": "930af558-887b-4dbb-acfa-83b2fd4a8fd2",
       "shortOrderId": "1416499854602543105",
-      "currentSpread": 0.00039878666666666684,
+      "currentSpread": -0.00006533333333333334,
       "unrealizedPnl": 0
     }
   ],
@@ -207,7 +207,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773513583423,
+  "_lastEarnedCheck": 1773625019389,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,

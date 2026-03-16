@@ -13,8 +13,6 @@ const path = require('path');
 const https = require('https');
 const WebSocket = require('ws');
 const { ethers } = require('ethers');
-const { execSync } = require('child_process');
-
 // ============ CONFIG ============
 const CONFIG = {
   // 数据刷新
@@ -27,12 +25,10 @@ const CONFIG = {
   watcherEvictDays: 30,                     // 观察期30天
 
   // 监控
-  // evmPollInterval已废弃(EVM改为WS监控)
   
   // 过滤
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
   confirmWindowMs: 60 * 60 * 1000,          // 60分钟确认窗口
-  // minLiqMcRatio已废弃(流动性比率不作拦截条件)
   minMarketCap: 10000,                     // 最低市值$10K，太小的流动性差买卖滑点大
   maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
   
@@ -52,8 +48,6 @@ const DATA_DIR = path.join(__dirname, 'data', 'v8');
 const WALLETS_FILE = path.join(DATA_DIR, 'smart_wallets.json');  // 排名快照（展示用）
 const WALLET_DB_FILE = path.join(DATA_DIR, 'wallet_db.json');   // 钱包库（持久化）
 const POSITIONS_FILE = path.join(DATA_DIR, 'positions.json');
-// signals.json已废弃，信号记录在日志中
-// blacklist已废弃（跑步哥要求不要黑名单）
 const AUDIT_CACHE_FILE = path.join(DATA_DIR, 'audit_cache.json');
 const BOUGHT_TOKENS_FILE = path.join(DATA_DIR, 'bought_tokens.json');
 
@@ -68,7 +62,6 @@ let boughtTokens = new Set(); // 已买过的token（防重复）
 const lowBalNotified = {};    // 低余额通知去重（chain → timestamp）
 // 稳定币/大币过滤（symbol级别，不走审计直接跳过）
 const SKIP_SYMBOLS = new Set(['USDT','USDC','BUSD','DAI','TUSD','FDUSD','USD1','WBNB','WETH','WBTC','CBBTC','CBETH','STETH','RETH','BNB','ETH','BTC','SOL','WSOL']);
-// blacklist变量已废弃
 let auditCache = {};
 
 // Chain config
@@ -584,10 +577,6 @@ function setupOfficialSolWs() {
     }
   }, 30000);
 }
-
-
-
-
 // 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
 async function pollSolanaWallets() {
   log('INFO', `🔌 [SOL] 轮询模式启动 ${solWalletSet.size} 个钱包`);
@@ -690,79 +679,6 @@ async function parseSolSignature(walletAddr, signature) {
 }
 
 // 解析Solana swap交易 — 从tokenTransfers提取买入信号
-// [已废弃] parseSolanaSwap — 由parseSolSignature替代
-async function _unused_parseSolanaSwap(result) {
-  try {
-  const tx = result.transaction;
-  const meta = tx?.meta;
-  if (!tx || !meta || meta.err) return; // 失败交易跳过
-  
-  const sig = result.signature;
-  const accountKeys = tx.transaction?.message?.accountKeys || [];
-  const feePayer = accountKeys[0]?.pubkey;
-  if (!feePayer || !solWalletSet.has(feePayer)) return; // 不是我们的钱包发起的
-  
-  // 从tokenBalances变化中检测swap: SOL减少 + 某token增加 = 买入
-  const preBalances = meta.preBalances || [];
-  const postBalances = meta.postBalances || [];
-  const solChange = (postBalances[0] || 0) - (preBalances[0] || 0);
-  
-  // 从tokenTransfers中找到获得的token
-  const preTokenBals = meta.preTokenBalances || [];
-  const postTokenBals = meta.postTokenBalances || [];
-  
-  // 构建token余额变化map
-  const tokenChanges = {};
-  for (const post of postTokenBals) {
-    if (!post.owner || post.owner !== feePayer) continue;
-    const mint = post.mint;
-    const postAmt = parseFloat(post.uiTokenAmount?.uiAmountString || '0');
-    const pre = preTokenBals.find(p => p.mint === mint && p.owner === feePayer);
-    const preAmt = pre ? parseFloat(pre.uiTokenAmount?.uiAmountString || '0') : 0;
-    const delta = postAmt - preAmt;
-    if (delta > 0) tokenChanges[mint] = delta;
-  }
-  
-  // SOL减少 + token增加 = 买入swap
-  const WSOL = 'So11111111111111111111111111111111111111112';
-  if (solChange < -1000000 && Object.keys(tokenChanges).length > 0) { // >0.001 SOL花费
-    for (const [mint, amount] of Object.entries(tokenChanges)) {
-      if (mint === WSOL) continue; // wSOL不算
-      const solSpent = Math.abs(solChange) / 1e9;
-      const wallet = rankedWallets.find(w => w.address === feePayer);
-      const rank = wallet?.rank || 999;
-      log('INFO', `🔔 [SOL] 检测到买入! 钱包#${rank} ${feePayer.slice(0,8)}... 花${solSpent.toFixed(3)}SOL 买 ${mint.slice(0,8)}...`);
-      
-      await handleSignal({
-        chain: 'solana',
-        token: mint,
-        symbol: '?',
-        wallet: feePayer,
-        walletRank: rank,
-        solSpent,
-        timestamp: Date.now(),
-      });
-    }
-  }
-  
-  // 检测卖出: token减少 + SOL增加
-  for (const pre of preTokenBals) {
-    if (!pre.owner || pre.owner !== feePayer) continue;
-    const mint = pre.mint;
-    if (mint === WSOL) continue;
-    const preAmt = parseFloat(pre.uiTokenAmount?.uiAmountString || '0');
-    const post = postTokenBals.find(p => p.mint === mint && p.owner === feePayer);
-    const postAmt = post ? parseFloat(post.uiTokenAmount?.uiAmountString || '0') : 0;
-    if (preAmt > 0 && postAmt < preAmt && solChange > 1000000) {
-      const sellRatio = (preAmt - postAmt) / preAmt;
-      if (positions[mint] && sellRatio > 0.3) {
-        log('INFO', `🔔 [SOL] 检测到卖出! 钱包 ${feePayer.slice(0,8)}... 卖出 ${mint.slice(0,8)}... ${(sellRatio*100).toFixed(0)}%`);
-        trackSmartMoneySell(mint, feePayer, sellRatio);
-      }
-    }
-  }
-  } catch(e) { log('WARN', `parseSolanaSwap异常: ${e.message}`); }
-}
 
 // 跟踪聪明钱卖出 — 积累到阈值触发跟卖（持久化到positions）
 const sellTracker = {}; // token -> [{wallet, time, source}]
@@ -810,9 +726,10 @@ function trackSmartMoneySell(token, wallet, ratio) {
 
 // BSC/Base: WebSocket实时推送 — 订阅DEX Router的Transfer事件
 const EVM_WS_ENDPOINTS = {
-  bsc: "wss://bsc.publicnode.com",
-  base: "wss://base.publicnode.com",
+  bsc: ["wss://bsc.publicnode.com", "wss://bsc.drpc.org"],
+  base: ["wss://base.publicnode.com", "wss://base.drpc.org"],
 };
+const evmWsIdx = { bsc: 0, base: 0 }; // 当前endpoint索引
 const evmWsRetries = { bsc: 0, base: 0 };
 
 const _evmWsRefs = {}; // 存WS引用，重连前关旧的
@@ -991,7 +908,8 @@ async function handleSignal(signal) {
   if (chainPositions >= CONFIG.maxPerChain) return;
   
   // 检查钱包状态: watch的只记录不算确认
-  const walletInfo = rankedWallets.find(w => w.address === wallet || w.address?.toLowerCase() === wallet);
+  const walletLower = wallet.toLowerCase();
+  const walletInfo = rankedWallets.find(w => w.address === wallet || w.address?.toLowerCase() === walletLower);
   const walletStatus = walletInfo?.status || 'watcher';
   
   // 多钱包确认 — 每个钱包只算1次，5分钟窗口
@@ -1039,7 +957,9 @@ async function handleSignal(signal) {
     dexData = await dexScreenerGet(token);
     const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
     if (price > 0) {
-      for (const sig of [...activeSignals, ...watchSignals]) {
+      // 并行查所有SM余额（提速：串行→并行）
+      const allSigs = [...activeSignals, ...watchSignals];
+      const results = await Promise.all(allSigs.map(async (sig) => {
         try {
           let holdingUsd = 0;
           if (chain === 'solana') {
@@ -1056,14 +976,18 @@ async function handleSignal(signal) {
             const [bal, dec] = await Promise.all([erc20.balanceOf(sig.wallet), erc20.decimals()]);
             holdingUsd = parseFloat(ethers.formatUnits(bal, dec)) * price;
           }
-          if (holdingUsd >= MIN_SM_HOLDING_USD) {
-            realConfirmWallets.push(sig.wallet);
-            if (sig.walletStatus === 'hunter') realHunters++;
-            else realScouts++;
-          } else {
-            log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，不算确认`);
-          }
-        } catch {}
+          return { sig, holdingUsd };
+        } catch { return { sig, holdingUsd: -1 }; } // -1=查询失败，算有效
+      }));
+      for (const { sig, holdingUsd } of results) {
+        if (holdingUsd < 0 || holdingUsd >= MIN_SM_HOLDING_USD) {
+          realConfirmWallets.push(sig.wallet);
+          if (sig.walletStatus === 'hunter') realHunters++;
+          else realScouts++;
+          if (holdingUsd < 0) log('WARN', `查SM ${sig.wallet.slice(0,10)} 余额失败，默认算有效`);
+        } else {
+          log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，不算确认`);
+        }
       }
     } else {
       // 查不到价格→不过滤，全算有效
@@ -1166,48 +1090,6 @@ async function auditBinance(chain, tokenAddress) {
     sellTax: parseFloat(audit.extraInfo?.sellTax || 0),
   };
 }
-
-
-
-// [已废弃] checkLiquidity — 跑步哥要求删除
-async function _unused_checkLiquidity(chain, tokenAddress) {
-  try {
-    // OKX报价验证：能报价=有路由=能买卖（覆盖内盘/外盘）
-    const chainIndex = CHAIN_ID[chain];
-    const native = NATIVE[chain];
-    const testAmount = chain === 'solana' ? '10000000' : '5000000000000000'; // 0.01 SOL / 0.005 BNB/ETH
-    const quoteUrl = `https://web3.okx.com/api/v6/dex/aggregator/quote?chainIndex=${chainIndex}&fromTokenAddress=${native}&toTokenAddress=${tokenAddress}&amount=${testAmount}`;
-    const quoteData = await okxGet(quoteUrl);
-    
-    if (!quoteData?.data?.[0]?.routerResult) {
-      return { ok: false, reason: 'OKX无路由' };
-    }
-    
-    const toAmount = parseFloat(quoteData.data[0].routerResult.toTokenAmount || 0);
-    if (toAmount <= 0) return { ok: false, reason: 'OKX报价=0' };
-    
-    // 补充DexScreener检查市值+创建时间（有就查，没有不拦）
-    try {
-      const d = await dexScreenerGet(tokenAddress);
-      const pair = d?.pairs?.[0];
-      const mc = parseFloat(pair?.marketCap || 0);
-      if (mc > 0 && mc < CONFIG.minMarketCap) {
-        return { ok: false, reason: `MC=$${Math.round(mc)}<$${CONFIG.minMarketCap}` };
-      }
-      if (mc > CONFIG.maxMarketCap) {
-        return { ok: false, reason: `MC=$${Math.round(mc/1e6)}M>$50M 大币` };
-      }
-      const liq = parseFloat(pair?.liquidity?.usd || 0);
-      const ratio = mc > 0 ? (liq / mc * 100).toFixed(1) + '%' : '内盘';
-      return { ok: true, ratio, reason: 'OK(OKX有路由)' };
-    } catch(e) {
-      return { ok: true, ratio: '内盘', reason: 'OK(OKX有路由,DexScreener无数据)' };
-    }
-  } catch(e) {
-    return { ok: false, reason: 'check_failed_block' };
-  }
-}
-
 // 原生代币价格缓存（30秒有效）
 const nativePriceCache = {};
 const NATIVE_TOKENS = {
@@ -1336,7 +1218,8 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       nativeAmount = Math.floor((size / price) * 1e9);
       log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(nativeAmount/1e9).toFixed(4)} SOL 猎手=${confirmCount}`);
     } else {
-      nativeAmount = BigInt(Math.floor((size / price) * 1e18)).toString();
+      const { ethers } = require('ethers');
+      nativeAmount = ethers.parseEther((size / price).toFixed(18)).toString();
       const unit = chain === 'bsc' ? 'BNB' : 'ETH';
       log('INFO', `💰 买入 ${symbol}(${chain}) $${size} = ${(size/price).toFixed(6)} ${unit} 猎手=${confirmCount}`);
     }
@@ -1770,7 +1653,6 @@ async function main() {
   // 加载状态
   positions = loadJSON(POSITIONS_FILE, {});
   restoreSellTracker(); // 从positions恢复SM卖出记录（重启不丢）
-  // 黑名单已废弃，不再加载
   auditCache = loadJSON(AUDIT_CACHE_FILE, {});
   // 已买过的token（从持仓+历史记录双重加载）
   const savedBought = loadJSON(BOUGHT_TOKENS_FILE, []);

@@ -202,7 +202,8 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
   try {
     const est = await provider.estimateGas({ from: w.evm.address, to: txData.to, data: txData.data, value: txData.value || '0' });
     gasLimit = est * 150n / 100n;
-  } catch {
+  } catch (e) {
+    console.log(`[dex_trader] ⚠️ ${chain} estimateGas失败: ${e.message?.slice(0,60)}，用OKX gas×2`);
     gasLimit = BigInt(txData.gas || '500000') * 200n / 100n;
   }
 
@@ -268,7 +269,8 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
   try {
     const est = await provider.estimateGas({ from: w.evm.address, to: txData.to, data: txData.data, value: txData.value || '0' });
     gasLimit = est * 150n / 100n;
-  } catch {
+  } catch (e) {
+    console.log(`[dex_trader] ⚠️ ${chain} 卖出estimateGas失败: ${e.message?.slice(0,60)}，用OKX gas×2`);
     gasLimit = BigInt(txData.gas || '500000') * 200n / 100n;
   }
 
@@ -314,7 +316,7 @@ async function sell(chain, tokenAddress, amountRaw) {
 // ============ 辅助 ============
 async function _getTokenBalance(chain, tokenAddress) {
   if (chain === 'solana') {
-    const { conn } = getSolConn();
+    const { conn, rpcIdx } = getSolConn();
     const w = getWallets();
     try {
       const accts = await conn.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
@@ -324,8 +326,9 @@ async function _getTokenBalance(chain, tokenAddress) {
       }
       return total.toString();
     } catch (e) {
-      // 429 → 切RPC重试一次
+      // 429 → 标记down+切RPC重试一次
       if (e.message?.includes('429')) {
+        markSolRpcDown(rpcIdx);
         const { conn: conn2 } = getSolConn();
         const accts = await conn2.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
         let total = 0n;
@@ -344,17 +347,6 @@ async function _getTokenBalance(chain, tokenAddress) {
   }
 }
 
-const RETRY_DELAYS = [1000, 2000, 3000];
-async function _withRetry(fn, label) {
-  for (let i = 0; i < 3; i++) {
-    try { return await fn(); }
-    catch (e) {
-      if (i === 2) throw e;
-      console.log(`⚠️ ${label} 失败(第${i + 1}次), ${RETRY_DELAYS[i] / 1000}秒后重试: ${e.message?.slice(0, 80)}`);
-      await sleep(RETRY_DELAYS[i]);
-    }
-  }
-}
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
