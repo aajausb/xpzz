@@ -92,10 +92,11 @@
   },
   "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82": {
     "safe": true,
-    "riskLevel": "UNKNOWN",
     "isHoneypot": false,
     "sellTax": 0,
-    "reason": "OK"
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773666971640
   },
   "2qfVE31F9GXKiWgbp5njiprmvCucJbFiu581nufspump": {
     "safe": true,
@@ -875,5 +876,37 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1773665902691
+  },
+  "0x48f721942fd4d78fbb4117e500aaf8cfa04d4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773666452779
+  },
+  "0x525da851216acb39c1ab735e5cde0e30df604444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773666570688
+  },
+  "0xa445bb64f615fe93ee7692f1bef2962b41814444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773666839506
+  },
+  "0xe20a684c4e6985f762830fa56e6fee68e41c4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773667082169
   }
 }
