@@ -2,14 +2,14 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -240.88001160999997,
-  "realizedPnl": -789.0258965823411,
+  "totalPnl": -246.94325210999997,
+  "realizedPnl": -795.0891370823412,
   "unrealizedPnl": 0,
-  "dailyPnl": -16.962757189999998,
+  "dailyPnl": -23.025997689999997,
   "dailyPnlDate": "2026-03-16",
   "trades": 11,
   "wins": 3,
-  "losses": 26,
+  "losses": 27,
   "positions": [
     {
       "id": "mmojtgek",
@@ -32,10 +32,6 @@
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
-          "time": 1773438590107,
-          "spread": 0
-        },
-        {
           "time": 1773442190104,
           "spread": 0
         },
@@ -50,50 +46,14 @@
         {
           "time": 1773635818886,
           "spread": 0
+        },
+        {
+          "time": 1773639418884,
+          "spread": 0
         }
       ],
       "consecutiveNeg": 0,
       "health": "ok"
-    },
-    {
-      "id": "mmpfzh6j",
-      "symbol": "LYN",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bitget",
-      "size": 1700,
-      "qty": 5250,
-      "entryPrice": 0.323625,
-      "entryTime": "2026-03-13T22:02:05.371Z",
-      "spread": 0.10650612,
-      "annualized": 11662.42014,
-      "earned": -2.6632405000000006,
-      "totalFee": 3.4,
-      "settlementAligned": true,
-      "longOrderId": 933623125,
-      "shortOrderId": "1416472683204976642",
-      "currentSpread": 0.0003394311111111111,
-      "unrealizedPnl": 0,
-      "spreadHistory": [
-        {
-          "time": 1773442190104,
-          "spread": -0.003923679999999997
-        },
-        {
-          "time": 1773628619320,
-          "spread": 0.0007081955555555556
-        },
-        {
-          "time": 1773632218894,
-          "spread": 0.0005106666666666666
-        },
-        {
-          "time": 1773635818886,
-          "spread": 0.00043441777777777777
-        }
-      ],
-      "consecutiveNeg": 0,
-      "health": "weak"
     },
     {
       "id": "mmpjubmx",
@@ -126,9 +86,13 @@
         {
           "time": 1773635818886,
           "spread": -0.00004933333333333334
+        },
+        {
+          "time": 1773639418885,
+          "spread": 0
         }
       ],
-      "consecutiveNeg": 3,
+      "consecutiveNeg": 0,
       "health": "weak"
     }
   ],
@@ -191,7 +155,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773637618784,
+  "_lastEarnedCheck": 1773639418784,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,

@@ -1402,6 +1402,7 @@ const _sellLocks = new Set(); // 卖出锁（防同一token并发卖出）
 async function executeSell(tokenAddress, reason, ratio = 1.0) {
   const pos = positions[tokenAddress];
   if (!pos) return;
+  if (pos.unsellable) { return; } // 已标记卖不出，跳过
   if (_sellLocks.has(tokenAddress)) { log('INFO', `⏳ ${pos.symbol} 卖出中，跳过重复触发`); return; }
   _sellLocks.add(tokenAddress);
   try {
@@ -1491,12 +1492,29 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
       } else if (attempt < MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
         continue;
+      } else if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
+        // 非异常路径也标记unsellable
+        positions[tokenAddress].unsellable = true;
+        positions[tokenAddress].unsellableReason = result?.error?.substring?.(0, 200) || 'sell failed';
+        positions[tokenAddress].unsellableSince = Date.now();
+        saveJSON(POSITIONS_FILE, positions);
+        log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次卖出全失败，标记unsellable停止重试`);
+        await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次全失败: ${result?.error || 'unknown'}\n🔧 需手动处理`);
       }
     } catch(e) {
       log('ERROR', `卖出异常 ${pos.symbol}(第${attempt}次): ${e.message}`);
       if (attempt < MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
         continue;
+      }
+      // 3次全失败 → 标记unsellable，停止重试，通知跑步哥
+      if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
+        positions[tokenAddress].unsellable = true;
+        positions[tokenAddress].unsellableReason = e.message?.substring(0, 200);
+        positions[tokenAddress].unsellableSince = Date.now();
+        saveJSON(POSITIONS_FILE, positions);
+        log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次卖出全失败，标记unsellable停止重试`);
+        await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次全失败: ${e.message?.substring(0, 100)}\n🔧 可能是貔貅币/流动性耗尽，需手动处理`);
       }
     }
   }

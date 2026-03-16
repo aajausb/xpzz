@@ -49,98 +49,49 @@
     "confirmWallets": [
       "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
       "0xa05ec35f7d1eba823cff2ed26aeaed419683742f"
-    ]
-  },
-  "0xec99e427177c739df171a01337312ad22c014444": {
-    "chain": "bsc",
-    "token": "0xec99e427177c739df171a01337312ad22c014444",
-    "symbol": "BinanceAI",
-    "buyPrice": 0.00002981,
-    "buyAmount": 625640.85332582,
-    "buyAmountRaw": 625640.85332582,
-    "buyCost": 23,
-    "buyTime": 1773638746572,
-    "confirmCount": 1,
-    "confirmWallets": [
-      "0xa05ec35f7d1eba823cff2ed26aeaed419683742f",
-      "0x95701259b045f972b06089e5ba498d463f627aa2",
-      "0x60f456333b4f57e41140d484fb7d2bace824109c",
-      "0xb7dfd0c604f46aaa7b58b2b42d1033ef054f4f5a",
-      "0x7cb966df1905cc8954a5058e20ad892daacb474f"
     ],
-    "_transfers": {
-      "0x60f456333b4f57e41140d484fb7d2bace824109c": {
-        "subWallet": "0xb7dfd0c604f46aaa7b58b2b42d1033ef054f4f5a",
-        "time": 1773638831711
-      },
-      "0x7420416a0893575eac9ab7443e9ee5717fe804da": {
-        "subWallet": "0x7cb966df1905cc8954a5058e20ad892daacb474f",
-        "time": 1773638881235
-      }
-    },
     "_sells": [
       {
-        "wallet": "0x95701259b045f972b06089e5ba498d463f627aa2",
-        "time": 1773638881061,
+        "wallet": "0xa05ec35f7d1eba823cff2ed26aeaed419683742f",
+        "time": 1773639124981,
         "source": "patrol"
-      },
-      {
-        "wallet": "0x7cb966df1905cc8954a5058e20ad892daacb474f",
-        "time": 1773638892711,
-        "source": "patrol"
-      },
-      {
-        "wallet": "0x7420416a0893575eac9ab7443e9ee5717fe804da",
-        "time": 1773638892746,
-        "source": "sub-patrol"
       }
     ],
-    "soldRatio": 0.6
+    "soldRatio": 0.5
   },
   "0xcb20965ac329b0107d8f723f778bf0ca2c144444": {
     "chain": "bsc",
     "token": "0xcb20965ac329b0107d8f723f778bf0ca2c144444",
     "symbol": "BinanceAI",
-    "buyPrice": 0.00002954,
-    "buyAmount": 823862.926134814,
-    "buyAmountRaw": 823862.926134814,
-    "buyCost": 34,
-    "buyTime": 1773638883343,
+    "buyPrice": 0.0001072,
+    "buyAmount": 228626.41282699653,
+    "buyAmountRaw": 228626.41282699653,
+    "buyCost": 27,
+    "buyTime": 1773640465392,
     "confirmCount": 1,
     "confirmWallets": [
-      "0x61e1de40854cae288a11feb9b28a064df14d29ef",
-      "0x58d3cf89a1fc1ed034e9d816d63f6f702fff16e3",
-      "0x95701259b045f972b06089e5ba498d463f627aa2",
+      "0xc2c6acd377458010713e733e1b21dd6f670d091c",
+      "0xe18c8685818cb936dc2448be33349da61b412a4d",
+      "0xcfe30db196c9a99fc80c72ad44fb4a135a53491f",
+      "0x03430d9812b2502aec36649696657566f183615d",
       "0x634b1b9a86928d0069ac42834da89832866512d8"
     ],
     "_transfers": {
-      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6": {
+      "0x2bf7befc0b8d2318c4416f5fc80dfc45f12facab": {
+        "subWallet": "0x03430d9812b2502aec36649696657566f183615d",
+        "time": 1773640640610
+      },
+      "0xa05ec35f7d1eba823cff2ed26aeaed419683742f": {
         "subWallet": "0x634b1b9a86928d0069ac42834da89832866512d8",
-        "time": 1773638966488
+        "time": 1773640655027
       }
     },
     "_sells": [
       {
-        "wallet": "0x95701259b045f972b06089e5ba498d463f627aa2",
-        "time": 1773638968848,
+        "wallet": "0xcfe30db196c9a99fc80c72ad44fb4a135a53491f",
+        "time": 1773640764499,
         "source": "patrol"
       }
-    ]
-  },
-  "0xa15336382d95acdc6550634a5894ed49791a4444": {
-    "chain": "bsc",
-    "token": "0xa15336382d95acdc6550634a5894ed49791a4444",
-    "symbol": "?",
-    "buyPrice": 0,
-    "buyAmount": 3068661.510469209,
-    "buyAmountRaw": 3068661.510469209,
-    "buyCost": 34,
-    "buyTime": 1773638991727,
-    "confirmCount": 2,
-    "confirmWallets": [
-      "0x11db1321c3f926334eb155d5fe704f6b2ff6a2f9",
-      "0x94cf7ed19901eb7d487c779e6d1baa87157b2d01",
-      "0xcfe30db196c9a99fc80c72ad44fb4a135a53491f"
     ]
   }
 }
