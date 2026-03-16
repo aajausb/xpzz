@@ -33,8 +33,8 @@ const CONFIG = {
   maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
   
   // 交易 — 动态仓位(余额×百分比): TOP10=20% TOP30=15% 其他=10% min$5 max$200
-  maxPositions: 10,
-  maxPerChain: 5,
+  maxPositions: 999,
+  maxPerChain: 999,
   
   // 止损/止盈
   stopLoss: -30,                            // 兜底止损-30%（防SM没动但币崩了）

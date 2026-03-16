@@ -91,8 +91,19 @@
         "wallet": "0xcfe30db196c9a99fc80c72ad44fb4a135a53491f",
         "time": 1773640764499,
         "source": "patrol"
+      },
+      {
+        "wallet": "0x03430d9812b2502aec36649696657566f183615d",
+        "time": 1773645664348,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0x2bf7befc0b8d2318c4416f5fc80dfc45f12facab",
+        "time": 1773645664387,
+        "source": "sub-patrol"
       }
-    ]
+    ],
+    "soldRatio": 0.6
   },
   "0x423e58eef8298812f5f6ba5c8a4cb5267d5e4444": {
     "chain": "bsc",

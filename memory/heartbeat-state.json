@@ -1,15 +1,15 @@
 {
   "lastChecks": {
-    "engine": 1742111220,
-    "memory": 1742111220,
-    "walletCheck": 1742111220
+    "engine": 1742120460,
+    "memory": 1742120460,
+    "walletCheck": 1742120460
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T06:47Z",
-    "SOL_W1_CyaE1V": "活跃(05:50UTC有3笔交易)，引擎SOL信号正常(1h内多条检测)",
-    "BSC_W1_0x8d56": "nonce=2998(+12 since 04:08)",
-    "BASE_W1_0x03bd": "nonce=3563(不变)",
-    "verdict": "三链正常，SOL/BSC活跃检测中，持仓5个，SOL RPC偶尔限速自动切换正常"
+    "time": "2026-03-16T15:21+08",
+    "SOL_CyaE1V": "活跃(05:50UTC最新交易)",
+    "BSC_0x8d56": "nonce=3000(+14 since 04:08)",
+    "BASE_0x03bd": "nonce=3563(不变)",
+    "verdict": "三链WS在线，1h 221条信号，无断线无错误"
   },
-  "notes": "14:47 引擎active, 持仓5个, 三链WS正常, 内存6054MB, SOL RPC限速自动切#2"
+  "notes": "15:21 引擎active, 内存5810MB, 三链正常"
 }
