@@ -1,17 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1742092400,
-    "memory": 1742092400,
-    "walletCheck": 1742092400
+    "engine": 1742104980,
+    "memory": 1742104980,
+    "walletCheck": 1742104980
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T10:34+08",
-    "SOL_W1_CyaE1V": "活跃(02:08UTC有交易)",
-    "SOL_W2_G6fUXj": "活跃(02:23UTC有交易)",
-    "BSC_W1_nonce": 2986,
-    "BSC_W2_nonce": 20631,
-    "BASE_W1_nonce": 3563,
-    "verdict": "三链WS全在线。SOL 1h/366信号、BSC 1h/199信号、Base 1h/8信号。龙虾保镖BSC卖出reverted 2次后第3次成功。当前2个持仓。"
+    "time": "2026-03-16T11:03+08",
+    "SOL_W1_CyaE1V": "活跃(02:08UTC最新交易)",
+    "SOL_W2_G6fUXj": "活跃(02:23UTC最新交易)",
+    "BSC_W1_0x8d56": "nonce=2986(未变)",
+    "BSC_W2_0x2ce9": "nonce=20646(+15 since 04:08)",
+    "BASE_W1_0x03bd": "nonce=3563(未变)",
+    "verdict": "三链WS在线正常检测。SOL 1h内77条信号，BSC/Base持续有新信号。BSC/Base偶尔WS断开自动重连，无异常。"
   },
-  "notes": "10:34 引擎active, 三链信号密集, 内存5165MB, 今日多笔买卖, 龙虾保镖BSC合约有revert但重试成功"
+  "notes": "11:03 引擎active, 三链正常, SOL RPC#1偶尔限速自动切#2, 内存5109MB充裕"
 }

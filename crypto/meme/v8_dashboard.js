@@ -213,7 +213,8 @@ async function buildDashboard() {
       const amount = onChainAmount > 0 ? onChainAmount : pos.buyAmount;
       const curVal = parseFloat((amount * curPrice).toFixed(2));
       const cost = pos.buyCost || 0;
-      const pnlUsd = curVal - cost;
+      const sellRev = pos.sellRevenue || 0;
+      const pnlUsd = curVal + sellRev - cost;
       const pnlPct = cost > 0 ? (pnlUsd / cost * 100) : 0;
       totalPnl += pnlUsd;
       const emoji = pnlPct >= 0 ? '🟢' : '🔴';
@@ -221,7 +222,8 @@ async function buildDashboard() {
       const smCount = (pos.confirmWallets || []).length || pos.confirmCount || '?';
       const returnX = cost > 0 && curVal > cost ? ` ${(curVal/cost).toFixed(1)}x` : '';
       const amountStr = onChainAmount > 1000 ? `${(onChainAmount/1000).toFixed(1)}K` : onChainAmount > 0 ? onChainAmount.toFixed(1) : '0';
-      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) $${cost}→$${curVal}${returnX}`;
+      const revStr = sellRev > 0 ? ` 已回${sellRev.toFixed(0)}` : '';
+      posText += `\n${emoji} ${pos.symbol || '?'}(${pos.chain}) ${cost}→${curVal}${returnX}${revStr}`;
       posText += `\n   ${amountStr}个 PnL ${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}% ($${pnlUsd >= 0 ? '+' : ''}${pnlUsd.toFixed(2)}) SM×${smCount} ${smSold}`;
     }
   } else {

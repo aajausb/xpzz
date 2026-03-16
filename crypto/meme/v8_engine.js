@@ -1427,7 +1427,24 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
       }
       
       if (result.success) {
+        // 估算卖出收益（卖出数量×当前价格）
+        try {
+          const sellAmount = ratio < 0.99 ? (pos.buyAmount || 0) * ratio : (pos.buyAmount || 0);
+          const dexData = dexScreenerCache[tokenAddress] || await (async()=>{
+            try { return await (await fetch('https://api.dexscreener.com/latest/dex/tokens/'+tokenAddress,{headers:{'User-Agent':'Mozilla/5.0'}})).json(); } catch{return null;}
+          })();
+          const curPrice = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
+          const revenue = sellAmount * curPrice;
+          if (revenue > 0) {
+            pos.sellRevenue = (pos.sellRevenue || 0) + revenue;
+            log('INFO', `💵 卖出收益估算: ${revenue.toFixed(2)} (累计${pos.sellRevenue.toFixed(2)})`);
+          }
+        } catch {}
         if (ratio >= 0.99) {
+          // 全卖：保存最终sellRevenue到日志后删除
+          const finalRevenue = pos.sellRevenue || 0;
+          const finalPnl = finalRevenue - (pos.buyCost || 0);
+          log('INFO', `📊 ${pos.symbol} 最终PnL: 成本${pos.buyCost||0} 回收${finalRevenue.toFixed(2)} 盈亏${finalPnl.toFixed(2)}`);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
           delete transferTracker[tokenAddress];
