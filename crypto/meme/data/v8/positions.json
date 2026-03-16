@@ -198,38 +198,60 @@
     "confirmCount": 2,
     "confirmWallets": [
       "0x61e1de40854cae288a11feb9b28a064df14d29ef",
-      "0xb3f2b4d6718db553fe239d5e65423ee2891644fe"
+      "0xb3f2b4d6718db553fe239d5e65423ee2891644fe",
+      "0xa686c75226ddb6aa0445c37feca728dd01cfe2e8"
     ],
     "_sells": [
       {
         "wallet": "0xb3f2b4d6718db553fe239d5e65423ee2891644fe",
         "time": 1773649439867,
         "source": "patrol"
-      }
-    ],
-    "soldRatio": 0.5
-  },
-  "0x7ff3062a752a4b01cb113cc9d95b0aa0823c4444": {
-    "chain": "bsc",
-    "token": "0x7ff3062a752a4b01cb113cc9d95b0aa0823c4444",
-    "symbol": "?",
-    "buyPrice": 0,
-    "buyAmount": 1940670.398557081,
-    "buyAmountRaw": 1940670.398557081,
-    "buyCost": 25,
-    "buyTime": 1773649582709,
-    "confirmCount": 2,
-    "confirmWallets": [
-      "0x11db1321c3f926334eb155d5fe704f6b2ff6a2f9",
-      "0x38e47fece3ea323e864c65410f6458c820eaa897"
-    ],
-    "_sells": [
+      },
       {
-        "wallet": "0x38e47fece3ea323e864c65410f6458c820eaa897",
-        "time": 1773649622100,
+        "wallet": "0x61e1de40854cae288a11feb9b28a064df14d29ef",
+        "time": 1773649932254,
         "source": "patrol"
       }
     ],
-    "soldRatio": 0.5
+    "soldRatio": 0.6666666666666666,
+    "_transfers": {
+      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6": {
+        "subWallet": "0xa686c75226ddb6aa0445c37feca728dd01cfe2e8",
+        "time": 1773649883251
+      }
+    },
+    "unsellable": true,
+    "unsellableReason": "transaction execution reverted (action=\"sendTransaction\", data=null, reason=null, invocation=null, revert=null, transaction={ \"data\": \"\", \"from\": \"0xe00ca1d766f329eFfC05E704499f10dB1F14FD47\", \"to\": \"0",
+    "unsellableSince": 1773649949600
+  },
+  "0xe81ab43e7da7dd4eab1a77dc9338d8bad94b4444": {
+    "chain": "bsc",
+    "token": "0xe81ab43e7da7dd4eab1a77dc9338d8bad94b4444",
+    "symbol": "NEO",
+    "buyPrice": 0.000008331,
+    "buyAmount": 2472035.528756236,
+    "buyAmountRaw": 2472035.528756236,
+    "buyCost": 25,
+    "buyTime": 1773651296171,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0x38e47fece3ea323e864c65410f6458c820eaa897",
+      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6"
+    ]
+  },
+  "0xc1e835465710dee93a2fa4f9a4b2a7f33a094444": {
+    "chain": "bsc",
+    "token": "0xc1e835465710dee93a2fa4f9a4b2a7f33a094444",
+    "symbol": "NEO",
+    "buyPrice": 0.00001506,
+    "buyAmount": 603680.8418908,
+    "buyAmountRaw": 603680.8418908,
+    "buyCost": 15,
+    "buyTime": 1773651412401,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0x38e47fece3ea323e864c65410f6458c820eaa897",
+      "0x8d5624fa29526c879a1ca7560961e4c5a08089ae"
+    ]
   }
 }
