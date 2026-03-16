@@ -1,15 +1,17 @@
 {
+  "lastChecks": {
+    "engine": 1742092400,
+    "memory": 1742092400,
+    "walletCheck": 1742092400
+  },
   "lastWalletCheck": {
-    "time": "2026-03-16T00:58:16.540Z",
-    "results": {
-      "SOL#1_CyaE1V": {
-        "lastTx": "08:54:45",
-        "detected": true
-      },
-      "BSC#3_0x2ce9d4": {
-        "txCount": 20631
-      }
-    },
-    "status": "all_ok"
-  }
+    "time": "2026-03-16T10:34+08",
+    "SOL_W1_CyaE1V": "活跃(02:08UTC有交易)",
+    "SOL_W2_G6fUXj": "活跃(02:23UTC有交易)",
+    "BSC_W1_nonce": 2986,
+    "BSC_W2_nonce": 20631,
+    "BASE_W1_nonce": 3563,
+    "verdict": "三链WS全在线。SOL 1h/366信号、BSC 1h/199信号、Base 1h/8信号。龙虾保镖BSC卖出reverted 2次后第3次成功。当前2个持仓。"
+  },
+  "notes": "10:34 引擎active, 三链信号密集, 内存5165MB, 今日多笔买卖, 龙虾保镖BSC合约有revert但重试成功"
 }

@@ -212,6 +212,7 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
 
   const txParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
+  if (!txParams.data || txParams.data.length < 10) throw new Error(`txParams.data为空: to=${txParams.to}`);
   let tx;
   try { tx = await privateWallet.sendTransaction(txParams); }
   catch (e) {
@@ -250,7 +251,8 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
       if (allowance < BigInt(amountRaw)) {
         console.log(`[dex_trader] ${chain} approve max to ${spender}...`);
         const appTx = await erc20.approve(spender, ethers.MaxUint256);
-        await appTx.wait();
+        const appReceipt = await appTx.wait();
+        if (appReceipt.status !== 1) throw new Error(`approve revert: ${appTx.hash}`);
         await sleep(1000); // nonce同步
       }
       _approvedTokens.add(approveKey);
@@ -279,6 +281,7 @@ async function evmSell(chain, tokenAddress, amountRaw, slippage = 3) {
 
   const txParams = { to: txData.to, data: txData.data, value: txData.value || '0', chainId, gasLimit, ...(gasPrice ? { gasPrice } : {}) };
 
+  if (!txParams.data || txParams.data.length < 10) throw new Error(`txParams.data为空: to=${txParams.to}`);
   let tx;
   try { tx = await privateWallet.sendTransaction(txParams); }
   catch (e) {

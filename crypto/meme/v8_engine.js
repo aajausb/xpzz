@@ -1647,7 +1647,7 @@ async function notifyTelegram(msg) {
     await httpPost(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       chat_id: chatId, text: msg, parse_mode: 'HTML', disable_web_page_preview: true
     });
-  } catch(e) { /* TG通知失败不影响交易 */ }
+  } catch(e) { log('WARN', `TG通知失败: ${e.message?.slice(0,60)}`); }
 }
 
 // ============ MAIN ============

@@ -28,13 +28,9 @@
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
-      "currentSpread": 0.00005245333333333332,
+      "currentSpread": 0,
       "unrealizedPnl": 0,
       "spreadHistory": [
-        {
-          "time": 1773427790113,
-          "spread": 0
-        },
         {
           "time": 1773431390105,
           "spread": 0
@@ -50,6 +46,10 @@
         {
           "time": 1773442190104,
           "spread": 0
+        },
+        {
+          "time": 1773628619319,
+          "spread": 0.000026360000000000002
         }
       ],
       "consecutiveNeg": 0,
@@ -72,13 +72,9 @@
       "settlementAligned": true,
       "longOrderId": 1129923166,
       "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.000465946666666667,
+      "currentSpread": 0.0002841866666666662,
       "unrealizedPnl": 0,
       "spreadHistory": [
-        {
-          "time": 1773427790114,
-          "spread": 0.0012758533333333336
-        },
         {
           "time": 1773431390105,
           "spread": 0.00025857333333333354
@@ -94,9 +90,13 @@
         {
           "time": 1773442190104,
           "spread": -0.00008097333333333355
+        },
+        {
+          "time": 1773628619320,
+          "spread": 0.0004248666666666669
         }
       ],
-      "consecutiveNeg": 3,
+      "consecutiveNeg": 0,
       "health": "ok"
     },
     {
@@ -116,15 +116,19 @@
       "settlementAligned": true,
       "longOrderId": 933623125,
       "shortOrderId": "1416472683204976642",
-      "currentSpread": 0.0006809244444444444,
+      "currentSpread": 0.0006486933333333333,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
           "time": 1773442190104,
           "spread": -0.003923679999999997
+        },
+        {
+          "time": 1773628619320,
+          "spread": 0.0007081955555555556
         }
       ],
-      "consecutiveNeg": 1,
+      "consecutiveNeg": 0,
       "health": "weak"
     },
     {
@@ -144,8 +148,16 @@
       "settlementAligned": true,
       "longOrderId": "930af558-887b-4dbb-acfa-83b2fd4a8fd2",
       "shortOrderId": "1416499854602543105",
-      "currentSpread": -0.00008133333333333334,
-      "unrealizedPnl": 0
+      "currentSpread": -0.00007325333333333333,
+      "unrealizedPnl": 0,
+      "spreadHistory": [
+        {
+          "time": 1773628619320,
+          "spread": -0.00011066666666666668
+        }
+      ],
+      "consecutiveNeg": 1,
+      "health": "weak"
     }
   ],
   "balances": {
@@ -207,7 +219,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773626818781,
+  "_lastEarnedCheck": 1773628618784,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
