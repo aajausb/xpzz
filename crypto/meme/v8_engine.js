@@ -1660,10 +1660,15 @@ async function notifyTelegram(msg) {
   try {
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
-    if (!botToken || !chatId) return; // env未配置则静默跳过
-    await httpPost(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      chat_id: chatId, text: msg, parse_mode: 'HTML', disable_web_page_preview: true
+    if (!botToken || !chatId) return;
+    // 用fetch替代httpPost（httpPost的https.request有DNS/TLS问题）
+    const resp = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: 'HTML', disable_web_page_preview: true }),
+      signal: AbortSignal.timeout(10000),
     });
+    if (!resp.ok) log('WARN', `TG通知HTTP ${resp.status}`);
   } catch(e) { log('WARN', `TG通知失败: ${e.message?.slice(0,60)}`); }
 }
 
