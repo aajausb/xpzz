@@ -1,16 +1,14 @@
 {
   "lastChecks": {
-    "engine": 1742143300,
-    "memory": 1742143300,
+    "engine": 1773662887,
+    "memory": 1773662887,
     "walletCheck": 1742143300
   },
   "lastWalletCheck": {
-    "time": "2026-03-16T19:41+08",
-    "SOL_W1_CyaE1V": "最新交易08:01UTC，正常",
-    "SOL_W2_G6fUXj": "最新交易03:43UTC",
-    "BSC_W1_0x8d56": "nonce=3002(+16 since 04:08)",
-    "BASE_W1_0x03bd": "nonce=3563(不变)",
-    "verdict": "三链WS正常，SOL刚完成100WS+218轮询初始化，BSC活跃检测中，持仓13个"
+    "time": 1773662887,
+    "sol_ok": true,
+    "bsc_ok": true,
+    "notes": "SOL猎手最近交易16:01, BSC猎手暂无活动(正常)"
   },
   "notes": "19:41 引擎active, 持仓13个, 内存6360MB, 三链正常, SOL WS刚重新初始化"
 }

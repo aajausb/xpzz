@@ -1438,11 +1438,12 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
   }
   } // end retry loop
   
-  // 买入完全失败（3次重试+无链上余额）→解锁boughtTokens
+  // 买入完全失败（3次重试+无链上余额）→标记审计黑名单（防revert无限循环浪费gas）
   if (!txSucceeded && !positions[tokenAddress]) {
-    boughtTokens.delete(tokenAddress);
-    saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
-    log('INFO', `🔓 ${symbol} 买入失败，解锁boughtTokens`);
+    // 不解锁boughtTokens — revert过的token永久跳过（防无限循环）
+    auditCache[tokenAddress] = { safe: false, reason: 'buy_reverted_3x', _time: Date.now() };
+    saveJSON(AUDIT_CACHE_FILE, auditCache);
+    log('WARN', `🚫 ${symbol} 买入3次全revert，加入审计黑名单（永久跳过）`);
   }
 }
 
@@ -1450,7 +1451,15 @@ const _sellLocks = new Set(); // 卖出锁（防同一token并发卖出）
 async function executeSell(tokenAddress, reason, ratio = 1.0) {
   const pos = positions[tokenAddress];
   if (!pos) return;
-  if (pos.unsellable) { return; } // 已标记卖不出，跳过
+  if (pos.unsellable) {
+    // Bug fix: unsellable每30分钟重试一次（不永久放弃）
+    const since = pos.unsellableSince || 0;
+    if (Date.now() - since < 30 * 60 * 1000) return;
+    log('INFO', `🔄 ${pos.symbol} unsellable已过30分钟，重试卖出...`);
+    delete pos.unsellable;
+    delete pos.unsellableReason;
+    delete pos.unsellableSince;
+  }
   if (_sellLocks.has(tokenAddress)) { log('INFO', `⏳ ${pos.symbol} 卖出中，跳过重复触发`); return; }
   _sellLocks.add(tokenAddress);
   try {
@@ -1499,8 +1508,11 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
       if (result.success) {
         // 估算卖出收益（卖出数量×当前价格）
         try {
-          const sellAmount = ratio < 0.99 ? (pos.buyAmount || 0) * ratio : (pos.buyAmount || 0);
-          const dexData = dexScreenerCache[tokenAddress] || await (async()=>{
+          // Bug fix: ratio是相对剩余的比例，换算成实际卖出数量
+          const remaining = (pos.buyAmount || 0) * (1 - (pos.soldRatio || 0));
+          const sellAmount = ratio < 0.99 ? remaining * ratio : remaining;
+          // Bug fix: 用_dexCache而不是dexScreenerCache
+          const dexData = _dexCache[tokenAddress]?.data || await (async()=>{
             try { return await (await fetch('https://api.dexscreener.com/latest/dex/tokens/'+tokenAddress,{headers:{'User-Agent':'Mozilla/5.0'}})).json(); } catch{return null;}
           })();
           const curPrice = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
@@ -1588,6 +1600,9 @@ async function managePositions() {
             if (pos.buyPrice > 0) {
               pos.pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
             }
+            // 真实PnL = 当前价值 + 已卖收入 - 成本
+            pos.totalPnl = pos.currentValue + (pos.sellRevenue || 0) - (pos.buyCost || 0);
+            pos.totalPnlPercent = pos.buyCost > 0 ? (pos.totalPnl / pos.buyCost * 100) : 0;
             // symbol为?时尝试修复
             if (pos.symbol === '?' && d?.pairs?.[0]?.baseToken?.symbol) {
               pos.symbol = d.pairs[0].baseToken.symbol;
@@ -1761,6 +1776,14 @@ async function main() {
   // 已买过的token（从持仓+历史记录双重加载）
   const savedBought = loadJSON(BOUGHT_TOKENS_FILE, []);
   boughtTokens = new Set([...Object.keys(positions), ...savedBought]);
+  
+  // Bug fix: 清理boughtTokens孤儿（不在positions里的=已卖完，解锁让它能重新被买）
+  const orphans = [...boughtTokens].filter(t => !positions[t]);
+  if (orphans.length > 0) {
+    for (const t of orphans) boughtTokens.delete(t);
+    saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+    log('INFO', `🧹 清理boughtTokens孤儿: ${orphans.length}个`);
+  }
   
   // 加载钱包库
   walletDb = loadJSON(WALLET_DB_FILE, {});

@@ -34,7 +34,12 @@
     ],
     "soldRatio": 0.6666666666666666,
     "sellRevenue": 49.04,
-    "busCost": 55
+    "busCost": 55,
+    "currentPrice": 0.0001093,
+    "currentValue": 9.484583950551535,
+    "pnlPercent": -28.515369522563766,
+    "totalPnl": 3.5245839505515306,
+    "totalPnlPercent": 6.408334455548237
   },
   "0xe78251421e10596dc2812cb02665f8794a6b4444": {
     "chain": "bsc",
@@ -57,7 +62,12 @@
         "source": "patrol"
       }
     ],
-    "soldRatio": 0.5
+    "soldRatio": 0.5,
+    "currentPrice": 0.00002617,
+    "currentValue": 108.9837559478647,
+    "pnlPercent": 205.26070220459576,
+    "totalPnl": 29.983755947864694,
+    "totalPnlPercent": 37.954121452993284
   },
   "0xcb20965ac329b0107d8f723f778bf0ca2c144444": {
     "chain": "bsc",
@@ -103,7 +113,12 @@
         "source": "sub-patrol"
       }
     ],
-    "soldRatio": 0.6
+    "soldRatio": 0.6,
+    "currentPrice": 0.0001721,
+    "currentValue": 15.738642259010442,
+    "pnlPercent": 60.5410447761194,
+    "totalPnl": -11.261357740989558,
+    "totalPnlPercent": -41.7087323740354
   },
   "0x423e58eef8298812f5f6ba5c8a4cb5267d5e4444": {
     "chain": "bsc",
@@ -126,7 +141,12 @@
         "source": "patrol"
       }
     ],
-    "soldRatio": 0.5
+    "soldRatio": 0.5,
+    "currentPrice": 0.00001459,
+    "currentValue": 8.63560415534315,
+    "pnlPercent": -40.13130898645876,
+    "totalPnl": -26.364395844656848,
+    "totalPnlPercent": -75.32684527044815
   },
   "0xa818853a06040a6ba9fb98ab34bbf56fe8444444": {
     "chain": "bsc",
@@ -150,9 +170,11 @@
         "source": "patrol"
       }
     ],
-    "currentPrice": 0.00002385,
-    "currentValue": 31.69064630071732,
-    "pnlPercent": 41.62707838479809
+    "currentPrice": 0.00002569,
+    "currentValue": 34.135543122240165,
+    "pnlPercent": 52.55344418052255,
+    "totalPnl": 12.135543122240165,
+    "totalPnlPercent": 55.1615596465462
   },
   "0x8306d5723b68228e934b63f5efc2c571eeb14444": {
     "chain": "bsc",
@@ -187,7 +209,12 @@
         "source": "patrol"
       }
     ],
-    "soldRatio": 0.6666666666666666
+    "soldRatio": 0.6666666666666666,
+    "currentPrice": 0.00000484,
+    "currentValue": 2.8319115105900203,
+    "pnlPercent": -45.78245771255741,
+    "totalPnl": -30.16808848940998,
+    "totalPnlPercent": -91.41844996790903
   },
   "0x9005b2a2cd5b9e6b461acbbed51f0ceec2474444": {
     "chain": "bsc",
@@ -225,7 +252,12 @@
     },
     "unsellable": true,
     "unsellableReason": "transaction execution reverted (action=\"sendTransaction\", data=null, reason=null, invocation=null, revert=null, transaction={ \"data\": \"\", \"from\": \"0xe00ca1d766f329eFfC05E704499f10dB1F14FD47\", \"to\": \"0",
-    "unsellableSince": 1773649949600
+    "unsellableSince": 1773649949600,
+    "currentPrice": 0.00002606,
+    "currentValue": 6.976863981894483,
+    "pnlPercent": 6.193969030154859,
+    "totalPnl": -15.023136018105518,
+    "totalPnlPercent": -68.28698190047963
   },
   "0xa9e67c5e1254eb6b8c4e79fb55c316ac77a24444": {
     "chain": "bsc",
@@ -248,7 +280,12 @@
         "source": "patrol"
       }
     ],
-    "soldRatio": 0.5
+    "soldRatio": 0.5,
+    "currentPrice": 0.00001298,
+    "currentValue": 6.764309013322683,
+    "pnlPercent": 156.16735741069667,
+    "totalPnl": -6.235690986677317,
+    "totalPnlPercent": -47.96685374367166
   },
   "0x5c92aa834ef64762d8883f4ee345368c65b5fb07": {
     "chain": "bsc",
@@ -291,69 +328,10 @@
     },
     "soldRatio": 0.75
   },
-  "0x2b1901fa8502c66cdbb28fe25346ea2f5d2b4444": {
-    "chain": "bsc",
-    "token": "0x2b1901fa8502c66cdbb28fe25346ea2f5d2b4444",
-    "symbol": "Chinese",
-    "buyPrice": 0.00003261,
-    "buyAmount": 334664.61902959,
-    "buyAmountRaw": 334664.61902959,
-    "buyCost": 12,
-    "buyTime": 1773656325158,
-    "confirmCount": 1,
-    "confirmWallets": [
-      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
-      "0xa83b73f5644cde337b61da79589f10ea15548811",
-      "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
-      "0xad6639655e11ad2a306d2da48319b44669739b4b",
-      "0xb300000b72deaeb607a12d5f54773d1c19c7028d"
-    ],
-    "_transfers": {
-      "0x2bf7befc0b8d2318c4416f5fc80dfc45f12facab": {
-        "subWallet": "0xad6639655e11ad2a306d2da48319b44669739b4b",
-        "time": 1773656398855
-      },
-      "0x3c7e18f7463880c90126f83cbedb95cfe321b41a": {
-        "subWallet": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
-        "time": 1773656526989
-      }
-    },
-    "_sells": [
-      {
-        "wallet": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
-        "time": 1773656534208,
-        "source": "patrol"
-      },
-      {
-        "wallet": "0x3c7e18f7463880c90126f83cbedb95cfe321b41a",
-        "time": 1773656534246,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
-        "time": 1773656603440,
-        "source": "patrol"
-      },
-      {
-        "wallet": "0xa83b73f5644cde337b61da79589f10ea15548811",
-        "time": 1773656637910,
-        "source": "patrol"
-      },
-      {
-        "wallet": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
-        "time": 1773656747993,
-        "source": "patrol"
-      }
-    ],
-    "unsellable": true,
-    "unsellableReason": "transaction execution reverted (action=\"sendTransaction\", data=null, reason=null, invocation=null, revert=null, transaction={ \"data\": \"\", \"from\": \"0xe00ca1d766f329eFfC05E704499f10dB1F14FD47\", \"to\": \"0",
-    "unsellableSince": 1773656620992,
-    "soldRatio": 0.8
-  },
   "0x97ffcf57db501f7b4b2609b5c05a718593477777": {
     "chain": "bsc",
     "token": "0x97ffcf57db501f7b4b2609b5c05a718593477777",
-    "symbol": "?",
+    "symbol": "人生",
     "buyPrice": 0.00004349,
     "buyAmount": 119437.298971985,
     "buyAmountRaw": 119437.298971985,
@@ -390,7 +368,12 @@
         "time": 1773657657347
       }
     },
-    "soldRatio": 0.6
+    "soldRatio": 0.6,
+    "currentPrice": 0.0000279,
+    "currentValue": 1.3329202565273526,
+    "pnlPercent": -35.84732122326971,
+    "totalPnl": -8.667079743472648,
+    "totalPnlPercent": -86.67079743472648
   },
   "0xc2fe9990501474f37b27a07672d7eb7904574444": {
     "chain": "bsc",
@@ -437,7 +420,12 @@
         "time": 1773659848539
       }
     },
-    "soldRatio": 0.8
+    "soldRatio": 0.8,
+    "currentPrice": 0.00003469,
+    "currentValue": 0.3627434947646166,
+    "pnlPercent": -42.028743315508024,
+    "totalPnl": -4.637256505235383,
+    "totalPnlPercent": -92.74513010470767
   },
   "0x735b7ca78176d93b8c506626bcd7507ccaf74444": {
     "chain": "bsc",
@@ -473,7 +461,12 @@
         "source": "patrol"
       }
     ],
-    "soldRatio": 0.5
+    "soldRatio": 0.5,
+    "currentPrice": 0.0002741,
+    "currentValue": 2.4193861649826567,
+    "pnlPercent": -9.567799406136588,
+    "totalPnl": -3.5806138350173433,
+    "totalPnlPercent": -59.67689725028905
   },
   "0x9528df8ca26e9c3550cf57e482b807405bf44444": {
     "chain": "bsc",
@@ -490,9 +483,9 @@
       "0x7852346c77b3a622fa73607ee35cc784e53f326b",
       "0xfb4e4fa492217d8401aa9e893c78707b61923953"
     ],
-    "currentPrice": 0.0000112,
-    "currentValue": 4.271099978558167,
-    "pnlPercent": -0.17825311942958832,
+    "currentPrice": 0.000004184,
+    "currentValue": 0.5318536401871243,
+    "pnlPercent": -62.70944741532977,
     "_sells": [
       {
         "wallet": "0xfb4e4fa492217d8401aa9e893c78707b61923953",
@@ -505,6 +498,8 @@
         "source": "patrol"
       }
     ],
-    "soldRatio": 0.6666666666666666
+    "soldRatio": 0.6666666666666666,
+    "totalPnl": -4.4681463598128754,
+    "totalPnlPercent": -89.36292719625752
   }
 }
