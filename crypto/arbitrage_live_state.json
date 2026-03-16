@@ -2,14 +2,14 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -223.91725441999998,
-  "realizedPnl": -772.0631393923411,
+  "totalPnl": -240.88001160999997,
+  "realizedPnl": -789.0258965823411,
   "unrealizedPnl": 0,
-  "dailyPnl": 0,
+  "dailyPnl": -16.962757189999998,
   "dailyPnlDate": "2026-03-16",
   "trades": 11,
   "wins": 3,
-  "losses": 25,
+  "losses": 26,
   "positions": [
     {
       "id": "mmojtgek",
@@ -32,10 +32,6 @@
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
-          "time": 1773431390105,
-          "spread": 0
-        },
-        {
           "time": 1773434990184,
           "spread": 0
         },
@@ -50,50 +46,10 @@
         {
           "time": 1773628619319,
           "spread": 0.000026360000000000002
-        }
-      ],
-      "consecutiveNeg": 0,
-      "health": "ok"
-    },
-    {
-      "id": "mmouikc8",
-      "symbol": "KITE",
-      "type": "funding",
-      "longEx": "binance",
-      "shortEx": "bitget",
-      "size": 10000,
-      "qty": 45173,
-      "entryPrice": 0.24562,
-      "entryTime": "2026-03-13T12:01:04.376Z",
-      "spread": 0.0114041,
-      "annualized": 1248.7489500000001,
-      "earned": 3.037242810000002,
-      "totalFee": 20,
-      "settlementAligned": true,
-      "longOrderId": 1129923166,
-      "shortOrderId": "1416321432450375681",
-      "currentSpread": 0.00012542666666666655,
-      "unrealizedPnl": 0,
-      "spreadHistory": [
-        {
-          "time": 1773431390105,
-          "spread": 0.00025857333333333354
         },
         {
-          "time": 1773434990184,
-          "spread": -0.0002642000000000003
-        },
-        {
-          "time": 1773438590108,
-          "spread": -0.0002828399999999995
-        },
-        {
-          "time": 1773442190104,
-          "spread": -0.00008097333333333355
-        },
-        {
-          "time": 1773628619320,
-          "spread": 0.0004248666666666669
+          "time": 1773632218893,
+          "spread": 0
         }
       ],
       "consecutiveNeg": 0,
@@ -116,7 +72,7 @@
       "settlementAligned": true,
       "longOrderId": 933623125,
       "shortOrderId": "1416472683204976642",
-      "currentSpread": 0.0005556799999999999,
+      "currentSpread": 0.0005197333333333332,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
@@ -126,6 +82,10 @@
         {
           "time": 1773628619320,
           "spread": 0.0007081955555555556
+        },
+        {
+          "time": 1773632218894,
+          "spread": 0.0005106666666666666
         }
       ],
       "consecutiveNeg": 0,
@@ -148,15 +108,19 @@
       "settlementAligned": true,
       "longOrderId": "930af558-887b-4dbb-acfa-83b2fd4a8fd2",
       "shortOrderId": "1416499854602543105",
-      "currentSpread": -0.000021720000000000002,
+      "currentSpread": -0.00001934666666666667,
       "unrealizedPnl": 0,
       "spreadHistory": [
         {
           "time": 1773628619320,
           "spread": -0.00011066666666666668
+        },
+        {
+          "time": 1773632218894,
+          "spread": -0.000018840000000000003
         }
       ],
-      "consecutiveNeg": 1,
+      "consecutiveNeg": 2,
       "health": "weak"
     }
   ],
@@ -219,7 +183,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773630418785,
+  "_lastEarnedCheck": 1773632218785,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,

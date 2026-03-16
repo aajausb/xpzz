@@ -35,5 +35,40 @@
     "soldRatio": 0.6666666666666666,
     "sellRevenue": 49.04,
     "busCost": 55
+  },
+  "0xb6c63a4e1d00687097b6a4ad1b54d55276e94444": {
+    "chain": "bsc",
+    "token": "0xb6c63a4e1d00687097b6a4ad1b54d55276e94444",
+    "symbol": "火马",
+    "buyPrice": 0.00001499,
+    "buyAmount": 6083488.957952335,
+    "buyAmountRaw": 6083488.957952335,
+    "buyCost": 84,
+    "buyTime": 1773632123963,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0x38e47fece3ea323e864c65410f6458c820eaa897",
+      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
+      "0x5c952063c7fc8610ffdb798152d69f0b9550762b"
+    ],
+    "_transfers": {
+      "0x38e47fece3ea323e864c65410f6458c820eaa897": {
+        "subWallet": "0x5c952063c7fc8610ffdb798152d69f0b9550762b",
+        "time": 1773632149232
+      }
+    },
+    "_sells": [
+      {
+        "wallet": "0x38e47fece3ea323e864c65410f6458c820eaa897",
+        "time": 1773632151080,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
+        "time": 1773632151120,
+        "source": "patrol"
+      }
+    ],
+    "soldRatio": 0.6666666666666666
   }
 }
