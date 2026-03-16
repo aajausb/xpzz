@@ -2,14 +2,14 @@
   "startTime": "2026-03-13T06:32:15.522Z",
   "running": true,
   "paused": false,
-  "totalPnl": -246.94325210999997,
-  "realizedPnl": -795.0891370823412,
+  "totalPnl": -253.07945442999997,
+  "realizedPnl": -801.2253394023412,
   "unrealizedPnl": 0,
-  "dailyPnl": -23.025997689999997,
+  "dailyPnl": -29.162200009999996,
   "dailyPnlDate": "2026-03-16",
   "trades": 11,
   "wins": 3,
-  "losses": 27,
+  "losses": 28,
   "positions": [
     {
       "id": "mmojtgek",
@@ -28,13 +28,9 @@
       "settlementAligned": true,
       "longOrderId": "1416246070622167043",
       "shortOrderId": 252593795,
-      "currentSpread": 0,
+      "currentSpread": 0.00025197333333333333,
       "unrealizedPnl": 0,
       "spreadHistory": [
-        {
-          "time": 1773442190104,
-          "spread": 0
-        },
         {
           "time": 1773628619319,
           "spread": 0.000026360000000000002
@@ -50,50 +46,14 @@
         {
           "time": 1773639418884,
           "spread": 0
+        },
+        {
+          "time": 1773643019091,
+          "spread": 0.000059279999999999995
         }
       ],
       "consecutiveNeg": 0,
       "health": "ok"
-    },
-    {
-      "id": "mmpjubmx",
-      "symbol": "RESOLV",
-      "type": "funding",
-      "longEx": "bybit",
-      "shortEx": "bitget",
-      "size": 6000,
-      "qty": 72948,
-      "entryPrice": 0.08225,
-      "entryTime": "2026-03-13T23:50:03.369Z",
-      "spread": 0.0038779999999999995,
-      "annualized": 424.6409999999999,
-      "earned": 5.863797680000001,
-      "totalFee": 12,
-      "settlementAligned": true,
-      "longOrderId": "930af558-887b-4dbb-acfa-83b2fd4a8fd2",
-      "shortOrderId": "1416499854602543105",
-      "currentSpread": 0,
-      "unrealizedPnl": 0,
-      "spreadHistory": [
-        {
-          "time": 1773628619320,
-          "spread": -0.00011066666666666668
-        },
-        {
-          "time": 1773632218894,
-          "spread": -0.000018840000000000003
-        },
-        {
-          "time": 1773635818886,
-          "spread": -0.00004933333333333334
-        },
-        {
-          "time": 1773639418885,
-          "spread": 0
-        }
-      ],
-      "consecutiveNeg": 0,
-      "health": "weak"
     }
   ],
   "balances": {
@@ -155,7 +115,7 @@
   "errors": 0,
   "consecutiveErrors": 0,
   "lastError": "",
-  "_lastEarnedCheck": 1773641218783,
+  "_lastEarnedCheck": 1773643018786,
   "_lastMarginWarn": {
     "liq_warn_bitget_LYN": 1773318659392,
     "liq_warn_binance_KITE": 1773411826902,
