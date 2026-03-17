@@ -966,6 +966,21 @@ async function handleSignal(signal) {
     return;
   }
   
+  // 同名币去重：已经买了同名的币就不再买（防同名撒网，如7个TITAN）
+  // 先查DexScreener拿symbol
+  let earlyDexData = null;
+  try { earlyDexData = await dexScreenerGet(token); } catch {}
+  const earlySymbol = earlyDexData?.pairs?.[0]?.baseToken?.symbol || '?';
+  if (earlySymbol !== '?') {
+    const sameNameHeld = Object.values(positions).some(p => 
+      p.symbol && p.symbol.toUpperCase() === earlySymbol.toUpperCase() && p.chain === chain
+    );
+    if (sameNameHeld) {
+      log('INFO', `🚫 ${earlySymbol}(${chain}) 已持有同名币，跳过(防撒网)`);
+      return;
+    }
+  }
+
   // 验证SM真实持仓（过滤空投/撒币：持仓<$1的不算有效确认）
   const MIN_SM_HOLDING_USD = 1; // SM至少持有$1才算有效
   let realHunters = 0, realScouts = 0;
@@ -1751,7 +1766,20 @@ async function managePositions() {
           continue;
         }
         
-        // 不做自动止损，完全跟随聪明钱卖出
+        // 归零快速清仓：跌99%以上直接清（不等SM，币已经死了）
+        if (pos.buyPrice > 0 && pos.currentPrice > 0) {
+          const dropPct = ((pos.buyPrice - pos.currentPrice) / pos.buyPrice) * 100;
+          if (dropPct >= 99) {
+            log('INFO', `💀 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}%归零，清仓`);
+            delete positions[tokenAddr];
+            delete sellTracker[tokenAddr];
+            boughtTokens.delete(tokenAddr);
+            saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+            saveJSON(POSITIONS_FILE, positions);
+            await notifyTelegram(`💀 v8归零 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}% 成本$${pos.buyCost||0}`);
+            continue;
+          }
+        }
         
         saveJSON(POSITIONS_FILE, positions);
       } catch(e) { if (e.message) log('WARN', `巡检异常 ${pos?.symbol || tokenAddr?.slice(0,8)}: ${e.message.slice(0,60)}`); }

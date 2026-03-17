@@ -1,14 +1,24 @@
 {
   "lastChecks": {
     "engine": 1742169600,
-    "walletCheck": 1742169600,
+    "walletCheck": 1773709162,
     "memory": null
   },
   "lastWalletCheck": {
-    "time": "2026-03-17T08:25:00+08:00",
-    "sol_rank1": "CyaE1V 1分钟前有链上活动",
-    "bsc_ws": "3个WS连接覆盖173个钱包，检测正常",
-    "base_ws": "1个WS连接29个钱包，检测正常",
-    "result": "三链WS正常"
+    "timestamp": 1773709162,
+    "time_human": "2026-03-17 08:58",
+    "sol_detections_1h": 98,
+    "bsc_detections_1h": 110,
+    "base_detections_1h": 0,
+    "base_ws_status": "reconnected at 08:52, 29 wallets subscribed, no detections yet",
+    "bsc_txcounts": {
+      "0xf07e": 88,
+      "0xe6b0": 335
+    },
+    "base_txcounts": {
+      "0xe56c": 106,
+      "0xa9b5": 566
+    },
+    "notes": "Base WS had disconnects 05:28-05:39, multiple restarts 08:20-08:52. Now connected but 0 detections - likely low Base activity at this hour. txCounts unchanged from 4:27AM (106/566) = no new txs from sampled wallets."
   }
 }

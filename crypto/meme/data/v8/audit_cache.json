@@ -966,5 +966,77 @@
     "safe": false,
     "reason": "buy_reverted_3x",
     "_time": 1773703331295
+  },
+  "0x57abd0b2f88d468555e469ac2edfdcb60f38af1d": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773707617075
+  },
+  "0x220fc5c7cedf7776d78054413c3cb96926824444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773707627095
+  },
+  "0x5de8488ae63a34ec9fe50ba5726e1a8901cdcbbf": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773707701267
+  },
+  "0xe2411a57d21cc6d15c31900d76b07778656e85c4": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773707776410
+  },
+  "0x7d1b62fb4451db43737a6072d2ce023384ed186e": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773707856057
+  },
+  "0x94122bce752f6f633f59bfb777374560864eba24": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773707927991
+  },
+  "0xb3703962e5e8fdb7e80d7bb64ab3422f07ea4038": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773707995593
+  },
+  "0xb2486050373ead12fd2e73a65d87e9fe0aae4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773708009717
+  },
+  "0x9d21594a69643dbe1e0535aed1469fae14d898d9": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773708061215
   }
 }

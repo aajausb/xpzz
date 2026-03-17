@@ -1,1 +1,71 @@
-{}
+{
+  "0x57abd0b2f88d468555e469ac2edfdcb60f38af1d": {
+    "chain": "bsc",
+    "token": "0x57abd0b2f88d468555e469ac2edfdcb60f38af1d",
+    "symbol": "TITAN",
+    "buyPrice": 9.776e-13,
+    "buyAmount": 547605.317978484,
+    "buyAmountRaw": 547605.317978484,
+    "buyCost": 80,
+    "buyTime": 1773707625729,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0x64b23c2987aca16b3d3c55ad6f694058783c72ea",
+      "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
+      "0xa83b73f5644cde337b61da79589f10ea15548811"
+    ],
+    "currentPrice": 1.315e-12,
+    "currentValue": 7.201009931417064e-7,
+    "pnlPercent": 34.51309328968903,
+    "totalPnl": -79.999999279899,
+    "totalPnlPercent": -99.99999909987375
+  },
+  "0x220fc5c7cedf7776d78054413c3cb96926824444": {
+    "chain": "bsc",
+    "token": "0x220fc5c7cedf7776d78054413c3cb96926824444",
+    "symbol": "泰坦",
+    "buyPrice": 0.00001573,
+    "buyAmount": 1723317.817697644,
+    "buyAmountRaw": 1723317.817697644,
+    "buyCost": 33,
+    "buyTime": 1773707631240,
+    "confirmCount": 1,
+    "confirmWallets": [
+      "0xc2c6acd377458010713e733e1b21dd6f670d091c",
+      "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
+      "0xd41feaa24dede516a501862cf1f376defb811772",
+      "0x2b106fc0533a1b7b02c0332d0361c3f1917b16c7"
+    ],
+    "currentPrice": 0.00004567,
+    "currentValue": 19.67598118356285,
+    "pnlPercent": 190.33693579148127,
+    "totalPnl": 36.45401634775929,
+    "totalPnlPercent": 110.4667162053312,
+    "sellRevenue": 49.778035164196446,
+    "soldRatio": 0.75,
+    "_tpDone": true,
+    "_sells": [
+      {
+        "wallet": "0xd41feaa24dede516a501862cf1f376defb811772",
+        "time": 1773708041432,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0xc2c6acd377458010713e733e1b21dd6f670d091c",
+        "time": 1773708644990,
+        "source": "patrol"
+      },
+      {
+        "wallet": "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
+        "time": 1773708994266,
+        "source": "patrol"
+      }
+    ],
+    "_transfers": {
+      "0xc2c6acd377458010713e733e1b21dd6f670d091c": {
+        "subWallet": "0x2b106fc0533a1b7b02c0332d0361c3f1917b16c7",
+        "time": 1773708454970
+      }
+    }
+  }
+}

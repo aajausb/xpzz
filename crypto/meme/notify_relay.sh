@@ -3,22 +3,16 @@
 QUEUE="/root/.openclaw/workspace/crypto/meme/data/v8/notify_queue.json"
 LOCK="/tmp/notify_relay.lock"
 
-# 防重复启动
 exec 200>"$LOCK"
 flock -n 200 || { echo "已有实例在运行"; exit 1; }
 
 echo "🔔 通知转发服务启动，监听 $QUEUE"
-
-# 确保文件存在
 [ -f "$QUEUE" ] || echo '[]' > "$QUEUE"
 
 process_queue() {
-  # 原子读取+清空：rename旧文件→处理→删除（防竞态丢消息）
   local tmp="/tmp/notify_process_$$.json"
-  
-  # 原子移走队列文件（引擎发现文件不存在会新建）
   mv "$QUEUE" "$tmp" 2>/dev/null || return
-  echo '[]' > "$QUEUE"  # 立刻重建空文件给引擎写
+  echo '[]' > "$QUEUE"
   
   local content
   content=$(cat "$tmp" 2>/dev/null)
@@ -27,7 +21,6 @@ process_queue() {
   [ -z "$content" ] && return
   [ "$content" = "[]" ] && return
   
-  # 逐条发送
   echo "$content" | python3 -c "
 import json, sys, subprocess
 msgs = json.load(sys.stdin)
@@ -35,22 +28,30 @@ for m in msgs:
     msg = m.get('msg', '')
     if not msg: continue
     msg = msg.replace('<b>', '').replace('</b>', '').replace('<i>', '').replace('</i>', '')
-    print(f'📤 转发: {msg[:60]}...' if len(msg)>60 else f'📤 转发: {msg}')
-    subprocess.run([
-        'openclaw', 'message', 'send',
-        '--channel', 'telegram',
-        '--target', '877233818',
-        '--message', msg
-    ], capture_output=True, timeout=15)
+    short = (msg[:60] + '...') if len(msg) > 60 else msg
+    try:
+        r = subprocess.run([
+            'openclaw', 'message', 'send',
+            '--channel', 'telegram',
+            '--target', '877233818',
+            '--message', msg
+        ], capture_output=True, text=True, timeout=30)
+        if r.returncode == 0 and 'messageId' in r.stdout:
+            print(f'✅ 发送成功: {short}')
+        else:
+            print(f'❌ 发送失败(code={r.returncode}): {short}')
+            print(f'   stderr: {r.stderr[:200]}')
+    except subprocess.TimeoutExpired:
+        print(f'⏰ 发送超时: {short}')
+    except Exception as e:
+        print(f'❌ 异常: {e}')
 " 2>&1
 }
 
-# 初始检查一次
 process_queue
 
-# inotifywait监听文件变化
 while true; do
   inotifywait -qq -e modify -e move_to -e create "$(dirname "$QUEUE")" 2>/dev/null
-  sleep 0.3  # 等引擎写完
+  sleep 0.3
   process_queue
 done
