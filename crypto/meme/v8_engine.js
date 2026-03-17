@@ -1776,7 +1776,11 @@ async function managePositions() {
         } catch {}
         
         // 跟卖优先：查SM钱包是否还持有该token（不依赖价格）
-        if (pos.confirmWallets) {
+        // SOL RPC限速严重，SM查询降频到每60秒一次（价格查询每轮都跑）
+        if (!pos._lastSmCheck) pos._lastSmCheck = 0;
+        const smCheckInterval = pos.chain === 'solana' ? 60000 : 15000; // SOL 60秒, EVM 15秒
+        if (pos.confirmWallets && (Date.now() - pos._lastSmCheck >= smCheckInterval)) {
+          pos._lastSmCheck = Date.now();
           try {
             for (const smWallet of pos.confirmWallets) {
               if (sellTracker[tokenAddr]?.some(s => s.wallet === smWallet)) continue; // 已确认过
@@ -1786,7 +1790,7 @@ async function managePositions() {
                   smWallet, { mint: tokenAddr }, { encoding: 'jsonParsed' }
                 ]);
                 // 必须区分"查到余额=0"和"查询失败"
-                if (!balData?.result || balData.error) continue; // RPC失败跳过，不误判
+                if (!balData?.result || balData.error) { log('WARN', `查SM ${smWallet.slice(0,10)} ${pos.symbol} SOL RPC失败，跳过`); continue; }
                 const accounts = balData.result.value || [];
                 const bal = accounts.reduce((s, a) => 
                   s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
