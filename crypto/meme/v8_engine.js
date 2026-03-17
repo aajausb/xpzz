@@ -18,7 +18,7 @@ const CONFIG = {
   // 数据刷新
   rankRefreshInterval: 4 * 3600 * 1000,  // 4小时刷新币安排名
   // 不限数量，验证通过的全部跟踪，排名只决定优先级
-  hunterMinWinRate: 65,                     // 猎手: 胜率≥65%
+  hunterMinWinRate: 60,                     // 猎手: 胜率≥60%
   scoutMinWinRate: 50,                      // 哨兵: 胜率50-65%
   // <50% = 观察(watcher)，30天没涨回50%就踢
   watcherEvictDays: 30,                     // 观察期30天
@@ -195,7 +195,7 @@ async function fetchBinanceRank() {
   const allWallets = [];
   
   for (const [chainKey, chain] of Object.entries(CHAINS)) {
-    for (const period of ['7d']) {
+    for (const period of ['7d', '30d']) {
       for (let page = 1; page <= 4; page++) {
         try {
           const url = `https://web3.binance.com/bapi/defi/v1/public/wallet-direct/market/leaderboard/query?tag=ALL&pageNo=${page}&chainId=${chain.binanceId}&pageSize=25&sortBy=0&orderBy=0&period=${period}`;
@@ -224,11 +224,21 @@ async function fetchBinanceRank() {
     }
   }
   
-  // 去重: 同地址同链取PnL更高的
+  // 去重: 同地址同链优先用7d数据（更能反映近期表现）
   const unique = new Map();
   for (const w of allWallets) {
     const key = w.address + '_' + w.chain;
-    if (!unique.has(key) || w.pnl > unique.get(key).pnl) unique.set(key, w);
+    if (!unique.has(key)) {
+      unique.set(key, w);
+    } else {
+      const existing = unique.get(key);
+      // 7d优先；都是同周期取PnL高的
+      if (w.period === '7d' && existing.period !== '7d') {
+        unique.set(key, w);
+      } else if (w.period === existing.period && w.pnl > existing.pnl) {
+        unique.set(key, w);
+      }
+    }
   }
   
   const wallets = [...unique.values()];

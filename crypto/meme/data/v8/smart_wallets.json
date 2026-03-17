@@ -43,25 +43,11 @@
   },
   {
     "rank": 4,
-    "address": "2fg5QD1eD7rzNNCsvnhmXFm5hqNgwTTG8p7kQ6f3rx6f",
-    "chain": "solana",
-    "pnl": 95281.69588429597,
-    "winRate": 57.34,
-    "tokens": 5064,
-    "status": "scout",
-    "topTokens": [
-      "HODL",
-      "MOSS",
-      "LOOT"
-    ]
-  },
-  {
-    "rank": 5,
     "address": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
     "chain": "solana",
-    "pnl": 154248.66468909857,
-    "winRate": 65.44,
-    "tokens": 1281,
+    "pnl": 157117.39203992844,
+    "winRate": 65.47,
+    "tokens": 1287,
     "status": "hunter",
     "topTokens": [
       "Dogs",
@@ -70,7 +56,7 @@
     ]
   },
   {
-    "rank": 6,
+    "rank": 5,
     "address": "0x2ce9d43d1cba6ae31d7f07bfe0098dfa2d833373",
     "chain": "bsc",
     "pnl": 141364.34406688553,
@@ -84,7 +70,7 @@
     ]
   },
   {
-    "rank": 7,
+    "rank": 6,
     "address": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
     "chain": "bsc",
     "pnl": 107750.6952497996,
@@ -98,13 +84,13 @@
     ]
   },
   {
-    "rank": 8,
+    "rank": 7,
     "address": "0xd4367bfd77bb1eef476cb8e570ab1cb0a576a66d",
     "chain": "bsc",
     "pnl": 59974.91822565234,
     "winRate": 62.7,
     "tokens": 2255,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "TERRAFAB",
       "逮“虾”户",
@@ -112,12 +98,12 @@
     ]
   },
   {
-    "rank": 9,
+    "rank": 8,
     "address": "0xfb4e4fa492217d8401aa9e893c78707b61923953",
     "chain": "bsc",
-    "pnl": 53079.0303149661,
-    "winRate": 59.63,
-    "tokens": 3538,
+    "pnl": 53062.38599038934,
+    "winRate": 59.61,
+    "tokens": 3539,
     "status": "scout",
     "topTokens": [
       "龙虾",
@@ -126,7 +112,7 @@
     ]
   },
   {
-    "rank": 10,
+    "rank": 9,
     "address": "0xe2d8e5059849d61e8bed23d135057833014100d7",
     "chain": "bsc",
     "pnl": 85586.39245752266,
@@ -140,7 +126,7 @@
     ]
   },
   {
-    "rank": 11,
+    "rank": 10,
     "address": "BAr5csYtpWoNpwhUjixX7ZPHXkUciFZzjBp9uNxZXJPh",
     "chain": "solana",
     "pnl": 61776.47889376276,
@@ -154,7 +140,7 @@
     ]
   },
   {
-    "rank": 12,
+    "rank": 11,
     "address": "8deJ9xeUvXSJwicYptA9mHsU2rN2pDx37KWzkDkEXhU6",
     "chain": "solana",
     "pnl": 39329.345075801066,
@@ -168,12 +154,12 @@
     ]
   },
   {
-    "rank": 13,
+    "rank": 12,
     "address": "suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK",
     "chain": "solana",
-    "pnl": 42942.99104199509,
-    "winRate": 56.220000000000006,
-    "tokens": 4553,
+    "pnl": 43009.14068741462,
+    "winRate": 56.24,
+    "tokens": 4563,
     "status": "scout",
     "topTokens": [
       "XCHAIN",
@@ -182,7 +168,7 @@
     ]
   },
   {
-    "rank": 14,
+    "rank": 13,
     "address": "0x8dbef7eee8c691dc802f8e563112eb3adcbb5b23",
     "chain": "bsc",
     "pnl": 43596.87077348679,
@@ -196,13 +182,13 @@
     ]
   },
   {
-    "rank": 15,
+    "rank": 14,
     "address": "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9",
     "chain": "solana",
     "pnl": 52693.34881205653,
     "winRate": 63.91,
     "tokens": 1029,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Corner",
       "FRONKE",
@@ -210,7 +196,7 @@
     ]
   },
   {
-    "rank": 16,
+    "rank": 15,
     "address": "0x38e47fece3ea323e864c65410f6458c820eaa897",
     "chain": "bsc",
     "pnl": 80452.06466850884,
@@ -224,7 +210,7 @@
     ]
   },
   {
-    "rank": 17,
+    "rank": 16,
     "address": "0xb3f2b4d6718db553fe239d5e65423ee2891644fe",
     "chain": "bsc",
     "pnl": 34350.48661310949,
@@ -238,13 +224,13 @@
     ]
   },
   {
-    "rank": 18,
+    "rank": 17,
     "address": "0x61e1de40854cae288a11feb9b28a064df14d29ef",
     "chain": "bsc",
     "pnl": 91482.95513376532,
     "winRate": 63.77,
     "tokens": 461,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "无冕之王",
       "B",
@@ -252,7 +238,7 @@
     ]
   },
   {
-    "rank": 19,
+    "rank": 18,
     "address": "0xa83b73f5644cde337b61da79589f10ea15548811",
     "chain": "bsc",
     "pnl": 158131.89588538848,
@@ -266,7 +252,7 @@
     ]
   },
   {
-    "rank": 20,
+    "rank": 19,
     "address": "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
     "chain": "solana",
     "pnl": 19359.376571330802,
@@ -280,12 +266,12 @@
     ]
   },
   {
-    "rank": 21,
+    "rank": 20,
     "address": "0x878a051559152383fbd35315eb03f3ef5fbf76a6",
     "chain": "bsc",
-    "pnl": 29173.290371316485,
+    "pnl": 29171.91889718199,
     "winRate": 57.38999999999999,
-    "tokens": 1773,
+    "tokens": 1784,
     "status": "scout",
     "topTokens": [
       "Freedom of Money",
@@ -294,7 +280,7 @@
     ]
   },
   {
-    "rank": 22,
+    "rank": 21,
     "address": "0x199776730d88cfa1aa54e7f41df386b80ac150c5",
     "chain": "bsc",
     "pnl": 28395.312395332847,
@@ -308,7 +294,7 @@
     ]
   },
   {
-    "rank": 23,
+    "rank": 22,
     "address": "0xa05ec35f7d1eba823cff2ed26aeaed419683742f",
     "chain": "bsc",
     "pnl": 46336.24430365722,
@@ -322,13 +308,13 @@
     ]
   },
   {
-    "rank": 24,
+    "rank": 23,
     "address": "DfMxre4cKmvogbLrPigxmibVTTQDuzjdXojWzjCXXhzj",
     "chain": "solana",
     "pnl": 30937.59631710152,
     "winRate": 60.49,
     "tokens": 922,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "INCOME",
       "Orca",
@@ -336,7 +322,7 @@
     ]
   },
   {
-    "rank": 25,
+    "rank": 24,
     "address": "71PCu3E4JP5RDBoY6wJteqzxkKNXLyE1byg5BTAL9UtQ",
     "chain": "solana",
     "pnl": 65035.93365214564,
@@ -350,7 +336,7 @@
     ]
   },
   {
-    "rank": 26,
+    "rank": 25,
     "address": "0xc2c6acd377458010713e733e1b21dd6f670d091c",
     "chain": "bsc",
     "pnl": 21588.231303662662,
@@ -364,7 +350,7 @@
     ]
   },
   {
-    "rank": 27,
+    "rank": 26,
     "address": "0xddf0b0198cd505ada6a0c5eba9718eb1eb1c5585",
     "chain": "bsc",
     "pnl": 26063.336605241366,
@@ -378,26 +364,12 @@
     ]
   },
   {
-    "rank": 28,
-    "address": "ASVzakePP6GNg9r95d4LPZHJDMXun6L6E4um4pu5ybJk",
-    "chain": "solana",
-    "pnl": 35915.963550193395,
-    "winRate": 63.71,
-    "tokens": 466,
-    "status": "scout",
-    "topTokens": [
-      "BEDROCK",
-      "IF",
-      "HALF"
-    ]
-  },
-  {
-    "rank": 29,
+    "rank": 27,
     "address": "BCagckXeMChUKrHEd6fKFA1uiWDtcmCXMsqaheLiUPJd",
     "chain": "solana",
-    "pnl": 56912.790176824084,
-    "winRate": 51.71,
-    "tokens": 1402,
+    "pnl": 56999.24968119939,
+    "winRate": 51.73,
+    "tokens": 1415,
     "status": "scout",
     "topTokens": [
       "MAYA",
@@ -406,7 +378,21 @@
     ]
   },
   {
-    "rank": 30,
+    "rank": 28,
+    "address": "ASVzakePP6GNg9r95d4LPZHJDMXun6L6E4um4pu5ybJk",
+    "chain": "solana",
+    "pnl": 35915.963550193395,
+    "winRate": 63.71,
+    "tokens": 466,
+    "status": "hunter",
+    "topTokens": [
+      "BEDROCK",
+      "IF",
+      "HALF"
+    ]
+  },
+  {
+    "rank": 29,
     "address": "GmjsQzXC2tg9pMCUcmXEp8BFEpvg2SM1R3TzTipqggsb",
     "chain": "solana",
     "pnl": 67608.26906431661,
@@ -420,7 +406,7 @@
     ]
   },
   {
-    "rank": 31,
+    "rank": 30,
     "address": "0x93c883963af898ab7c41ef9250f9eed71506eb52",
     "chain": "bsc",
     "pnl": 54367.69447781147,
@@ -434,7 +420,7 @@
     ]
   },
   {
-    "rank": 32,
+    "rank": 31,
     "address": "5sNnKuWKUtZkdC1eFNyqz3XHpNoCRQ1D1DfHcNHMV7gn",
     "chain": "solana",
     "pnl": 50513.84475708181,
@@ -448,12 +434,26 @@
     ]
   },
   {
+    "rank": 32,
+    "address": "0x104db8720a525b57c97a385facf6d87305802f8f",
+    "chain": "bsc",
+    "pnl": 46258.39577695589,
+    "winRate": 69.23,
+    "tokens": 201,
+    "status": "hunter",
+    "topTokens": [
+      "龙虾",
+      "马年快乐",
+      "鸡气人"
+    ]
+  },
+  {
     "rank": 33,
     "address": "0xdadca49e762abb5c904223d73388eb9dcceba21c",
     "chain": "bsc",
-    "pnl": 30949.5296073953,
-    "winRate": 53.339999999999996,
-    "tokens": 1259,
+    "pnl": 30945.07151860859,
+    "winRate": 53.300000000000004,
+    "tokens": 1260,
     "status": "scout",
     "topTokens": [
       "MACROHARD",
@@ -463,20 +463,6 @@
   },
   {
     "rank": 34,
-    "address": "0x104db8720a525b57c97a385facf6d87305802f8f",
-    "chain": "bsc",
-    "pnl": 46026.61906557396,
-    "winRate": 68.75,
-    "tokens": 200,
-    "status": "hunter",
-    "topTokens": [
-      "龙虾",
-      "马年快乐",
-      "鸡气人"
-    ]
-  },
-  {
-    "rank": 35,
     "address": "0x2e15112404e48d44c0a2f617da6b73e167e8eb92",
     "chain": "bsc",
     "pnl": 52942.60446304186,
@@ -490,7 +476,7 @@
     ]
   },
   {
-    "rank": 36,
+    "rank": 35,
     "address": "0xd41feaa24dede516a501862cf1f376defb811772",
     "chain": "bsc",
     "pnl": 42726.507212826655,
@@ -504,7 +490,7 @@
     ]
   },
   {
-    "rank": 37,
+    "rank": 36,
     "address": "0x3080362af9ccbbcfab33acd5a2399f8f59c15ab4",
     "chain": "bsc",
     "pnl": 57252.40979840465,
@@ -518,7 +504,7 @@
     ]
   },
   {
-    "rank": 38,
+    "rank": 37,
     "address": "0x07dbf6ac9958e06e611e1dcec8ccaeaa6eed6723",
     "chain": "bsc",
     "pnl": 25774.63495224257,
@@ -532,12 +518,12 @@
     ]
   },
   {
-    "rank": 39,
+    "rank": 38,
     "address": "Bi4rd5FH5bYEN8scZ7wevxNZyNmKHdaBcvewdPFxYdLt",
     "chain": "solana",
-    "pnl": 79545.50872336968,
-    "winRate": 50.68,
-    "tokens": 815,
+    "pnl": 83134.88049211811,
+    "winRate": 50.55,
+    "tokens": 818,
     "status": "scout",
     "topTokens": [
       "Tsuncoin",
@@ -546,12 +532,12 @@
     ]
   },
   {
-    "rank": 40,
+    "rank": 39,
     "address": "BCnqsPEtA1TkgednYEebRpkmwFRJDCjMQcKZMMtEdArc",
     "chain": "solana",
-    "pnl": 30299.265411553355,
-    "winRate": 52.76,
-    "tokens": 1110,
+    "pnl": 30215.38771137974,
+    "winRate": 52.7,
+    "tokens": 1117,
     "status": "scout",
     "topTokens": [
       "tetanus",
@@ -560,7 +546,7 @@
     ]
   },
   {
-    "rank": 41,
+    "rank": 40,
     "address": "DsCLwbpYSy1yGYFU4mHBsRC9eU2cYcA9DABnPKHQkiEg",
     "chain": "solana",
     "pnl": 20596.84323811036,
@@ -574,7 +560,7 @@
     ]
   },
   {
-    "rank": 42,
+    "rank": 41,
     "address": "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk",
     "chain": "solana",
     "pnl": 32895.162020234886,
@@ -588,13 +574,13 @@
     ]
   },
   {
-    "rank": 43,
+    "rank": 42,
     "address": "0x23a6bb06cd1613cf9bc49497f6857dbe31dd990f",
     "chain": "bsc",
     "pnl": 24766.14026763753,
     "winRate": 61.660000000000004,
     "tokens": 433,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Fight",
       "懂个球",
@@ -602,7 +588,7 @@
     ]
   },
   {
-    "rank": 44,
+    "rank": 43,
     "address": "0x6309dae36af5f27e6e55bedcd13a96b4e3f3ef0f",
     "chain": "bsc",
     "pnl": 16690.094393863743,
@@ -616,7 +602,7 @@
     ]
   },
   {
-    "rank": 45,
+    "rank": 44,
     "address": "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3",
     "chain": "solana",
     "pnl": 17813.3275229004,
@@ -630,7 +616,7 @@
     ]
   },
   {
-    "rank": 46,
+    "rank": 45,
     "address": "0xcb28c3eace045b640fde5b50ede3c445d53f3dbd",
     "chain": "bsc",
     "pnl": 14723.446274720596,
@@ -644,7 +630,7 @@
     ]
   },
   {
-    "rank": 47,
+    "rank": 46,
     "address": "0x8a01f9b809c3d4f15c2bcfb83bc5e1e9b4d1bcb8",
     "chain": "bsc",
     "pnl": 23889.554671573416,
@@ -658,7 +644,7 @@
     ]
   },
   {
-    "rank": 48,
+    "rank": 47,
     "address": "EaVboaPxFCYanjoNWdkxTbPvt57nhXGu5i6m9m6ZS2kK",
     "chain": "solana",
     "pnl": 36361.315678043866,
@@ -672,13 +658,13 @@
     ]
   },
   {
-    "rank": 49,
+    "rank": 48,
     "address": "0x7852346c77b3a622fa73607ee35cc784e53f326b",
     "chain": "bsc",
     "pnl": 33170.19268809682,
     "winRate": 61.89,
     "tokens": 286,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "巨鲸",
       "无冕之王",
@@ -686,7 +672,7 @@
     ]
   },
   {
-    "rank": 50,
+    "rank": 49,
     "address": "32mRYcNZJfG8gFrn9gvqusUtaWekXVAVQpkc97j5M9iT",
     "chain": "solana",
     "pnl": 23562.990112336593,
@@ -700,7 +686,7 @@
     ]
   },
   {
-    "rank": 51,
+    "rank": 50,
     "address": "0x1fa8bbd3f95f89958930450ee155355588888888",
     "chain": "bsc",
     "pnl": 33803.51738050828,
@@ -714,7 +700,7 @@
     ]
   },
   {
-    "rank": 52,
+    "rank": 51,
     "address": "0xb1e65ccc2f5d68e447bf321ba9bfba35a94f5ad5",
     "chain": "bsc",
     "pnl": 25846.37330236864,
@@ -728,13 +714,13 @@
     ]
   },
   {
-    "rank": 53,
+    "rank": 52,
     "address": "5fHJszey2UdB2nETS1y6NS2wSG4ic9byKtbgJzaYzGeV",
     "chain": "solana",
-    "pnl": 7416.5867126665635,
-    "winRate": 63.519999999999996,
-    "tokens": 541,
-    "status": "scout",
+    "pnl": 7431.90668226572,
+    "winRate": 63.3,
+    "tokens": 546,
+    "status": "hunter",
     "topTokens": [
       "ZK",
       "☊⍜⟟⋏",
@@ -742,7 +728,7 @@
     ]
   },
   {
-    "rank": 54,
+    "rank": 53,
     "address": "0x8ade93ba431a2ce19fc62a9ce97626e69a4a333f",
     "chain": "bsc",
     "pnl": 19472.46642061507,
@@ -756,7 +742,7 @@
     ]
   },
   {
-    "rank": 55,
+    "rank": 54,
     "address": "0x64b23c2987aca16b3d3c55ad6f694058783c72ea",
     "chain": "bsc",
     "pnl": 24566.006549012374,
@@ -770,7 +756,7 @@
     ]
   },
   {
-    "rank": 56,
+    "rank": 55,
     "address": "0x23d5c48c73c51668f4eb3f33fb349f8d0cf4c748",
     "chain": "bsc",
     "pnl": 55682.74463169946,
@@ -784,10 +770,10 @@
     ]
   },
   {
-    "rank": 57,
+    "rank": 56,
     "address": "7bsTkeWcSPG6nzsbXucxV89YUULoSExNJdX2WqfLHwZ4",
     "chain": "solana",
-    "pnl": 27524.144004823473,
+    "pnl": 27522.30836035378,
     "winRate": 51.300000000000004,
     "tokens": 781,
     "status": "scout",
@@ -798,7 +784,7 @@
     ]
   },
   {
-    "rank": 58,
+    "rank": 57,
     "address": "0x548dad6cc48e6b7a906307984665edae09c68dc0",
     "chain": "bsc",
     "pnl": 20847.31544165977,
@@ -812,7 +798,7 @@
     ]
   },
   {
-    "rank": 59,
+    "rank": 58,
     "address": "0x2fd1887e5d99014cb0b8884f06560ed20d65003d",
     "chain": "base",
     "pnl": 61606.975862469735,
@@ -826,7 +812,7 @@
     ]
   },
   {
-    "rank": 60,
+    "rank": 59,
     "address": "0xd57d105f1834579a467d4ed991962f3580665acf",
     "chain": "bsc",
     "pnl": 29251.465913635868,
@@ -840,7 +826,7 @@
     ]
   },
   {
-    "rank": 61,
+    "rank": 60,
     "address": "Ci4RrZ4G16NWUey4GFzvTWAXQBnYRxUvkN3vPpwMfwhP",
     "chain": "solana",
     "pnl": 8363.220557769131,
@@ -854,7 +840,7 @@
     ]
   },
   {
-    "rank": 62,
+    "rank": 61,
     "address": "0x57cdafe0a8ab749c54161932e98de4c4d10b06c6",
     "chain": "bsc",
     "pnl": 35922.77300831149,
@@ -868,7 +854,7 @@
     ]
   },
   {
-    "rank": 63,
+    "rank": 62,
     "address": "0xddac928a240bdace3994c2cc0783d4e29a002127",
     "chain": "bsc",
     "pnl": 56181.00304622365,
@@ -882,7 +868,7 @@
     ]
   },
   {
-    "rank": 64,
+    "rank": 63,
     "address": "0x698f8414171f4438ab2db94c6ba8508a2a9fcb82",
     "chain": "bsc",
     "pnl": 16993.03348112003,
@@ -896,7 +882,7 @@
     ]
   },
   {
-    "rank": 65,
+    "rank": 64,
     "address": "JDd3hy3gQn2V982mi1zqhNqUw1GfV2UL6g76STojCJPN",
     "chain": "solana",
     "pnl": 23683.887848408118,
@@ -910,7 +896,7 @@
     ]
   },
   {
-    "rank": 66,
+    "rank": 65,
     "address": "AyC5aMKf4F3TYypirhCiERj8HRj7M3wTuP52hjyCPLJu",
     "chain": "solana",
     "pnl": 5759.997586981204,
@@ -924,7 +910,7 @@
     ]
   },
   {
-    "rank": 67,
+    "rank": 66,
     "address": "3BLjRcxWGtR7WRshJ3hL25U3RjWr5Ud98wMcczQqk4Ei",
     "chain": "solana",
     "pnl": 40717.06404837166,
@@ -938,7 +924,7 @@
     ]
   },
   {
-    "rank": 68,
+    "rank": 67,
     "address": "0x94cf7ed19901eb7d487c779e6d1baa87157b2d01",
     "chain": "bsc",
     "pnl": 18903.47850280788,
@@ -952,7 +938,7 @@
     ]
   },
   {
-    "rank": 69,
+    "rank": 68,
     "address": "0x214684b3236d4769cec8663411b90cb7fdc6eb95",
     "chain": "bsc",
     "pnl": 12882.046434513282,
@@ -966,7 +952,7 @@
     ]
   },
   {
-    "rank": 70,
+    "rank": 69,
     "address": "0x11db1321c3f926334eb155d5fe704f6b2ff6a2f9",
     "chain": "bsc",
     "pnl": 19891.232455985664,
@@ -980,12 +966,12 @@
     ]
   },
   {
-    "rank": 71,
+    "rank": 70,
     "address": "0x9a98c8b4e29989e05fb374ba9370e9143828f6a0",
     "chain": "bsc",
     "pnl": 14579.731824781587,
     "winRate": 67.25999999999999,
-    "tokens": 183,
+    "tokens": 184,
     "status": "hunter",
     "topTokens": [
       "UP",
@@ -994,13 +980,13 @@
     ]
   },
   {
-    "rank": 72,
+    "rank": 71,
     "address": "0xbca1cf24a02950981d4a25d2ea532f2a131010ff",
     "chain": "bsc",
     "pnl": 12247.94910319656,
     "winRate": 63.57000000000001,
     "tokens": 258,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "漂亮马",
       "逮虾户",
@@ -1008,13 +994,13 @@
     ]
   },
   {
-    "rank": 73,
+    "rank": 72,
     "address": "GgSni7JWRCvzTDd7FhCUdNMb5HqfrhDxHzoXtj9E7wpw",
     "chain": "solana",
     "pnl": 72894.60351937971,
     "winRate": 64.52,
     "tokens": 97,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Punch",
       "Slurmit",
@@ -1022,7 +1008,7 @@
     ]
   },
   {
-    "rank": 74,
+    "rank": 73,
     "address": "0x5388668c4fa8da7f756ef8498ff24d7999999999",
     "chain": "bsc",
     "pnl": 25387.23134737119,
@@ -1036,7 +1022,7 @@
     ]
   },
   {
-    "rank": 75,
+    "rank": 74,
     "address": "0x7e8fb0392542812476d9f2d0d71c01d1fa0776c5",
     "chain": "bsc",
     "pnl": 16765.979453263455,
@@ -1050,7 +1036,7 @@
     ]
   },
   {
-    "rank": 76,
+    "rank": 75,
     "address": "0x98ba85977943619d5221273e81bab148e12885f7",
     "chain": "bsc",
     "pnl": 22105.03925305634,
@@ -1064,7 +1050,7 @@
     ]
   },
   {
-    "rank": 77,
+    "rank": 76,
     "address": "0xc220edb82ee55a4298a0c7c4e153d248613b83b4",
     "chain": "bsc",
     "pnl": 37319.71188161621,
@@ -1078,13 +1064,13 @@
     ]
   },
   {
-    "rank": 78,
+    "rank": 77,
     "address": "0xb5dabb68cca3fab35e75c5e29dfc7ec8da6887b9",
     "chain": "bsc",
     "pnl": 17919.61005809525,
     "winRate": 62.77,
-    "tokens": 190,
-    "status": "scout",
+    "tokens": 191,
+    "status": "hunter",
     "topTokens": [
       "Fight",
       "我是未来",
@@ -1092,13 +1078,13 @@
     ]
   },
   {
-    "rank": 79,
+    "rank": 78,
     "address": "0x507e33036cccd11df40a3d516690c3f0380c0685",
     "chain": "bsc",
     "pnl": 16583.790859991288,
     "winRate": 62.5,
     "tokens": 197,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "RAVE",
       "富个鸟",
@@ -1106,12 +1092,12 @@
     ]
   },
   {
-    "rank": 80,
+    "rank": 79,
     "address": "PMJA8UQDyWTFw2Smhyp9jGA6aTaP7jKHR7BPudrgyYN",
     "chain": "solana",
-    "pnl": 18297.158356159376,
-    "winRate": 45.73,
-    "tokens": 1209,
+    "pnl": 18582.530025698175,
+    "winRate": 45.75,
+    "tokens": 1226,
     "status": "watcher",
     "topTokens": [
       "MUSHU",
@@ -1120,7 +1106,7 @@
     ]
   },
   {
-    "rank": 81,
+    "rank": 80,
     "address": "0xe09152d99cc2ceb2ce9d73150f262e28ad403f35",
     "chain": "bsc",
     "pnl": 32789.753448165604,
@@ -1134,12 +1120,12 @@
     ]
   },
   {
-    "rank": 82,
+    "rank": 81,
     "address": "J9TYAsWWidbrcZybmLSfrLzryANf4CgJBLdvwdGuC8MB",
     "chain": "solana",
-    "pnl": 37989.74154694018,
-    "winRate": 49.18,
-    "tokens": 435,
+    "pnl": 37895.46926312145,
+    "winRate": 48.97,
+    "tokens": 441,
     "status": "watcher",
     "topTokens": [
       "FOMO",
@@ -1148,7 +1134,7 @@
     ]
   },
   {
-    "rank": 83,
+    "rank": 82,
     "address": "5t9xBNuDdGTGpjaPTx6hKd7sdRJbvtKS8Mhq6qVbo8Qz",
     "chain": "solana",
     "pnl": 62127.114550842634,
@@ -1162,13 +1148,13 @@
     ]
   },
   {
-    "rank": 84,
+    "rank": 83,
     "address": "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV",
     "chain": "solana",
-    "pnl": 5259.990534504575,
-    "winRate": 63.41,
-    "tokens": 318,
-    "status": "scout",
+    "pnl": 5256.838725918533,
+    "winRate": 63.129999999999995,
+    "tokens": 321,
+    "status": "hunter",
     "topTokens": [
       "PIZZA",
       "gemmy",
@@ -1176,7 +1162,7 @@
     ]
   },
   {
-    "rank": 85,
+    "rank": 84,
     "address": "0x44c43ad6aa8c4c0a3cd22ad2bde06a96279b5e21",
     "chain": "bsc",
     "pnl": 25777.84976736178,
@@ -1190,7 +1176,7 @@
     ]
   },
   {
-    "rank": 86,
+    "rank": 85,
     "address": "J485YzQjuJPLYoFEYjrjxd7NAoLHTiyUU63JwK7kLxRr",
     "chain": "solana",
     "pnl": 9175.093801548517,
@@ -1204,7 +1190,7 @@
     ]
   },
   {
-    "rank": 87,
+    "rank": 86,
     "address": "sAdNbe1cKNMDqDsa4npB3TfL62T14uAo2MsUQfLvzLT",
     "chain": "solana",
     "pnl": 22849.84521975128,
@@ -1218,7 +1204,7 @@
     ]
   },
   {
-    "rank": 88,
+    "rank": 87,
     "address": "0x24844ff2793ca76d671269aea1b1fc8b228f573e",
     "chain": "bsc",
     "pnl": 14696.589835107075,
@@ -1232,21 +1218,7 @@
     ]
   },
   {
-    "rank": 89,
-    "address": "0x95701259b045f972b06089e5ba498d463f627aa2",
-    "chain": "bsc",
-    "pnl": 21554.032579425784,
-    "winRate": 56.56,
-    "tokens": 221,
-    "status": "scout",
-    "topTokens": [
-      "万事币安",
-      "金钱自由",
-      "InStreet"
-    ]
-  },
-  {
-    "rank": 90,
+    "rank": 88,
     "address": "5B79fMkcFeRTiwm7ehsZsFiKsC7m7n1Bgv9yLxPp9q2X",
     "chain": "solana",
     "pnl": 37988.95817830067,
@@ -1260,7 +1232,7 @@
     ]
   },
   {
-    "rank": 91,
+    "rank": 89,
     "address": "0xf944f59307b394e7e7f2db693f7f09fefc55b7f9",
     "chain": "bsc",
     "pnl": 52731.47005048187,
@@ -1274,7 +1246,7 @@
     ]
   },
   {
-    "rank": 92,
+    "rank": 90,
     "address": "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
     "chain": "bsc",
     "pnl": 23933.80902431623,
@@ -1285,6 +1257,34 @@
       "龙虾",
       "Fight",
       "Distorted"
+    ]
+  },
+  {
+    "rank": 91,
+    "address": "86AEJExyjeNNgcp7GrAvCXTDicf5aGWgoERbXFiG1EdD",
+    "chain": "solana",
+    "pnl": 15977.924767088949,
+    "winRate": 53.22,
+    "tokens": 360,
+    "status": "scout",
+    "topTokens": [
+      "Sheep",
+      "PushAgent",
+      "AGENT"
+    ]
+  },
+  {
+    "rank": 92,
+    "address": "0x95701259b045f972b06089e5ba498d463f627aa2",
+    "chain": "bsc",
+    "pnl": 21128.729783732684,
+    "winRate": 56.05,
+    "tokens": 223,
+    "status": "scout",
+    "topTokens": [
+      "万事币安",
+      "金钱自由",
+      "InStreet"
     ]
   },
   {
@@ -1308,7 +1308,7 @@
     "pnl": 41847.560031348934,
     "winRate": 64.56,
     "tokens": 79,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "futiure",
       "币安小龙虾",
@@ -1317,16 +1317,16 @@
   },
   {
     "rank": 95,
-    "address": "86AEJExyjeNNgcp7GrAvCXTDicf5aGWgoERbXFiG1EdD",
+    "address": "2fg5QD1eD7rzNNCsvnhmXFm5hqNgwTTG8p7kQ6f3rx6f",
     "chain": "solana",
-    "pnl": 15367.878035590982,
-    "winRate": 52.99,
-    "tokens": 354,
+    "pnl": 5454.380916841263,
+    "winRate": 59.06,
+    "tokens": 348,
     "status": "scout",
     "topTokens": [
-      "Sheep",
-      "PushAgent",
-      "AGENT"
+      "HODL",
+      "MOSS",
+      "LOOT"
     ]
   },
   {
@@ -1361,7 +1361,7 @@
     "rank": 98,
     "address": "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
     "chain": "solana",
-    "pnl": 70175.16506024767,
+    "pnl": 70073.82943092733,
     "winRate": 76,
     "tokens": 32,
     "status": "hunter",
@@ -1378,7 +1378,7 @@
     "pnl": 12318.438678890718,
     "winRate": 64.71000000000001,
     "tokens": 127,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "PumpLiquid",
       "Life",
@@ -1403,7 +1403,7 @@
     "rank": 101,
     "address": "xyzfhxfy8NhfeNG3Um3WaUvFXzNuHkrhrZMD8dsStB6",
     "chain": "solana",
-    "pnl": 37489.35472983267,
+    "pnl": 37519.5507785465,
     "winRate": 43.39,
     "tokens": 591,
     "status": "watcher",
@@ -1457,20 +1457,6 @@
   },
   {
     "rank": 105,
-    "address": "FkzekjMLgbXC8NuSQQ2u53rmdh3jhfAZr2psDouDYvfR",
-    "chain": "solana",
-    "pnl": 31611.730323694017,
-    "winRate": 38.23,
-    "tokens": 1384,
-    "status": "watcher",
-    "topTokens": [
-      "HODL",
-      "ELONGATE",
-      "Pumpwheel"
-    ]
-  },
-  {
-    "rank": 106,
     "address": "3wjyaSegfV7SZzjv9Ut1p6AcY5ZdoZjmu6i6QPCVvnmz",
     "chain": "solana",
     "pnl": 7769.439870344767,
@@ -1481,6 +1467,20 @@
       "PIP ",
       "Obsessed",
       "Lobstar"
+    ]
+  },
+  {
+    "rank": 106,
+    "address": "FkzekjMLgbXC8NuSQQ2u53rmdh3jhfAZr2psDouDYvfR",
+    "chain": "solana",
+    "pnl": 31232.13876178438,
+    "winRate": 38.11,
+    "tokens": 1391,
+    "status": "watcher",
+    "topTokens": [
+      "HODL",
+      "ELONGATE",
+      "Pumpwheel"
     ]
   },
   {
@@ -1515,9 +1515,9 @@
     "rank": 109,
     "address": "B32QbbdDAyhvUQzjcaM5j6ZVKwjCxAwGH5Xgvb9SJqnC",
     "chain": "solana",
-    "pnl": 10571.907939150055,
-    "winRate": 55.800000000000004,
-    "tokens": 228,
+    "pnl": 10713.886801289338,
+    "winRate": 56.00000000000001,
+    "tokens": 229,
     "status": "scout",
     "topTokens": [
       "CORNER",
@@ -1529,7 +1529,7 @@
     "rank": 110,
     "address": "0xe04723b83fc521a5bc5b707ca0f15e2108c448b3",
     "chain": "bsc",
-    "pnl": 37280.44268770127,
+    "pnl": 37258.43308929019,
     "winRate": 93.75,
     "tokens": 16,
     "status": "hunter",
@@ -1543,9 +1543,9 @@
     "rank": 111,
     "address": "GNrmKZCxYyNiSUsjduwwPJzhed3LATjciiKVuSGrsHEC",
     "chain": "solana",
-    "pnl": 6439.863168744935,
-    "winRate": 59.51,
-    "tokens": 205,
+    "pnl": 6467.02832654085,
+    "winRate": 59.709999999999994,
+    "tokens": 206,
     "status": "scout",
     "topTokens": [
       "Punch",
@@ -1585,9 +1585,9 @@
     "rank": 114,
     "address": "8nqtxpFpuXwfXG4pBLsDkkuMMPK9FjSkBMCn542HiM3v",
     "chain": "solana",
-    "pnl": 22336.133480566143,
-    "winRate": 40.04,
-    "tokens": 920,
+    "pnl": 22736.52008617037,
+    "winRate": 40.239999999999995,
+    "tokens": 923,
     "status": "watcher",
     "topTokens": [
       "HODL",
@@ -1599,9 +1599,9 @@
     "rank": 115,
     "address": "831yhv67QpKqLBJjbmw2xoDUeeFHGUx8RnuRj9imeoEs",
     "chain": "solana",
-    "pnl": 29501.558918979314,
-    "winRate": 50.260000000000005,
-    "tokens": 194,
+    "pnl": 29525.53888890302,
+    "winRate": 50.519999999999996,
+    "tokens": 195,
     "status": "scout",
     "topTokens": [
       "Punch",
@@ -1711,7 +1711,7 @@
     "rank": 123,
     "address": "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
     "chain": "solana",
-    "pnl": 7252.08323250835,
+    "pnl": 7259.674426799224,
     "winRate": 76.09,
     "tokens": 51,
     "status": "hunter",
@@ -1767,9 +1767,9 @@
     "rank": 127,
     "address": "4nvNc7dDEqKKLM4Sr9Kgk3t1of6f8G66kT64VoC95LYh",
     "chain": "solana",
-    "pnl": 16527.595743106493,
-    "winRate": 46.089999999999996,
-    "tokens": 367,
+    "pnl": 16521.47148446346,
+    "winRate": 45.96,
+    "tokens": 370,
     "status": "watcher",
     "topTokens": [
       "MACROHARD",
@@ -1779,6 +1779,20 @@
   },
   {
     "rank": 128,
+    "address": "G9VPG4XvHheUUbzPexNzx9Yyx97ii53WYb89PvdM2qQk",
+    "chain": "solana",
+    "pnl": 13628.8956603847,
+    "winRate": 45.93,
+    "tokens": 405,
+    "status": "watcher",
+    "topTokens": [
+      "Pumpwheel",
+      "HODL",
+      "Orca"
+    ]
+  },
+  {
+    "rank": 129,
     "address": "Hw5UKBU5k3YudnGwaykj5E8cYUidNMPuEewRRar5Xoc7",
     "chain": "solana",
     "pnl": 10051.464223599101,
@@ -1792,7 +1806,7 @@
     ]
   },
   {
-    "rank": 129,
+    "rank": 130,
     "address": "9tY7u1HgEt2RDcxym3RJ9sfvT3aZStiiUwXd44X9RUr8",
     "chain": "solana",
     "pnl": 28347.573793623702,
@@ -1806,7 +1820,7 @@
     ]
   },
   {
-    "rank": 130,
+    "rank": 131,
     "address": "G6fUXjMKPJzCY1rveAE6Qm7wy5U3vZgKDJmN1VPAdiZC",
     "chain": "solana",
     "pnl": 34197.150633456804,
@@ -1817,20 +1831,6 @@
       "HeavyPulp",
       "Distorted",
       "IMAGINE"
-    ]
-  },
-  {
-    "rank": 131,
-    "address": "G9VPG4XvHheUUbzPexNzx9Yyx97ii53WYb89PvdM2qQk",
-    "chain": "solana",
-    "pnl": 13613.171842741196,
-    "winRate": 45.660000000000004,
-    "tokens": 403,
-    "status": "watcher",
-    "topTokens": [
-      "Pumpwheel",
-      "HODL",
-      "Orca"
     ]
   },
   {
@@ -1975,6 +1975,20 @@
   },
   {
     "rank": 142,
+    "address": "Dwo2kj88YYhwcFJiybTjXezR9a6QjkMASz5xXD7kujXC",
+    "chain": "solana",
+    "pnl": 6863.710475051065,
+    "winRate": 43.97,
+    "tokens": 721,
+    "status": "watcher",
+    "topTokens": [
+      "HONK",
+      "BACKPACK",
+      "XCHAIN"
+    ]
+  },
+  {
+    "rank": 143,
     "address": "EprZRrfRJZ4tBQY8chMKGMJXHKyYoL93kNsuUrPkxjL8",
     "chain": "solana",
     "pnl": 31361.517170563053,
@@ -1985,20 +1999,6 @@
       "Punch",
       "WAGMI",
       "BLOXX"
-    ]
-  },
-  {
-    "rank": 143,
-    "address": "Dwo2kj88YYhwcFJiybTjXezR9a6QjkMASz5xXD7kujXC",
-    "chain": "solana",
-    "pnl": 6816.421854013803,
-    "winRate": 43.89,
-    "tokens": 720,
-    "status": "watcher",
-    "topTokens": [
-      "HONK",
-      "BACKPACK",
-      "XCHAIN"
     ]
   },
   {
@@ -2059,20 +2059,6 @@
   },
   {
     "rank": 148,
-    "address": "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB",
-    "chain": "solana",
-    "pnl": 9156.87263240285,
-    "winRate": 46.129999999999995,
-    "tokens": 381,
-    "status": "watcher",
-    "topTokens": [
-      "HODL",
-      "BRITAIN",
-      "Dorito"
-    ]
-  },
-  {
-    "rank": 149,
     "address": "0xcef230f428ea2fe4850bf84718c1c166b20780e6",
     "chain": "bsc",
     "pnl": 14735.68961678165,
@@ -2086,7 +2072,7 @@
     ]
   },
   {
-    "rank": 150,
+    "rank": 149,
     "address": "ALJ4P5QNyHeLEjpKGmA1eUfJHSEGQMjY8HLnDkSgjczb",
     "chain": "solana",
     "pnl": 23090.981969594282,
@@ -2100,7 +2086,7 @@
     ]
   },
   {
-    "rank": 151,
+    "rank": 150,
     "address": "G9eY4AAyLiVGS9TUfd2aUoqHantt9Co3LVoQbaDwY91v",
     "chain": "solana",
     "pnl": 12353.465754699833,
@@ -2111,6 +2097,20 @@
       "DOME",
       "UXR",
       "TRN"
+    ]
+  },
+  {
+    "rank": 151,
+    "address": "BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB",
+    "chain": "solana",
+    "pnl": 8841.194722923548,
+    "winRate": 46.01,
+    "tokens": 382,
+    "status": "watcher",
+    "topTokens": [
+      "HODL",
+      "BRITAIN",
+      "Dorito"
     ]
   },
   {
@@ -2157,6 +2157,20 @@
   },
   {
     "rank": 155,
+    "address": "87nWQxQvYvnijGKAD5yt8QafCr1sCsbRs8KroufmVogw",
+    "chain": "solana",
+    "pnl": 9864.17024558284,
+    "winRate": 48.82,
+    "tokens": 218,
+    "status": "watcher",
+    "topTokens": [
+      "UXR",
+      "SOS",
+      "UXR"
+    ]
+  },
+  {
+    "rank": 156,
     "address": "95TWoKkvv2z85EXBzd2z6NwbxH2f54AvwuCA9x3NoKep",
     "chain": "solana",
     "pnl": 24591.365121993334,
@@ -2170,31 +2184,17 @@
     ]
   },
   {
-    "rank": 156,
+    "rank": 157,
     "address": "0x22327055282f2f12f45e43468ce5bc43c61bafd2",
     "chain": "bsc",
-    "pnl": 27919.071721458196,
-    "winRate": 48.06,
+    "pnl": 27695.61904108204,
+    "winRate": 47.69,
     "tokens": 130,
     "status": "watcher",
     "topTokens": [
       "龙虾",
       "路飞",
       "我的刀盾"
-    ]
-  },
-  {
-    "rank": 157,
-    "address": "87nWQxQvYvnijGKAD5yt8QafCr1sCsbRs8KroufmVogw",
-    "chain": "solana",
-    "pnl": 9507.051154676106,
-    "winRate": 48.52,
-    "tokens": 215,
-    "status": "watcher",
-    "topTokens": [
-      "UXR",
-      "SOS",
-      "UXR"
     ]
   },
   {
@@ -2246,7 +2246,7 @@
     "pnl": 10619.553342443023,
     "winRate": 61.67,
     "tokens": 60,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "骡子快跑",
       "巨硬",
@@ -2283,30 +2283,30 @@
   },
   {
     "rank": 164,
-    "address": "EsnPMjPo9pH7sWS2r28H2xC214S8BSXhyYgMG3vXbSgt",
-    "chain": "solana",
-    "pnl": 5501.142374778132,
-    "winRate": 62.32,
-    "tokens": 74,
-    "status": "scout",
-    "topTokens": [
-      "butthole",
-      "Life",
-      "WhiteHouse"
-    ]
-  },
-  {
-    "rank": 165,
     "address": "8DGbkGgQewL9mx4aXzZCUChr7hBVXvPK9fYqSqc7Ajpn",
     "chain": "solana",
-    "pnl": 6527.369741842007,
-    "winRate": 48.25,
-    "tokens": 235,
+    "pnl": 6550.653067596887,
+    "winRate": 48.26,
+    "tokens": 236,
     "status": "watcher",
     "topTokens": [
       "NMF",
       "PETAH",
       "FRUITFLY"
+    ]
+  },
+  {
+    "rank": 165,
+    "address": "EsnPMjPo9pH7sWS2r28H2xC214S8BSXhyYgMG3vXbSgt",
+    "chain": "solana",
+    "pnl": 5501.142374778132,
+    "winRate": 62.32,
+    "tokens": 74,
+    "status": "hunter",
+    "topTokens": [
+      "butthole",
+      "Life",
+      "WhiteHouse"
     ]
   },
   {
@@ -2368,7 +2368,7 @@
     "pnl": 45911.24029896785,
     "winRate": 62.07,
     "tokens": 30,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "金钱自由",
       "马年快乐",
@@ -2391,20 +2391,6 @@
   },
   {
     "rank": 172,
-    "address": "0xddddddf60647d0cc4579242d699a4c5f53dddddd",
-    "chain": "bsc",
-    "pnl": 31383.312797150582,
-    "winRate": 41.449999999999996,
-    "tokens": 195,
-    "status": "watcher",
-    "topTokens": [
-      "金钱自由",
-      "Freedom of Money,",
-      "十二生肖"
-    ]
-  },
-  {
-    "rank": 173,
     "address": "FSAmbD6jm6SZZQadSJeC1paX3oTtAiY9hTx1UYzVoXqj",
     "chain": "solana",
     "pnl": 13859.781735394703,
@@ -2415,6 +2401,20 @@
       "Land",
       "SINCLAIR",
       "BIOCLAW"
+    ]
+  },
+  {
+    "rank": 173,
+    "address": "0xddddddf60647d0cc4579242d699a4c5f53dddddd",
+    "chain": "bsc",
+    "pnl": 31204.951617270686,
+    "winRate": 41.24,
+    "tokens": 195,
+    "status": "watcher",
+    "topTokens": [
+      "金钱自由",
+      "Freedom of Money,",
+      "十二生肖"
     ]
   },
   {
@@ -2601,6 +2601,20 @@
   },
   {
     "rank": 187,
+    "address": "67Nwfi9hgwqhxGoovT2JGLU67uxfomLwQAWncjXXzU6U",
+    "chain": "solana",
+    "pnl": 8129.501927712831,
+    "winRate": 40.910000000000004,
+    "tokens": 354,
+    "status": "watcher",
+    "topTokens": [
+      "BRIAN",
+      "Adam",
+      "KEVAI"
+    ]
+  },
+  {
+    "rank": 188,
     "address": "3VCx8WYeP6dmWaUgChyvNEqTqaCn9bNDsYBgBVbHTZ68",
     "chain": "solana",
     "pnl": 36200.86546896018,
@@ -2614,7 +2628,7 @@
     ]
   },
   {
-    "rank": 188,
+    "rank": 189,
     "address": "39q2g5tTQn9n7KnuapzwS2smSx3NGYqBoea11tBjsGEt",
     "chain": "solana",
     "pnl": 8670.925955792436,
@@ -2625,20 +2639,6 @@
       "Pencil",
       "DATACLAW",
       "Out"
-    ]
-  },
-  {
-    "rank": 189,
-    "address": "67Nwfi9hgwqhxGoovT2JGLU67uxfomLwQAWncjXXzU6U",
-    "chain": "solana",
-    "pnl": 7788.447483317854,
-    "winRate": 40.8,
-    "tokens": 351,
-    "status": "watcher",
-    "topTokens": [
-      "BRIAN",
-      "Adam",
-      "KEVAI"
     ]
   },
   {
@@ -2659,7 +2659,7 @@
     "rank": 191,
     "address": "FmWKN36kiu1e4C5dABSN5x5uEmCuSUGWGjyn8g56MYm",
     "chain": "solana",
-    "pnl": 5910.9354410340975,
+    "pnl": 5911.7516492443065,
     "winRate": 59.31999999999999,
     "tokens": 61,
     "status": "scout",
@@ -2808,9 +2808,9 @@
     "rank": 202,
     "address": "FpD6n8gfoZNxyAN6QqNH4TFQdV9vZEgcv5W4H2YL8k4X",
     "chain": "solana",
-    "pnl": 7106.9221344098805,
-    "winRate": 38.07,
-    "tokens": 436,
+    "pnl": 7121.751373374121,
+    "winRate": 38.129999999999995,
+    "tokens": 438,
     "status": "watcher",
     "topTokens": [
       "AGENT",
@@ -2825,7 +2825,7 @@
     "pnl": 10803.417317207168,
     "winRate": 64.29,
     "tokens": 30,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "EDGE",
       "BNKR",
@@ -2932,6 +2932,20 @@
   },
   {
     "rank": 211,
+    "address": "CEtc9Yn2U6Kgm5wTctd6kgarHMgCsE4MRGNm9ko3k7n7",
+    "chain": "solana",
+    "pnl": 6025.730640667483,
+    "winRate": 48.699999999999996,
+    "tokens": 115,
+    "status": "watcher",
+    "topTokens": [
+      "abcdefg",
+      "MIM",
+      "MOLLY"
+    ]
+  },
+  {
+    "rank": 212,
     "address": "0xba26ce9353add142364b381407f8cb6c61694f85",
     "chain": "bsc",
     "pnl": 25040.969891078625,
@@ -2943,7 +2957,7 @@
     ]
   },
   {
-    "rank": 212,
+    "rank": 213,
     "address": "94LBANHCUJCBRcKB3z1x55R951j1PS6GM1jPSGQHDPrU",
     "chain": "solana",
     "pnl": 5965.62523146446,
@@ -2957,12 +2971,12 @@
     ]
   },
   {
-    "rank": 213,
+    "rank": 214,
     "address": "GZn9ExSNoehPUm4oTM8YALMsjSqf3fL7LU7Rj4TvZFod",
     "chain": "solana",
-    "pnl": 5741.54382553899,
+    "pnl": 5743.422501798212,
     "winRate": 53.52,
-    "tokens": 73,
+    "tokens": 75,
     "status": "scout",
     "topTokens": [
       "SOS",
@@ -2971,7 +2985,7 @@
     ]
   },
   {
-    "rank": 214,
+    "rank": 215,
     "address": "EU1bFxZ9oiUC2V6tme6gaPgTP6mvVm54q2oUKD27U3pm",
     "chain": "solana",
     "pnl": 5871.914990984597,
@@ -2985,7 +2999,7 @@
     ]
   },
   {
-    "rank": 215,
+    "rank": 216,
     "address": "D3MuDmrs2dm6U9CiZur651CnPjLwUWjs9p1a3PoDs76H",
     "chain": "solana",
     "pnl": 11832.914311844193,
@@ -2996,20 +3010,6 @@
       "01001000",
       "Distorted",
       "Twin"
-    ]
-  },
-  {
-    "rank": 216,
-    "address": "CEtc9Yn2U6Kgm5wTctd6kgarHMgCsE4MRGNm9ko3k7n7",
-    "chain": "solana",
-    "pnl": 5863.587882486774,
-    "winRate": 47.83,
-    "tokens": 115,
-    "status": "watcher",
-    "topTokens": [
-      "abcdefg",
-      "MIM",
-      "MOLLY"
     ]
   },
   {
@@ -3047,7 +3047,7 @@
     "pnl": 79875.02737157785,
     "winRate": 62.5,
     "tokens": 15,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "TripleT",
       "Peace",
@@ -3061,7 +3061,7 @@
     "pnl": 7352.172959094342,
     "winRate": 63.33,
     "tokens": 31,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "SIRI",
       "Password",
@@ -3269,7 +3269,7 @@
     "pnl": 5056.521070052912,
     "winRate": 64.29,
     "tokens": 31,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "SHAPE",
       "gay",
@@ -3306,20 +3306,6 @@
   },
   {
     "rank": 238,
-    "address": "0xa7d4ffc4eca3c71af150ce302560a9d04a1d2b9f",
-    "chain": "bsc",
-    "pnl": 68757.48704013771,
-    "winRate": 34.62,
-    "tokens": 134,
-    "status": "watcher",
-    "topTokens": [
-      "龙虾",
-      "人生",
-      "memes"
-    ]
-  },
-  {
-    "rank": 239,
     "address": "0xfe8d6dd17db7a9a17c08012370b6ed2c6e6e0549",
     "chain": "bsc",
     "pnl": 16057.096873015891,
@@ -3330,6 +3316,20 @@
       "龙虾",
       "Fight",
       "MOONDOGE"
+    ]
+  },
+  {
+    "rank": 239,
+    "address": "0xa7d4ffc4eca3c71af150ce302560a9d04a1d2b9f",
+    "chain": "bsc",
+    "pnl": 68367.98816453764,
+    "winRate": 34.35,
+    "tokens": 136,
+    "status": "watcher",
+    "topTokens": [
+      "龙虾",
+      "人生",
+      "memes"
     ]
   },
   {
@@ -3348,6 +3348,20 @@
   },
   {
     "rank": 241,
+    "address": "0xeb2bfa536281a30069f3dfa6de50dbdb45c4dfb0",
+    "chain": "bsc",
+    "pnl": 26928.005437704946,
+    "winRate": 46.150000000000006,
+    "tokens": 52,
+    "status": "watcher",
+    "topTokens": [
+      "龙虾",
+      "躺͏平",
+      "巨硬"
+    ]
+  },
+  {
+    "rank": 242,
     "address": "HZXdwRRw27kfpYtTqc7bMfrRgK3LSUaiKDFtqoEihik8",
     "chain": "solana",
     "pnl": 5729.053031599549,
@@ -3361,7 +3375,7 @@
     ]
   },
   {
-    "rank": 242,
+    "rank": 243,
     "address": "0xe6b0f1cd32b53f9d5dc06eb547a35211fd1b635a",
     "chain": "bsc",
     "pnl": 14342.886216822151,
@@ -3375,7 +3389,7 @@
     ]
   },
   {
-    "rank": 243,
+    "rank": 244,
     "address": "Acphq6jyn5WCebyCF6gqrwRjLWFPyq93evLJReKHHFZN",
     "chain": "solana",
     "pnl": 56508.22746744537,
@@ -3389,7 +3403,7 @@
     ]
   },
   {
-    "rank": 244,
+    "rank": 245,
     "address": "0x9bd3a92c231893278c2fa654fc8d152ae6dc86b5",
     "chain": "bsc",
     "pnl": 23387.84535803498,
@@ -3400,20 +3414,6 @@
       "TITAN",
       "futiure",
       "LOBSTER"
-    ]
-  },
-  {
-    "rank": 245,
-    "address": "0xeb2bfa536281a30069f3dfa6de50dbdb45c4dfb0",
-    "chain": "bsc",
-    "pnl": 25169.02553612274,
-    "winRate": 46.150000000000006,
-    "tokens": 52,
-    "status": "watcher",
-    "topTokens": [
-      "龙虾",
-      "躺͏平",
-      "巨硬"
     ]
   },
   {
@@ -3502,6 +3502,20 @@
   },
   {
     "rank": 252,
+    "address": "FsG3BaPmRTdSrPaivbgJsFNCCa8cPfkUtk8VLWXkHpHP",
+    "chain": "solana",
+    "pnl": 5610.606773889539,
+    "winRate": 37.45,
+    "tokens": 268,
+    "status": "watcher",
+    "topTokens": [
+      "AI",
+      "OPTIMUS",
+      "clod"
+    ]
+  },
+  {
+    "rank": 253,
     "address": "0xe56c99cb1c72f3605ea65ca3a1fbc093d6bd7f96",
     "chain": "base",
     "pnl": 10507.189408684571,
@@ -3514,7 +3528,7 @@
     ]
   },
   {
-    "rank": 253,
+    "rank": 254,
     "address": "ETAbGk5qFPP4tXyL182mE61u2RsayZbDt6rEJeiZVSzr",
     "chain": "solana",
     "pnl": 7776.020590703454,
@@ -3528,7 +3542,7 @@
     ]
   },
   {
-    "rank": 254,
+    "rank": 255,
     "address": "HLnVkPUGZ4BPdbuVH2Jd59aGvyAhirFxBg5Paiz2fTUa",
     "chain": "solana",
     "pnl": 31159.05940304439,
@@ -3541,7 +3555,7 @@
     ]
   },
   {
-    "rank": 255,
+    "rank": 256,
     "address": "FUCKNiggAS8VdjcGbpAgoPZtfmpA32Q5CGbVbxHeuAgt",
     "chain": "solana",
     "pnl": 9420.153999880284,
@@ -3555,7 +3569,7 @@
     ]
   },
   {
-    "rank": 256,
+    "rank": 257,
     "address": "EyBoZNwNDrMGtU6f6LSZge2Z8x7mtYyzBtJ26FT2XLvk",
     "chain": "solana",
     "pnl": 17084.039368334004,
@@ -3569,19 +3583,19 @@
     ]
   },
   {
-    "rank": 257,
+    "rank": 258,
     "address": "7ozNzbChUcs8iuivmGFYyciQbkvQceztGvsifRdPtEeZ",
     "chain": "solana",
     "pnl": 54297.19481391248,
     "winRate": 60,
     "tokens": 14,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Lupe"
     ]
   },
   {
-    "rank": 258,
+    "rank": 259,
     "address": "6S8GezkxYUfZy9JPtYnanbcZTMB87Wjt1qx3c6ELajKC",
     "chain": "solana",
     "pnl": 27532.740595324674,
@@ -3595,7 +3609,7 @@
     ]
   },
   {
-    "rank": 259,
+    "rank": 260,
     "address": "7zc5tFyTAHjtVeAiKvjU8Y7kDWn2zmjVnHVuhXuftBxh",
     "chain": "solana",
     "pnl": 7090.671145731616,
@@ -3609,7 +3623,7 @@
     ]
   },
   {
-    "rank": 260,
+    "rank": 261,
     "address": "J3XvzFiJ9u17jAQr5jpkaKTNTZKt3MS2o61nSeqSqXcQ",
     "chain": "solana",
     "pnl": 130339.61613120722,
@@ -3623,13 +3637,13 @@
     ]
   },
   {
-    "rank": 261,
+    "rank": 262,
     "address": "0xd4acd38de8f461cba9d7f5742ca115da4ad3d96f",
     "chain": "bsc",
     "pnl": 24708.40807944666,
     "winRate": 64.29,
     "tokens": 14,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "HANA",
       "SIREN",
@@ -3637,7 +3651,7 @@
     ]
   },
   {
-    "rank": 262,
+    "rank": 263,
     "address": "DT32SXWkqxSJ3eczP8LzgFwfqiDdV8VS2cSWrF2Spyur",
     "chain": "solana",
     "pnl": 8885.264825781536,
@@ -3651,7 +3665,7 @@
     ]
   },
   {
-    "rank": 263,
+    "rank": 264,
     "address": "0x7f25e38e7c58632130078a05fe8baf5959af4d6b",
     "chain": "bsc",
     "pnl": 83024.74692063541,
@@ -3665,7 +3679,7 @@
     ]
   },
   {
-    "rank": 264,
+    "rank": 265,
     "address": "DqUJZJ6e3sBiMtUbgveCJzqh3JhiLhpuBYmncg1ivwcc",
     "chain": "solana",
     "pnl": 21505.556177261173,
@@ -3679,7 +3693,7 @@
     ]
   },
   {
-    "rank": 265,
+    "rank": 266,
     "address": "0xdd16b0a6c71a897c2ad17c4754c80d7db4e68446",
     "chain": "bsc",
     "pnl": 20279.39412873218,
@@ -3693,7 +3707,7 @@
     ]
   },
   {
-    "rank": 266,
+    "rank": 267,
     "address": "0x4d0e5759e4f2af31b93b25277b77b7c59dbb1f9c",
     "chain": "bsc",
     "pnl": 17363.025194825437,
@@ -3707,7 +3721,7 @@
     ]
   },
   {
-    "rank": 267,
+    "rank": 268,
     "address": "Gmgjj8Q7jCfSDLR5hLA9ZsHDprXEUz9wzfrrbAvnWcGh",
     "chain": "solana",
     "pnl": 32803.172308295834,
@@ -3720,7 +3734,7 @@
     ]
   },
   {
-    "rank": 268,
+    "rank": 269,
     "address": "0xe7caa302158e4fe7b3bd160c895be2f56deb680b",
     "chain": "bsc",
     "pnl": 12168.614525035116,
@@ -3734,10 +3748,10 @@
     ]
   },
   {
-    "rank": 269,
+    "rank": 270,
     "address": "0xf284fc763bdb95c03427497b8f2d22487f9ddf31",
     "chain": "bsc",
-    "pnl": 30065.658594401277,
+    "pnl": 29971.72130901819,
     "winRate": 32.89,
     "tokens": 149,
     "status": "watcher",
@@ -3745,20 +3759,6 @@
       "KIMCHI",
       "AnAn",
       "Burn King"
-    ]
-  },
-  {
-    "rank": 270,
-    "address": "FDGoXYGJ6tJzPbQpYJh21JGfWvczQEF7kNRsTCpPPGEX",
-    "chain": "solana",
-    "pnl": 25584.51827552188,
-    "winRate": 48.15,
-    "tokens": 31,
-    "status": "watcher",
-    "topTokens": [
-      "HeavyPulp",
-      "asciivision",
-      "SPACE"
     ]
   },
   {
@@ -3791,6 +3791,20 @@
   },
   {
     "rank": 273,
+    "address": "FDGoXYGJ6tJzPbQpYJh21JGfWvczQEF7kNRsTCpPPGEX",
+    "chain": "solana",
+    "pnl": 24811.754042936373,
+    "winRate": 48.15,
+    "tokens": 31,
+    "status": "watcher",
+    "topTokens": [
+      "HeavyPulp",
+      "asciivision",
+      "SPACE"
+    ]
+  },
+  {
+    "rank": 274,
     "address": "2GmtrUJRCzi33PuSbcU585Tgc4jU68WpACkBZ9BiMZwV",
     "chain": "solana",
     "pnl": 13289.485696109785,
@@ -3804,7 +3818,7 @@
     ]
   },
   {
-    "rank": 274,
+    "rank": 275,
     "address": "FUDjTfP7oRipn317ben99P3hjEGDgwKTfPm2QxGwQd78",
     "chain": "solana",
     "pnl": 57985.99817368254,
@@ -3818,7 +3832,7 @@
     ]
   },
   {
-    "rank": 275,
+    "rank": 276,
     "address": "6hFWHcoxrsfohekfyNvKqxu2E5XaP51dmpG8vLdfRtf9",
     "chain": "solana",
     "pnl": 29090.4491356767,
@@ -3832,7 +3846,7 @@
     ]
   },
   {
-    "rank": 276,
+    "rank": 277,
     "address": "H5eMKBBeY1GFyxQhpFEPQtPGEyypomEsudiMqQRsFt4D",
     "chain": "solana",
     "pnl": 35892.98140603901,
@@ -3846,7 +3860,7 @@
     ]
   },
   {
-    "rank": 277,
+    "rank": 278,
     "address": "0xc8fbf94b430f4384431a3a26ec1008d6e0f63c7d",
     "chain": "bsc",
     "pnl": 41408.21476454533,
@@ -3860,7 +3874,7 @@
     ]
   },
   {
-    "rank": 278,
+    "rank": 279,
     "address": "0xe92c26ddc8929a7c4360be4ccc0b99b7b4fbeb9b",
     "chain": "bsc",
     "pnl": 22149.99026736835,
@@ -3874,7 +3888,7 @@
     ]
   },
   {
-    "rank": 279,
+    "rank": 280,
     "address": "H31vEBxSJk1nQdUN11qZgZyhScyShhscKhvhZZU3dQoU",
     "chain": "solana",
     "pnl": 6559.206713584648,
@@ -3888,7 +3902,7 @@
     ]
   },
   {
-    "rank": 280,
+    "rank": 281,
     "address": "LeenseyyUU3ccdBPCFCrrZ8oKU2B3T2uToGGZ7eVABY",
     "chain": "solana",
     "pnl": 6533.879353932777,
@@ -3902,7 +3916,7 @@
     ]
   },
   {
-    "rank": 281,
+    "rank": 282,
     "address": "0x2df5381c4aefea42acce09c25d0e790b70a6c365",
     "chain": "bsc",
     "pnl": 19593.225597318782,
@@ -3916,7 +3930,7 @@
     ]
   },
   {
-    "rank": 282,
+    "rank": 283,
     "address": "0xf07e74d42cdb5be001c21590716bf019c0587d83",
     "chain": "bsc",
     "pnl": 22417.2688275386,
@@ -3929,7 +3943,7 @@
     ]
   },
   {
-    "rank": 283,
+    "rank": 284,
     "address": "3SJXFZrExftNJ4vLGpL4dkyt1mSNLg8YqUUvSamVY2HP",
     "chain": "solana",
     "pnl": 8974.270224960766,
@@ -3943,7 +3957,21 @@
     ]
   },
   {
-    "rank": 284,
+    "rank": 285,
+    "address": "FFn8s7cj38ht2xpKr15K14LoMHCQ3EiDKDMda9mAZHcS",
+    "chain": "solana",
+    "pnl": 10618.788830551257,
+    "winRate": 37.5,
+    "tokens": 97,
+    "status": "watcher",
+    "topTokens": [
+      "OPTIMUS",
+      "LabClaw",
+      "mogging"
+    ]
+  },
+  {
+    "rank": 286,
     "address": "B9nvYujRmqunZHM3MvRaE4fzSSq9UKdx426PZJ4jt1mr",
     "chain": "solana",
     "pnl": 31079.572194355413,
@@ -3957,7 +3985,7 @@
     ]
   },
   {
-    "rank": 285,
+    "rank": 287,
     "address": "Cv4JVc25RZ7JV8HhEXrnxJjzebMBCqN5prB5ec43aJSz",
     "chain": "solana",
     "pnl": 8255.662450110785,
@@ -3971,21 +3999,7 @@
     ]
   },
   {
-    "rank": 286,
-    "address": "FFn8s7cj38ht2xpKr15K14LoMHCQ3EiDKDMda9mAZHcS",
-    "chain": "solana",
-    "pnl": 10236.332287711248,
-    "winRate": 37.63,
-    "tokens": 94,
-    "status": "watcher",
-    "topTokens": [
-      "OPTIMUS",
-      "LabClaw",
-      "mogging"
-    ]
-  },
-  {
-    "rank": 287,
+    "rank": 288,
     "address": "0x3d8efb4a1acdac06c9ba0db5bb42e49e00ef400b",
     "chain": "bsc",
     "pnl": 11803.90014866199,
@@ -3999,7 +4013,7 @@
     ]
   },
   {
-    "rank": 288,
+    "rank": 289,
     "address": "0xc37f72e36dc1e7632ca2ab49a775b439ed6b758a",
     "chain": "bsc",
     "pnl": 18363.4244789706,
@@ -4013,13 +4027,27 @@
     ]
   },
   {
-    "rank": 289,
+    "rank": 290,
+    "address": "Za7LfQJ6LCnBiNrdAAL7e75DPmExG6y3deLmYk6ozu4",
+    "chain": "solana",
+    "pnl": 6108.360935468885,
+    "winRate": 60,
+    "tokens": 19,
+    "status": "hunter",
+    "topTokens": [
+      "Mustard",
+      "UGOR",
+      "RTP"
+    ]
+  },
+  {
+    "rank": 291,
     "address": "0x09fe45a1dd5624238f41489e27a1473c136f80e3",
     "chain": "bsc",
     "pnl": 15419.579134392212,
     "winRate": 61.53999999999999,
     "tokens": 13,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "龙虾",
       "骡子快跑",
@@ -4027,13 +4055,13 @@
     ]
   },
   {
-    "rank": 290,
+    "rank": 292,
     "address": "zmnRJ4yguzHxnQXASsckXJSPxmUWeBHA8dUMW9gNuAy",
     "chain": "solana",
     "pnl": 6426.253738421659,
     "winRate": 64.29,
     "tokens": 15,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "VAULT",
       "SYRA",
@@ -4041,7 +4069,7 @@
     ]
   },
   {
-    "rank": 291,
+    "rank": 293,
     "address": "0x6814c5a927314422d49976cae5143e13510ea7f1",
     "chain": "bsc",
     "pnl": 58985.81715018177,
@@ -4053,7 +4081,7 @@
     ]
   },
   {
-    "rank": 292,
+    "rank": 294,
     "address": "HYWo71Wk9PNDe5sBaRKazPnVyGnQDiwgXCFKvgAQ1ENp",
     "chain": "solana",
     "pnl": 31682.803705403316,
@@ -4067,13 +4095,13 @@
     ]
   },
   {
-    "rank": 293,
+    "rank": 295,
     "address": "3H9LVHarjBoZ2YPEsgFbVD1zuERCGwfp4AeyHoHsFSEC",
     "chain": "solana",
     "pnl": 5346.628620608654,
     "winRate": 61.11,
     "tokens": 18,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "MACROHARD",
       "HeavyPulp",
@@ -4081,27 +4109,27 @@
     ]
   },
   {
-    "rank": 294,
-    "address": "Za7LfQJ6LCnBiNrdAAL7e75DPmExG6y3deLmYk6ozu4",
+    "rank": 296,
+    "address": "C9oTK7ga8tfCBn1WL11D3gwLXK6xGh3UA9z3xt1tmNES",
     "chain": "solana",
-    "pnl": 6108.360935468885,
-    "winRate": 60,
-    "tokens": 18,
-    "status": "scout",
+    "pnl": 25471.776167020267,
+    "winRate": 30.830000000000002,
+    "tokens": 136,
+    "status": "watcher",
     "topTokens": [
-      "Mustard",
-      "UGOR",
-      "RTP"
+      "我的刀盾",
+      "Capybara",
+      "TST"
     ]
   },
   {
-    "rank": 295,
+    "rank": 297,
     "address": "5Mj6oFnvZnPyDUjvMxLacjDmjKMHj8Tnk6L9Egq369LP",
     "chain": "solana",
     "pnl": 30060.609608950024,
     "winRate": 60,
     "tokens": 11,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "PSYOP",
       "nees",
@@ -4109,7 +4137,7 @@
     ]
   },
   {
-    "rank": 296,
+    "rank": 298,
     "address": "CxSzWutkVGEbGU2D2xo2CoDwR8upZYCwLduosUXqiVPi",
     "chain": "solana",
     "pnl": 13596.130237256384,
@@ -4123,21 +4151,7 @@
     ]
   },
   {
-    "rank": 297,
-    "address": "C9oTK7ga8tfCBn1WL11D3gwLXK6xGh3UA9z3xt1tmNES",
-    "chain": "solana",
-    "pnl": 24166.78970676572,
-    "winRate": 30.830000000000002,
-    "tokens": 136,
-    "status": "watcher",
-    "topTokens": [
-      "我的刀盾",
-      "Capybara",
-      "TST"
-    ]
-  },
-  {
-    "rank": 298,
+    "rank": 299,
     "address": "mDR91ufq4S2uSHa9E2PYL7xg4LwcQXaQFP7YK864a1z",
     "chain": "solana",
     "pnl": 9894.434626552831,
@@ -4151,7 +4165,7 @@
     ]
   },
   {
-    "rank": 299,
+    "rank": 300,
     "address": "0x4f2df6ab817e8154bddff8b4f07de3ae36967173",
     "chain": "bsc",
     "pnl": 122225.36868212782,
@@ -4164,7 +4178,7 @@
     ]
   },
   {
-    "rank": 300,
+    "rank": 301,
     "address": "DxLmcz6DmrNXZ4Zn6qMR4Y4FKVk54GqpJiadGMT3Nmrk",
     "chain": "solana",
     "pnl": 8608.25828928472,
@@ -4178,7 +4192,7 @@
     ]
   },
   {
-    "rank": 301,
+    "rank": 302,
     "address": "Ao3ir1DmPY2cFKnNVwD3wCuMHL7ibjp5DP6LSeMNvL1J",
     "chain": "solana",
     "pnl": 11894.643148696172,
@@ -4192,7 +4206,7 @@
     ]
   },
   {
-    "rank": 302,
+    "rank": 303,
     "address": "FfyLxGLJu6WnCMahP9AKEDkC3VFWRvcH8wUx42CQTGhB",
     "chain": "solana",
     "pnl": 5186.068360759341,
@@ -4206,7 +4220,7 @@
     ]
   },
   {
-    "rank": 303,
+    "rank": 304,
     "address": "0x7ca1fa9447b1c56db5a22ab7ba4a55307090f3e0",
     "chain": "bsc",
     "pnl": 26294.690608209014,
@@ -4220,7 +4234,7 @@
     ]
   },
   {
-    "rank": 304,
+    "rank": 305,
     "address": "0xf001f55a301c0cba784960e0a8f9ae507740f7b6",
     "chain": "bsc",
     "pnl": 17872.59556289059,
@@ -4234,13 +4248,13 @@
     ]
   },
   {
-    "rank": 305,
+    "rank": 306,
     "address": "2cScMkV5L8sVV7vspG25FYd62FRXNSWXk5Spuk86fKPE",
     "chain": "solana",
     "pnl": 35465.17839299774,
     "winRate": 60,
     "tokens": 9,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Distorted",
       "Sheep",
@@ -4248,7 +4262,7 @@
     ]
   },
   {
-    "rank": 306,
+    "rank": 307,
     "address": "HZWNvU1A43d5fzvzAwhKCKJwZux7va2XKFrFS4yDx3F3",
     "chain": "solana",
     "pnl": 10802.227284204313,
@@ -4262,7 +4276,7 @@
     ]
   },
   {
-    "rank": 307,
+    "rank": 308,
     "address": "H8hNbGFhefhvBwf6E1ScMHeVo6aKEhoXcTrMUR6xVQQR",
     "chain": "solana",
     "pnl": 6362.077995546443,
@@ -4276,7 +4290,7 @@
     ]
   },
   {
-    "rank": 308,
+    "rank": 309,
     "address": "0x8a4d7285506eda4c319cd4de0a18857b89aff579",
     "chain": "bsc",
     "pnl": 15351.45829795243,
@@ -4290,7 +4304,7 @@
     ]
   },
   {
-    "rank": 309,
+    "rank": 310,
     "address": "0xee02c6125ce15daf79a3346482ee6c9d946321e5",
     "chain": "bsc",
     "pnl": 25789.0231527888,
@@ -4303,7 +4317,7 @@
     ]
   },
   {
-    "rank": 310,
+    "rank": 311,
     "address": "FwjYcbfktK8PC2bzCrqxR6QkUPxmHFbcFGNrz3YAV7ft",
     "chain": "solana",
     "pnl": 7528.0258096829275,
@@ -4317,13 +4331,13 @@
     ]
   },
   {
-    "rank": 311,
+    "rank": 312,
     "address": "0xea0653d5dcdef577c024b7c935ea40359a461e9c",
     "chain": "bsc",
     "pnl": 20874.17721477398,
     "winRate": 60,
     "tokens": 10,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "龙虾",
       "memes",
@@ -4331,7 +4345,7 @@
     ]
   },
   {
-    "rank": 312,
+    "rank": 313,
     "address": "EYNsxgoUJGsXhAVx3rEGqyFzVLVrBWot1kiLkgAGTx5b",
     "chain": "solana",
     "pnl": 7160.840436857362,
@@ -4342,20 +4356,6 @@
       "Spawn",
       "PRSM",
       "MiroFish"
-    ]
-  },
-  {
-    "rank": 313,
-    "address": "XZAtgw1Lfo6X4jsF9YQFfYPqEammeQH5bKh2QqacWTk",
-    "chain": "solana",
-    "pnl": 10356.336880645717,
-    "winRate": 42.11,
-    "tokens": 38,
-    "status": "watcher",
-    "topTokens": [
-      "HeavyPulp",
-      "Rosie",
-      "Distorted"
     ]
   },
   {
@@ -4407,7 +4407,7 @@
     "pnl": 8539.822833524751,
     "winRate": 62.5,
     "tokens": 11,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "PAPERCLIP",
       "NEO",
@@ -4485,18 +4485,32 @@
   },
   {
     "rank": 323,
+    "address": "XZAtgw1Lfo6X4jsF9YQFfYPqEammeQH5bKh2QqacWTk",
+    "chain": "solana",
+    "pnl": 10169.4810292677,
+    "winRate": 41.03,
+    "tokens": 39,
+    "status": "watcher",
+    "topTokens": [
+      "HeavyPulp",
+      "Rosie",
+      "Distorted"
+    ]
+  },
+  {
+    "rank": 324,
     "address": "0xa92f099dc37d3dbac65b781df1f0822e83aea52c",
     "chain": "bsc",
     "pnl": 22421.260290171816,
     "winRate": 60,
     "tokens": 9,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "元宇宙狗"
     ]
   },
   {
-    "rank": 324,
+    "rank": 325,
     "address": "2VFNGYobbEd4Nk4SpAiAos3HheDiqGs8RjV1YyGiXZ9F",
     "chain": "solana",
     "pnl": 39089.66429756393,
@@ -4510,10 +4524,10 @@
     ]
   },
   {
-    "rank": 325,
+    "rank": 326,
     "address": "0x2ea18f5e713f28079c7b731c1db679c0b32ef44d",
     "chain": "bsc",
-    "pnl": 13632.651918691228,
+    "pnl": 13676.716849401839,
     "winRate": 30.84,
     "tokens": 110,
     "status": "watcher",
@@ -4524,13 +4538,13 @@
     ]
   },
   {
-    "rank": 326,
+    "rank": 327,
     "address": "0x50fae72047f9714384c2e01a9ad47cc5b4571c6c",
     "chain": "base",
     "pnl": 25909.69689471709,
     "winRate": 60,
     "tokens": 16,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Conway",
       "FELIX",
@@ -4538,19 +4552,19 @@
     ]
   },
   {
-    "rank": 327,
+    "rank": 328,
     "address": "EcYh9hnUd183vYEpuEgTEqnXXGXQaptxVzfWKr7E4VvT",
     "chain": "solana",
     "pnl": 35360.71324993993,
     "winRate": 60,
     "tokens": 8,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Pippkin"
     ]
   },
   {
-    "rank": 328,
+    "rank": 329,
     "address": "4hvruD7YDRZL2xh5aCUrN2DoxZKCjGv9jofDXMvwGagC",
     "chain": "solana",
     "pnl": 41858.184502954995,
@@ -4564,7 +4578,7 @@
     ]
   },
   {
-    "rank": 329,
+    "rank": 330,
     "address": "De1WZZZ6Gp7i7ec3pAyL4xzKQQxfx9pRpLkDutn8wJnB",
     "chain": "solana",
     "pnl": 6047.737215274156,
@@ -4578,7 +4592,7 @@
     ]
   },
   {
-    "rank": 330,
+    "rank": 331,
     "address": "0x443737e31fac04b39a112a6d2f7f92948b9c5ab9",
     "chain": "bsc",
     "pnl": 30050.21483167821,
@@ -4591,7 +4605,7 @@
     ]
   },
   {
-    "rank": 331,
+    "rank": 332,
     "address": "FXTbbv2rVJcFKfbXqtpEKc5mSnHnkcwmVux8L4CGn1KF",
     "chain": "solana",
     "pnl": 21291.66164760476,
@@ -4604,10 +4618,10 @@
     ]
   },
   {
-    "rank": 332,
+    "rank": 333,
     "address": "0x4085fe0d2b63cd457622e5473e48f130ef14f466",
     "chain": "bsc",
-    "pnl": 27996.683439240805,
+    "pnl": 28526.40844920907,
     "winRate": 37.14,
     "tokens": 35,
     "status": "watcher",
@@ -4618,7 +4632,7 @@
     ]
   },
   {
-    "rank": 333,
+    "rank": 334,
     "address": "0xdff4230649325ea0d074c1ff1a0902aa73016723",
     "chain": "bsc",
     "pnl": 11707.735768315873,
@@ -4632,7 +4646,7 @@
     ]
   },
   {
-    "rank": 334,
+    "rank": 335,
     "address": "DpYuj2At1Z1tH4baoz5A1XV4AanjJa8bgbB51BWSZUyn",
     "chain": "solana",
     "pnl": 28191.69044377354,
@@ -4646,7 +4660,7 @@
     ]
   },
   {
-    "rank": 335,
+    "rank": 336,
     "address": "E9CAsaxaMiRDNS1X2Vb7FC3RdyGtoLZNWhVffADBTWQo",
     "chain": "solana",
     "pnl": 6022.2494178951265,
@@ -4660,7 +4674,7 @@
     ]
   },
   {
-    "rank": 336,
+    "rank": 337,
     "address": "3fupiyLEr2BnFE9myQY8FS1kzqjhVZd7MdxUj74TFev4",
     "chain": "solana",
     "pnl": 15714.98530633176,
@@ -4674,7 +4688,7 @@
     ]
   },
   {
-    "rank": 337,
+    "rank": 338,
     "address": "V1ZQHRp9YwoLmE7bnnQWfAJUpXbuVhGEVEQV7rkvks3",
     "chain": "solana",
     "pnl": 5789.493830220689,
@@ -4688,7 +4702,7 @@
     ]
   },
   {
-    "rank": 338,
+    "rank": 339,
     "address": "0xf9b0405656e8cf7973a4823d9bbc45fe8f9a1ae1",
     "chain": "bsc",
     "pnl": 44471.61680612365,
@@ -4702,7 +4716,7 @@
     ]
   },
   {
-    "rank": 339,
+    "rank": 340,
     "address": "4GVoqTXYLRDyBZPVTeX6PeDsoJ4vJeP4gPdVPeqkeKXe",
     "chain": "solana",
     "pnl": 14392.177848933003,
@@ -4715,7 +4729,7 @@
     ]
   },
   {
-    "rank": 340,
+    "rank": 341,
     "address": "0xb10327568797354f65e91d43bc1e36f7d5f9a145",
     "chain": "bsc",
     "pnl": 27506.29952378873,
@@ -4729,7 +4743,7 @@
     ]
   },
   {
-    "rank": 341,
+    "rank": 342,
     "address": "0x72b3cbad0bf01d544676ac0dc9417c68ed397951",
     "chain": "bsc",
     "pnl": 15904.07956587322,
@@ -4743,7 +4757,7 @@
     ]
   },
   {
-    "rank": 342,
+    "rank": 343,
     "address": "7QZB4bbdYcKRGQvgTzdH3F886HpujWbkb3y5mPvDehHT",
     "chain": "solana",
     "pnl": 6689.722508995329,
@@ -4757,7 +4771,7 @@
     ]
   },
   {
-    "rank": 343,
+    "rank": 344,
     "address": "5Lbbak76kR9RBcdsD49zzNb3dd1qbBdhCx39NKr7td51",
     "chain": "solana",
     "pnl": 8696.333839928411,
@@ -4771,7 +4785,7 @@
     ]
   },
   {
-    "rank": 344,
+    "rank": 345,
     "address": "Hj5DTVGwUo1LQXjmSveE9JWSUc5j3LdK6aWyKaeEvSnb",
     "chain": "solana",
     "pnl": 26148.60980994146,
@@ -4785,10 +4799,10 @@
     ]
   },
   {
-    "rank": 345,
+    "rank": 346,
     "address": "0xa412183350a190a370c3104366140d6c4adfefee",
     "chain": "bsc",
-    "pnl": 13796.14016723536,
+    "pnl": 13717.60391294649,
     "winRate": 38.24,
     "tokens": 34,
     "status": "watcher",
@@ -4799,7 +4813,7 @@
     ]
   },
   {
-    "rank": 346,
+    "rank": 347,
     "address": "0xf96169bebfd1087f9e8a7df0b89f220c0b392e0b",
     "chain": "bsc",
     "pnl": 24141.122254025675,
@@ -4813,7 +4827,7 @@
     ]
   },
   {
-    "rank": 347,
+    "rank": 348,
     "address": "Eci7kwnHHCLuc4RgV7oL5wfmCtdHx5sHDYWQD9oajm1z",
     "chain": "solana",
     "pnl": 8968.835654820828,
@@ -4827,7 +4841,7 @@
     ]
   },
   {
-    "rank": 348,
+    "rank": 349,
     "address": "0xe60d480d216449aa320db71e6fbb48667bd08b85",
     "chain": "bsc",
     "pnl": 29583.223891740392,
@@ -4841,7 +4855,7 @@
     ]
   },
   {
-    "rank": 349,
+    "rank": 350,
     "address": "0xd9bc65b142360fa2ba60145517d07e5dfb2ad97c",
     "chain": "bsc",
     "pnl": 44846.22374505962,
@@ -4854,7 +4868,7 @@
     ]
   },
   {
-    "rank": 350,
+    "rank": 351,
     "address": "4rdk26JLj5q8GZVLRpA9KgW4RbUYf7ZoDgkUftmHACMV",
     "chain": "solana",
     "pnl": 5509.3236872303505,
@@ -4868,7 +4882,7 @@
     ]
   },
   {
-    "rank": 351,
+    "rank": 352,
     "address": "0x044c1b6a32312a87fbf17946822f5933a27db925",
     "chain": "bsc",
     "pnl": 20846.081399143874,
@@ -4881,7 +4895,7 @@
     ]
   },
   {
-    "rank": 352,
+    "rank": 353,
     "address": "D1H83ueSw5Nxy5okxH7VBfV4jRnqAK5Mm1tm3JAj3m5t",
     "chain": "solana",
     "pnl": 24285.587884238466,
@@ -4895,7 +4909,7 @@
     ]
   },
   {
-    "rank": 353,
+    "rank": 354,
     "address": "AsRzRX7hBJLgQquiQUyTE6aVsAAZfK3vQKTYzWuUC6k6",
     "chain": "solana",
     "pnl": 5316.08909194148,
@@ -4909,7 +4923,7 @@
     ]
   },
   {
-    "rank": 354,
+    "rank": 355,
     "address": "CPGmbNzVWeavaZDb21aL26v9bevQc4qwQ43NvFMXaaHD",
     "chain": "solana",
     "pnl": 26275.819203969273,
@@ -4923,7 +4937,7 @@
     ]
   },
   {
-    "rank": 355,
+    "rank": 356,
     "address": "bJDNkc81uUFCvV4GbqsQ15zh5VC5ojTvUESKkmpkvF3",
     "chain": "solana",
     "pnl": 24569.82853763039,
@@ -4937,7 +4951,7 @@
     ]
   },
   {
-    "rank": 356,
+    "rank": 357,
     "address": "FCuSFwcXUD5AyWXz8eVrmqj6Siai3nvMUWaYvQ8DAC5x",
     "chain": "solana",
     "pnl": 30903.328026612442,
@@ -4951,7 +4965,7 @@
     ]
   },
   {
-    "rank": 357,
+    "rank": 358,
     "address": "0xf270789c43d3a38fcbc4eada241af28a93bded73",
     "chain": "bsc",
     "pnl": 76300.0054118341,
@@ -4964,7 +4978,7 @@
     ]
   },
   {
-    "rank": 358,
+    "rank": 359,
     "address": "FuqSezCyiNEvycLEAv4eyBZEMmod2HUUmAPpUbqHaGR9",
     "chain": "solana",
     "pnl": 7364.828979259581,
@@ -4978,7 +4992,7 @@
     ]
   },
   {
-    "rank": 359,
+    "rank": 360,
     "address": "EiqsrJKM4MQmUft1VPvtsnziSYLgszCzi9zVEQAA1p9w",
     "chain": "solana",
     "pnl": 30078.43055659765,
@@ -4992,7 +5006,7 @@
     ]
   },
   {
-    "rank": 360,
+    "rank": 361,
     "address": "4nwfXw7n98jEQn93VWY7Cuf1jnn1scHXuXCPGVYS9k6T",
     "chain": "solana",
     "pnl": 9385.018554327662,
@@ -5006,7 +5020,7 @@
     ]
   },
   {
-    "rank": 361,
+    "rank": 362,
     "address": "3xbVry2B9cb6oV7amRjrzFrwGeBCdbxg7qZMyLtmojFJ",
     "chain": "solana",
     "pnl": 6893.390186219925,
@@ -5020,7 +5034,7 @@
     ]
   },
   {
-    "rank": 362,
+    "rank": 363,
     "address": "0xf78b066050e00fdb9b980e265aa9f317ef4b947c",
     "chain": "bsc",
     "pnl": 14520.76308351444,
@@ -5034,20 +5048,20 @@
     ]
   },
   {
-    "rank": 363,
+    "rank": 364,
     "address": "0x22a013b83ea41dfc3d9f81fbcb94262c2aee38ae",
     "chain": "base",
     "pnl": 5434.503549662578,
     "winRate": 62.5,
     "tokens": 9,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "ROBOTMONEY",
       "TORIVA"
     ]
   },
   {
-    "rank": 364,
+    "rank": 365,
     "address": "0x93ec5cdec27d47e44c74d9aa187cb4d3af8b8b0d",
     "chain": "bsc",
     "pnl": 24105.926708444546,
@@ -5061,7 +5075,7 @@
     ]
   },
   {
-    "rank": 365,
+    "rank": 366,
     "address": "8hsSDYaV6V9JAqZXbzPojZoebJBMt1bs3rss9mdakjV8",
     "chain": "solana",
     "pnl": 8422.931868627342,
@@ -5075,7 +5089,7 @@
     ]
   },
   {
-    "rank": 366,
+    "rank": 367,
     "address": "5VaKS1FuUiFiuLykD91iYp5LdnHmACjqgesDgBNtbpC7",
     "chain": "solana",
     "pnl": 34144.26268769382,
@@ -5089,7 +5103,7 @@
     ]
   },
   {
-    "rank": 367,
+    "rank": 368,
     "address": "AccVJGCog5YCJ6J64CvxkQNGADLHUvc4ZjqBU1z56coq",
     "chain": "solana",
     "pnl": 7691.072057758199,
@@ -5103,7 +5117,7 @@
     ]
   },
   {
-    "rank": 368,
+    "rank": 369,
     "address": "0xae988c405ed6c30dfbefa3b4d884d28d9b994706",
     "chain": "bsc",
     "pnl": 28486.400937988245,
@@ -5117,7 +5131,7 @@
     ]
   },
   {
-    "rank": 369,
+    "rank": 370,
     "address": "0xe7d435af0c5170d18ee322c99bb6f6d2f5bf991a",
     "chain": "bsc",
     "pnl": 32028.078193165664,
@@ -5131,7 +5145,7 @@
     ]
   },
   {
-    "rank": 370,
+    "rank": 371,
     "address": "G5nxEXuFMfV74DSnsrSatqCW32F34XUnBeq3PfDS7w5E",
     "chain": "solana",
     "pnl": 28149.765372503032,
@@ -5145,7 +5159,7 @@
     ]
   },
   {
-    "rank": 371,
+    "rank": 372,
     "address": "0x94dd1ea6a2270b375f8c75cd6b2e1f4a3c115236",
     "chain": "bsc",
     "pnl": 98217.68621868036,
@@ -5158,7 +5172,7 @@
     ]
   },
   {
-    "rank": 372,
+    "rank": 373,
     "address": "BUSGyr6YZkTerVnkp7AU4pLGJpsMuEJYrWix3vhop5GG",
     "chain": "solana",
     "pnl": 28285.340589483472,
@@ -5172,7 +5186,7 @@
     ]
   },
   {
-    "rank": 373,
+    "rank": 374,
     "address": "0x2f5eb3f35df41a6bfbd17faaf0130b3d4228759e",
     "chain": "base",
     "pnl": 155.5436292126446,
@@ -5184,7 +5198,7 @@
     ]
   },
   {
-    "rank": 374,
+    "rank": 375,
     "address": "5LrsHtU4KBNk2osj2g6aUcdoBL8QyEzNUu9PSVmGfD7x",
     "chain": "solana",
     "pnl": 27842.20721605699,
@@ -5198,20 +5212,20 @@
     ]
   },
   {
-    "rank": 375,
+    "rank": 376,
     "address": "6kSdHG4CgGi6CwDFt9FYa4jwN5BegcJ479RzrThXLKEv",
     "chain": "solana",
     "pnl": 5222.334047454676,
     "winRate": 62.5,
     "tokens": 8,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Life",
       "early"
     ]
   },
   {
-    "rank": 376,
+    "rank": 377,
     "address": "0xb7ae37b0f1f2b0aab85723dfba4ee51f80810ab2",
     "chain": "bsc",
     "pnl": 15562.071431204755,
@@ -5225,7 +5239,7 @@
     ]
   },
   {
-    "rank": 377,
+    "rank": 378,
     "address": "EwTNPYTuwxMzrvL19nzBsSLXdAoEmVBKkisN87csKgtt",
     "chain": "solana",
     "pnl": 15275.749238247457,
@@ -5239,13 +5253,13 @@
     ]
   },
   {
-    "rank": 378,
+    "rank": 379,
     "address": "0x3f28e35986798ec7328c963036de762aa2cd870d",
     "chain": "base",
     "pnl": 1839.143846220998,
     "winRate": 62.5,
     "tokens": 11,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "LITCOIN",
       "NOOK",
@@ -5253,7 +5267,7 @@
     ]
   },
   {
-    "rank": 379,
+    "rank": 380,
     "address": "0x1f1a4b79048b99bb3e2183c0837e20c81365b540",
     "chain": "base",
     "pnl": 5165.003460923564,
@@ -5265,7 +5279,7 @@
     ]
   },
   {
-    "rank": 380,
+    "rank": 381,
     "address": "4zeVXCXXr4dZ14GqKUZLPFj6adAKd844xGVM92QwfYJZ",
     "chain": "solana",
     "pnl": 5618.60121245028,
@@ -5278,13 +5292,13 @@
     ]
   },
   {
-    "rank": 381,
+    "rank": 382,
     "address": "0xe4873d62e81bd43e9db342096b60df8ee2731634",
     "chain": "base",
     "pnl": 37023.13225832118,
     "winRate": 62.5,
     "tokens": 8,
-    "status": "scout",
+    "status": "hunter",
     "topTokens": [
       "Conway",
       "KellyClaude",
@@ -5292,7 +5306,7 @@
     ]
   },
   {
-    "rank": 382,
+    "rank": 383,
     "address": "0x105bb1c846da423cf26f40b6dd2270f164b4dafd",
     "chain": "bsc",
     "pnl": 33426.38956302337,
@@ -5306,7 +5320,7 @@
     ]
   },
   {
-    "rank": 383,
+    "rank": 384,
     "address": "0x13267f77e7241db36f9ee3418dd3069bbc91f2b2",
     "chain": "bsc",
     "pnl": 21502.147431154808,
@@ -5320,7 +5334,7 @@
     ]
   },
   {
-    "rank": 384,
+    "rank": 385,
     "address": "Eyi3C9jpfBvwjqfntpMY1YgwGatj4kV1rPc3pH9yMHBm",
     "chain": "solana",
     "pnl": 6380.632228949326,
@@ -5334,7 +5348,7 @@
     ]
   },
   {
-    "rank": 385,
+    "rank": 386,
     "address": "62PLWwN98jDquEX3VJCw7pUdfgdCEQUTeNVTpdMuAr6v",
     "chain": "solana",
     "pnl": 34592.056082776624,
@@ -5348,7 +5362,7 @@
     ]
   },
   {
-    "rank": 386,
+    "rank": 387,
     "address": "0x18cd691900c6a3695b6514fac91ddd2fdab14e66",
     "chain": "base",
     "pnl": 2510.355545216203,
@@ -5361,7 +5375,7 @@
     ]
   },
   {
-    "rank": 387,
+    "rank": 388,
     "address": "C3nLTNMK6Ao1s3J1CQhv8GbT3NoMmifWoi9PGEcYd9hP",
     "chain": "solana",
     "pnl": 55581.39144101727,
@@ -5375,7 +5389,7 @@
     ]
   },
   {
-    "rank": 388,
+    "rank": 389,
     "address": "0x049c48d6e1619cc9aad5005aa3508a33b4f4a114",
     "chain": "bsc",
     "pnl": 19625.952450950666,
@@ -5389,7 +5403,7 @@
     ]
   },
   {
-    "rank": 389,
+    "rank": 390,
     "address": "3rA7MJkPtG8gQznKvqNyFh3CN8vC1KLjKYzW9y7MoojZ",
     "chain": "solana",
     "pnl": 38305.63397193168,
@@ -5400,20 +5414,6 @@
       "Punch",
       "SCUBA",
       "MAYA"
-    ]
-  },
-  {
-    "rank": 390,
-    "address": "0x9899ecd3eb662552cfc25613038cda9036fadccb",
-    "chain": "base",
-    "pnl": 15934.169453652898,
-    "winRate": 30.3,
-    "tokens": 43,
-    "status": "watcher",
-    "topTokens": [
-      "FELIX",
-      "DAIMON",
-      "SAIRI"
     ]
   },
   {
@@ -5519,20 +5519,6 @@
   },
   {
     "rank": 399,
-    "address": "0xe5816184adee6486739e6a82b71d9bd7abcdc065",
-    "chain": "bsc",
-    "pnl": 32922.472361347776,
-    "winRate": 23.44,
-    "tokens": 69,
-    "status": "watcher",
-    "topTokens": [
-      "Freedom of Money",
-      "MILADY",
-      "Ensoul"
-    ]
-  },
-  {
-    "rank": 400,
     "address": "GiJzJjBaeAZqcP4NTz9xjAhk4ZMau1tfgViumsKZ5xw1",
     "chain": "solana",
     "pnl": 24893.67608932985,
@@ -5546,7 +5532,7 @@
     ]
   },
   {
-    "rank": 401,
+    "rank": 400,
     "address": "92EMydaJFMVLEuUfW4vJ6FLzRA5KdQMPrbPJP5ks4NKh",
     "chain": "solana",
     "pnl": 10996.221075107444,
@@ -5560,7 +5546,7 @@
     ]
   },
   {
-    "rank": 402,
+    "rank": 401,
     "address": "cYATVxiZxWKrBYn6A7rFrfcfSM2GwdCCkeid7D2zccj",
     "chain": "solana",
     "pnl": 7226.224865482468,
@@ -5574,7 +5560,7 @@
     ]
   },
   {
-    "rank": 403,
+    "rank": 402,
     "address": "0xa63d8e8a4dd26544d56d4a015792c3df06e97f25",
     "chain": "base",
     "pnl": 5484.216731475625,
@@ -5588,7 +5574,7 @@
     ]
   },
   {
-    "rank": 404,
+    "rank": 403,
     "address": "93CUPvLERovbhFDmTPRnXr4F8WXvjgWRSuZvgePRRmqN",
     "chain": "solana",
     "pnl": 27849.85770838512,
@@ -5602,7 +5588,7 @@
     ]
   },
   {
-    "rank": 405,
+    "rank": 404,
     "address": "A2iWj3PiZfpfAvvbawgD62C3d7eaxHNVW2jFoRijFUKA",
     "chain": "solana",
     "pnl": 21255.73049765442,
@@ -5616,7 +5602,7 @@
     ]
   },
   {
-    "rank": 406,
+    "rank": 405,
     "address": "Eu4DNnkPbV9kMj81FwaZMHPqAHsBAVrwbtjGfKdRhVzh",
     "chain": "solana",
     "pnl": 28807.84714212945,
@@ -5630,7 +5616,7 @@
     ]
   },
   {
-    "rank": 407,
+    "rank": 406,
     "address": "5rqHGhnQAsU931QqyATE4F6bW7Ha1GkjcgqTvM6RaRVG",
     "chain": "solana",
     "pnl": 36760.179068832134,
@@ -5644,7 +5630,7 @@
     ]
   },
   {
-    "rank": 408,
+    "rank": 407,
     "address": "2rT3tD6NxZDM79fXZbrK6oTsabuBiwppF5hqh8s2Znty",
     "chain": "solana",
     "pnl": 5145.8943955721,
@@ -5658,7 +5644,7 @@
     ]
   },
   {
-    "rank": 409,
+    "rank": 408,
     "address": "0xa9b5aeb8eebe7d5884ea19453d85e8f09a703aac",
     "chain": "base",
     "pnl": 280.19711642538203,
@@ -5671,7 +5657,7 @@
     ]
   },
   {
-    "rank": 410,
+    "rank": 409,
     "address": "0x5006ce81ee0ab7436534832a4c3288929447372b",
     "chain": "bsc",
     "pnl": 26489.745237203173,
@@ -5685,7 +5671,7 @@
     ]
   },
   {
-    "rank": 411,
+    "rank": 410,
     "address": "0x31ea32c1226c40511651d582a75c71e170820482",
     "chain": "bsc",
     "pnl": 28827.494370668832,
@@ -5699,7 +5685,7 @@
     ]
   },
   {
-    "rank": 412,
+    "rank": 411,
     "address": "5jNnvyUdPG87aft9rcjEKzuCHwMdpVf5qJ28ZpKtTPce",
     "chain": "solana",
     "pnl": 22647.32544114656,
@@ -5711,7 +5697,7 @@
     ]
   },
   {
-    "rank": 413,
+    "rank": 412,
     "address": "0x10f6ac28c5beba848c638a7038944a5039f3a7a4",
     "chain": "bsc",
     "pnl": 43720.67396438369,
@@ -5723,7 +5709,7 @@
     ]
   },
   {
-    "rank": 414,
+    "rank": 413,
     "address": "0x2d2e4f83104e76091ddc32bbb80184cbaafeb254",
     "chain": "base",
     "pnl": 5737.159932206717,
@@ -5737,7 +5723,7 @@
     ]
   },
   {
-    "rank": 415,
+    "rank": 414,
     "address": "0x5f757014ab90daf18853d17dd985471bb4aa683a",
     "chain": "bsc",
     "pnl": 18259.025078206476,
@@ -5750,7 +5736,7 @@
     ]
   },
   {
-    "rank": 416,
+    "rank": 415,
     "address": "9TCH1zJpHqrC6dAEyZdbL4E7Hw1YNEKKS5xuwYGE985o",
     "chain": "solana",
     "pnl": 6803.539166946926,
@@ -5764,7 +5750,7 @@
     ]
   },
   {
-    "rank": 417,
+    "rank": 416,
     "address": "aDfntoG5VYUTAaVybwWf3S3m2RQrxTNGzsAxT4sGxxJ",
     "chain": "solana",
     "pnl": 5774.516489941803,
@@ -5778,7 +5764,35 @@
     ]
   },
   {
+    "rank": 417,
+    "address": "0x9899ecd3eb662552cfc25613038cda9036fadccb",
+    "chain": "base",
+    "pnl": 14805.516543984791,
+    "winRate": 26.47,
+    "tokens": 44,
+    "status": "watcher",
+    "topTokens": [
+      "FELIX",
+      "DAIMON",
+      "SAIRI"
+    ]
+  },
+  {
     "rank": 418,
+    "address": "0xe5816184adee6486739e6a82b71d9bd7abcdc065",
+    "chain": "bsc",
+    "pnl": 32909.71158439444,
+    "winRate": 21.88,
+    "tokens": 69,
+    "status": "watcher",
+    "topTokens": [
+      "Freedom of Money",
+      "MILADY",
+      "Ensoul"
+    ]
+  },
+  {
+    "rank": 419,
     "address": "0x1b33b77c64bd13ea11fc40d5112373e3a8d91af3",
     "chain": "bsc",
     "pnl": 19870.919444963016,
@@ -5791,7 +5805,7 @@
     ]
   },
   {
-    "rank": 419,
+    "rank": 420,
     "address": "0x8c0e50d4ec1ec9e68bb454797537e45cd9ee0d31",
     "chain": "base",
     "pnl": 11267.169922154868,
@@ -5804,7 +5818,7 @@
     ]
   },
   {
-    "rank": 420,
+    "rank": 421,
     "address": "G9YjAaxuGEgKVc1FA7jJED4N5vhJGfX8ZGdGB9tAt2Wt",
     "chain": "solana",
     "pnl": 27975.12681588033,
@@ -5818,7 +5832,7 @@
     ]
   },
   {
-    "rank": 421,
+    "rank": 422,
     "address": "GXkGy6qEKaejc5eLbDCJYZRxmUFHSvnQnK9tN7uyukxd",
     "chain": "solana",
     "pnl": 32795.10647803563,
@@ -5832,7 +5846,7 @@
     ]
   },
   {
-    "rank": 422,
+    "rank": 423,
     "address": "0x49fd960bce0e49b0901ccdf78c98cba3db80bdd8",
     "chain": "bsc",
     "pnl": 98648.63090526548,
@@ -5846,7 +5860,7 @@
     ]
   },
   {
-    "rank": 423,
+    "rank": 424,
     "address": "0xd5afbbb5cd64865a22da2c6c308e8ea4de09d6ab",
     "chain": "base",
     "pnl": 1388.068228620564,
@@ -5860,7 +5874,7 @@
     ]
   },
   {
-    "rank": 424,
+    "rank": 425,
     "address": "Fv4UTRYcMZkKQmhCWAxiwVVGXtGpJtbSTMpwSvWcey6v",
     "chain": "solana",
     "pnl": 43094.7695137289,
@@ -5873,7 +5887,7 @@
     ]
   },
   {
-    "rank": 425,
+    "rank": 426,
     "address": "0x38a06a55026aab5cfa3a80756f907f8feca9873b",
     "chain": "bsc",
     "pnl": 13309.430072712112,
@@ -5887,7 +5901,7 @@
     ]
   },
   {
-    "rank": 426,
+    "rank": 427,
     "address": "0x373c5d9bbcfeb6cda160469dd9da07d742a8a27d",
     "chain": "bsc",
     "pnl": 32649.09519830606,
@@ -5900,7 +5914,7 @@
     ]
   },
   {
-    "rank": 427,
+    "rank": 428,
     "address": "6JTyKqZ5Vdk2dmDT3gBTgr8edb9V8ftxe5mqXB1qZDrU",
     "chain": "solana",
     "pnl": 8013.991170192815,
@@ -5913,7 +5927,7 @@
     ]
   },
   {
-    "rank": 428,
+    "rank": 429,
     "address": "0xe9e1c9a214a018f2ec12d8526988ccebeb664f3b",
     "chain": "bsc",
     "pnl": 10899.36539921448,
@@ -5927,7 +5941,7 @@
     ]
   },
   {
-    "rank": 429,
+    "rank": 430,
     "address": "Ga2kFusLYDKjsy5pXFJ97zTamdtsFdRi8pRYVLvSxZGb",
     "chain": "solana",
     "pnl": 150231.91562175952,
@@ -5940,7 +5954,7 @@
     ]
   },
   {
-    "rank": 430,
+    "rank": 431,
     "address": "0x2b12b7e522c8338c620accfb16d997e5d6ea15e4",
     "chain": "bsc",
     "pnl": 15347.053623430762,
@@ -5952,7 +5966,7 @@
     ]
   },
   {
-    "rank": 431,
+    "rank": 432,
     "address": "7VR6WfmAwGRdg1yzJgUxJHnTe87GvZM41yMdSjFHaYCJ",
     "chain": "solana",
     "pnl": 10997.851046192014,
@@ -5965,7 +5979,7 @@
     ]
   },
   {
-    "rank": 432,
+    "rank": 433,
     "address": "0x190a5e6bfc1416537a3898c678db59d91274513e",
     "chain": "bsc",
     "pnl": 20224.942302396394,
@@ -5978,7 +5992,7 @@
     ]
   },
   {
-    "rank": 433,
+    "rank": 434,
     "address": "8J6bKvAhyAusRouBbPzPioeYmKDRehUU9pnmSpGsjzhj",
     "chain": "solana",
     "pnl": 5340.795180628644,
@@ -5992,7 +6006,7 @@
     ]
   },
   {
-    "rank": 434,
+    "rank": 435,
     "address": "DT4zAzcUti1UD235SbpYX5QvyS9upFipCK89UC3C7oEZ",
     "chain": "solana",
     "pnl": 5236.871407533692,
@@ -6005,7 +6019,7 @@
     ]
   },
   {
-    "rank": 435,
+    "rank": 436,
     "address": "0xd1c51f23b0c421f5df40a9405cd7c47ca322facd",
     "chain": "bsc",
     "pnl": 9872.538036699307,
@@ -6017,7 +6031,7 @@
     ]
   },
   {
-    "rank": 436,
+    "rank": 437,
     "address": "0xeb89055e16ae1c1e42ad6770a7344ff5c7b4f31d",
     "chain": "bsc",
     "pnl": 13823.422356149678,
@@ -6030,7 +6044,7 @@
     ]
   },
   {
-    "rank": 437,
+    "rank": 438,
     "address": "0xc989e04e525dca0f093de2ca19c749348112a6f2",
     "chain": "base",
     "pnl": 7955.440099408498,
@@ -6044,7 +6058,7 @@
     ]
   },
   {
-    "rank": 438,
+    "rank": 439,
     "address": "0xcd6c87e9a4fae88ab26a4e72d6212f3af1e79dd5",
     "chain": "bsc",
     "pnl": 23072.247040798422,
@@ -6057,7 +6071,7 @@
     ]
   },
   {
-    "rank": 439,
+    "rank": 440,
     "address": "0x95a7ae62605b857906b27e298e3e04bbc1e11ed2",
     "chain": "bsc",
     "pnl": 25242.55550593208,
@@ -6070,7 +6084,7 @@
     ]
   },
   {
-    "rank": 440,
+    "rank": 441,
     "address": "3szPPQgAuXkQbaCWWTSzjEzvdJZuJStKQJu9CoRqiTe6",
     "chain": "solana",
     "pnl": 37036.646365130575,
@@ -6083,7 +6097,7 @@
     ]
   },
   {
-    "rank": 441,
+    "rank": 442,
     "address": "6Mfmu3gnzmFRmjNfZQZ3R7b738shB55mE7AGNQFDL8J5",
     "chain": "solana",
     "pnl": 22418.24053108498,
@@ -6096,10 +6110,10 @@
     ]
   },
   {
-    "rank": 442,
+    "rank": 443,
     "address": "0xfe32b00c8e9b8eb3fb8575dd3ceaa24dfd247318",
     "chain": "base",
-    "pnl": 5047.840189516137,
+    "pnl": 6112.610547333094,
     "winRate": 29.630000000000003,
     "tokens": 27,
     "status": "watcher",
@@ -6109,7 +6123,7 @@
     ]
   },
   {
-    "rank": 443,
+    "rank": 444,
     "address": "3HYKWWp8VUvWUWs8rVrbDQpPWnTLnPNUKUdFByo9TNhK",
     "chain": "solana",
     "pnl": 22601.89439849925,
@@ -6123,7 +6137,7 @@
     ]
   },
   {
-    "rank": 444,
+    "rank": 445,
     "address": "39yzP2VePP4VfAJAYoASaZFJ9rVCm78ZAgakCDk6mxKH",
     "chain": "solana",
     "pnl": 118576.78866735377,
@@ -6135,7 +6149,7 @@
     ]
   },
   {
-    "rank": 445,
+    "rank": 446,
     "address": "H9b1EhDaYpTiZ8Cfd9FUJN7EVnsvjZQWu4mFsKeQ329v",
     "chain": "solana",
     "pnl": 6240.8389080958805,
@@ -6149,7 +6163,7 @@
     ]
   },
   {
-    "rank": 446,
+    "rank": 447,
     "address": "33dN1ADY3ZD6Xke1FdxpSUnHTBKHNSFbSUp8cNxZLM4s",
     "chain": "solana",
     "pnl": 25917.659805532774,
@@ -6163,7 +6177,7 @@
     ]
   },
   {
-    "rank": 447,
+    "rank": 448,
     "address": "BqLmaVERmQBLQbm9Ax74m1RFHFUPn1Gg4UQZ1JthDXsw",
     "chain": "solana",
     "pnl": 5484.244152133088,
@@ -6177,7 +6191,7 @@
     ]
   },
   {
-    "rank": 448,
+    "rank": 449,
     "address": "BuysWnp2RynHYD8MLgrmzPBDNjrm71Et9g6NYd44iNVy",
     "chain": "solana",
     "pnl": 25939.429100606405,
@@ -6189,7 +6203,7 @@
     ]
   },
   {
-    "rank": 449,
+    "rank": 450,
     "address": "0x1970eeb4f5c5639ddc08d897f7a1b260d01736fb",
     "chain": "bsc",
     "pnl": 20226.83456383781,
@@ -6202,7 +6216,7 @@
     ]
   },
   {
-    "rank": 450,
+    "rank": 451,
     "address": "5XfoaF8UqK7erod8Bg1J6Tr1HcSq7iHu87daFdfYqCZK",
     "chain": "solana",
     "pnl": 9129.705035274059,
@@ -6216,7 +6230,7 @@
     ]
   },
   {
-    "rank": 451,
+    "rank": 452,
     "address": "71bYPd1hkuV6wcdHx56UVAanpz6fHV5S7ZLvykzDqtfm",
     "chain": "solana",
     "pnl": 5432.027599297062,
@@ -6227,18 +6241,6 @@
       "Punch",
       "SCUBA",
       "AuPair"
-    ]
-  },
-  {
-    "rank": 452,
-    "address": "0xd29e43c291fddf4087ea01cadf37f1cceaa660f5",
-    "chain": "base",
-    "pnl": 2279.2910102770297,
-    "winRate": 50,
-    "tokens": 7,
-    "status": "scout",
-    "topTokens": [
-      "ROBOTMONEY"
     ]
   },
   {
@@ -6432,18 +6434,6 @@
   },
   {
     "rank": 467,
-    "address": "0xc06b1b25084d67611e3a765060ffeeb487a28362",
-    "chain": "base",
-    "pnl": 2215.0629124517855,
-    "winRate": 40,
-    "tokens": 8,
-    "status": "watcher",
-    "topTokens": [
-      "ROBOTMONEY"
-    ]
-  },
-  {
-    "rank": 468,
     "address": "0xe7aa802e19c973690f1928af8fac88db0afefc6a",
     "chain": "bsc",
     "pnl": 10986.2668365159,
@@ -6457,7 +6447,7 @@
     ]
   },
   {
-    "rank": 469,
+    "rank": 468,
     "address": "3J3u4f9RTE2RDkz7EAm3utVqweLBYiAiCPbcktQnd4h7",
     "chain": "solana",
     "pnl": 10672.875907644084,
@@ -6470,7 +6460,7 @@
     ]
   },
   {
-    "rank": 470,
+    "rank": 469,
     "address": "BuhkHhM3j4viF71pMTd23ywxPhF35LUnc2QCLAvUxCdW",
     "chain": "solana",
     "pnl": 27431.377982312206,
@@ -6484,7 +6474,7 @@
     ]
   },
   {
-    "rank": 471,
+    "rank": 470,
     "address": "2YUgYXic6F5jA5YTdD2oagEeus5VFwP5JBL2bwm7WawV",
     "chain": "solana",
     "pnl": 9234.967301294506,
@@ -6497,7 +6487,7 @@
     ]
   },
   {
-    "rank": 472,
+    "rank": 471,
     "address": "0x92e9b91aa2171694d740e7066f787739ca1af9de",
     "chain": "base",
     "pnl": 4036.602531249661,
@@ -6511,7 +6501,7 @@
     ]
   },
   {
-    "rank": 473,
+    "rank": 472,
     "address": "GMw12x43Wa5rRtqpjEtbGzAkmbqSmsohm3V3RLbHT3UG",
     "chain": "solana",
     "pnl": 27292.69134522437,
@@ -6522,6 +6512,18 @@
       "HODL",
       "OPTIMUS",
       "ALIENJAK"
+    ]
+  },
+  {
+    "rank": 473,
+    "address": "0xc06b1b25084d67611e3a765060ffeeb487a28362",
+    "chain": "base",
+    "pnl": 502.2585957660577,
+    "winRate": 42.86,
+    "tokens": 10,
+    "status": "watcher",
+    "topTokens": [
+      "ROBOTMONEY"
     ]
   },
   {
@@ -6594,7 +6596,7 @@
     "rank": 479,
     "address": "0x3b48abffcc77a4d0ea158b62c7fbe12914b0e7ea",
     "chain": "bsc",
-    "pnl": 24654.802914546322,
+    "pnl": 24715.42346429076,
     "winRate": 25,
     "tokens": 9,
     "status": "watcher",
@@ -6643,6 +6645,18 @@
   },
   {
     "rank": 483,
+    "address": "0xd29e43c291fddf4087ea01cadf37f1cceaa660f5",
+    "chain": "base",
+    "pnl": 486.5238752622004,
+    "winRate": 40,
+    "tokens": 8,
+    "status": "watcher",
+    "topTokens": [
+      "ROBOTMONEY"
+    ]
+  },
+  {
+    "rank": 484,
     "address": "0x5ca12f79e4d33b0bd153b40df59f6db9ee03482e",
     "chain": "base",
     "pnl": 483.70797802991996,
@@ -6654,7 +6668,7 @@
     ]
   },
   {
-    "rank": 484,
+    "rank": 485,
     "address": "BJQ7PZRbxYd8bJ3jNP9mLQi1vng6CXfcVUDVu4tTXA4s",
     "chain": "solana",
     "pnl": 10945.40368416154,
@@ -6667,7 +6681,7 @@
     ]
   },
   {
-    "rank": 485,
+    "rank": 486,
     "address": "0xf71cbb7b368aacb550fdb7e198c8313b017dfd5c",
     "chain": "bsc",
     "pnl": 18429.297471903195,
@@ -6679,7 +6693,7 @@
     ]
   },
   {
-    "rank": 486,
+    "rank": 487,
     "address": "DHMhgh9sEVuQHNboKsqHmQzJXmofCPN5b4y4ddsf3dK",
     "chain": "solana",
     "pnl": 6804.4432933881,
@@ -6693,7 +6707,7 @@
     ]
   },
   {
-    "rank": 487,
+    "rank": 488,
     "address": "HRupKbFAyhGDq6pkLobvEG7w2Go8LizUqGttsfHJYU55",
     "chain": "solana",
     "pnl": 15201.034796519543,
@@ -6705,7 +6719,7 @@
     ]
   },
   {
-    "rank": 488,
+    "rank": 489,
     "address": "CSuQB2tUK9aEhvU4WgnSB5am3f2R7DP73iLMPMYssWSQ",
     "chain": "solana",
     "pnl": 31393.700190950734,
@@ -6717,7 +6731,7 @@
     ]
   },
   {
-    "rank": 489,
+    "rank": 490,
     "address": "0x0d025aa831a8d974d90cecbb73ea6bf245f50c54",
     "chain": "bsc",
     "pnl": 18035.098111896692,
@@ -6730,7 +6744,7 @@
     ]
   },
   {
-    "rank": 490,
+    "rank": 491,
     "address": "CwU1JcgPwmQsksEZKn5yq6dPY2GNEMoLnoQxnVz9ai1y",
     "chain": "solana",
     "pnl": 19907.60942957344,
@@ -6744,7 +6758,7 @@
     ]
   },
   {
-    "rank": 491,
+    "rank": 492,
     "address": "0x11960d12811a406dd18a4fc3896b9821113e58dc",
     "chain": "base",
     "pnl": 718.1506372418919,
@@ -6756,7 +6770,7 @@
     ]
   },
   {
-    "rank": 492,
+    "rank": 493,
     "address": "0xb119b62684bc1eb424c4f4a71b97c09f5570fec4",
     "chain": "bsc",
     "pnl": 78955.00058474747,
@@ -6770,7 +6784,7 @@
     ]
   },
   {
-    "rank": 493,
+    "rank": 494,
     "address": "0x78518e991daca403011da7e1c428efd5819d0af9",
     "chain": "bsc",
     "pnl": 27073.688492975725,
@@ -6783,7 +6797,7 @@
     ]
   },
   {
-    "rank": 494,
+    "rank": 495,
     "address": "GKjUWsSKkA975GBPEabYE9k5jq19hAhDpFZhsYxdQUVS",
     "chain": "solana",
     "pnl": 6166.477933857899,
@@ -6795,7 +6809,7 @@
     ]
   },
   {
-    "rank": 495,
+    "rank": 496,
     "address": "0x7b354f78116003ef1d61ea5cd0606f886736fe8a",
     "chain": "bsc",
     "pnl": 25096.365341714543,
@@ -6807,7 +6821,7 @@
     ]
   },
   {
-    "rank": 496,
+    "rank": 497,
     "address": "0x739b067815d8d4d86dcd8de7ba2ac3e8652ec40f",
     "chain": "bsc",
     "pnl": 12481.995130900877,
@@ -6819,7 +6833,7 @@
     ]
   },
   {
-    "rank": 497,
+    "rank": 498,
     "address": "0x78b1094269465e61b08fe6040db5cb754e85a159",
     "chain": "base",
     "pnl": 17269.013537144685,
@@ -6831,7 +6845,7 @@
     ]
   },
   {
-    "rank": 498,
+    "rank": 499,
     "address": "0x639857ba5361cbc21898e64bf77c3bfdd70db9fc",
     "chain": "bsc",
     "pnl": 16374.385777254174,
@@ -6843,7 +6857,7 @@
     ]
   },
   {
-    "rank": 499,
+    "rank": 500,
     "address": "0x390f3d72b6e4621ae58f44e368b26c63d330e263",
     "chain": "base",
     "pnl": 466.0316856756807,
@@ -6855,7 +6869,7 @@
     ]
   },
   {
-    "rank": 500,
+    "rank": 501,
     "address": "0x25ebe4b901e023e000ae054bd5445adbf84c8822",
     "chain": "bsc",
     "pnl": 36569.94411520236,
@@ -6868,7 +6882,7 @@
     ]
   },
   {
-    "rank": 501,
+    "rank": 502,
     "address": "JADNKGZBjBj3NG5nwYny6yEoNSzGKaimPgimZoW5RMV7",
     "chain": "solana",
     "pnl": 6570.004091666737,
@@ -6881,7 +6895,7 @@
     ]
   },
   {
-    "rank": 502,
+    "rank": 503,
     "address": "0xbd737754a3f8db5a22d41a869476ad7ce45aae36",
     "chain": "base",
     "pnl": 170.7564840369351,
@@ -6893,7 +6907,7 @@
     ]
   },
   {
-    "rank": 503,
+    "rank": 504,
     "address": "0x5ebde8fe264777ffffa5dee21307cb6b8c7a7cce",
     "chain": "bsc",
     "pnl": 19149.548234130536,
