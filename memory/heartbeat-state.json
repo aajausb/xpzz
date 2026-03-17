@@ -1,17 +1,20 @@
 {
   "lastChecks": {
-    "engine": 1773861000,
-    "walletCheck": 1773861000,
+    "engine": 1773788500,
+    "walletCheck": 1773788500,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773861000,
-    "time_human": "2026-03-18 06:30:00",
-    "sol_hunters_active": true,
-    "bsc_detecting": true,
-    "base_quiet": true,
-    "sol_rpc_warnings": "RPC rate limit, auto-switched to #2",
-    "positions_monitored": 4,
-    "buy_errors": "MR SPEED COIN + BRC insufficient liquidity (normal)"
+    "timestamp": 1773788500,
+    "time_human": "2026-03-18 06:59:00",
+    "sol_hunters_checked": 2,
+    "bsc_hunters_checked": 2,
+    "base_hunters_checked": 2,
+    "sol_last_tx_age_h": "7-35h",
+    "engine_buys_2h": 3,
+    "engine_buy_fails": 3,
+    "fail_reason": "Insufficient liquidity (MR SPEED COIN, BRC, Qi)",
+    "positions": 4,
+    "errors": "none critical"
   }
 }
