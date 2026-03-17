@@ -323,29 +323,47 @@ function rankWallets(wallets) {
     const wr = (w.winRate || 0) / 100;                        // 0~1
     const sampleWeight = Math.log2((w.tokens || 1) + 1);      // 交易币数，log防大户碾压
     const pnlWeight = Math.log10(Math.max(w.pnl, 1) + 1);    // PnL取log
-    const age = now - (w.lastActivity || 0);
+    const age = now - (w.lastSeen || w.lastActivity || 0);
     const activityMul = age < 7 * 86400000 ? 1.5              // 7天内活跃
                       : age < 30 * 86400000 ? 1.2             // 30天内
                       : 1.0;
     w.score = wr * sampleWeight * pnlWeight * activityMul;
     
-    // 三级状态: ≥65%=hunter(猎手), 50-65%=scout(哨兵), <50%=watcher(观察)
+    // 三级状态: ≥60%=hunter(猎手), 50-60%=scout(哨兵), <50%=watcher(观察)
     const winRate = w.winRate || 0;
-    if (winRate >= CONFIG.hunterMinWinRate) {
-      w.status = 'hunter';
-    } else if (winRate >= CONFIG.scoutMinWinRate) {
-      w.status = 'scout';
-    } else {
-      w.status = 'watcher';
-      // 观察期：记录降级时间，超过30天没涨回50%就踢
-      const key = w.address + '_' + w.chain;
-      if (walletDb[key] && !walletDb[key].watcherSince) {
-        walletDb[key].watcherSince = Date.now();
+    const key2 = w.address + '_' + w.chain;
+    // 过时降级的钱包不自动升回（等重新出现在排名时lastSeen更新后才解锁）
+    if (walletDb[key2]?._staleDemoted) {
+      if (walletDb[key2].lastSeen && (Date.now() - walletDb[key2].lastSeen) < 48 * 3600000) {
+        // 重新出现在排名了，解锁
+        delete walletDb[key2]._staleDemoted;
+      } else {
+        // 还是过时的，不升级
+        w.status = walletDb[key2].status || 'scout';
+        // 跳过下面的分级
+      }
+    }
+    if (!walletDb[key2]?._staleDemoted) {
+      if (winRate >= CONFIG.hunterMinWinRate) {
+        w.status = 'hunter';
+      } else if (winRate >= CONFIG.scoutMinWinRate) {
+        w.status = 'scout';
+      } else {
+        w.status = 'watcher';
+        // 观察期：记录降级时间，超过30天没涨回50%就踢
+        const key = w.address + '_' + w.chain;
+        if (walletDb[key] && !walletDb[key].watcherSince) {
+          walletDb[key].watcherSince = Date.now();
+        }
       }
     }
   }
-  wallets.sort((a, b) => b.score - a.score);
-  wallets.forEach((w, i) => w.rank = i + 1);
+  // 按链独立排名（SOL/BSC/Base各自TOP10/TOP30）
+  for (const chain of ['solana', 'bsc', 'base']) {
+    const chainWallets = wallets.filter(w => w.chain === chain);
+    chainWallets.sort((a, b) => b.score - a.score);
+    chainWallets.forEach((w, i) => w.rank = i + 1);
+  }
   
   // 持久化status/score/rank到walletDb + 观察期淘汰
   const evictKeys = [];
@@ -383,9 +401,10 @@ function rankWallets(wallets) {
   for (const [key, dbw] of Object.entries(walletDb)) {
     if (dbw.lastSeen) {
       const hours = (now2 - dbw.lastSeen) / 3600000;
-      if (hours >= STALE_HOURS && dbw.status === 'hunter') {
+      if (hours >= STALE_HOURS && dbw.status === 'hunter' && !dbw._staleDemoted) {
         log('INFO', `📊 ${dbw.address?.slice(0,10)}(${dbw.chain}) hunter→scout (${Math.round(hours)}h未出现在排名)`);
         dbw.status = 'scout';
+        dbw._staleDemoted = true;
       } else if (hours >= STALE_HOURS * 2 && dbw.status === 'scout') {
         log('INFO', `📊 ${dbw.address?.slice(0,10)}(${dbw.chain}) scout→watcher (${Math.round(hours)}h未出现在排名)`);
         dbw.status = 'watcher';
