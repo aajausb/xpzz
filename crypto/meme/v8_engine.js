@@ -28,7 +28,7 @@ const CONFIG = {
   
   // 过滤
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
-  confirmWindowMs: 60 * 60 * 1000,          // 60分钟确认窗口
+  confirmWindowMs: 72 * 60 * 60 * 1000,          // 72小时确认窗口
   minMarketCap: 10000,                     // 最低市值$10K，太小的流动性差买卖滑点大
   maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
   
