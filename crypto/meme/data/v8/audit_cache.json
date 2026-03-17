@@ -1056,5 +1056,15 @@
     "safe": false,
     "reason": "buy_reverted_3x",
     "_time": 1773723058322
+  },
+  "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0x145cb797387be103f536671dbf21b6eb45bbeaef": {
+    "safe": false,
+    "reason": "buy_reverted_3x",
+    "_time": 1773733890936
   }
 }
