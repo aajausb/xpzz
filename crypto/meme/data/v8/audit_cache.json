@@ -1046,5 +1046,15 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1773709509828
+  },
+  "0xcc87b6e882a2d0a13323686c0854f198bb1ab260": {
+    "safe": false,
+    "reason": "buy_reverted_3x",
+    "_time": 1773722717446
+  },
+  "0x7cfe19c6c579d6bad4dea04cf59eb8ae8f0ad88b": {
+    "safe": false,
+    "reason": "buy_reverted_3x",
+    "_time": 1773723058322
   }
 }
