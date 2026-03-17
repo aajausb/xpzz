@@ -158,9 +158,9 @@ async function buildDashboard() {
   const watch = { solana: 0, bsc: 0, base: 0 };
   const watcher = { solana: 0, bsc: 0, base: 0 };
   for (const w of wallets) {
-    const wr = w.winRate || 0;
-    if (wr >= 60 && wr <= 85) active[w.chain]++;
-    else if (wr >= 50) watch[w.chain]++;
+    const s = w.status;
+    if (s === 'hunter') active[w.chain]++;
+    else if (s === 'scout') watch[w.chain]++;
     else watcher[w.chain]++;
   }
   const totalActive = Object.values(active).reduce((a, b) => a + b, 0);
