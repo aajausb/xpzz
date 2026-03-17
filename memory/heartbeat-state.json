@@ -2,22 +2,22 @@
   "lastChecks": {
     "engine": 1742175420,
     "memory": 1742175420,
-    "walletCheck": 1773692915
+    "walletCheck": 1773705479
   },
   "lastWalletCheck": {
-    "timestamp": 1773692915,
-    "time_human": "2026-03-17 04:28:35",
+    "timestamp": 1773705479,
+    "time_human": "2026-03-17 07:57:59",
     "sol_engine_active": true,
-    "sol_detections_last_hour": 10,
+    "detections_2h": 278,
     "bsc_txcounts": {
-      "0xf07e...": 88,
-      "0xe6b0...": 335
+      "0xf07e": 88,
+      "0xe6b0": 335
     },
     "base_txcounts": {
-      "0xe56c...": 106,
-      "0xa9b5...": 566
+      "0xe56c": 106,
+      "0xa9b5": 566
     },
-    "notes": "SOL WS active with swap detections. BSC/Base txCount recorded for next comparison."
+    "notes": "All 3 chains WS active. Engine restarted at 07:52 (systemd auto). UGGR buy failed 3x (insufficient liquidity). BSC/Base txCounts unchanged from last check - SM wallets quiet."
   },
   "notes": "03:57 引擎active, 三链WS正常, 钱包库414(猎手104/哨兵124/观察186), 内存6097MB, 一切正常"
 }

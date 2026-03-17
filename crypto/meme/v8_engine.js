@@ -1579,6 +1579,11 @@ async function managePositions() {
             pos.currentPrice = currentPrice;
             const remaining = pos.buyAmount * (1 - (pos.soldRatio || 0));
             pos.currentValue = currentPrice * remaining;
+            // 修复buyPrice=0：用当前价格回填（首次查到的价格作为buyPrice）
+            if (!pos.buyPrice || pos.buyPrice === 0) {
+              pos.buyPrice = currentPrice;
+              log('INFO', `📝 ${pos.symbol} buyPrice回填: $${currentPrice}`);
+            }
             if (pos.buyPrice > 0) {
               pos.pnlPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
             }

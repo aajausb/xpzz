@@ -13,13 +13,19 @@ echo "🔔 通知转发服务启动，监听 $QUEUE"
 [ -f "$QUEUE" ] || echo '[]' > "$QUEUE"
 
 process_queue() {
+  # 原子读取+清空：rename旧文件→处理→删除（防竞态丢消息）
+  local tmp="/tmp/notify_process_$$.json"
+  
+  # 原子移走队列文件（引擎发现文件不存在会新建）
+  mv "$QUEUE" "$tmp" 2>/dev/null || return
+  echo '[]' > "$QUEUE"  # 立刻重建空文件给引擎写
+  
   local content
-  content=$(cat "$QUEUE" 2>/dev/null)
+  content=$(cat "$tmp" 2>/dev/null)
+  rm -f "$tmp"
+  
   [ -z "$content" ] && return
   [ "$content" = "[]" ] && return
-  
-  # 读取并清空（原子操作）
-  echo '[]' > "$QUEUE"
   
   # 逐条发送
   echo "$content" | python3 -c "
@@ -28,7 +34,6 @@ msgs = json.load(sys.stdin)
 for m in msgs:
     msg = m.get('msg', '')
     if not msg: continue
-    # HTML标签转纯文本（OpenClaw message不支持HTML parse_mode）
     msg = msg.replace('<b>', '').replace('</b>', '').replace('<i>', '').replace('</i>', '')
     print(f'📤 转发: {msg[:60]}...' if len(msg)>60 else f'📤 转发: {msg}')
     subprocess.run([
