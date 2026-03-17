@@ -1126,5 +1126,15 @@
     "safe": false,
     "reason": "buy_failed_3x",
     "_time": 1773778732127
+  },
+  "9QSjVAg5rDfBZPhvKwZcB63St3r6bqohP3Adurkjpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0xe7d103aadb65bb943e99bd59498e3a49c3a0b9a6": {
+    "safe": false,
+    "reason": "buy_failed_3x",
+    "_time": 1773781634435
   }
 }
