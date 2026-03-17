@@ -1422,6 +1422,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
   
   const MAX_RETRIES = 3;
   let txSucceeded = false; // 交易已上链成功的标记
+  let lastBuyError = ''; // 最后一次失败原因（区分临时/永久）
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
   try {
     const trader = require('./dex_trader.js');
@@ -1538,6 +1539,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         log('WARN', `❌ ${symbol} 确认超时且链上无余额，买入失败`);
       }
     } else {
+      lastBuyError = result.error || 'unknown';
       log('WARN', `❌ 买入失败 ${symbol}: ${result.error}`);
       if (attempt < MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt)); // 递增等待
@@ -1546,6 +1548,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     }
     break; // 成功或最后一次失败，退出循环
   } catch(e) {
+    lastBuyError = e.message || 'exception';
     log('ERROR', `买入异常 ${symbol}(第${attempt}次): ${e.message}`);
     if (attempt < MAX_RETRIES) {
       await new Promise(r => setTimeout(r, 2000 * attempt));
@@ -1554,12 +1557,22 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
   }
   } // end retry loop
   
-  // 买入完全失败（3次重试+无链上余额）→标记审计黑名单（防revert无限循环浪费gas）
+  // 买入完全失败（3次重试+无链上余额）
   if (!txSucceeded && !positions[tokenAddress]) {
-    // 不解锁boughtTokens — revert过的token永久跳过（防无限循环）
-    auditCache[tokenAddress] = { safe: false, reason: 'buy_reverted_3x', _time: Date.now() };
-    saveJSON(AUDIT_CACHE_FILE, auditCache);
-    log('WARN', `🚫 ${symbol} 买入3次全revert，加入审计黑名单（永久跳过）`);
+    // 区分错误类型：只有纯网络问题(timeout/429)临时跳过，其他全拉黑
+    const lastErr = (lastBuyError || '').toLowerCase();
+    const isNetworkOnly = (lastErr.includes('timeout') || lastErr.includes('429')) && !lastErr.includes('liquidity') && !lastErr.includes('revert');
+    if (isNetworkOnly) {
+      // 纯网络问题：解锁让下次SM信号可重新触发
+      boughtTokens.delete(tokenAddress);
+      saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+      log('WARN', `⏳ ${symbol} 买入失败(网络:${lastErr.slice(0,30)})，临时跳过`);
+    } else {
+      // revert/无流动性/合约问题：永久拉黑
+      auditCache[tokenAddress] = { safe: false, reason: 'buy_failed_3x', _time: Date.now() };
+      saveJSON(AUDIT_CACHE_FILE, auditCache);
+      log('WARN', `🚫 ${symbol} 买入3次全失败(${lastErr.slice(0,30)})，加入黑名单`);
+    }
   }
 }
 
@@ -1711,6 +1724,37 @@ async function managePositions() {
           const currentPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
           if (currentPrice > 0) {
             pos.currentPrice = currentPrice;
+            // 修复buyAmount=0：查链上余额回填（RPC 429导致买入时没记到数量）
+            if (!pos.buyAmount || pos.buyAmount === 0) {
+              try {
+                const trader = require('./dex_trader.js');
+                if (pos.chain === 'solana') {
+                  const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+                    trader.getWalletAddress('solana'), { mint: tokenAddr }, { encoding: 'jsonParsed' }
+                  ]);
+                  let onChainBal = 0;
+                  for (const a of (balData.result?.value || [])) {
+                    onChainBal += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
+                  }
+                  if (onChainBal > 0) {
+                    pos.buyAmount = onChainBal;
+                    pos.buyAmountRaw = onChainBal;
+                    log('INFO', `📝 ${pos.symbol} buyAmount回填: ${onChainBal}`);
+                  }
+                } else {
+                  const { ethers } = require('ethers');
+                  const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                  const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+                  const [bal, dec] = await Promise.all([erc20.balanceOf(trader.getWalletAddress('evm')), erc20.decimals()]);
+                  const onChainBal = parseFloat(ethers.formatUnits(bal, dec));
+                  if (onChainBal > 0) {
+                    pos.buyAmount = onChainBal;
+                    pos.buyAmountRaw = onChainBal;
+                    log('INFO', `📝 ${pos.symbol} buyAmount回填: ${onChainBal}`);
+                  }
+                }
+              } catch(e) { log('WARN', `${pos.symbol} buyAmount回填失败: ${(e.message||'').slice(0,40)}`); }
+            }
             const remaining = pos.buyAmount * (1 - (pos.soldRatio || 0));
             pos.currentValue = currentPrice * remaining;
             // 修复buyPrice=0：用当前价格回填（首次查到的价格作为buyPrice）
@@ -1850,11 +1894,14 @@ async function managePositions() {
           }
         }
 
-        // 归零快速清仓：跌99%以上直接清（不等SM，币已经死了）
+        // 归零快速清仓：跌99%以上 或 绝对价值<$0.01 直接清（不等SM，币已经死了）
         if (pos.buyPrice > 0 && pos.currentPrice > 0) {
           const dropPct = ((pos.buyPrice - pos.currentPrice) / pos.buyPrice) * 100;
-          if (dropPct >= 99) {
-            log('INFO', `💀 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}%归零，清仓`);
+          const remaining = (pos.buyAmount || 0) * (1 - (pos.soldRatio || 0));
+          const absValue = remaining * pos.currentPrice;
+          if (dropPct >= 99 || (absValue < 0.01 && pos.buyCost > 1)) {
+            const reason = absValue < 0.01 ? `价值$${absValue.toExponential(1)}归零` : `跌${dropPct.toFixed(0)}%归零`;
+            log('INFO', `💀 ${pos.symbol}(${pos.chain}) ${reason}，清仓`);
             // 同名冷却1小时
             if (pos.symbol && pos.symbol !== '?') {
               if (!handleSignal._symbolCooldown) handleSignal._symbolCooldown = {};
@@ -1866,7 +1913,7 @@ async function managePositions() {
             boughtTokens.delete(tokenAddr);
             saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
             saveJSON(POSITIONS_FILE, positions);
-            await notifyTelegram(`💀 v8归零 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}% 成本$${pos.buyCost||0}`);
+            await notifyTelegram(`💀 v8归零 ${pos.symbol}(${pos.chain}) ${reason} 成本$${pos.buyCost||0}`);
             continue;
           }
         }

@@ -1065,6 +1065,14 @@
   "0x145cb797387be103f536671dbf21b6eb45bbeaef": {
     "safe": false,
     "reason": "buy_reverted_3x",
-    "_time": 1773733890936
+    "_time": 1773735269901
+  },
+  "0x1b4d27c86af0832cd3c918d8c3719d9463eb0486": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1773734883882
   }
 }
