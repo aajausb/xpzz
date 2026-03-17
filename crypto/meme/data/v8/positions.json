@@ -1,52 +1,4 @@
 {
-  "0x220fc5c7cedf7776d78054413c3cb96926824444": {
-    "chain": "bsc",
-    "token": "0x220fc5c7cedf7776d78054413c3cb96926824444",
-    "symbol": "泰坦",
-    "buyPrice": 0.00001573,
-    "buyAmount": 1723317.817697644,
-    "buyAmountRaw": 1723317.817697644,
-    "buyCost": 33,
-    "buyTime": 1773707631240,
-    "confirmCount": 1,
-    "confirmWallets": [
-      "0xc2c6acd377458010713e733e1b21dd6f670d091c",
-      "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
-      "0xd41feaa24dede516a501862cf1f376defb811772",
-      "0x2b106fc0533a1b7b02c0332d0361c3f1917b16c7"
-    ],
-    "currentPrice": 0.00002516,
-    "currentValue": 10.83966907331818,
-    "pnlPercent": 59.949141767323574,
-    "totalPnl": 27.61770423751463,
-    "totalPnlPercent": 83.69001284095341,
-    "sellRevenue": 49.778035164196446,
-    "soldRatio": 0.75,
-    "_tpDone": true,
-    "_sells": [
-      {
-        "wallet": "0xd41feaa24dede516a501862cf1f376defb811772",
-        "time": 1773708041432,
-        "source": "patrol"
-      },
-      {
-        "wallet": "0xc2c6acd377458010713e733e1b21dd6f670d091c",
-        "time": 1773708644990,
-        "source": "patrol"
-      },
-      {
-        "wallet": "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
-        "time": 1773708994266,
-        "source": "patrol"
-      }
-    ],
-    "_transfers": {
-      "0xc2c6acd377458010713e733e1b21dd6f670d091c": {
-        "subWallet": "0x2b106fc0533a1b7b02c0332d0361c3f1917b16c7",
-        "time": 1773708454970
-      }
-    }
-  },
   "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump": {
     "chain": "solana",
     "token": "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump",
@@ -59,12 +11,13 @@
     "confirmCount": 2,
     "confirmWallets": [
       "F4YRDqkXKmSdUcwAoZGJBjcXVYDetXMAGaV8W7DYtsmX",
-      "2cScMkV5L8sVV7vspG25FYd62FRXNSWXk5Spuk86fKPE"
+      "2cScMkV5L8sVV7vspG25FYd62FRXNSWXk5Spuk86fKPE",
+      "2rT3tD6NxZDM79fXZbrK6oTsabuBiwppF5hqh8s2Znty"
     ],
-    "currentPrice": 0.0007049,
-    "currentValue": 35.7855937797981,
-    "pnlPercent": 5.555555555555554,
-    "totalPnl": 0.7855937797980985,
-    "totalPnlPercent": 2.244553656565996
+    "currentPrice": 0.0006849,
+    "currentValue": 34.770255610418104,
+    "pnlPercent": 2.560646900269547,
+    "totalPnl": -0.2297443895818958,
+    "totalPnlPercent": -0.6564125416625595
   }
 }

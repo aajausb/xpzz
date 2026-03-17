@@ -1,24 +1,17 @@
 {
   "lastChecks": {
     "engine": 1742169600,
-    "walletCheck": 1773730952,
+    "walletCheck": 1773737888,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773730952,
-    "time_human": "2026-03-17 15:02:32",
-    "sol_engine_active": true,
-    "sol_detections_last_hour": 399,
-    "bsc_txcounts": {
-      "0xf07e...": 88,
-      "0xe6b0...": 340
-    },
-    "base_txcounts": {
-      "0xe56c...": 106,
-      "0xa9b5...": 566
-    },
-    "bsc_delta": "0xe6b0: 335->340 (+5 txs since 4:27AM)",
-    "base_delta": "no change",
-    "notes": "All 3 chains WS active. BSC 0xe6b0 had 5 new txs. Engine detected them (BSC logs active)."
+    "timestamp": 1773737888,
+    "time_human": "2026-03-17 16:58:08",
+    "sol_detections_1h": 71,
+    "bsc_detections_1h": 292,
+    "base_detections_1h": 0,
+    "base_ws_connected": true,
+    "base_note": "WS connected 29 wallets but 0 detections in 6h+, likely low on-chain activity",
+    "errors": "none"
   }
 }
