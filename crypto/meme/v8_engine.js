@@ -840,6 +840,52 @@ function setupEvmWebSocket(chainKey) {
   _evmWsRefs[chainKey] = wsConns;
   log("INFO", `🔌 [${chain.name}] 共${chunks.length}个WS连接 覆盖全部${sorted.length}个钱包`);
 }
+// EVM猎手轮询兜底：WS可能静默丢事件，对top猎手每60秒查最近区块的Transfer
+const _evmPollLastBlock = { bsc: 0, base: 0 };
+async function pollEvmHunters() {
+  await sleep(30000); // 等WS先连上
+  log('INFO', '🔌 [EVM] 猎手轮询兜底启动');
+  while (true) {
+    for (const chainKey of ['bsc', 'base']) {
+      try {
+        const provider = chainKey === 'bsc' ? bscProvider : baseProvider;
+        const currentBlock = await provider.getBlockNumber();
+        if (!_evmPollLastBlock[chainKey]) _evmPollLastBlock[chainKey] = currentBlock;
+        const fromBlock = _evmPollLastBlock[chainKey] + 1;
+        if (fromBlock > currentBlock) continue;
+        _evmPollLastBlock[chainKey] = currentBlock;
+        
+        // 只查猎手
+        const hunters = rankedWallets.filter(w => w.chain === chainKey && w.status === 'hunter');
+        if (hunters.length === 0) continue;
+        
+        const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+        const nativeTokens = new Set(['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c','0x4200000000000000000000000000000000000006','0x55d398326f99059ff775485246999027b3197955','0x833589fcd6edb6e08f4c7c32d4f71b54bda02913']);
+        
+        for (const h of hunters) {
+          try {
+            const padded = ethers.zeroPadValue(h.address.toLowerCase(), 32);
+            const logs = await provider.getLogs({ fromBlock, toBlock: currentBlock, topics: [TRANSFER_TOPIC, null, padded] });
+            for (const l of logs) {
+              const tokenAddr = l.address.toLowerCase();
+              if (nativeTokens.has(tokenAddr)) continue;
+              const fromAddr = '0x' + l.topics[1].slice(26).toLowerCase();
+              const walletSet = chainKey === 'bsc' ? bscWalletSet : baseWalletSet;
+              if (walletSet.has(fromAddr)) continue; // SM间转账不算
+              if (boughtTokens.has(tokenAddr)) continue;
+              const chain = CHAINS[chainKey];
+              log('INFO', '🔔 [' + chain.name + '] 轮询检测! 猎手#' + h.rank + ' ' + h.address.slice(0,10) + '... 获得 ' + tokenAddr);
+              await handleSignal({ chain: chainKey, token: tokenAddr, symbol: '?', wallet: h.address.toLowerCase(), walletRank: h.rank, timestamp: Date.now() });
+            }
+          } catch {}
+          await sleep(100);
+        }
+      } catch(e) { if(e.message) log('WARN', `EVM轮询异常(${chainKey}): ${e.message.slice(0,40)}`); }
+    }
+    await sleep(60000); // 60秒一轮
+  }
+}
+
 // 验证EVM卖出：查交易receipt，看有没有native token流入钱包（swap的标志）
 async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
   const chain = CHAINS[chainKey];
@@ -1926,6 +1972,7 @@ async function main() {
   setupSolanaMonitor();
   setupEvmWebSocket('bsc');
   setupEvmWebSocket('base');
+  pollEvmHunters(); // EVM猎手轮询兜底（WS可能静默丢事件）
   
   // 持仓管理
   managePositions();
