@@ -1110,8 +1110,13 @@ async function handleSignal(signal) {
     return;
   }
   
-  // 通过审计 → 买入（用过滤空投后的真实SM列表）
-  const bestRank = Math.min(...activeSignals.map(s => s.walletRank || 999));
+  // 通过审计 → 买入（用降权+空投过滤后的真实SM列表）
+  const bestRank = realConfirmWallets.length > 0
+    ? Math.min(...realConfirmWallets.map(addr => {
+        const w = rankedWallets.find(rw => rw.address === addr || rw.address?.toLowerCase() === addr?.toLowerCase());
+        return w?.rank || 999;
+      }))
+    : 999;
   const confirmWallets = [...new Set(realConfirmWallets)];
   log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}`);
   delete pendingSignals[token];
