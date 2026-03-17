@@ -600,29 +600,38 @@ async function pollSolanaWallets() {
   log('INFO', `🔌 [SOL] 初始化完成, ${solLastSigs.size}/${solWalletSet.size} 钱包有历史签名`);
   
   while (true) {
-    const interval = solOfficialWs ? 30000 : 10000; // WS连上降频，断了提频
+    const interval = 15000;
     await sleep(interval);
     
+    // 收集要轮询的钱包
+    const pollAddrs = [];
     for (const addr of solWalletSet) {
-      // WS已订阅的钱包不轮询（避免重复信号）
-      if (solOfficialWs && solWsSubscribedAddrs.has(addr)) continue;
-      try {
-        const lastSig = solLastSigs.get(addr);
-        const params = lastSig ? [addr, { limit: 5, until: lastSig }] : [addr, { limit: 1 }];
-        const d = await rpcPost(getSolRpc(), 'getSignaturesForAddress', params);
-        const sigs = d.result || [];
-        
-        if (sigs.length === 0) continue;
-        
-        // 更新最新签名
-        solLastSigs.set(addr, sigs[0].signature);
-        
-        for (const sig of sigs) {
-          if (sig.err) continue; // 跳过失败交易
-          await parseSolSignature(addr, sig.signature);
-        }
-      } catch(e) { if (e.message && !e.message.includes('429') && !e.message.includes('超时')) log('WARN', `SOL轮询 ${addr.slice(0,8)} 异常: ${e.message.slice(0,40)}`); }
-      await sleep(200); // 每个钱包间隔200ms，37个钱包一轮~7秒
+      if (solOfficialWs && solWsSubscribedAddrs.has(addr)) {
+        const w = rankedWallets.find(rw => rw.address === addr);
+        if (w?.status !== 'hunter') continue;
+      }
+      pollAddrs.push(addr);
+    }
+    
+    // 并行3个一批（3个RPC轮转，每个承担1个请求）
+    const BATCH = 3;
+    for (let i = 0; i < pollAddrs.length; i += BATCH) {
+      const batch = pollAddrs.slice(i, i + BATCH);
+      await Promise.all(batch.map(async (addr) => {
+        try {
+          const lastSig = solLastSigs.get(addr);
+          const params = lastSig ? [addr, { limit: 5, until: lastSig }] : [addr, { limit: 1 }];
+          const d = await rpcPost(getSolRpc(), 'getSignaturesForAddress', params);
+          const sigs = d.result || [];
+          if (sigs.length === 0) return;
+          solLastSigs.set(addr, sigs[0].signature);
+          for (const sig of sigs) {
+            if (sig.err) continue;
+            await parseSolSignature(addr, sig.signature);
+          }
+        } catch(e) { if (e.message && !e.message.includes('429') && !e.message.includes('超时')) log('WARN', `SOL轮询 ${addr.slice(0,8)} 异常: ${e.message.slice(0,40)}`); }
+      }));
+      await sleep(150);
     }
   }
 }
@@ -862,27 +871,32 @@ async function pollEvmHunters() {
         const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
         const nativeTokens = new Set(['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c','0x4200000000000000000000000000000000000006','0x55d398326f99059ff775485246999027b3197955','0x833589fcd6edb6e08f4c7c32d4f71b54bda02913']);
         
-        for (const h of hunters) {
-          try {
-            const padded = ethers.zeroPadValue(h.address.toLowerCase(), 32);
-            const logs = await provider.getLogs({ fromBlock, toBlock: currentBlock, topics: [TRANSFER_TOPIC, null, padded] });
-            for (const l of logs) {
-              const tokenAddr = l.address.toLowerCase();
-              if (nativeTokens.has(tokenAddr)) continue;
-              const fromAddr = '0x' + l.topics[1].slice(26).toLowerCase();
-              const walletSet = chainKey === 'bsc' ? bscWalletSet : baseWalletSet;
-              if (walletSet.has(fromAddr)) continue; // SM间转账不算
-              if (boughtTokens.has(tokenAddr)) continue;
-              const chain = CHAINS[chainKey];
-              log('INFO', '🔔 [' + chain.name + '] 轮询检测! 猎手#' + h.rank + ' ' + h.address.slice(0,10) + '... 获得 ' + tokenAddr);
-              await handleSignal({ chain: chainKey, token: tokenAddr, symbol: '?', wallet: h.address.toLowerCase(), walletRank: h.rank, timestamp: Date.now() });
-            }
-          } catch {}
+        // 并行查猎手（5个一批，提速5倍）
+        const BATCH = 5;
+        for (let i = 0; i < hunters.length; i += BATCH) {
+          const batch = hunters.slice(i, i + BATCH);
+          await Promise.all(batch.map(async (h) => {
+            try {
+              const padded = ethers.zeroPadValue(h.address.toLowerCase(), 32);
+              const logs = await provider.getLogs({ fromBlock, toBlock: currentBlock, topics: [TRANSFER_TOPIC, null, padded] });
+              for (const l of logs) {
+                const tokenAddr = l.address.toLowerCase();
+                if (nativeTokens.has(tokenAddr)) continue;
+                const fromAddr = '0x' + l.topics[1].slice(26).toLowerCase();
+                const walletSet = chainKey === 'bsc' ? bscWalletSet : baseWalletSet;
+                if (walletSet.has(fromAddr)) continue;
+                if (boughtTokens.has(tokenAddr)) continue;
+                const chain = CHAINS[chainKey];
+                log('INFO', '🔔 [' + chain.name + '] 轮询检测! 猎手#' + h.rank + ' ' + h.address.slice(0,10) + '... 获得 ' + tokenAddr);
+                await handleSignal({ chain: chainKey, token: tokenAddr, symbol: '?', wallet: h.address.toLowerCase(), walletRank: h.rank, timestamp: Date.now() });
+              }
+            } catch {}
+          }));
           await sleep(100);
         }
       } catch(e) { if(e.message) log('WARN', `EVM轮询异常(${chainKey}): ${e.message.slice(0,40)}`); }
     }
-    await sleep(60000); // 60秒一轮
+    await sleep(15000); // 15秒一轮
   }
 }
 
