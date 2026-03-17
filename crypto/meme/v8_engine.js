@@ -1790,8 +1790,11 @@ async function managePositions() {
                 const accounts = balData.result.value || [];
                 const bal = accounts.reduce((s, a) => 
                   s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
-                if (bal === 0) {
-                  // 余额=0 → 查最后一笔是卖出还是转仓
+                // 灰尘判定：余额×当前价格<$0.01视为已清仓
+                const balValue = bal * (pos.currentPrice || 0);
+                if (bal === 0 || (bal > 0 && balValue < 0.01 && pos.currentPrice > 0)) {
+                  if (bal > 0) log('INFO', `🧹 SM ${smWallet.slice(0,10)} ${pos.symbol} 灰尘余额${bal.toFixed(2)}≈$${balValue.toFixed(4)}，视为已卖`);
+                  // 余额=0或灰尘 → 查最后一笔是卖出还是转仓
                   const check = await checkSolTransferTarget(tokenAddr, smWallet);
                   if (check.type === 'transfer' && check.to) {
                     // 转到小号 → 追踪小号
@@ -1817,8 +1820,13 @@ async function managePositions() {
                 const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
                 let bal;
                 try { bal = await erc20.balanceOf(smWallet); } catch(e) { log('WARN', `查SM ${smWallet.slice(0,10)} ${pos.symbol} 余额失败: ${e.message?.slice(0,40)}`); continue; }
-                if (bal.toString() === '0') {
-                  // 余额=0 → 查最后一笔是卖出还是转仓
+                // EVM灰尘判定：余额极小视为已清仓
+                const balNum = parseFloat(ethers.formatUnits(bal, 18));
+                const balValue = balNum * (pos.currentPrice || 0);
+                const isDust = bal.toString() === '0' || (balValue < 0.01 && pos.currentPrice > 0 && balNum > 0);
+                if (isDust) {
+                  if (bal.toString() !== '0') log('INFO', `🧹 SM ${smWallet.slice(0,10)} ${pos.symbol} EVM灰尘余额≈$${balValue.toFixed(4)}，视为已卖`);
+                  // 余额=0或灰尘 → 查最后一笔是卖出还是转仓
                   const check = await checkEvmTransferTarget(pos.chain, tokenAddr, smWallet);
                   if (check.type === 'transfer' && check.to) {
                     log('INFO', `🔄 SM ${smWallet.slice(0,10)}... 转仓到 ${check.to.slice(0,10)}(${pos.chain}) — 追踪小号`);
