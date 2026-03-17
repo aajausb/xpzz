@@ -79,10 +79,13 @@ async function scanWalletTokens() {
   
   // SOL: 查所有token账户
   try {
-    const solRpcBody = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner', params: [
-      SOL_WALLET, { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }, { encoding: 'jsonParsed' }
-    ]});
-    const d = await fetchWithRetry('https://solana-rpc.publicnode.com', {
+    // 查Token Program + Token-2022两个程序的持仓
+    const solTokens = [];
+    for (const pid of ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb']) {
+      const solRpcBody = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner', params: [
+        SOL_WALLET, { programId: pid }, { encoding: 'jsonParsed' }
+      ]});
+      const d = await fetchWithRetry('https://solana-rpc.publicnode.com', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: solRpcBody
     });
     for (const a of (d.result?.value || [])) {
@@ -106,6 +109,7 @@ async function scanWalletTokens() {
         } catch { tokens.push({ chain: 'SOL', symbol: mint.slice(0, 8), amount: amt, price: 0, value: 0 }); }
       }
     }
+    } // end pid loop
   } catch {}
 
   // BSC/Base: 没有通用API扫全部token，查已知持仓

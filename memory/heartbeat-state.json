@@ -1,16 +1,15 @@
 {
   "lastChecks": {
     "engine": 1742169600,
-    "walletCheck": 1773710932,
+    "walletCheck": 1773714588,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773710932,
-    "time_human": "2026-03-17 09:28:52",
-    "sol_engine_active": true,
-    "bsc_engine_active": true,
-    "base_engine_active": true,
-    "detections_last_hour": 302,
+    "timestamp": 1773714588,
+    "time_human": "2026-03-17 10:29:48",
+    "sol_detections_1h": 110,
+    "bsc_detections_1h": 108,
+    "base_detections_1h": "15+ (6h window)",
     "bsc_txcounts": {
       "0xf07e": 88,
       "0xe6b0": 335
@@ -19,6 +18,6 @@
       "0xe56c": 106,
       "0xa9b5": 566
     },
-    "notes": "All 3 chains WS active. 302 detections in last hour. BSC/Base txCounts unchanged from 5h ago (normal - these are nonce counts, SM wallets may not have sent outgoing txs)."
+    "notes": "All 3 chains WS active. No change in sampled wallet txCounts (normal for 6h window)."
   }
 }
