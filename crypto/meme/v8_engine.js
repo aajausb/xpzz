@@ -278,9 +278,14 @@ function mergeToWalletDb(verifiedWallets) {
     seenKeys.add(key);
     
     if (walletDb[key]) {
-      // 已有 → 只更新lastSeen，不覆盖排名数据（入库后靠自己跟踪评判）
+      // 已有 → 更新lastSeen + 核心数据（winRate/pnl/tokens可能变化）
       walletDb[key].lastSeen = now;
       walletDb[key].missCount = 0;
+      // 更新胜率和PnL（币安排名每次刷新数据不同）
+      if (w.winRate !== undefined) walletDb[key].winRate = w.winRate;
+      if (w.pnl !== undefined) walletDb[key].pnl = w.pnl;
+      if (w.tokens !== undefined) walletDb[key].tokens = w.tokens;
+      if (w.txCount !== undefined) walletDb[key].txCount = w.txCount;
     } else {
       // 新钱包 → 入库
       walletDb[key] = {
@@ -292,8 +297,24 @@ function mergeToWalletDb(verifiedWallets) {
     }
   }
   
-  // 不踢任何人，只通过rankWallets自动降级/升级（猎手↔哨兵）
-  // 胜率低的自动降为哨兵，回升后自动升猎手
+  // 超过48小时不在币安排名的钱包，降级保护（数据可能过时）
+  // 猎手→哨兵，哨兵→观察（不直接踢，给机会回来）
+  const STALE_HOURS = 48;
+  for (const [key, w] of Object.entries(walletDb)) {
+    if (!seenKeys.has(key) && w.lastSeen) {
+      const hours = (now - w.lastSeen) / 3600000;
+      if (hours >= STALE_HOURS) {
+        if (w.status === 'hunter') {
+          log('INFO', `📊 ${w.address?.slice(0,10)}(${w.chain}) hunter→scout (${Math.round(hours)}h未出现在排名)`);
+          w.status = 'scout';
+        } else if (w.status === 'scout' && hours >= STALE_HOURS * 2) {
+          log('INFO', `📊 ${w.address?.slice(0,10)}(${w.chain}) scout→watcher (${Math.round(hours)}h未出现在排名)`);
+          w.status = 'watcher';
+          if (!w.watcherSince) w.watcherSince = now;
+        }
+      }
+    }
+  }
   
   const totalBefore = Object.keys(walletDb).length;
   saveJSON(WALLET_DB_FILE, walletDb);
@@ -339,9 +360,14 @@ function rankWallets(wallets) {
   for (const w of wallets) {
     const key = w.address + '_' + w.chain;
     if (walletDb[key]) {
+      const oldStatus = walletDb[key].status;
       walletDb[key].status = w.status;
       walletDb[key].score = w.score;
       walletDb[key].rank = w.rank;
+      // 升降级日志
+      if (oldStatus && oldStatus !== w.status) {
+        log('INFO', `📊 ${w.address.slice(0,10)}(${w.chain}) ${oldStatus}→${w.status} WR:${w.winRate?.toFixed(1)}%`);
+      }
       // 脱离观察状态 → 清除watcherSince
       if (w.status !== 'watcher') {
         delete walletDb[key].watcherSince;
