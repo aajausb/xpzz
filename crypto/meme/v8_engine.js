@@ -1778,7 +1778,7 @@ async function managePositions() {
         // 跟卖优先：查SM钱包是否还持有该token（不依赖价格）
         // SOL RPC限速严重，SM查询降频到每60秒一次（价格查询每轮都跑）
         if (!pos._lastSmCheck) pos._lastSmCheck = 0;
-        const smCheckInterval = pos.chain === 'solana' ? 60000 : 15000; // SOL 60秒, EVM 15秒
+        const smCheckInterval = 30000; // 三链统一30秒
         if (pos.confirmWallets && (Date.now() - pos._lastSmCheck >= smCheckInterval)) {
           pos._lastSmCheck = Date.now();
           try {
