@@ -1,13 +1,15 @@
 {
   "lastChecks": {
     "engine": 1773858420,
-    "walletCheck": 1773858420,
+    "walletCheck": 1773772668,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773858420,
-    "time_human": "2026-03-18 01:07:00",
-    "sol_hunter1_active": true,
-    "notes": "All 3 services active. 6.1GB free. 0 errors. 0 notify pending. SOL hunter#1 active (0min ago). Major session: fixed 10+ bugs today."
+    "timestamp": 1773772668,
+    "time_human": "2026-03-18 02:37:48",
+    "sol_1h": 159,
+    "bsc_1h": 34,
+    "base_1h": 0,
+    "errors": "Atlas sell CALL_EXCEPTION (approve check failed on BSC)"
   }
 }
