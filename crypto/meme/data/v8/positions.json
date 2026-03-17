@@ -36,11 +36,11 @@
       "0xd41feaa24dede516a501862cf1f376defb811772",
       "0x2b106fc0533a1b7b02c0332d0361c3f1917b16c7"
     ],
-    "currentPrice": 0.00005851,
-    "currentValue": 25.207831378372287,
-    "pnlPercent": 271.96439923712654,
-    "totalPnl": 41.98586654256873,
-    "totalPnlPercent": 127.22989861384464,
+    "currentPrice": 0.00004847,
+    "currentValue": 20.8823036559512,
+    "pnlPercent": 208.13731722822632,
+    "totalPnl": 37.66033882014764,
+    "totalPnlPercent": 114.12223884893224,
     "sellRevenue": 49.778035164196446,
     "soldRatio": 0.75,
     "_tpDone": true,
@@ -67,5 +67,25 @@
         "time": 1773708454970
       }
     }
+  },
+  "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump": {
+    "chain": "solana",
+    "token": "EPuZ1X6pPzac3ELPsT59LStmgaSr4kBJvaAbL15Fpump",
+    "symbol": "Distorted",
+    "buyPrice": 0.0006678,
+    "buyAmount": 0,
+    "buyAmountRaw": 0,
+    "buyCost": 35,
+    "buyTime": 1773731550246,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "F4YRDqkXKmSdUcwAoZGJBjcXVYDetXMAGaV8W7DYtsmX",
+      "2cScMkV5L8sVV7vspG25FYd62FRXNSWXk5Spuk86fKPE"
+    ],
+    "currentPrice": 0.0006787,
+    "currentValue": 0,
+    "pnlPercent": 1.6322252171308769,
+    "totalPnl": -35,
+    "totalPnlPercent": -100
   }
 }
