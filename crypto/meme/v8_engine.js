@@ -297,24 +297,7 @@ function mergeToWalletDb(verifiedWallets) {
     }
   }
   
-  // 超过48小时不在币安排名的钱包，降级保护（数据可能过时）
-  // 猎手→哨兵，哨兵→观察（不直接踢，给机会回来）
-  const STALE_HOURS = 48;
-  for (const [key, w] of Object.entries(walletDb)) {
-    if (!seenKeys.has(key) && w.lastSeen) {
-      const hours = (now - w.lastSeen) / 3600000;
-      if (hours >= STALE_HOURS) {
-        if (w.status === 'hunter') {
-          log('INFO', `📊 ${w.address?.slice(0,10)}(${w.chain}) hunter→scout (${Math.round(hours)}h未出现在排名)`);
-          w.status = 'scout';
-        } else if (w.status === 'scout' && hours >= STALE_HOURS * 2) {
-          log('INFO', `📊 ${w.address?.slice(0,10)}(${w.chain}) scout→watcher (${Math.round(hours)}h未出现在排名)`);
-          w.status = 'watcher';
-          if (!w.watcherSince) w.watcherSince = now;
-        }
-      }
-    }
-  }
+  // winRate更新后由rankWallets统一处理status，这里不做降级
   
   const totalBefore = Object.keys(walletDb).length;
   saveJSON(WALLET_DB_FILE, walletDb);
@@ -383,6 +366,25 @@ function rankWallets(wallets) {
     }
   }
   for (const k of evictKeys) delete walletDb[k];
+  
+  // 超过48小时不在币安排名的钱包，降级保护（数据可能过时）
+  // 必须在rankWallets里做，不能在mergeToWalletDb里（会被覆盖）
+  const STALE_HOURS = 48;
+  const now2 = Date.now();
+  for (const [key, dbw] of Object.entries(walletDb)) {
+    if (dbw.lastSeen) {
+      const hours = (now2 - dbw.lastSeen) / 3600000;
+      if (hours >= STALE_HOURS && dbw.status === 'hunter') {
+        log('INFO', `📊 ${dbw.address?.slice(0,10)}(${dbw.chain}) hunter→scout (${Math.round(hours)}h未出现在排名)`);
+        dbw.status = 'scout';
+      } else if (hours >= STALE_HOURS * 2 && dbw.status === 'scout') {
+        log('INFO', `📊 ${dbw.address?.slice(0,10)}(${dbw.chain}) scout→watcher (${Math.round(hours)}h未出现在排名)`);
+        dbw.status = 'watcher';
+        if (!dbw.watcherSince) dbw.watcherSince = now2;
+      }
+    }
+  }
+  
   saveJSON(WALLET_DB_FILE, walletDb);
   
   return wallets;
