@@ -1,26 +1,30 @@
 {
   "lastChecks": {
     "engine": 1742169600,
-    "walletCheck": 1773723676,
+    "walletCheck": 1773725530,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773723676,
-    "time_human": "2026-03-17 13:01:16",
+    "timestamp": 1773725530,
+    "time_human": "2026-03-17 13:32:10",
     "sol_engine_active": true,
-    "sol_detections_last_hour": 93,
-    "bsc_engine_active": true,
-    "bsc_detections_6h": 718,
-    "base_engine_active": false,
-    "base_detections_6h": 0,
+    "sol_detections_1h": 159,
     "bsc_txcounts": {
-      "0xf07e": 88,
-      "0xe6b0": 338
+      "0xf07e...": 88,
+      "0xe6b0...": 340
     },
     "base_txcounts": {
-      "0xe56c": 106,
-      "0xa9b5": 566
+      "0xe56c...": 106,
+      "0xa9b5...": 566
     },
-    "notes": "SOL+BSC WS active. BASE no detections in 6h, txCounts unchanged - may need investigation."
+    "bsc_delta": {
+      "0xf07e...": 0,
+      "0xe6b0...": "+5 (335->340)"
+    },
+    "base_delta": {
+      "0xe56c...": 0,
+      "0xa9b5...": 0
+    },
+    "notes": "All 3 chains WS active. BSC 0xe6b0 +5 txs since 04:27. SOL 159 detections/hr. Engine healthy."
   }
 }
