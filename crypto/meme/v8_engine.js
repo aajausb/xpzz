@@ -823,8 +823,14 @@ function setupEvmWebSocket(chainKey) {
       const delay = Math.min(2000 * Math.ceil(evmWsRetries[chainKey] / endpoints.length), 30000);
       const nextUrl = endpoints[evmWsIdx[chainKey] % endpoints.length].replace('wss://','');
       if (evmWsRetries[chainKey] <= 5) log("WARN", `🔌 [${chain.name}] WS#${ci+1} 断开，${delay/1000}秒后重连`);
-      // 全部重连（保持分片一致性）
-      if (ci === 0) setTimeout(() => setupEvmWebSocket(chainKey), delay);
+      // 任何一个连接断了都全部重连（防抖：100ms内只触发一次）
+      if (!setupEvmWebSocket._reconnectTimer?.[chainKey]) {
+        if (!setupEvmWebSocket._reconnectTimer) setupEvmWebSocket._reconnectTimer = {};
+        setupEvmWebSocket._reconnectTimer[chainKey] = setTimeout(() => {
+          delete setupEvmWebSocket._reconnectTimer[chainKey];
+          setupEvmWebSocket(chainKey);
+        }, delay);
+      }
     });
     
     ws.on("error", (e) => { if (e.message) log('WARN', `[${chain.name}] WS#${ci+1}错误: ${e.message.slice(0,40)}`); });
@@ -966,8 +972,7 @@ async function handleSignal(signal) {
     return;
   }
   
-  // 同名币去重：已经买了同名的币就不再买（防同名撒网，如7个TITAN）
-  // 先查DexScreener拿symbol
+  // 同名币去重：已持有同名币→拒绝
   let earlyDexData = null;
   try { earlyDexData = await dexScreenerGet(token); } catch {}
   const earlySymbol = earlyDexData?.pairs?.[0]?.baseToken?.symbol || '?';
@@ -976,9 +981,40 @@ async function handleSignal(signal) {
       p.symbol && p.symbol.toUpperCase() === earlySymbol.toUpperCase() && p.chain === chain
     );
     if (sameNameHeld) {
-      log('INFO', `🚫 ${earlySymbol}(${chain}) 已持有同名币，跳过(防撒网)`);
+      log('INFO', `🚫 ${earlySymbol}(${chain}) 已持有同名币，跳过`);
       return;
     }
+  }
+
+  // SM频率降权：1小时内买>5个不同币的SM临时降为观察（撒网型打法）
+  if (!handleSignal._smBuyFreq) handleSignal._smBuyFreq = {};
+  const smNow = Date.now();
+  for (const sig of [...activeSignals, ...watchSignals]) {
+    if (!handleSignal._smBuyFreq[sig.wallet]) handleSignal._smBuyFreq[sig.wallet] = [];
+    // 记录这个SM买了这个token（去重）
+    const existing = handleSignal._smBuyFreq[sig.wallet];
+    if (!existing.some(r => r.token === token)) {
+      existing.push({ token, time: smNow });
+    }
+    // 清理1小时前的记录
+    handleSignal._smBuyFreq[sig.wallet] = existing.filter(r => smNow - r.time < 3600000);
+  }
+  // 过滤掉撒网SM（1小时内买>5个不同币）
+  const nonSpamHunters = activeSignals.filter(s => {
+    const freq = (handleSignal._smBuyFreq[s.wallet] || []).length;
+    if (freq > 5) { log('INFO', `⚡ ${s.wallet.slice(0,10)} 1h内买${freq}个币，降权(撒网)`); return false; }
+    return true;
+  });
+  const nonSpamScouts = watchSignals.filter(s => {
+    const freq = (handleSignal._smBuyFreq[s.wallet] || []).length;
+    return freq <= 5;
+  });
+  const filteredConfirmCount = new Set(nonSpamHunters.map(s => s.wallet)).size;
+  const filteredWatchCount = new Set(nonSpamScouts.map(s => s.wallet)).size;
+  const stillConfirmed = filteredConfirmCount >= 2 || (filteredConfirmCount >= 1 && filteredWatchCount >= 2);
+  if (!stillConfirmed) {
+    log('INFO', `🚫 ${token.slice(0,10)}(${chain}) 过滤撒网SM后不达标: 猎手=${filteredConfirmCount} 哨兵=${filteredWatchCount}`);
+    return;
   }
 
   // 验证SM真实持仓（过滤空投/撒币：持仓<$1的不算有效确认）
@@ -990,8 +1026,8 @@ async function handleSignal(signal) {
     dexData = await dexScreenerGet(token);
     const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
     if (price > 0) {
-      // 并行查所有SM余额（提速：串行→并行）
-      const allSigs = [...activeSignals, ...watchSignals];
+      // 用降权过滤后的SM列表（不是原始activeSignals）
+      const allSigs = [...nonSpamHunters, ...nonSpamScouts];
       const results = await Promise.all(allSigs.map(async (sig) => {
         try {
           let holdingUsd = 0;
@@ -1023,15 +1059,15 @@ async function handleSignal(signal) {
         }
       }
     } else {
-      // 查不到价格→不过滤，全算有效
-      realHunters = confirmCount;
-      realScouts = watchCount;
-      for (const sig of [...activeSignals, ...watchSignals]) realConfirmWallets.push(sig.wallet);
+      // 查不到价格→不过滤，用降权后的列表
+      realHunters = filteredConfirmCount;
+      realScouts = filteredWatchCount;
+      for (const sig of [...nonSpamHunters, ...nonSpamScouts]) realConfirmWallets.push(sig.wallet);
     }
   } catch {
-    realHunters = confirmCount;
-    realScouts = watchCount;
-    for (const sig of [...activeSignals, ...watchSignals]) realConfirmWallets.push(sig.wallet);
+    realHunters = filteredConfirmCount;
+    realScouts = filteredWatchCount;
+    for (const sig of [...nonSpamHunters, ...nonSpamScouts]) realConfirmWallets.push(sig.wallet);
   }
   
   // 重新检查确认门槛（过滤空投后）
@@ -1739,6 +1775,22 @@ async function managePositions() {
           }
         }
 
+        // 归零快速清仓：跌99%以上直接清（不等SM，币已经死了）
+        if (pos.buyPrice > 0 && pos.currentPrice > 0) {
+          const dropPct = ((pos.buyPrice - pos.currentPrice) / pos.buyPrice) * 100;
+          if (dropPct >= 99) {
+            log('INFO', `💀 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}%归零，清仓`);
+            delete positions[tokenAddr];
+            delete sellTracker[tokenAddr];
+            delete transferTracker[tokenAddr];
+            boughtTokens.delete(tokenAddr);
+            saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+            saveJSON(POSITIONS_FILE, positions);
+            await notifyTelegram(`💀 v8归零 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}% 成本$${pos.buyCost||0}`);
+            continue;
+          }
+        }
+
         const sells = sellTracker[tokenAddr] || [];
         const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
         const totalConfirm = (pos.confirmWallets || []).length || pos.confirmCount || 2;
@@ -1764,21 +1816,6 @@ async function managePositions() {
             }
           }
           continue;
-        }
-        
-        // 归零快速清仓：跌99%以上直接清（不等SM，币已经死了）
-        if (pos.buyPrice > 0 && pos.currentPrice > 0) {
-          const dropPct = ((pos.buyPrice - pos.currentPrice) / pos.buyPrice) * 100;
-          if (dropPct >= 99) {
-            log('INFO', `💀 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}%归零，清仓`);
-            delete positions[tokenAddr];
-            delete sellTracker[tokenAddr];
-            boughtTokens.delete(tokenAddr);
-            saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
-            saveJSON(POSITIONS_FILE, positions);
-            await notifyTelegram(`💀 v8归零 ${pos.symbol}(${pos.chain}) 跌${dropPct.toFixed(0)}% 成本$${pos.buyCost||0}`);
-            continue;
-          }
         }
         
         saveJSON(POSITIONS_FILE, positions);
