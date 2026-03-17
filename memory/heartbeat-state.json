@@ -1,17 +1,16 @@
 {
   "lastChecks": {
-    "engine": 1742169600,
-    "walletCheck": 1773737888,
+    "engine": 1773940217,
+    "walletCheck": 1773940217,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773737888,
-    "time_human": "2026-03-17 16:58:08",
-    "sol_detections_1h": 71,
-    "bsc_detections_1h": 292,
-    "base_detections_1h": 0,
-    "base_ws_connected": true,
-    "base_note": "WS connected 29 wallets but 0 detections in 6h+, likely low on-chain activity",
-    "errors": "none"
+    "timestamp": 1773940217,
+    "time_human": "2026-03-17 19:50:17",
+    "sol_engine_active": true,
+    "sol_hunter1_missed": "2FYi1zej... and 2gDvC7Be... (29min ago, OK txs) not in engine logs!",
+    "bsc_ws": "active, WS#2 reconnected once",
+    "base_ws": "active",
+    "notes": "SOL hunter#1 CyaE1V had 2 successful txs ~29min ago but engine has ZERO detection. Possible WS silent drop + polling missed. Need investigation."
   }
 }
