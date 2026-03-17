@@ -748,83 +748,91 @@ function setupEvmWebSocket(chainKey) {
   const routers = DEX_ROUTERS[chainKey] || new Set();
   if (routers.size === 0) return;
   
-  // 关闭旧WS
+  // 关闭所有旧WS连接
   if (_evmWsRefs[chainKey]) {
-    try { _evmWsRefs[chainKey].removeAllListeners(); _evmWsRefs[chainKey].terminate(); } catch {}
+    const refs = Array.isArray(_evmWsRefs[chainKey]) ? _evmWsRefs[chainKey] : [_evmWsRefs[chainKey]];
+    for (const ws of refs) { try { ws.removeAllListeners(); ws.terminate(); } catch {} }
+  }
+  
+  // 按优先级排序：hunter > scout > watcher
+  const sorted = [...walletSet].sort((a, b) => {
+    const wa = rankedWallets.find(w => w.address?.toLowerCase() === a);
+    const wb = rankedWallets.find(w => w.address?.toLowerCase() === b);
+    const order = { hunter: 0, scout: 1, watcher: 2 };
+    return (order[wa?.status] ?? 3) - (order[wb?.status] ?? 3);
+  });
+  
+  // 拆分成多个连接，每个最多80个钱包(160个订阅)，留余量防截断
+  const WALLETS_PER_WS = 80;
+  const chunks = [];
+  for (let i = 0; i < sorted.length; i += WALLETS_PER_WS) {
+    chunks.push(sorted.slice(i, i + WALLETS_PER_WS));
   }
   
   const endpoints = EVM_WS_ENDPOINTS[chainKey];
-  const wsUrl = endpoints[evmWsIdx[chainKey] % endpoints.length];
-  const ws = new WebSocket(wsUrl);
-  _evmWsRefs[chainKey] = ws;
+  const wsConns = [];
   
-  ws.on("open", () => {
-    let subId = 1;
-    // 按钱包订阅: to=钱包（收到token=买入）+ from=钱包（发出token=卖出）
-    // 不限DEX Router，任何来源的Transfer都能捡到
-    for (const walletAddr of walletSet) {
-      const paddedWallet = ethers.zeroPadValue(walletAddr, 32);
-      // 买入: Transfer to=钱包
-      ws.send(JSON.stringify({
-        jsonrpc: "2.0", id: subId++, method: "eth_subscribe",
-        params: ["logs", { topics: [TRANSFER_TOPIC, null, paddedWallet] }]
-      }));
-      // 卖出: Transfer from=钱包
-      ws.send(JSON.stringify({
-        jsonrpc: "2.0", id: subId++, method: "eth_subscribe",
-        params: ["logs", { topics: [TRANSFER_TOPIC, paddedWallet] }]
-      }));
-    }
-    evmWsRetries[chainKey] = 0;
-    log("INFO", "🔌 [" + chain.name + "] WebSocket钱包级监控(买+卖) " + walletSet.size + " 个钱包");
-  });
-  
-  ws.on("message", async (data) => {
-    try {
-      const msg = JSON.parse(data);
-      if (msg.id && msg.result) return;
-      if (msg.params?.result) {
-        const logEntry = msg.params.result;
-        const fromAddr = "0x" + logEntry.topics[1].slice(26).toLowerCase();
-        const toAddr = "0x" + logEntry.topics[2].slice(26).toLowerCase();
-        const tokenAddr = logEntry.address.toLowerCase();
-        const nativeTokens = new Set(['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c','0x4200000000000000000000000000000000000006','0x55d398326f99059ff775485246999027b3197955','0x833589fcd6edb6e08f4c7c32d4f71b54bda02913']);
-        
-        // 买入: to=我们的钱包（收到非native token）
-        if (walletSet.has(toAddr) && !walletSet.has(fromAddr) && !nativeTokens.has(tokenAddr)) {
-          // 已买过的跳过 + 已持仓的跳过（handleSignal会处理但减少无谓调用）
-          if (boughtTokens.has(tokenAddr)) return;
-          const wallet = rankedWallets.find(w => w.address?.toLowerCase() === toAddr);
-          const rank = wallet?.rank || 999;
-          log("INFO", "🔔 [" + chain.name + "] 买入! 钱包#" + rank + " " + toAddr.slice(0,10) + "... 获得 " + tokenAddr);
-          await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now() });
-        }
-        
-        // 卖出检测: from=SM钱包发出token
-        if (walletSet.has(fromAddr) && !walletSet.has(toAddr)) {
-          if (positions[tokenAddr]) {
-            const txHash = logEntry.transactionHash;
-            if (txHash) {
-              verifyEvmSell(chainKey, txHash, fromAddr, tokenAddr).catch(() => {});
+  for (let ci = 0; ci < chunks.length; ci++) {
+    const chunk = chunks[ci];
+    const wsUrl = endpoints[(evmWsIdx[chainKey] + ci) % endpoints.length];
+    const ws = new WebSocket(wsUrl);
+    wsConns.push(ws);
+    
+    ws.on("open", () => {
+      let subId = 1;
+      for (const walletAddr of chunk) {
+        const paddedWallet = ethers.zeroPadValue(walletAddr, 32);
+        ws.send(JSON.stringify({ jsonrpc: "2.0", id: subId++, method: "eth_subscribe", params: ["logs", { topics: [TRANSFER_TOPIC, null, paddedWallet] }] }));
+        ws.send(JSON.stringify({ jsonrpc: "2.0", id: subId++, method: "eth_subscribe", params: ["logs", { topics: [TRANSFER_TOPIC, paddedWallet] }] }));
+      }
+      if (ci === 0) evmWsRetries[chainKey] = 0;
+      const hunterCount = chunk.filter(a => { const w = rankedWallets.find(rw => rw.address?.toLowerCase() === a); return w?.status === 'hunter'; }).length;
+      log("INFO", `🔌 [${chain.name}] WS#${ci+1}/${chunks.length} 订阅${chunk.length}个(猎手${hunterCount}) ${subId-1}个订阅`);
+    });
+    
+    ws.on("message", async (data) => {
+      try {
+        const msg = JSON.parse(data);
+        if (msg.id && msg.result) return;
+        if (msg.params?.result) {
+          const logEntry = msg.params.result;
+          const fromAddr = "0x" + logEntry.topics[1].slice(26).toLowerCase();
+          const toAddr = "0x" + logEntry.topics[2].slice(26).toLowerCase();
+          const tokenAddr = logEntry.address.toLowerCase();
+          const nativeTokens = new Set(['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c','0x4200000000000000000000000000000000000006','0x55d398326f99059ff775485246999027b3197955','0x833589fcd6edb6e08f4c7c32d4f71b54bda02913']);
+          if (walletSet.has(toAddr) && !walletSet.has(fromAddr) && !nativeTokens.has(tokenAddr)) {
+            if (boughtTokens.has(tokenAddr)) return;
+            const wallet = rankedWallets.find(w => w.address?.toLowerCase() === toAddr);
+            const rank = wallet?.rank || 999;
+            log("INFO", "🔔 [" + chain.name + "] 买入! 钱包#" + rank + " " + toAddr.slice(0,10) + "... 获得 " + tokenAddr);
+            await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now() });
+          }
+          if (walletSet.has(fromAddr) && !walletSet.has(toAddr)) {
+            if (positions[tokenAddr]) {
+              const txHash = logEntry.transactionHash;
+              if (txHash) { verifyEvmSell(chainKey, txHash, fromAddr, tokenAddr).catch(() => {}); }
             }
           }
         }
-      }
-    } catch(e) { if (e.message) log('WARN', `EVM WS消息处理异常(${chainKey}): ${e.message.slice(0,50)}`); }
-  });
+      } catch(e) { if (e.message) log('WARN', `EVM WS消息处理异常(${chainKey}#${ci+1}): ${e.message.slice(0,50)}`); }
+    });
+    
+    ws.on("close", () => {
+      evmWsRetries[chainKey] = (evmWsRetries[chainKey] || 0) + 1;
+      evmWsIdx[chainKey] = (evmWsIdx[chainKey] + 1) % endpoints.length;
+      const delay = Math.min(2000 * Math.ceil(evmWsRetries[chainKey] / endpoints.length), 30000);
+      const nextUrl = endpoints[evmWsIdx[chainKey] % endpoints.length].replace('wss://','');
+      if (evmWsRetries[chainKey] <= 5) log("WARN", `🔌 [${chain.name}] WS#${ci+1} 断开，${delay/1000}秒后重连`);
+      // 全部重连（保持分片一致性）
+      if (ci === 0) setTimeout(() => setupEvmWebSocket(chainKey), delay);
+    });
+    
+    ws.on("error", (e) => { if (e.message) log('WARN', `[${chain.name}] WS#${ci+1}错误: ${e.message.slice(0,40)}`); });
+    const ping = setInterval(() => { if (ws.readyState === WebSocket.OPEN) ws.ping(); else clearInterval(ping); }, 30000);
+  }
   
-  ws.on("close", () => {
-    evmWsRetries[chainKey] = (evmWsRetries[chainKey] || 0) + 1;
-    // 断连切备用endpoint
-    evmWsIdx[chainKey] = (evmWsIdx[chainKey] + 1) % endpoints.length;
-    const delay = Math.min(2000 * Math.ceil(evmWsRetries[chainKey] / endpoints.length), 30000);
-    const nextUrl = endpoints[evmWsIdx[chainKey] % endpoints.length].replace('wss://','');
-    if (evmWsRetries[chainKey] <= 5) log("WARN", "🔌 [" + chain.name + "] WS断开，" + delay/1000 + "秒后切" + nextUrl);
-    setTimeout(() => setupEvmWebSocket(chainKey), delay);
-  });
-  
-  ws.on("error", (e) => { if (e.message) log('WARN', `[${chain.name}] WS错误: ${e.message.slice(0,40)}`); });
-  const ping = setInterval(() => { if (ws.readyState === WebSocket.OPEN) ws.ping(); else clearInterval(ping); }, 30000);
+  _evmWsRefs[chainKey] = wsConns;
+  log("INFO", `🔌 [${chain.name}] 共${chunks.length}个WS连接 覆盖全部${sorted.length}个钱包`);
 }
 // 验证EVM卖出：查交易receipt，看有没有native token流入钱包（swap的标志）
 async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
