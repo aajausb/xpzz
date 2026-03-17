@@ -1115,12 +1115,9 @@
     "source": "skip"
   },
   "0xd05bb98214af924d4031e5a1b5f8df6e89afc2e4": {
-    "safe": true,
-    "isHoneypot": false,
-    "sellTax": 0,
-    "riskLevel": "LOW",
-    "reason": "OK",
-    "_time": 1773776901992
+    "safe": false,
+    "reason": "buy_failed_3x",
+    "_time": 1773786860180
   },
   "0xe394bc71e12ebfef520a4102d4f9ab6284d45c1d": {
     "safe": false,

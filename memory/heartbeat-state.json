@@ -1,15 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1773858420,
-    "walletCheck": 1773772668,
+    "engine": 1773861000,
+    "walletCheck": 1773861000,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773772668,
-    "time_human": "2026-03-18 02:37:48",
-    "sol_1h": 159,
-    "bsc_1h": 34,
-    "base_1h": 0,
-    "errors": "Atlas sell CALL_EXCEPTION (approve check failed on BSC)"
+    "timestamp": 1773861000,
+    "time_human": "2026-03-18 06:30:00",
+    "sol_hunters_active": true,
+    "bsc_detecting": true,
+    "base_quiet": true,
+    "sol_rpc_warnings": "RPC rate limit, auto-switched to #2",
+    "positions_monitored": 4,
+    "buy_errors": "MR SPEED COIN + BRC insufficient liquidity (normal)"
   }
 }
