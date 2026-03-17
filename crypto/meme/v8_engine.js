@@ -18,9 +18,8 @@ const CONFIG = {
   // 数据刷新
   rankRefreshInterval: 4 * 3600 * 1000,  // 4小时刷新币安排名
   // 不限数量，验证通过的全部跟踪，排名只决定优先级
-  hunterMinWinRate: 60,                     // 猎手: 胜率60-85%
-  hunterMaxWinRate: 85,                     // >85%可能虚高，降哨兵
-  scoutMinWinRate: 50,                      // 哨兵: 胜率50-60%
+  hunterMinWinRate: 65,                     // 猎手: 胜率≥65%
+  scoutMinWinRate: 50,                      // 哨兵: 胜率50-65%
   // <50% = 观察(watcher)，30天没涨回50%就踢
   watcherEvictDays: 30,                     // 观察期30天
 
@@ -196,7 +195,7 @@ async function fetchBinanceRank() {
   const allWallets = [];
   
   for (const [chainKey, chain] of Object.entries(CHAINS)) {
-    for (const period of ['7d', '30d']) {
+    for (const period of ['7d']) {
       for (let page = 1; page <= 4; page++) {
         try {
           const url = `https://web3.binance.com/bapi/defi/v1/public/wallet-direct/market/leaderboard/query?tag=ALL&pageNo=${page}&chainId=${chain.binanceId}&pageSize=25&sortBy=0&orderBy=0&period=${period}`;
@@ -320,9 +319,9 @@ function rankWallets(wallets) {
                       : 1.0;
     w.score = wr * sampleWeight * pnlWeight * activityMul;
     
-    // 三级状态: 60-85%=hunter(猎手), 50-60%或>85%=scout(哨兵), <50%=watcher(观察)
+    // 三级状态: ≥65%=hunter(猎手), 50-65%=scout(哨兵), <50%=watcher(观察)
     const winRate = w.winRate || 0;
-    if (winRate >= CONFIG.hunterMinWinRate && winRate <= CONFIG.hunterMaxWinRate) {
+    if (winRate >= CONFIG.hunterMinWinRate) {
       w.status = 'hunter';
     } else if (winRate >= CONFIG.scoutMinWinRate) {
       w.status = 'scout';

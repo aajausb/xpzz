@@ -1092,5 +1092,13 @@
     "safe": false,
     "reason": "buy_failed_3x",
     "_time": 1773747466090
+  },
+  "0x04f4edf9eaec5c93269adfe331542a8208c45ba3": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773766129777
   }
 }
