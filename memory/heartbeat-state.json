@@ -1,23 +1,17 @@
 {
   "lastChecks": {
     "engine": 1742169600,
-    "walletCheck": 1773714588,
+    "walletCheck": 1773720096,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773714588,
-    "time_human": "2026-03-17 10:29:48",
-    "sol_detections_1h": 110,
-    "bsc_detections_1h": 108,
-    "base_detections_1h": "15+ (6h window)",
-    "bsc_txcounts": {
-      "0xf07e": 88,
-      "0xe6b0": 335
-    },
-    "base_txcounts": {
-      "0xe56c": 106,
-      "0xa9b5": 566
-    },
-    "notes": "All 3 chains WS active. No change in sampled wallet txCounts (normal for 6h window)."
+    "timestamp": 1773720096,
+    "time_human": "2026-03-17 12:01:36",
+    "sol_detections_1h": 172,
+    "bsc_detections_1h": 197,
+    "base_detections_1h": 0,
+    "base_ws_connected": true,
+    "base_txcounts_unchanged": true,
+    "notes": "SOL/BSC active. Base WS connected but 0 detections + txCounts unchanged (106/566) = chain quiet, not a bug."
   }
 }
