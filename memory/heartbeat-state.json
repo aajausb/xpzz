@@ -1,15 +1,16 @@
 {
   "lastChecks": {
-    "engine": 1773980400,
-    "walletCheck": 1773980400,
+    "engine": 1710736740,
+    "walletCheck": 1710736740,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773980400,
-    "time_human": "2026-03-18 10:10:00",
-    "sol_1h": 231,
-    "bsc_1h": 219,
-    "base_1h": 0,
-    "notes": "Base WS connected but no hunter swaps in last hour. SOL hunter ASVzakeP tx was FLASH program (not swap) - correctly not flagged. Engine restarted 4x between 09:06-09:30, current PID stable since 09:30. EVM polling has intermittent RPC errors (auto-retry). SOL RPC rate limit auto-switching works."
+    "timestamp": 1710736740,
+    "time_human": "2026-03-18 11:19:00",
+    "sol_ws": "100/284 subscribed, rest polling fallback",
+    "bsc_polling": "active, multiple detections",
+    "base_polling": "active, multiple detections",
+    "engine_restarts": "3 in last hour (10:40, 10:48, 11:12)",
+    "issues": "SOL WS subscription limit 100/100, occasional SOL RPC rate limits, SOL poll JSON parse error for EiqsrJKM"
   }
 }

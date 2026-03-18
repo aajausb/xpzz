@@ -1085,9 +1085,14 @@ async function handleSignal(signal) {
   
   // 分级确认:
   // ≥2个猎手 → 买
-  // 1个猎手 + ≥2个哨兵 → 买（哨兵当佐证）
-  // 其他 → 等
-  const confirmed = confirmCount >= 2 || (confirmCount >= 1 && watchCount >= 2);
+  // BSC门槛更高：≥3猎手 或 2猎手+3哨兵（信号多但质量参差不齐）
+  // SOL/Base：≥2猎手 或 1猎手+2哨兵
+  let confirmed;
+  if (chain === 'bsc') {
+    confirmed = confirmCount >= 3 || (confirmCount >= 2 && watchCount >= 3);
+  } else {
+    confirmed = confirmCount >= 2 || (confirmCount >= 1 && watchCount >= 2);
+  }
   if (!confirmed) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
 
@@ -1145,7 +1150,12 @@ async function handleSignal(signal) {
   });
   const filteredConfirmCount = new Set(nonSpamHunters.map(s => s.wallet)).size;
   const filteredWatchCount = new Set(nonSpamScouts.map(s => s.wallet)).size;
-  const stillConfirmed = filteredConfirmCount >= 2 || (filteredConfirmCount >= 1 && filteredWatchCount >= 2);
+  let stillConfirmed;
+  if (chain === 'bsc') {
+    stillConfirmed = filteredConfirmCount >= 3 || (filteredConfirmCount >= 2 && filteredWatchCount >= 3);
+  } else {
+    stillConfirmed = filteredConfirmCount >= 2 || (filteredConfirmCount >= 1 && filteredWatchCount >= 2);
+  }
   if (!stillConfirmed) {
     log('INFO', `🚫 ${token.slice(0,10)}(${chain}) 过滤撒网SM后不达标: 猎手=${filteredConfirmCount} 哨兵=${filteredWatchCount}`);
     return;
@@ -1205,7 +1215,12 @@ async function handleSignal(signal) {
   }
   
   // 重新检查确认门槛（过滤空投后）
-  const realConfirmed = realHunters >= 2 || (realHunters >= 1 && realScouts >= 2);
+  let realConfirmed;
+  if (chain === 'bsc') {
+    realConfirmed = realHunters >= 3 || (realHunters >= 2 && realScouts >= 3);
+  } else {
+    realConfirmed = realHunters >= 2 || (realHunters >= 1 && realScouts >= 2);
+  }
   if (!realConfirmed) {
     log('INFO', `🚫 ${token.slice(0,10)}(${chain}) 过滤空投后不达标: 真实猎手=${realHunters} 哨兵=${realScouts}`);
     return;
@@ -1820,7 +1835,7 @@ async function managePositions() {
               } catch(e) { log('WARN', `${pos.symbol} buyAmount回填失败: ${(e.message||'').slice(0,40)}`); }
             }
             // 检查我们自己链上余额是否=0（部分卖出实际全卖了的情况）
-            if (pos.soldRatio > 0 && pos.buyAmount > 0) {
+            if (pos.buyAmount > 0) { // 检查链上余额是否=0（手动卖出/部分卖出全卖了）
               try {
                 const trader = require('./dex_trader.js');
                 let ourBal = -1;
