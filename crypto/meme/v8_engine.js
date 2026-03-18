@@ -2112,7 +2112,9 @@ async function managePositions() {
               } catch(e) { log('WARN', `${pos.symbol} buyAmount回填失败: ${(e.message||'').slice(0,40)}`); }
             }
             // 检查我们自己链上余额是否=0（部分卖出实际全卖了的情况）
-            if (pos.buyAmount > 0) { // 检查链上余额是否=0（手动卖出/部分卖出全卖了）
+            // Bug fix: 买入后60秒内不检查余额清仓（RPC可能还没同步）
+            const buyAge = pos.buyTime ? (Date.now() - new Date(pos.buyTime).getTime()) : Infinity;
+            if (pos.buyAmount > 0 && buyAge > 60000) { // 检查链上余额是否=0（手动卖出/部分卖出全卖了）
               try {
                 const trader = require('./dex_trader.js');
                 let ourBal = -1;
