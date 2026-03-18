@@ -1,16 +1,13 @@
 {
   "lastChecks": {
-    "engine": 1773889740,
-    "walletCheck": 1773889740,
-    "memory": null
+    "engine": 1742270700,
+    "walletCheck": 1742270700,
+    "memory": 1742270700
   },
   "lastWalletCheck": {
-    "timestamp": 1773889740,
-    "time_human": "2026-03-18 11:49:00",
-    "sol_hunters_checked": 2,
-    "sol_detection": "OK - 4vw54BmA txs detected within seconds",
-    "bsc_detection": "OK - 15+ buy signals in last 3min",
-    "base_detection": "no signals in last hour (may be quiet)",
-    "errors": "BSCScan/BaseScan V1 API deprecated, used engine logs instead"
+    "time": "2026-03-18T12:05+08:00",
+    "sol_hunter1": "ok4zFPMn#1 - 最近交易12小时前，无新活动",
+    "bsc_hunter1": "0x92d693a4#1 - nonce=6776",
+    "result": "三链猎手近1小时无新交易，引擎无对应信号=正常（猎手没动就没信号）"
   }
 }
