@@ -1138,5 +1138,29 @@
     "safe": false,
     "reason": "buy_failed_3x",
     "_time": 1773785990386
+  },
+  "0x8eff69a9f2f3069af75a26e914addb2ca2394444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773797567573
+  },
+  "0x1e2135067982849ee66893481799a1ec4d644444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773797615979
+  },
+  "0x4b17358cd762245b3f5b17280e7345300f41c35f": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1773798729671
   }
 }
