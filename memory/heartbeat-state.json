@@ -1,14 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1773894420,
-    "walletCheck": 1773894420,
+    "engine": 1773897420,
+    "walletCheck": 1773897420,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773894420,
-    "time_human": "2026-03-18 13:07:00",
-    "detections_30min": 348,
-    "sol_verified": "J485YzQj tx detected at 12:29:49",
-    "status": "all_ok"
+    "timestamp": 1773897420,
+    "time_human": "2026-03-18 14:07:00",
+    "sol_30min_events": 591,
+    "bsc_30min_events": 319,
+    "base_30min_events": 0,
+    "sampled_hunters": "2cScMkV5(quiet 23h), 4BdKaxN8(quiet 6h)",
+    "engine_total_30min": 404,
+    "status": "healthy"
   }
 }

@@ -764,7 +764,8 @@ function setupOfficialSolWs() {
         if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
         setTimeout(() => setupOfficialSolWs(), 5000);
       }
-  }, 30000);
+    }, 30000);
+  } // end for each chunk
 }
 // 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
 async function pollSolanaWallets() {
