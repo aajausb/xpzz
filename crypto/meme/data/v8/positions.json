@@ -604,12 +604,12 @@
       "0xb90d9ea599c2634069ae4d5eecc5ab7234a81a05",
       "0x95701259b045f972b06089e5ba498d463f627aa2"
     ],
-    "currentPrice": 0.000007889,
-    "currentValue": 5.404729633751338,
-    "pnlPercent": -45.89163237311385,
-    "totalPnl": -25.27110615693678,
-    "totalPnlPercent": -44.33527395953821,
-    "_lastSmCheck": 1773809938430,
+    "currentPrice": 0.000006988,
+    "currentValue": 4.787457305191324,
+    "pnlPercent": -52.071330589849104,
+    "totalPnl": -25.888378485496794,
+    "totalPnlPercent": -45.41820786929262,
+    "_lastSmCheck": 1773809990924,
     "_sells": [
       {
         "wallet": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
@@ -639,7 +639,7 @@
     "chain": "bsc",
     "token": "0x2d1256a88d32e58547b591e13667a0d3df764444",
     "symbol": "太阳之子",
-    "buyPrice": 0,
+    "buyPrice": 0.00001097,
     "buyAmount": 2614454.800791462,
     "buyAmountRaw": 2614454.800791462,
     "buyCost": 51,
@@ -652,7 +652,7 @@
       "0xcfe30db196c9a99fc80c72ad44fb4a135a53491f",
       "0x8ade93ba431a2ce19fc62a9ce97626e69a4a333f"
     ],
-    "_lastSmCheck": 1773809951580,
+    "_lastSmCheck": 1773809991106,
     "_sells": [
       {
         "wallet": "0x7a2363a401b2340c7941dd2eeff0196a5078d2e6",
@@ -678,6 +678,11 @@
     "unsellable": true,
     "unsellableReason": "transaction execution reverted (action=\"sendTransaction\", data=null, reason=null, invocation=null, revert=null, transaction={ \"data\": \"\", \"from\": \"0xe00ca1d766f329eFfC05E704499f10dB1F14FD47\", \"to\": \"0",
     "unsellableSince": 1773809975772,
-    "soldRatio": 0.8
+    "soldRatio": 0.8,
+    "currentPrice": 0.00001097,
+    "currentValue": 5.736113832936466,
+    "pnlPercent": 0,
+    "totalPnl": -45.26388616706353,
+    "totalPnlPercent": -88.75271797463438
   }
 }
