@@ -1,17 +1,18 @@
 {
   "lastChecks": {
-    "engine": 1773890820,
-    "walletCheck": 1773890820,
+    "engine": 1742256540,
+    "walletCheck": 1742256540,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773890820,
-    "time_human": "2026-03-18 07:30:00",
-    "sol_2h_detections": 316,
-    "bsc_2h_detections": 72,
-    "base_2h_detections": 30,
-    "unique_sol_wallets_2h": 58,
-    "sol_rpc_failures_1h": 84,
-    "note": "CyaE1V(rank#2 hunter) actively trading but no WS detection since 04:50 - possible WS subscription gap. SOL WS overall working (316 detections). Not urgent - will flag to 跑步哥 when awake."
+    "timestamp": 1742256540,
+    "time_human": "2026-03-18 08:00:00",
+    "sol_hunters_checked": 2,
+    "sol_latest_tx_age_h": "8-36h (no new txns in last hour)",
+    "bsc_ws_disconnects_2h": 4,
+    "bsc_ws_status": "auto-reconnected, 205 wallets covered",
+    "sol_rpc_failures_2h": 134,
+    "engine_signals_detected": "active (multiple SOL swap detections)",
+    "notes": "BSC WS flaky but polling covers. SOL RPC failures high but non-critical (SM verification only)."
   }
 }
