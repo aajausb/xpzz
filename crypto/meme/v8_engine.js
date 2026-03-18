@@ -1380,11 +1380,7 @@ async function handleSignal(signal) {
             if (cachedSolBal !== undefined) {
               bal = cachedSolBal;
             } else {
-              const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-                sig.wallet, { mint: token }, { encoding: 'jsonParsed' }
-              ]);
-              bal = (balData.result?.value || []).reduce((s, a) =>
-                s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
+              bal = await getSolTokenBalance(sig.wallet, token);
               setCachedSolBalance(sig.wallet, token, bal);
             }
             let holdingUsd = bal * price;
@@ -2121,13 +2117,7 @@ async function managePositions() {
                 const trader = require('./dex_trader.js');
                 let ourBal = -1;
                 if (pos.chain === 'solana') {
-                  const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-                    trader.getWalletAddress('solana'), { mint: tokenAddr }, { encoding: 'jsonParsed' }
-                  ]);
-                  if (balData?.result) {
-                    ourBal = (balData.result.value || []).reduce((s, a) => 
-                      s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
-                  }
+                  ourBal = await getSolTokenBalance(trader.getWalletAddress('solana'), tokenAddr);
                 } else {
                   const { ethers } = require('ethers');
                   const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
@@ -2185,13 +2175,7 @@ async function managePositions() {
                 if (cachedSolBal !== undefined) {
                   bal = cachedSolBal;
                 } else {
-                  const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-                    smWallet, { mint: tokenAddr }, { encoding: 'jsonParsed' }
-                  ]);
-                  if (!balData?.result || balData.error) { log('WARN', `查SM ${smWallet.slice(0,10)} ${pos.symbol} SOL RPC失败，跳过`); continue; }
-                  const accounts = balData.result.value || [];
-                  bal = accounts.reduce((s, a) => 
-                    s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
+                  bal = await getSolTokenBalance(smWallet, tokenAddr);
                   setCachedSolBalance(smWallet, tokenAddr, bal);
                 }
                 const balValue = bal * (pos.currentPrice || 0);
@@ -2260,9 +2244,7 @@ async function managePositions() {
                   if (cachedSubBal !== undefined) {
                     bal = cachedSubBal;
                   } else {
-                    const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [sub, { mint: tokenAddr }, { encoding: 'jsonParsed' }]);
-                    if (!balData?.result || balData.error) continue;
-                    bal = (balData.result.value || []).reduce((s, a) => s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
+                    bal = await getSolTokenBalance(sub, tokenAddr);
                     setCachedSolBalance(sub, tokenAddr, bal);
                   }
                   if (bal === 0) {
