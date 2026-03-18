@@ -1,17 +1,14 @@
 {
   "lastChecks": {
-    "engine": 1773902580,
-    "walletCheck": 1773902580,
-    "memory": null
+    "walletCheck": 1742290860,
+    "processCheck": 1742290860,
+    "memoryCheck": 1742290860,
+    "notifyQueue": 1742290860
   },
   "lastWalletCheck": {
-    "timestamp": 1773902580,
-    "time_human": "2026-03-18 16:23:00",
-    "engine_detections_1h": 904,
-    "sol_log_lines_1h": 53709,
-    "bsc_log_lines_1h": 553,
-    "base_log_lines_1h": 0,
-    "sampled_hunters": "4BdKaxN8(inactive 499min), FSAmbD6j(inactive 709min)",
-    "verdict": "OK - hunters just idle, engine healthy with 904 detections/hr"
+    "time": "2026-03-18T17:41+08:00",
+    "sol": {"checked": ["CyaE1V","G6fUXj"], "txCount": [0,0], "engineDetected": true},
+    "bsc": {"checked": ["0x8d5624","0x2ce9d4"], "txCount": [0,0], "engineDetected": true},
+    "base": {"checked": ["0x36e582","0x3f28e3"], "txCount": [0,1], "engineDetected": true}
   }
 }

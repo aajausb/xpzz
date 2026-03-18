@@ -741,7 +741,14 @@ function setupOfficialSolWs() {
     ws.on('close', () => {
       log('WARN', `🔌 [SOL] WS#${ci+1} 断开，5秒后重连`);
       if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
-      setTimeout(() => setupOfficialSolWs(), 5000);
+      // 防止指数级重连爆炸：只有第一个连接触发重连，且加锁防并发
+      if (ci === 0 && !setupOfficialSolWs._reconnecting) {
+        setupOfficialSolWs._reconnecting = true;
+        setTimeout(() => {
+          setupOfficialSolWs._reconnecting = false;
+          setupOfficialSolWs();
+        }, 5000);
+      }
     });
     
     ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS#${ci+1}错误: ${e.message.slice(0,40)}`); });
