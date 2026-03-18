@@ -1328,7 +1328,13 @@ async function handleSignal(signal) {
                 s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
               setCachedSolBalance(sig.wallet, token, bal);
             }
-            return { sig, holdingUsd: bal * price };
+            let holdingUsd = bal * price;
+            // 余额=0但有买入信号 → 可能转仓到小号，不算空投
+            if (holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet)) {
+              holdingUsd = -1; // -1=算有效（有买入记录证明是真买）
+              log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${(bal*price).toFixed(2)}但有买入信号，算有效(可能转仓)`);
+            }
+            return { sig, holdingUsd };
           } catch { return { sig, holdingUsd: -1 }; }
         }));
         for (const { sig, holdingUsd } of results) {
@@ -1350,6 +1356,11 @@ async function handleSignal(signal) {
           let holdingUsd = -1; // 查询失败算有效
           if (info) {
             holdingUsd = info.balNum * price;
+          }
+          // 余额=0但有买入信号 → 可能转仓到小号，不算空投
+          if (holdingUsd >= 0 && holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet || s.wallet?.toLowerCase() === sig.wallet?.toLowerCase())) {
+            log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${holdingUsd.toFixed(2)}但有买入信号，算有效(可能转仓)`);
+            holdingUsd = -1;
           }
           if (holdingUsd < 0 || holdingUsd >= MIN_SM_HOLDING_USD) {
             realConfirmWallets.push(sig.wallet);
