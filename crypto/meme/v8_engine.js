@@ -659,100 +659,111 @@ function setupSolanaMonitor() {
   pollSolanaWallets();
 }
 
-// QuickNode WS: 无订阅限制，全部钱包WS实时
+// QuickNode WS: 100个/连接限制，多连接分片覆盖全部钱包
 function setupOfficialSolWs() {
   // 按优先级排序: hunter > scout > watcher
   const priorityOrder = { hunter: 0, scout: 1, watcher: 2 };
   const sorted = rankedWallets
     .filter(w => w.chain === 'solana')
     .sort((a, b) => (priorityOrder[a.status] || 2) - (priorityOrder[b.status] || 2) || (a.rank || 999) - (b.rank || 999));
-  const walletList = sorted.map(w => w.address); // QuickNode无限制，全部订阅
+  const walletList = sorted.map(w => w.address);
   if (walletList.length === 0) return;
   solWsSubscribedAddrs.clear();
   for (const a of walletList) solWsSubscribedAddrs.add(a);
   
-  const wsWalletCount = walletList.length;
-  const pollOnly = [...solWalletSet].filter(a => !walletList.includes(a));
-  log('INFO', `🔌 [SOL] QuickNode WS订阅${wsWalletCount}个(全部) + 轮询${pollOnly.length}个`);
-  
-  const ws = new WebSocket(SOL_WS_OFFICIAL);
-  solOfficialWs = ws;
-  let subscribed = 0;
-  const idToAddr = {};
-  
-  ws.on('open', async () => {
-    // Solana官方WS: 每批5个等1秒（稳定，30秒订完100个）
-    for (let i = 0; i < walletList.length; i++) {
-      if (ws.readyState !== WebSocket.OPEN) break;
-      const addr = walletList[i];
-      const id = i + 1;
-      idToAddr[id] = addr;
-      ws.send(JSON.stringify({
-        jsonrpc: '2.0', id, method: 'logsSubscribe',
-        params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
-      }));
-      if ((i + 1) % 5 === 0) await new Promise(r => setTimeout(r, 1000));
-    }
-  });
-  
-  const subIdToAddr = {};
-  
-  ws.on('message', async (data) => {
-    try {
-      const msg = JSON.parse(data);
-      if (msg.id && msg.result !== undefined) {
-        subscribed++;
-        subIdToAddr[msg.result] = idToAddr[msg.id];
-        if (subscribed === 1 || subscribed % 20 === 0 || subscribed === walletList.length) {
-          log('INFO', `🔌 [SOL] 官方RPC ${subscribed}/${walletList.length} 已订阅`);
-        }
-        if (subscribed === walletList.length) solWsMode = 'official';
-        return;
-      }
-      if (msg.id && msg.error) {
-        log('WARN', `🔌 [SOL] 订阅失败 #${msg.id}: ${msg.error.message}`);
-        return;
-      }
-      if (msg.params?.result) {
-        const subId = msg.params.subscription;
-        const addr = subIdToAddr[subId];
-        const sig = msg.params.result.value?.signature;
-        if (sig && addr && !msg.params.result.value?.err) {
-          await parseSolSignature(addr, sig);
-        }
-      }
-    } catch(e) {}
-  });
-  
-  ws.on('close', () => {
-    log('WARN', '🔌 [SOL] 官方WS断开，5秒后重连');
-    solOfficialWs = null;
-    solWsMode = 'polling';
-    setTimeout(() => setupOfficialSolWs(), 5000);
-  });
-  
-  ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS错误: ${e.message.slice(0,40)}`); });
-  
-  // 活跃度检测：5分钟没收到任何消息→静默断连→主动重连
-  let lastMsgTime = Date.now();
-  const origOnMsg = ws.listeners('message')[0];
-  if (origOnMsg) {
-    ws.removeListener('message', origOnMsg);
-    ws.on('message', (data) => { lastMsgTime = Date.now(); origOnMsg(data); });
+  const WS_LIMIT = 95; // 每连接95个（留余量）
+  const chunks = [];
+  for (let i = 0; i < walletList.length; i += WS_LIMIT) {
+    chunks.push(walletList.slice(i, i + WS_LIMIT));
   }
   
-  const healthCheck = setInterval(() => {
-    if (ws.readyState !== WebSocket.OPEN) { clearInterval(healthCheck); return; }
-    ws.ping();
-    // 5分钟无消息→判定静默断连
-    if (Date.now() - lastMsgTime > 300000) {
-      log('WARN', '🔌 [SOL] WS静默断连(5分钟无消息)，主动重连');
-      clearInterval(healthCheck);
-      try { ws.removeAllListeners(); ws.terminate(); } catch {}
-      solOfficialWs = null;
-      solWsMode = 'polling';
+  const pollOnly = [...solWalletSet].filter(a => !walletList.includes(a));
+  log('INFO', `🔌 [SOL] QuickNode WS订阅${walletList.length}个(${chunks.length}连接×${WS_LIMIT}) + 轮询${pollOnly.length}个`);
+  
+  // 关闭旧连接
+  if (solOfficialWs) { try { solOfficialWs.close(); } catch {} }
+  if (!setupOfficialSolWs._wsPool) setupOfficialSolWs._wsPool = [];
+  for (const old of setupOfficialSolWs._wsPool) { try { old.close(); } catch {} }
+  setupOfficialSolWs._wsPool = [];
+  
+  for (let ci = 0; ci < chunks.length; ci++) {
+    const chunk = chunks[ci];
+    const ws = new WebSocket(SOL_WS_OFFICIAL);
+    setupOfficialSolWs._wsPool.push(ws);
+    if (ci === 0) solOfficialWs = ws; // 第一个连接作为主连接
+    
+    const idToAddr = {};
+    let subscribed = 0;
+    
+    ws.on('open', async () => {
+      for (let i = 0; i < chunk.length; i++) {
+        if (ws.readyState !== WebSocket.OPEN) break;
+        const addr = chunk[i];
+        const id = i + 1;
+        idToAddr[id] = addr;
+        ws.send(JSON.stringify({
+          jsonrpc: '2.0', id, method: 'logsSubscribe',
+          params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
+        }));
+        if ((i + 1) % 5 === 0) await new Promise(r => setTimeout(r, 1000));
+      }
+    });
+    
+    const subIdToAddr = {};
+  
+    ws.on('message', async (data) => {
+      try {
+        const msg = JSON.parse(data);
+        if (msg.id && msg.result !== undefined) {
+          subscribed++;
+          subIdToAddr[msg.result] = idToAddr[msg.id];
+          if (subscribed === 1 || subscribed % 20 === 0 || subscribed === chunk.length) {
+            log('INFO', `🔌 [SOL] WS#${ci+1}/${chunks.length} ${subscribed}/${chunk.length} 已订阅`);
+          }
+          if (ci === 0 && subscribed === chunk.length) solWsMode = 'official';
+          return;
+        }
+        if (msg.id && msg.error) {
+          if (subscribed < 3) log('WARN', `🔌 [SOL] WS#${ci+1} 订阅失败 #${msg.id}: ${msg.error.message}`);
+          return;
+        }
+        if (msg.params?.result) {
+          const subId = msg.params.subscription;
+          const addr = subIdToAddr[subId];
+          const sig = msg.params.result.value?.signature;
+          if (sig && addr && !msg.params.result.value?.err) {
+            await parseSolSignature(addr, sig);
+          }
+        }
+      } catch(e) {}
+    });
+    
+    ws.on('close', () => {
+      log('WARN', `🔌 [SOL] WS#${ci+1} 断开，5秒后重连`);
+      if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
       setTimeout(() => setupOfficialSolWs(), 5000);
+    });
+    
+    ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS#${ci+1}错误: ${e.message.slice(0,40)}`); });
+    
+    // 活跃度检测：5分钟没收到任何消息→静默断连→主动重连
+    let lastMsgTime = Date.now();
+    const origOnMsg = ws.listeners('message')[0];
+    if (origOnMsg) {
+      ws.removeListener('message', origOnMsg);
+      ws.on('message', (data) => { lastMsgTime = Date.now(); origOnMsg(data); });
     }
+    
+    const healthCheck = setInterval(() => {
+      if (ws.readyState !== WebSocket.OPEN) { clearInterval(healthCheck); return; }
+      ws.ping();
+      if (Date.now() - lastMsgTime > 300000) {
+        log('WARN', `🔌 [SOL] WS#${ci+1} 静默断连(5分钟无消息)，主动重连`);
+        clearInterval(healthCheck);
+        try { ws.removeAllListeners(); ws.terminate(); } catch {}
+        if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
+        setTimeout(() => setupOfficialSolWs(), 5000);
+      }
   }, 30000);
 }
 // 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
@@ -1402,6 +1413,50 @@ async function handleSignal(signal) {
   if (!audit.safe) {
     log('WARN', `❌ ${symbol}(${chain}) 审计不通过: ${audit.reason}`);
     delete pendingSignals[token]; // 审计不过清掉，不重复查
+    return;
+  }
+  
+  // 市值过滤（DexScreener fdv → OKX报价反推）
+  let mcap = parseFloat(dexData?.pairs?.[0]?.fdv || dexData?.pairs?.[0]?.marketCap || 0);
+  const minMcap = chain === 'bsc' ? 10000 : CONFIG.minMarketCap; // BSC最低$10K
+  const maxMcap = CONFIG.maxMarketCap;
+  
+  // DexScreener没市值（内盘/新币）→ 用OKX报价 × totalSupply反推
+  if (mcap === 0 && chain !== 'solana') {
+    try {
+      const { ethers } = require('ethers');
+      const provider = chain === 'bsc' ? bscProvider : baseProvider;
+      const erc20 = new ethers.Contract(token, ['function totalSupply() view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+      const [supply, dec] = await Promise.all([erc20.totalSupply(), erc20.decimals()]);
+      const supplyNum = parseFloat(ethers.formatUnits(supply, dec));
+      // 用DexScreener价格或已缓存的价格
+      const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
+      if (price > 0) {
+        mcap = price * supplyNum;
+      } else {
+        // 尝试OKX报价拿价格
+        const ts = new Date().toISOString();
+        const crypto = require('crypto');
+        const qPath = `/api/v6/dex/aggregator/quote?chainIndex=${CHAIN_ID[chain]}&fromTokenAddress=${token}&toTokenAddress=${NATIVE[chain]}&amount=${(BigInt(10) ** BigInt(dec)).toString()}&slippagePercent=0.5`;
+        const sign = crypto.createHmac('sha256', OKX_ENV.OKX_SECRET_KEY).update(ts + 'GET' + qPath).digest('base64');
+        const resp = await fetch('https://www.okx.com' + qPath, { headers: {
+          'OK-ACCESS-KEY': OKX_ENV.OKX_API_KEY, 'OK-ACCESS-SIGN': sign,
+          'OK-ACCESS-TIMESTAMP': ts, 'OK-ACCESS-PASSPHRASE': OKX_ENV.OKX_PASSPHRASE
+        }});
+        const qData = await resp.json();
+        const unitPrice = parseFloat(qData?.data?.[0]?.dexRouterList?.[0]?.fromToken?.tokenUnitPrice || 0);
+        if (unitPrice > 0) mcap = unitPrice * supplyNum;
+      }
+      if (mcap > 0) log('INFO', `📊 ${symbol}(${chain}) OKX反推市值: $${Math.round(mcap)}`);
+    } catch(e) { /* 反推失败不拦，继续买入 */ }
+  }
+  
+  if (mcap > 0 && mcap < minMcap) {
+    log('INFO', `🚫 ${symbol}(${chain}) 市值$${Math.round(mcap)}<$${minMcap}，跳过`);
+    return;
+  }
+  if (mcap > 0 && mcap > maxMcap) {
+    log('INFO', `🚫 ${symbol}(${chain}) 市值$${Math.round(mcap)}>$${maxMcap/1e6}M，跳过`);
     return;
   }
   

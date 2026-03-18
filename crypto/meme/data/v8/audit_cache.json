@@ -1380,5 +1380,18 @@
     "riskLevel": "LOW",
     "reason": "OK",
     "_time": 1773811083477
+  },
+  "0x43e85b9e34e259a3ad1fff5fa17db4683bf04444": {
+    "safe": false,
+    "reason": "buy_failed_3x",
+    "_time": 1773812040777
+  },
+  "0xc63322ec4ef3a7264ab6bd1fefe225fd7a744444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773812797058
   }
 }
