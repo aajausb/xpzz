@@ -45,16 +45,16 @@ async function getBalances() {
   const balances = {};
   
   const [solBal, bnbBal, ethBal, solR, bnbR, ethR] = await Promise.all([
-    // SOL: publicnode（不依赖QuickNode/官方限额）
-    fetchWithRetry('https://solana-rpc.publicnode.com', {
+    // SOL: QuickNode
+    fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
     }),
-    fetch('https://bsc-dataseed1.binance.org', {
+    fetch('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })
     }).then(r => r.json()).catch(() => null),
-    fetch('https://mainnet.base.org', {
+    fetch('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })
     }).then(r => r.json()).catch(() => null),
@@ -85,7 +85,7 @@ async function scanWalletTokens() {
       const solRpcBody = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner', params: [
         SOL_WALLET, { programId: pid }, { encoding: 'jsonParsed' }
       ]});
-      const d = await fetchWithRetry('https://solana-rpc.publicnode.com', {
+      const d = await fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: solRpcBody
     });
     for (const a of (d.result?.value || [])) {
@@ -119,8 +119,8 @@ async function scanWalletTokens() {
   try { knownTokens = JSON.parse(fs.readFileSync(knownTokensFile, 'utf8')); } catch {}
   
   const { ethers } = require('ethers');
-  const bscProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
-  const baseProvider = new ethers.JsonRpcProvider('https://mainnet.base.org');
+  const bscProvider = new ethers.JsonRpcProvider('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/');
+  const baseProvider = new ethers.JsonRpcProvider('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/');
 
   for (const kt of knownTokens) {
     try {
@@ -189,7 +189,7 @@ async function buildDashboard() {
       let onChainAmount = 0;
       try {
         if (pos.chain === 'solana') {
-          const balData = await fetchWithRetry('https://solana-rpc.publicnode.com', {
+          const balData = await fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner',
               params: [SOL_WALLET, { mint: token }, { encoding: 'jsonParsed' }] })

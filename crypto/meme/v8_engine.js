@@ -70,8 +70,8 @@ const CHAINS = {
 // SOL RPC: 三级fallback（QuickNode→官方→PublicNode）
 const SOL_RPCS = [
   'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/',
+  'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/',
   'https://api.mainnet-beta.solana.com',
-  'https://solana-rpc.publicnode.com',
 ];
 let solRpcIdx = 0;
 const solRpcCooldown = new Array(SOL_RPCS.length).fill(0);
@@ -105,8 +105,8 @@ const OKX_ENV = {
   OKX_PASSPHRASE: process.env.OKX_PASSPHRASE || '',
 };
 
-const bscProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
-const baseProvider = new ethers.JsonRpcProvider('https://mainnet.base.org');
+const bscProvider = new ethers.JsonRpcProvider('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/');
+const baseProvider = new ethers.JsonRpcProvider('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/');
 
 // OKX DEX链ID和原生代币
 const CHAIN_ID = { solana: '501', bsc: '56', base: '8453' };
@@ -522,7 +522,7 @@ const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a
 
 const solLastSigs = new Map(); // wallet -> lastSignature
 
-const SOL_WS_OFFICIAL = 'wss://api.mainnet-beta.solana.com'; // Solana官方WS（免费，限100订阅）
+const SOL_WS_OFFICIAL = 'wss://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/'; // QuickNode WS（无订阅限制）
 let solOfficialWs = null; // 单连接
 let solWsMode = 'none'; // 'official' | 'polling'
 const solWsSubscribedAddrs = new Set(); // WS已订阅的钱包（轮询时跳过）
@@ -541,21 +541,21 @@ function setupSolanaMonitor() {
   pollSolanaWallets();
 }
 
-// Solana官方WS: 最多100个订阅，猎手+哨兵优先
+// QuickNode WS: 无订阅限制，全部钱包WS实时
 function setupOfficialSolWs() {
   // 按优先级排序: hunter > scout > watcher
   const priorityOrder = { hunter: 0, scout: 1, watcher: 2 };
   const sorted = rankedWallets
     .filter(w => w.chain === 'solana')
     .sort((a, b) => (priorityOrder[a.status] || 2) - (priorityOrder[b.status] || 2) || (a.rank || 999) - (b.rank || 999));
-  const walletList = sorted.slice(0, 100).map(w => w.address); // 官方WS限100
+  const walletList = sorted.map(w => w.address); // QuickNode无限制，全部订阅
   if (walletList.length === 0) return;
   solWsSubscribedAddrs.clear();
   for (const a of walletList) solWsSubscribedAddrs.add(a);
   
   const wsWalletCount = walletList.length;
   const pollOnly = [...solWalletSet].filter(a => !walletList.includes(a));
-  log('INFO', `🔌 [SOL] 官方WS订阅${wsWalletCount}个(猎手+哨兵优先) + 轮询${pollOnly.length}个观察`);
+  log('INFO', `🔌 [SOL] QuickNode WS订阅${wsWalletCount}个(全部) + 轮询${pollOnly.length}个`);
   
   const ws = new WebSocket(SOL_WS_OFFICIAL);
   solOfficialWs = ws;
@@ -795,8 +795,8 @@ function trackSmartMoneySell(token, wallet, ratio) {
 
 // BSC/Base: WebSocket实时推送 — 订阅DEX Router的Transfer事件
 const EVM_WS_ENDPOINTS = {
-  bsc: ["wss://bsc.publicnode.com", "wss://bsc.drpc.org"],
-  base: ["wss://base.publicnode.com", "wss://base.drpc.org"],
+  bsc: ["wss://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/", "wss://bsc.publicnode.com"],
+  base: ["wss://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/", "wss://base.publicnode.com"],
 };
 const evmWsIdx = { bsc: 0, base: 0 }; // 当前endpoint索引
 const evmWsRetries = { bsc: 0, base: 0 };
@@ -913,10 +913,8 @@ async function pollEvmHunters() {
   while (true) {
     for (const chainKey of ['bsc', 'base']) {
       try {
-        // 轮询用drpc（binance dataseed对getLogs限速严重）
-        const pollProvider = chainKey === 'bsc' 
-          ? new ethers.JsonRpcProvider('https://bsc.drpc.org')
-          : new ethers.JsonRpcProvider('https://base.drpc.org');
+        // 轮询直接用QuickNode（付费，不限速）
+        const pollProvider = chainKey === 'bsc' ? bscProvider : baseProvider;
         const currentBlock = await pollProvider.getBlockNumber();
         if (!_evmPollLastBlock[chainKey]) _evmPollLastBlock[chainKey] = currentBlock;
         const fromBlock = _evmPollLastBlock[chainKey] + 1;
