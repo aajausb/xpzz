@@ -913,12 +913,15 @@ async function pollEvmHunters() {
   while (true) {
     for (const chainKey of ['bsc', 'base']) {
       try {
-        const provider = chainKey === 'bsc' ? bscProvider : baseProvider;
-        const currentBlock = await provider.getBlockNumber();
+        // 轮询用drpc（binance dataseed对getLogs限速严重）
+        const pollProvider = chainKey === 'bsc' 
+          ? new ethers.JsonRpcProvider('https://bsc.drpc.org')
+          : new ethers.JsonRpcProvider('https://base.drpc.org');
+        const currentBlock = await pollProvider.getBlockNumber();
         if (!_evmPollLastBlock[chainKey]) _evmPollLastBlock[chainKey] = currentBlock;
         const fromBlock = _evmPollLastBlock[chainKey] + 1;
         if (fromBlock > currentBlock) continue;
-        _evmPollLastBlock[chainKey] = currentBlock;
+        // 不提前更新lastBlock，等全部查完再更新（防止getLogs失败导致区间跳过）
         
         // 只查猎手
         const hunters = rankedWallets.filter(w => w.chain === chainKey && w.status === 'hunter');
@@ -927,14 +930,14 @@ async function pollEvmHunters() {
         const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
         const nativeTokens = new Set(['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c','0x4200000000000000000000000000000000000006','0x55d398326f99059ff775485246999027b3197955','0x833589fcd6edb6e08f4c7c32d4f71b54bda02913']);
         
-        // 并行查猎手（5个一批，提速5倍）
-        const BATCH = 5;
+        // 串行查猎手（drpc限速，2个一批）
+        const BATCH = 2;
         for (let i = 0; i < hunters.length; i += BATCH) {
           const batch = hunters.slice(i, i + BATCH);
           await Promise.all(batch.map(async (h) => {
             try {
               const padded = ethers.zeroPadValue(h.address.toLowerCase(), 32);
-              const logs = await provider.getLogs({ fromBlock, toBlock: currentBlock, topics: [TRANSFER_TOPIC, null, padded] });
+              const logs = await pollProvider.getLogs({ fromBlock, toBlock: currentBlock, topics: [TRANSFER_TOPIC, null, padded] });
               for (const l of logs) {
                 const tokenAddr = l.address.toLowerCase();
                 if (nativeTokens.has(tokenAddr)) continue;
@@ -946,11 +949,18 @@ async function pollEvmHunters() {
                 log('INFO', '🔔 [' + chain.name + '] 轮询检测! 猎手#' + h.rank + ' ' + h.address.slice(0,10) + '... 获得 ' + tokenAddr);
                 await handleSignal({ chain: chainKey, token: tokenAddr, symbol: '?', wallet: h.address.toLowerCase(), walletRank: h.rank, timestamp: Date.now() });
               }
-            } catch {}
+            } catch(e) { if(e.message && !e.message.includes('rate limit')) log('WARN', `EVM轮询猎手${h.rank}异常: ${e.message.slice(0,40)}`); }
           }));
-          await sleep(100);
+          await sleep(200);
         }
+        // 全部猎手查完才更新lastBlock
+        _evmPollLastBlock[chainKey] = currentBlock;
       } catch(e) { if(e.message) log('WARN', `EVM轮询异常(${chainKey}): ${e.message.slice(0,40)}`); }
+      // 查完这条链才更新lastBlock
+      if (_evmPollLastBlock[chainKey + '_pending']) {
+        _evmPollLastBlock[chainKey] = _evmPollLastBlock[chainKey + '_pending'];
+        delete _evmPollLastBlock[chainKey + '_pending'];
+      }
     }
     await sleep(15000); // 15秒一轮
   }
@@ -1810,6 +1820,39 @@ async function managePositions() {
                   }
                 }
               } catch(e) { log('WARN', `${pos.symbol} buyAmount回填失败: ${(e.message||'').slice(0,40)}`); }
+            }
+            // 检查我们自己链上余额是否=0（部分卖出实际全卖了的情况）
+            if (pos.soldRatio > 0 && pos.buyAmount > 0) {
+              try {
+                const trader = require('./dex_trader.js');
+                let ourBal = -1;
+                if (pos.chain === 'solana') {
+                  const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+                    trader.getWalletAddress('solana'), { mint: tokenAddr }, { encoding: 'jsonParsed' }
+                  ]);
+                  if (balData?.result) {
+                    ourBal = (balData.result.value || []).reduce((s, a) => 
+                      s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
+                  }
+                } else {
+                  const { ethers } = require('ethers');
+                  const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                  const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
+                  const bal = await erc20.balanceOf(trader.getWalletAddress('evm'));
+                  ourBal = bal.toString() === '0' ? 0 : 1;
+                }
+                if (ourBal === 0) {
+                  log('INFO', `🧹 ${pos.symbol}(${pos.chain}) 链上余额=0但positions还在，清仓`);
+                  const finalRevenue = pos.sellRevenue || 0;
+                  const finalPnl = finalRevenue - (pos.busCost || pos.buyCost || 0);
+                  log('INFO', `📊 ${pos.symbol} 最终PnL: 成本${pos.busCost||pos.buyCost||0} 回收${finalRevenue.toFixed(2)} 盈亏${finalPnl.toFixed(2)}`);
+                  delete positions[tokenAddr];
+                  boughtTokens.delete(tokenAddr);
+                  saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+                  saveJSON(POSITIONS_FILE, positions);
+                  continue;
+                }
+              } catch(e) {} // RPC失败不处理，下轮重试
             }
             const remaining = pos.buyAmount * (1 - (pos.soldRatio || 0));
             pos.currentValue = currentPrice * remaining;

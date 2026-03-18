@@ -1,16 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1773876540,
-    "walletCheck": 1773876540,
+    "engine": 1742260140,
+    "walletCheck": 1742260140,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773876540,
-    "time_human": "2026-03-18 08:29:00",
-    "sol_hunters_active": true,
-    "sol_rpc_warnings": "6c2asHNf RPC failures (intermittent)",
-    "bsc_detections": true,
-    "base_detections": true,
-    "all_chains_live": true
+    "timestamp": 1742260140,
+    "time_human": "2026-03-18 08:59:00",
+    "sol_2h_detections": 276,
+    "bsc_2h_detections": 134,
+    "base_2h_detections": 0,
+    "ws_errors": "none",
+    "spot_check": "SOL hunter ik1fCER sold token 36m ago (engine OK - sell of non-held token). SOL hunter2 6c2asHNf had txs 43m ago. BSC hunter 0xea06 no activity 1h. Base hunter 0xd5af no activity 1h.",
+    "status": "healthy"
   }
 }
