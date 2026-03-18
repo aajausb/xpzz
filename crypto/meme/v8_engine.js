@@ -350,7 +350,29 @@ async function verifyWallets(wallets) {
         const bal = (acct.lamports || 0) / 1e9;
         // 排除程序账户（executable=true）和非System Program owner的程序
         if (acct.executable) continue;
-        if (bal > 0) { w.verifiedBal = bal; verified.push(w); }
+        // 过滤余额<0.5 SOL的空壳地址
+        if (bal < 0.5) continue;
+        // 过滤无swap交易的地址（查最近5笔，必须有非System Program交互）
+        try {
+          const sigs = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [w.address, { limit: 5 }]);
+          if (!sigs?.result?.length) continue;
+          // 抽查第一笔成功交易，看是否涉及DEX程序
+          const firstOk = sigs.result.find(s => !s.err);
+          if (firstOk) {
+            const txDetail = await rpcPost(getSolRpc(), 'getTransaction', [firstOk.signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
+            const programs = (txDetail?.result?.transaction?.message?.instructions || []).map(i => i.programId || i.program || '');
+            const hasSwap = programs.some(p => 
+              p !== '11111111111111111111111111111111' && // System Program
+              p !== 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' && // Token Program (transfer只用这个)
+              p !== 'ComputeBudget111111111111111111111111111111'
+            );
+            if (!hasSwap) {
+              log('INFO', `  🚫 ${w.address.slice(0,10)} SOL无swap交易，跳过`);
+              continue;
+            }
+          }
+        } catch {}
+        w.verifiedBal = bal; verified.push(w);
       } else {
         const provider = w.chain === 'bsc' ? bscProvider : baseProvider;
         const [code, txCount] = await Promise.all([
@@ -435,7 +457,12 @@ function rankWallets(wallets) {
       }
     }
     if (!walletDb[key2]?._staleDemoted) {
-      if (winRate >= CONFIG.hunterMinWinRate) {
+      // SOL空壳过滤：余额<0.5 SOL强制观察（无swap的空地址/bot）
+      if (w.chain === 'solana' && (w.verifiedBal || 0) < 0.5) {
+        w.status = 'watcher';
+        const key = w.address + '_' + w.chain;
+        if (walletDb[key] && !walletDb[key].watcherSince) walletDb[key].watcherSince = Date.now();
+      } else if (winRate >= CONFIG.hunterMinWinRate) {
         w.status = 'hunter';
       } else if (winRate >= CONFIG.scoutMinWinRate) {
         w.status = 'scout';

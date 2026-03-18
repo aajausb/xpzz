@@ -1,15 +1,14 @@
 {
   "lastChecks": {
-    "engine": 1773892500,
-    "walletCheck": 1773889740,
+    "engine": 1773894420,
+    "walletCheck": 1773894420,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773889740,
-    "time_human": "2026-03-18 11:49:00",
-    "sol_detection": "OK",
-    "bsc_detection": "OK",
-    "base_detection": "quiet"
-  },
-  "notes": "SOL WS 100/100 limit - all 66 hunters fit in first 100, watchers/scouts overflow to polling. OK."
+    "timestamp": 1773894420,
+    "time_human": "2026-03-18 13:07:00",
+    "detections_30min": 348,
+    "sol_verified": "J485YzQj tx detected at 12:29:49",
+    "status": "all_ok"
+  }
 }
