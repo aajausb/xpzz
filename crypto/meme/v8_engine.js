@@ -1186,9 +1186,19 @@ async function handleSignal(signal) {
   }
   if (!confirmed) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
-
-    const extra = (watchCount > 0 ? ` +${watchCount}哨兵` : '') + (watcherCount > 0 ? ` +${watcherCount}观察` : '');
-    log('INFO', `⏳ ${token}(${chain}) 确认中 猎手=${confirmCount} 哨兵=${watchCount}${extra} 最高#${bestRank}`);
+    // 去重日志：同token+同确认数 60秒内不重复打印
+    if (!handleSignal._logDedup) handleSignal._logDedup = {};
+    const dedupKey = `${token}_${confirmCount}_${watchCount}`;
+    const now = Date.now();
+    if (!handleSignal._logDedup[dedupKey] || now - handleSignal._logDedup[dedupKey] >= 60000) {
+      handleSignal._logDedup[dedupKey] = now;
+      const extra = (watchCount > 0 ? ` +${watchCount}哨兵` : '') + (watcherCount > 0 ? ` +${watcherCount}观察` : '');
+      log('INFO', `⏳ ${token.slice(0,10)}(${chain}) 确认中 猎手=${confirmCount} 哨兵=${watchCount}${extra} 最高#${bestRank}`);
+      // 清理过期key
+      if (Object.keys(handleSignal._logDedup).length > 200) {
+        for (const k in handleSignal._logDedup) { if (now - handleSignal._logDedup[k] > 120000) delete handleSignal._logDedup[k]; }
+      }
+    }
     return;
   }
   
@@ -1709,8 +1719,13 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       
       log('INFO', `✅ 买入成功 ${symbol} | $${size} | 数量=${buyAmount} | 价格=$${buyPrice} | tx: ${result.txHash || '?'}`);
       
-      // 通知
-      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}\n🔗 ${result.txHash || ''}`);
+      // 通知（附带猎手排名）
+      const hunterRanks = confirmWallets.map(addr => {
+        const w = rankedWallets.find(rw => (rw.address || '').toLowerCase() === addr.toLowerCase());
+        return w && w.status === 'hunter' ? `${w.chain === 'bsc' ? 'BSC' : w.chain === 'base' ? 'Base' : 'SOL'}猎手#${w.rank}` : null;
+      }).filter(Boolean);
+      const rankLine = hunterRanks.length > 0 ? `\n🏹 ${hunterRanks.join(' ')}` : '';
+      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}${rankLine}\n🔗 ${result.txHash || ''}`);
     } else if (result.error === 'SOL确认超时' && result.txHash) {
       // 交易已发送但确认超时→可能已上链，查余额确认
       log('WARN', `⚠️ ${symbol} 确认超时，查链上余额...`);
@@ -1737,7 +1752,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
           confirmCount, confirmWallets,
         };
         saveJSON(POSITIONS_FILE, positions);
-        await notifyTelegram(`🟢 v8买入 ${symbol}(${chain}) [确认超时但成功]\n💰 $${size} | 猎手${confirmCount}\n🔗 ${result.txHash}`);
+        await notifyTelegram(`🟢 v8买入 ${symbol}(${chain}) [确认超时但成功]\n💰 $${size} | 猎手${confirmCount}${rankLine}\n🔗 ${result.txHash}`);
       } else {
         log('WARN', `❌ ${symbol} 确认超时且链上无余额，买入失败`);
       }
