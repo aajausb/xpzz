@@ -1,20 +1,17 @@
 {
   "lastChecks": {
-    "engine": 1773788500,
-    "walletCheck": 1773788500,
+    "engine": 1773890820,
+    "walletCheck": 1773890820,
     "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773788500,
-    "time_human": "2026-03-18 06:59:00",
-    "sol_hunters_checked": 2,
-    "bsc_hunters_checked": 2,
-    "base_hunters_checked": 2,
-    "sol_last_tx_age_h": "7-35h",
-    "engine_buys_2h": 3,
-    "engine_buy_fails": 3,
-    "fail_reason": "Insufficient liquidity (MR SPEED COIN, BRC, Qi)",
-    "positions": 4,
-    "errors": "none critical"
+    "timestamp": 1773890820,
+    "time_human": "2026-03-18 07:30:00",
+    "sol_2h_detections": 316,
+    "bsc_2h_detections": 72,
+    "base_2h_detections": 30,
+    "unique_sol_wallets_2h": 58,
+    "sol_rpc_failures_1h": 84,
+    "note": "CyaE1V(rank#2 hunter) actively trading but no WS detection since 04:50 - possible WS subscription gap. SOL WS overall working (316 detections). Not urgent - will flag to 跑步哥 when awake."
   }
 }
