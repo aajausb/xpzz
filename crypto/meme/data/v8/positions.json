@@ -1,34 +1,4 @@
 {
-  "2zLvKDtNSUT74Q98mpS2LntiXmF2prTpkhm4XiVwpump": {
-    "chain": "solana",
-    "token": "2zLvKDtNSUT74Q98mpS2LntiXmF2prTpkhm4XiVwpump",
-    "symbol": "UGOR",
-    "buyPrice": 0.0003417,
-    "buyAmount": 99676.795386,
-    "buyAmountRaw": 99676.795386,
-    "buyCost": 32,
-    "buyTime": 1773754557672,
-    "confirmCount": 2,
-    "confirmWallets": [
-      "Za7LfQJ6LCnBiNrdAAL7e75DPmExG6y3deLmYk6ozu4",
-      "33WDPWD74LAB9m79MgJtpxwACwNxVsmwwrv7n4S1kRn2",
-      "pYffPQeb49X2QdrecP6GTER3MePTnuGLgsh6JN2FoZk",
-      "87nWQxQvYvnijGKAD5yt8QafCr1sCsbRs8KroufmVogw"
-    ],
-    "currentPrice": 0.0003915,
-    "currentValue": 39.023465393619,
-    "pnlPercent": 14.574187884108856,
-    "totalPnl": 7.023465393618999,
-    "totalPnlPercent": 21.94832935505937,
-    "_sells": [
-      {
-        "wallet": "33WDPWD74LAB9m79MgJtpxwACwNxVsmwwrv7n4S1kRn2",
-        "time": 1773756055715,
-        "source": "patrol"
-      }
-    ],
-    "_lastSmCheck": 1773858580139
-  },
   "9QSjVAg5rDfBZPhvKwZcB63St3r6bqohP3Adurkjpump": {
     "chain": "solana",
     "token": "9QSjVAg5rDfBZPhvKwZcB63St3r6bqohP3Adurkjpump",
@@ -44,12 +14,12 @@
       "6c2asHNf5gWgZvPXVYQ4ebJCUYspEbmaz2A7M7p84RcN",
       "3VCx8WYeP6dmWaUgChyvNEqTqaCn9bNDsYBgBVbHTZ68"
     ],
-    "currentPrice": 0.0001994,
-    "currentValue": 6.6386866933558,
-    "pnlPercent": -22.95208655332303,
-    "totalPnl": -3.053784332015251,
-    "totalPnlPercent": -11.310312340797227,
-    "_lastSmCheck": 1773858581216,
+    "currentPrice": 0.0001961,
+    "currentValue": 6.5288187591127,
+    "pnlPercent": -24.22720247295209,
+    "totalPnl": -3.163652266258353,
+    "totalPnlPercent": -11.717230615771678,
+    "_lastSmCheck": 1773860393084,
     "_sells": [
       {
         "wallet": "EsnPMjPo9pH7sWS2r28H2xC214S8BSXhyYgMG3vXbSgt",
@@ -65,40 +35,26 @@
     "sellRevenue": 17.307528974628948,
     "soldRatio": 0.6666666666666666
   },
-  "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump": {
+  "89S7oVB4hui8ceJqhHreWB7fcxdthfvoB7z2pfJtpump": {
     "chain": "solana",
-    "token": "C4yDhKwkikpVGCQWD9BT2SJyHAtRFFnKPDM9Nyshpump",
-    "symbol": "Life",
-    "buyPrice": 0.0002762,
-    "buyAmount": 99121.163485,
-    "buyAmountRaw": 99121.163485,
-    "buyCost": 28,
-    "buyTime": 1773798893638,
-    "confirmCount": 2,
+    "token": "89S7oVB4hui8ceJqhHreWB7fcxdthfvoB7z2pfJtpump",
+    "symbol": "abcdefg",
+    "buyPrice": 0.0005999,
+    "buyAmount": 50008.33472245374,
+    "buyAmountRaw": 50008.33472245374,
+    "buyCost": 30,
+    "buyTime": 1773860086895,
+    "confirmCount": 1,
     "confirmWallets": [
-      "6c2asHNf5gWgZvPXVYQ4ebJCUYspEbmaz2A7M7p84RcN",
-      "FmWKN36kiu1e4C5dABSN5x5uEmCuSUGWGjyn8g56MYm"
+      "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
+      "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
+      "D3MuDmrs2dm6U9CiZur651CnPjLwUWjs9p1a3PoDs76H"
     ],
-    "currentPrice": 0.0002002,
-    "currentValue": 9.922028464848498,
-    "pnlPercent": -27.5162925416365,
-    "totalPnl": -5.36568231820025,
-    "totalPnlPercent": -19.163151136429462,
-    "_lastSmCheck": 1773858581676,
-    "_transfers": {
-      "FmWKN36kiu1e4C5dABSN5x5uEmCuSUGWGjyn8g56MYm": {
-        "subWallet": "6Wzuv7vLc6Vq8HJcHwwSCE9SKcdJiuoJmJm3EMFkWERN",
-        "time": 1773800458159
-      }
-    },
-    "_sells": [
-      {
-        "wallet": "FmWKN36kiu1e4C5dABSN5x5uEmCuSUGWGjyn8g56MYm",
-        "time": 1773800458417,
-        "source": "sub-patrol"
-      }
-    ],
-    "sellRevenue": 12.71228921695125,
-    "soldRatio": 0.5
+    "currentPrice": 0.0006658,
+    "currentValue": 33.295549258209704,
+    "pnlPercent": 10.985164194032343,
+    "totalPnl": 3.2955492582097037,
+    "totalPnlPercent": 10.985164194032345,
+    "_lastSmCheck": 1773860393381
   }
 }
