@@ -39,7 +39,7 @@ const CONFIG = {
   sellThreshold: 0.5,                      // SM卖出比例≥50%才触发跟卖
   
   // 启用的链（关掉的链不监控、不交易）
-  enabledChains: ['solana', 'base'],       // BSC关闭：余额$0
+  enabledChains: ['solana', 'bsc', 'base'],  // 三链全开
 };
 
 // ============ PATHS ============
@@ -100,6 +100,22 @@ function markSolRpcDown(url) {
 }
 const SOL_QN_RPC = SOL_RPCS[0];
 const SOL_PUBLIC_RPC = SOL_RPCS[0]; // 兼容旧引用
+
+// Token-2022兼容：查余额同时查spl-token和spl-token-2022
+async function getSolTokenBalance(owner, mint) {
+  let total = 0;
+  for (const programId of ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb']) {
+    try {
+      const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+        owner, { mint }, { encoding: 'jsonParsed', programId }
+      ]);
+      for (const a of (balData.result?.value || [])) {
+        total += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
+      }
+    } catch {}
+  }
+  return total;
+}
 
 const OKX_ENV = {
   ...process.env,
@@ -663,6 +679,22 @@ function setupSolanaMonitor() {
   pollSolanaWallets();
 }
 
+// SOL WS统一重连：防抖+递增退避+锁
+let _solWsReconnectTimer = null;
+let _solWsReconnectDelay = 10000; // 起步10秒
+const _SOL_WS_MAX_DELAY = 120000; // 最大120秒
+function _triggerSolWsReconnect() {
+  if (_solWsReconnectTimer) return; // 已有定时器在等，跳过
+  const delay = Math.min(_solWsReconnectDelay, _SOL_WS_MAX_DELAY);
+  log('INFO', `🔌 [SOL] WS将在${Math.round(delay/1000)}秒后重连`);
+  _solWsReconnectTimer = setTimeout(() => {
+    _solWsReconnectTimer = null;
+    _solWsReconnectDelay = Math.min(_solWsReconnectDelay * 1.5, _SOL_WS_MAX_DELAY); // 递增
+    setupOfficialSolWs();
+  }, delay);
+}
+function _resetSolWsReconnectDelay() { _solWsReconnectDelay = 10000; } // WS成功连接后重置
+
 // QuickNode WS: 100个/连接限制，多连接分片覆盖全部钱包
 function setupOfficialSolWs() {
   // 按优先级排序: hunter > scout > watcher
@@ -700,6 +732,7 @@ function setupOfficialSolWs() {
     let subscribed = 0;
     
     ws.on('open', async () => {
+      if (ci === 0) _resetSolWsReconnectDelay(); // 主连接成功→重置退避
       for (let i = 0; i < chunk.length; i++) {
         if (ws.readyState !== WebSocket.OPEN) break;
         const addr = chunk[i];
@@ -1167,10 +1200,31 @@ async function verifyEvmSell(chainKey, txHash, walletAddr, tokenAddr) {
 }
 
 // ============ PHASE 3: 过滤层 ============
+// 已知稳定币/大币合约地址（信号阶段过滤，不用等审计）
+const SKIP_TOKENS = new Set([
+  // BSC
+  '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // USDC
+  '0x55d398326f99059ff775485246999027b3197955', // USDT
+  '0xe9e7cea3dedca5984780bafc599bd69add087d56', // BUSD
+  '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', // WBNB
+  '0x2170ed0880ac9a755fd29b2688956bd959f933f8', // ETH on BSC
+  // Base
+  '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC
+  '0x4200000000000000000000000000000000000006', // WETH
+  '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', // DAI
+  // Solana
+  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
+  'So11111111111111111111111111111111111111112',    // wSOL
+].map(a => a.toLowerCase()));
+
 async function handleSignal(signal) {
   const { chain, wallet, walletRank } = signal;
   // EVM地址统一小写，SOL保持原样（base58区分大小写）
   const token = chain === 'solana' ? signal.token : signal.token.toLowerCase();
+  
+  // 稳定币/大币地址直接跳过（不等审计）
+  if (SKIP_TOKENS.has(token.toLowerCase())) return;
   
   // 已持仓 → 不买但把新SM加入confirmWallets（跟卖追踪，上限20个防巡检爆炸）
   if (positions[token]) {
@@ -1507,8 +1561,7 @@ async function handleSignal(signal) {
             if (cachedSolBal2 !== undefined) {
               bal2 = cachedSolBal2;
             } else {
-              const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [smWallet, { mint: token }, { encoding: 'jsonParsed' }]);
-              bal2 = (balData.result?.value || []).reduce((s, a) => s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
+              bal2 = await getSolTokenBalance(smWallet, token);
               setCachedSolBalance(smWallet, token, bal2);
             }
             if (bal2 * price >= 1) stillHolding++;
@@ -1759,20 +1812,17 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         buyPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
         
         if (chain === 'solana') {
-          // 查token余额（三次重试不同RPC）
+          // 查token余额（三次重试，兼容Token-2022）
           for (let _try = 0; _try < 3 && buyAmount === 0; _try++) {
             try {
               if (_try > 0) await sleep(2000);
-              const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-                require('./dex_trader.js').getWalletAddress('solana'),
-                { mint: tokenAddress },
-                { encoding: 'jsonParsed' }
-              ]);
-              const accts = balData.result?.value || [];
-              for (const a of accts) {
-                buyAmount += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
-              }
+              buyAmount = await getSolTokenBalance(require('./dex_trader.js').getWalletAddress('solana'), tokenAddress);
             } catch(e) { if (_try < 2) log('WARN', `查SOL余额第${_try+1}次失败: ${e.message?.slice(0,40)}`); }
+          }
+          // fallback: 查不到余额用cost÷price估算，不记0
+          if (buyAmount === 0 && buyPrice > 0) {
+            buyAmount = size / buyPrice;
+            log('WARN', `⚠️ ${symbol} 余额查询返回0，用估算值: ${buyAmount.toFixed(0)}`);
           }
         } else {
           // EVM查ERC20余额
@@ -1833,12 +1883,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       try {
         const trader2 = require('./dex_trader.js');
         if (chain === 'solana') {
-          const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-            trader2.getWalletAddress('solana'), { mint: tokenAddress }, { encoding: 'jsonParsed' }
-          ]);
-          for (const a of (balData.result?.value || [])) {
-            actualAmount += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
-          }
+          actualAmount = await getSolTokenBalance(trader2.getWalletAddress('solana'), tokenAddress);
         }
       } catch {}
       if (actualAmount > 0) {
@@ -1927,12 +1972,16 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         let partialAmount;
         try {
           if (pos.chain === 'solana') {
-            const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-              trader.getWalletAddress('solana'), { mint: tokenAddress }, { encoding: 'jsonParsed' }
-            ]);
             let onChainBal = 0n;
-            for (const a of (balData.result?.value || [])) {
-              onChainBal += BigInt(a.account?.data?.parsed?.info?.tokenAmount?.amount || '0');
+            for (const programId of ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb']) {
+              try {
+                const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+                  trader.getWalletAddress('solana'), { mint: tokenAddress }, { encoding: 'jsonParsed', programId }
+                ]);
+                for (const a of (balData.result?.value || [])) {
+                  onChainBal += BigInt(a.account?.data?.parsed?.info?.tokenAmount?.amount || '0');
+                }
+              } catch {}
             }
             partialAmount = (onChainBal * BigInt(Math.floor(ratio * 1000)) / 1000n).toString();
           } else {
@@ -2046,13 +2095,7 @@ async function managePositions() {
               try {
                 const trader = require('./dex_trader.js');
                 if (pos.chain === 'solana') {
-                  const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-                    trader.getWalletAddress('solana'), { mint: tokenAddr }, { encoding: 'jsonParsed' }
-                  ]);
-                  let onChainBal = 0;
-                  for (const a of (balData.result?.value || [])) {
-                    onChainBal += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
-                  }
+                  const onChainBal = await getSolTokenBalance(trader.getWalletAddress('solana'), tokenAddr);
                   if (onChainBal > 0) {
                     pos.buyAmount = onChainBal;
                     pos.buyAmountRaw = onChainBal;
@@ -2274,8 +2317,21 @@ async function managePositions() {
         // 归零快速清仓：跌99%以上 或 绝对价值<$0.01 直接清（不等SM，币已经死了）
         if (pos.buyPrice > 0 && pos.currentPrice > 0) {
           const dropPct = ((pos.buyPrice - pos.currentPrice) / pos.buyPrice) * 100;
-          const remaining = (pos.buyAmount || 0) * (1 - (pos.soldRatio || 0));
-          const absValue = remaining * pos.currentPrice;
+          let remaining = (pos.buyAmount || 0) * (1 - (pos.soldRatio || 0));
+          let absValue = remaining * pos.currentPrice;
+          // 如果记录的amount=0或absValue=0，去链上核实真实余额再判定
+          if ((remaining <= 0 || absValue < 0.01) && pos.chain === 'solana') {
+            try {
+              const realBal = await getSolTokenBalance(require('./dex_trader.js').getWalletAddress('solana'), tokenAddr);
+              if (realBal > 0) {
+                log('INFO', `🔍 ${pos.symbol} 链上余额${realBal.toFixed(0)}(记录=0)，修正`);
+                pos.buyAmount = realBal; pos.buyAmountRaw = realBal;
+                remaining = realBal * (1 - (pos.soldRatio || 0));
+                absValue = remaining * pos.currentPrice;
+                saveJSON(POSITIONS_FILE, positions);
+              }
+            } catch {}
+          }
           if (dropPct >= 99 || (absValue < 0.01 && pos.buyCost > 1)) {
             const reason = absValue < 0.01 ? `价值$${absValue.toExponential(1)}归零` : `跌${dropPct.toFixed(0)}%归零`;
             log('INFO', `💀 ${pos.symbol}(${pos.chain}) ${reason}，清仓`);

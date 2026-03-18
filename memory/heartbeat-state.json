@@ -1,13 +1,16 @@
 {
   "lastChecks": {
-    "wallet": 1742313240,
-    "engine": 1742313240,
-    "memory": 1742313240
+    "walletCheck": 1742312500,
+    "engine": 1742312500,
+    "memory": 1742312500
   },
   "lastWalletCheck": {
-    "time": "2026-03-18T22:54+08:00",
-    "sol2": "CyaE1VxvBr 52条/1h ✅",
-    "bsc3": "0x2ce9d43d checked",
-    "result": "正常"
+    "time": "2026-03-18 23:41",
+    "results": {
+      "SOL_#2_CyaE1V": "活跃，引擎检测到66次（正常）",
+      "SOL_#3_BAr5cs": "最近交易9小时前，无新交易（正常）",
+      "BSC_#1_0x92d6": "未抽查（BSC无余额）"
+    },
+    "wsLeaked": false
   }
 }
