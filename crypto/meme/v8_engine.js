@@ -37,6 +37,9 @@ const CONFIG = {
   
   // 止损/止盈
   sellThreshold: 0.5,                      // SM卖出比例≥50%才触发跟卖
+  
+  // 启用的链（关掉的链不监控、不交易）
+  enabledChains: ['solana', 'base'],       // BSC关闭：余额$0
 };
 
 // ============ PATHS ============
@@ -286,6 +289,7 @@ async function fetchBinanceRank() {
   const allWallets = [];
   
   for (const [chainKey, chain] of Object.entries(CHAINS)) {
+    if (!CONFIG.enabledChains.includes(chainKey)) continue;
     for (const period of ['7d', '30d']) {
       for (let page = 1; page <= 4; page++) {
         try {
@@ -739,16 +743,9 @@ function setupOfficialSolWs() {
     });
     
     ws.on('close', () => {
-      log('WARN', `🔌 [SOL] WS#${ci+1} 断开，5秒后重连`);
+      log('WARN', `🔌 [SOL] WS#${ci+1} 断开`);
       if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
-      // 防止指数级重连爆炸：只有第一个连接触发重连，且加锁防并发
-      if (ci === 0 && !setupOfficialSolWs._reconnecting) {
-        setupOfficialSolWs._reconnecting = true;
-        setTimeout(() => {
-          setupOfficialSolWs._reconnecting = false;
-          setupOfficialSolWs();
-        }, 5000);
-      }
+      _triggerSolWsReconnect();
     });
     
     ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS#${ci+1}错误: ${e.message.slice(0,40)}`); });
@@ -769,7 +766,7 @@ function setupOfficialSolWs() {
         clearInterval(healthCheck);
         try { ws.removeAllListeners(); ws.terminate(); } catch {}
         if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
-        setTimeout(() => setupOfficialSolWs(), 5000);
+        _triggerSolWsReconnect();
       }
     }, 30000);
   } // end for each chunk
@@ -1049,6 +1046,7 @@ async function pollEvmHunters() {
   log('INFO', '🔌 [EVM] 猎手轮询兜底启动');
   while (true) {
     for (const chainKey of ['bsc', 'base']) {
+      if (!CONFIG.enabledChains.includes(chainKey)) continue;
       try {
         // 轮询直接用QuickNode（付费，不限速）
         const pollProvider = chainKey === 'bsc' ? bscProvider : baseProvider;
@@ -2409,9 +2407,9 @@ async function main() {
   console.log(`💼 持仓: ${Object.keys(positions).length}个`);
   
   // Phase 2: 启动监控
-  setupSolanaMonitor();
-  setupEvmWebSocket('bsc');
-  setupEvmWebSocket('base');
+  if (CONFIG.enabledChains.includes('solana')) setupSolanaMonitor();
+  if (CONFIG.enabledChains.includes('bsc')) setupEvmWebSocket('bsc');
+  if (CONFIG.enabledChains.includes('base')) setupEvmWebSocket('base');
   pollEvmHunters(); // EVM猎手轮询兜底（WS可能静默丢事件）
   
   // 持仓管理
@@ -2439,8 +2437,8 @@ async function main() {
       if (newBsc + newBase + newSol > 0) {
         log('INFO', `  新增监控钱包: SOL+${newSol} BSC+${newBsc} Base+${newBase}`);
         // 有新EVM钱包→重连WS以订阅新地址
-        if (newBsc > 0) { log('INFO', '  🔌 BSC WS重连(新钱包)'); setupEvmWebSocket('bsc'); }
-        if (newBase > 0) { log('INFO', '  🔌 Base WS重连(新钱包)'); setupEvmWebSocket('base'); }
+        if (newBsc > 0 && CONFIG.enabledChains.includes('bsc')) { log('INFO', '  🔌 BSC WS重连(新钱包)'); setupEvmWebSocket('bsc'); }
+        if (newBase > 0 && CONFIG.enabledChains.includes('base')) { log('INFO', '  🔌 Base WS重连(新钱包)'); setupEvmWebSocket('base'); }
       }
       log('INFO', `  排名更新: ${rankedWallets.length}个钱包 (库${Object.keys(walletDb).length}个)`);
     } catch(e) {
