@@ -1,19 +1,13 @@
 {
   "lastChecks": {
-    "engine": 1773937020,
-    "walletCheck": 1773937020,
-    "memory": null
+    "email": null,
+    "calendar": null,
+    "weather": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773937020,
-    "time_human": "2026-03-19 03:57:00",
-    "detections_1h": 795,
-    "sol_signals": 5576,
-    "bsc_signals": 62,
-    "base_signals": 0,
-    "sol_check": "OK - 4vw54BmA txs detected, minor balance query failures (safe fallback)",
-    "bsc_check": "OK - 62 signals",
-    "base_check": "quiet",
-    "errors": "SM balance query intermittent failures (non-blocking)"
+    "time": "2026-03-19T04:28:00+08:00",
+    "result": "ok",
+    "details": "SOL hunter 7VR6WfmAwG last tx 12h ago, BSC hunter 0x10f6ac28 nonce 381, engine detected 632 swaps in 1h, just bought 5X4iVAM2DJ at 04:28",
+    "wsStatus": "SOL reconnecting but functional, BSC 4 WS active,轮询 backup working"
   }
 }
