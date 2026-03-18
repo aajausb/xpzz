@@ -1729,5 +1729,33 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1773850342652
+  },
+  "2HcuSURpcZAeX1qmqLWqEEZMCWSbXuuVZdNWPKoBcC7R": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "7MM1yekyg2UAQ7Upaq2qRfMPrnSHvyBGb6DbyGccupwN": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "F238PaqZCzdhSHukByddRhF8WGht2W9CwRaWfDwxpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "EQYgaffobp8sVgJw3DeMcm5L4TRV7ATdB9jcTpxspump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0x156f399b6147bf44bc28aaee0c4355b6e5c1dfd6": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773851699179
   }
 }

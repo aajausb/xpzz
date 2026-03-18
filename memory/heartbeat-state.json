@@ -1,16 +1,19 @@
 {
   "lastChecks": {
-    "walletCheck": 1742312500,
-    "engine": 1742312500,
-    "memory": 1742312500
+    "engine": 1773926220,
+    "walletCheck": 1773926220,
+    "memory": null
   },
   "lastWalletCheck": {
-    "time": "2026-03-18 23:41",
-    "results": {
-      "SOL_#2_CyaE1V": "活跃，引擎检测到66次（正常）",
-      "SOL_#3_BAr5cs": "最近交易9小时前，无新交易（正常）",
-      "BSC_#1_0x92d6": "未抽查（BSC无余额）"
-    },
-    "wsLeaked": false
+    "timestamp": 1773926220,
+    "time_human": "2026-03-19 00:57:00",
+    "detections_1h": 1086,
+    "sol_detections": 3704,
+    "bsc_detections": 374,
+    "base_detections": 0,
+    "sol_check": "OK - CyaE1Vxv detected + scatter-buy demotion active",
+    "bsc_check": "OK - 374 signals in last hour",
+    "base_check": "quiet - 0 signals (may be low activity period)",
+    "errors": "none"
   }
 }
