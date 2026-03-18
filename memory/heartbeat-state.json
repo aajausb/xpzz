@@ -1,14 +1,15 @@
 {
   "lastChecks": {
-    "engine": 1773798063,
-    "walletCheck": 1773798063
+    "engine": 1773980400,
+    "walletCheck": 1773980400,
+    "memory": null
   },
   "lastWalletCheck": {
-    "timestamp": 1773798063607,
-    "time_human": "2026-03-18 09:41:03",
-    "sol_top1": "ok4zFPMn 最近交易586min前(不活跃)",
-    "bsc_top1": "0x92d693 最近1h 0笔",
-    "base_top1": "0xe7bc2a 最近1h 0笔",
-    "notes": "Top猎手凌晨不活跃。BSC轮询兜底已修复(改drpc),检测到5条信号。无漏检。"
+    "timestamp": 1773980400,
+    "time_human": "2026-03-18 10:10:00",
+    "sol_1h": 231,
+    "bsc_1h": 219,
+    "base_1h": 0,
+    "notes": "Base WS connected but no hunter swaps in last hour. SOL hunter ASVzakeP tx was FLASH program (not swap) - correctly not flagged. Engine restarted 4x between 09:06-09:30, current PID stable since 09:30. EVM polling has intermittent RPC errors (auto-retry). SOL RPC rate limit auto-switching works."
   }
 }
