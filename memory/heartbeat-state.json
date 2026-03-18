@@ -1,14 +1,13 @@
 {
   "lastChecks": {
-    "walletCheck": 1742290860,
-    "processCheck": 1742290860,
-    "memoryCheck": 1742290860,
-    "notifyQueue": 1742290860
+    "wallet": 1742313240,
+    "engine": 1742313240,
+    "memory": 1742313240
   },
   "lastWalletCheck": {
-    "time": "2026-03-18T17:41+08:00",
-    "sol": {"checked": ["CyaE1V","G6fUXj"], "txCount": [0,0], "engineDetected": true},
-    "bsc": {"checked": ["0x8d5624","0x2ce9d4"], "txCount": [0,0], "engineDetected": true},
-    "base": {"checked": ["0x36e582","0x3f28e3"], "txCount": [0,1], "engineDetected": true}
+    "time": "2026-03-18T22:54+08:00",
+    "sol2": "CyaE1VxvBr 52条/1h ✅",
+    "bsc3": "0x2ce9d43d checked",
+    "result": "正常"
   }
 }
