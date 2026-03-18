@@ -107,6 +107,33 @@ const OKX_ENV = {
 
 const bscProvider = new ethers.JsonRpcProvider('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/');
 const baseProvider = new ethers.JsonRpcProvider('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/');
+// 备用免费RPC（非关键路径分流，减轻QuickNode压力）
+const bscFallbackProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
+const baseFallbackProvider = new ethers.JsonRpcProvider('https://base.publicnode.com');
+
+// EVM余额查询缓存（减少重复RPC调用）
+const _balanceCache = {};
+const BALANCE_CACHE_TTL = 60000; // 60秒有效
+function getCachedBalance(wallet, token) {
+  const key = wallet.toLowerCase() + '_' + token.toLowerCase();
+  const c = _balanceCache[key];
+  if (c && Date.now() - c.time < BALANCE_CACHE_TTL) return c.value;
+  return undefined;
+}
+function setCachedBalance(wallet, token, value) {
+  const key = wallet.toLowerCase() + '_' + token.toLowerCase();
+  _balanceCache[key] = { value, time: Date.now() };
+  // 清理过期缓存（防内存泄漏，每100次写入清一次）
+  if (!setCachedBalance._count) setCachedBalance._count = 0;
+  if (++setCachedBalance._count % 100 === 0) {
+    const now = Date.now();
+    for (const k in _balanceCache) { if (now - _balanceCache[k].time > BALANCE_CACHE_TTL * 2) delete _balanceCache[k]; }
+  }
+}
+// 非关键路径EVM provider（转仓追踪、SM余额巡检等）
+function getFallbackProvider(chain) {
+  return chain === 'bsc' ? bscFallbackProvider : baseFallbackProvider;
+}
 
 // OKX DEX链ID和原生代币
 const CHAIN_ID = { solana: '501', bsc: '56', base: '8453' };
@@ -466,9 +493,13 @@ const transferTracker = {};
 // 检查EVM最后一笔Transfer是转给Router(卖出)还是普通地址(转仓)
 async function checkEvmTransferTarget(chain, tokenAddr, smWallet) {
   try {
-    const provider = chain === 'bsc' ? bscProvider : baseProvider;
+    // 非关键路径，用备用RPC减轻QuickNode压力
+    const provider = getFallbackProvider(chain);
     const routers = DEX_ROUTERS[chain] || new Set();
-    const latestBlock = await provider.getBlockNumber();
+    let latestBlock;
+    try { latestBlock = await provider.getBlockNumber(); } catch {
+      latestBlock = await (chain === 'bsc' ? bscProvider : baseProvider).getBlockNumber();
+    }
     // 查最近5000块的Transfer事件（~4小时BSC）
     const logs = await provider.getLogs({
       address: tokenAddr,
@@ -1184,10 +1215,29 @@ async function handleSignal(signal) {
             holdingUsd = bal * price;
           } else {
             const { ethers } = require('ethers');
-            const provider = chain === 'bsc' ? bscProvider : baseProvider;
-            const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
-            const [bal, dec] = await Promise.all([erc20.balanceOf(sig.wallet), erc20.decimals()]);
-            holdingUsd = parseFloat(ethers.formatUnits(bal, dec)) * price;
+            // 确认阶段：先查缓存，没有则用备用RPC（QuickNode兜底）
+            const cachedBal = getCachedBalance(sig.wallet, token);
+            if (cachedBal !== undefined) {
+              const provider = chain === 'bsc' ? bscProvider : baseProvider;
+              const erc20 = new ethers.Contract(token, ['function decimals() view returns (uint8)'], provider);
+              let dec; try { dec = await erc20.decimals(); } catch { dec = 18; }
+              holdingUsd = parseFloat(ethers.formatUnits(cachedBal, dec)) * price;
+            } else {
+              const fbProvider = getFallbackProvider(chain);
+              const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], fbProvider);
+              try {
+                const [bal, dec] = await Promise.all([erc20.balanceOf(sig.wallet), erc20.decimals()]);
+                setCachedBalance(sig.wallet, token, bal);
+                holdingUsd = parseFloat(ethers.formatUnits(bal, dec)) * price;
+              } catch {
+                // 备用RPC失败→QuickNode兜底
+                const qnProvider = chain === 'bsc' ? bscProvider : baseProvider;
+                const erc20qn = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], qnProvider);
+                const [bal, dec] = await Promise.all([erc20qn.balanceOf(sig.wallet), erc20qn.decimals()]);
+                setCachedBalance(sig.wallet, token, bal);
+                holdingUsd = parseFloat(ethers.formatUnits(bal, dec)) * price;
+              }
+            }
           }
           return { sig, holdingUsd };
         } catch { return { sig, holdingUsd: -1 }; } // -1=查询失败，算有效
@@ -1286,10 +1336,25 @@ async function handleSignal(signal) {
             const bal = (balData.result?.value || []).reduce((s, a) => s + parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0), 0);
             if (bal * price >= 1) stillHolding++;
           } else {
-            const provider = chain === 'bsc' ? bscProvider : baseProvider;
-            const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
-            const [bal, dec] = await Promise.all([erc20.balanceOf(smWallet), erc20.decimals()]);
-            if (parseFloat(ethers.formatUnits(bal, dec)) * price >= 1) stillHolding++;
+            const cachedBal = getCachedBalance(smWallet, token);
+            if (cachedBal !== undefined) {
+              let dec2; try { const c = new ethers.Contract(token, ['function decimals() view returns (uint8)'], chain === 'bsc' ? bscProvider : baseProvider); dec2 = await c.decimals(); } catch { dec2 = 18; }
+              if (parseFloat(ethers.formatUnits(cachedBal, dec2)) * price >= 1) stillHolding++;
+            } else {
+              const fbProvider = getFallbackProvider(chain);
+              const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], fbProvider);
+              try {
+                const [bal, dec] = await Promise.all([erc20.balanceOf(smWallet), erc20.decimals()]);
+                setCachedBalance(smWallet, token, bal);
+                if (parseFloat(ethers.formatUnits(bal, dec)) * price >= 1) stillHolding++;
+              } catch {
+                const qnProvider = chain === 'bsc' ? bscProvider : baseProvider;
+                const erc20qn = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], qnProvider);
+                const [bal, dec] = await Promise.all([erc20qn.balanceOf(smWallet), erc20qn.decimals()]);
+                setCachedBalance(smWallet, token, bal);
+                if (parseFloat(ethers.formatUnits(bal, dec)) * price >= 1) stillHolding++;
+              }
+            }
           }
         } catch { stillHolding++; } // 查询失败算持有
       }
@@ -1930,12 +1995,25 @@ async function managePositions() {
                   }
                 }
               } else {
-                // EVM: 查token余额
+                // EVM: 查token余额（走缓存+备用RPC，减轻QuickNode压力）
                 const { ethers } = require('ethers');
-                const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
-                const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
+                const cachedBal = getCachedBalance(smWallet, tokenAddr);
                 let bal;
-                try { bal = await erc20.balanceOf(smWallet); } catch(e) { log('WARN', `查SM ${smWallet.slice(0,10)} ${pos.symbol} 余额失败: ${e.message?.slice(0,40)}`); continue; }
+                if (cachedBal !== undefined) {
+                  bal = cachedBal;
+                } else {
+                  const fbProvider = getFallbackProvider(pos.chain);
+                  const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], fbProvider);
+                  try { bal = await erc20.balanceOf(smWallet); } catch(e) {
+                    // 备用RPC失败→回退QuickNode
+                    try {
+                      const qnProvider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                      const erc20qn = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], qnProvider);
+                      bal = await erc20qn.balanceOf(smWallet);
+                    } catch(e2) { log('WARN', `查SM ${smWallet.slice(0,10)} ${pos.symbol} 余额失败: ${e2.message?.slice(0,40)}`); continue; }
+                  }
+                  setCachedBalance(smWallet, tokenAddr, bal);
+                }
                 // EVM灰尘判定：余额极小视为已清仓
                 const balNum = parseFloat(ethers.formatUnits(bal, 18));
                 const balValue = balNum * (pos.currentPrice || 0);
@@ -1981,9 +2059,22 @@ async function managePositions() {
                 }
               } else {
                 const { ethers } = require('ethers');
-                const provider = pos.chain === 'bsc' ? bscProvider : baseProvider;
-                const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], provider);
-                let bal; try { bal = await erc20.balanceOf(sub); } catch(e) { log('WARN', `查小号 ${sub.slice(0,10)} 余额失败: ${e.message?.slice(0,40)}`); continue; }
+                const cachedBal = getCachedBalance(sub, tokenAddr);
+                let bal;
+                if (cachedBal !== undefined) {
+                  bal = cachedBal;
+                } else {
+                  const fbProvider = getFallbackProvider(pos.chain);
+                  const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], fbProvider);
+                  try { bal = await erc20.balanceOf(sub); } catch(e) {
+                    try {
+                      const qnProvider = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                      const erc20qn = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)'], qnProvider);
+                      bal = await erc20qn.balanceOf(sub);
+                    } catch(e2) { log('WARN', `查小号 ${sub.slice(0,10)} 余额失败: ${e2.message?.slice(0,40)}`); continue; }
+                  }
+                  setCachedBalance(sub, tokenAddr, bal);
+                }
                 if (bal.toString() === '0') {
                   log('INFO', `🔴 小号 ${sub.slice(0,10)}... 已清仓 ${pos.symbol}(${pos.chain}) — SM${smWallet.slice(0,10)}的小号也卖了`);
                   if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];

@@ -295,3 +295,21 @@
 - **wSOL unwrap(2026-03-17)**：0.798 wSOL换回SOL，SOL 3.40→4.20
 
 - **绝对不要手动node启动引擎测试** — 2026-03-17僵尸进程跑21.5小时吃100%CPU+768MB，还抢RPC额度导致429。测试只用`node -c`语法检查或`systemctl restart`
+- **QuickNode Build Plan $49/月(2026-03-18)**: 三链全包，免费RPC全部降为备份
+  - SOL: shy-practical-bird.solana-mainnet.quiknode.pro
+  - BSC: smart-snowy-patina.bsc.quiknode.pro
+  - Base: green-polished-glitter.base-mainnet.quiknode.pro
+  - 三文件已全切: v8_engine.js + dex_trader.js + v8_dashboard.js
+  - SOL WS无限订阅（从100→全部284个），RPC失败从每5分钟7次→0次
+- **BSC买入门槛提高(2026-03-18)**: ≥3猎手 或 2猎手+3哨兵（BSC信号多质量差）
+- **SOL/Base保持**: ≥2猎手 或 1猎手+2哨兵
+- **钱包分级调整(2026-03-18)**:
+  - 猎手≥60%（无上限，之前60-85%）
+  - 7d胜率优先，30d补充（之前PnL高优先）
+  - 按链独立排名（之前三链混排）
+  - 48h未出现在排名→猎手降哨兵，96h→哨兵降观察
+  - winRate每次刷新排名时更新（之前不更新）
+  - 升降级打日志
+- **链上余额=0自动清仓(2026-03-18)**: 巡检发现我们链上余额=0但positions还在→自动清仓（不管soldRatio）
+- **灰尘余额检测(2026-03-18)**: SM余额×价格<$0.01视为已卖（三链统一）
+- **SM查询30秒一轮(2026-03-18)**: 从10秒改为30秒，防打爆RPC（QuickNode后可能可以缩短）
