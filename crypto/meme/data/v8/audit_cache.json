@@ -1401,5 +1401,29 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1773814623350
+  },
+  "0x42f18d9e23cdb9c8001176deb50ff210ff4e4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773815837276
+  },
+  "0x45f1c3c8264c6c32d5defa4df1027febb3044444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773817009583
+  },
+  "0x8421b5527128994a3dd5c8e92e9a7f52f8274444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773817182974
   }
 }
