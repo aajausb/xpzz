@@ -2281,11 +2281,14 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           const revenueUsd = ratio >= 0.99
             ? (pos.buyAmount * curPrice)
             : (pos.buyAmount * ratio * curPrice);
+          const remainCostUsd = pos.buyCost * (1 - (pos.soldRatio || 0)); // 剩余部分的成本
+          const thisCostUsd = ratio >= 0.99 ? remainCostUsd : remainCostUsd * ratio; // 本次卖出对应的成本
           logTrade({
             type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol, token: tokenAddress,
             ratio, reason, revenueUsd: Math.round(revenueUsd * 100) / 100,
-            costUsd: pos.buyCost, buyPrice: pos.buyPrice, sellPrice: curPrice,
-            pnlUsd: Math.round((revenueUsd - pos.buyCost * ratio) * 100) / 100,
+            costUsd: pos.buyCost, soldRatio: pos.soldRatio || 0,
+            buyPrice: pos.buyPrice, sellPrice: curPrice,
+            pnlUsd: Math.round((revenueUsd - thisCostUsd) * 100) / 100,
             holdMinutes: Math.round((Date.now() - pos.buyTime) / 60000),
             tx: result.txHash || '',
           });

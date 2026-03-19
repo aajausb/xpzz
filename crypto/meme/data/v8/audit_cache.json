@@ -2584,5 +2584,13 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1773921414713
+  },
+  "0x5a738a0109d85ba872c40c487da503619cf73a4e": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1773922732869
   }
 }
