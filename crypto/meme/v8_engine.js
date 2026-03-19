@@ -2127,7 +2127,9 @@ async function managePositions() {
                   const bal = await erc20.balanceOf(trader.getWalletAddress('evm'));
                   ourBal = bal.toString() === '0' ? 0 : 1;
                 }
-                if (ourBal === 0) {
+                // 新买入5分钟内不做余额=0清仓（RPC可能还没同步）
+                const buyAge = Date.now() - (pos.buyTime || 0);
+                if (ourBal === 0 && buyAge > 300000) {
                   log('INFO', `🧹 ${pos.symbol}(${pos.chain}) 链上余额=0但positions还在，清仓`);
                   const finalRevenue = pos.sellRevenue || 0;
                   const finalPnl = finalRevenue - (pos.busCost || pos.buyCost || 0);
