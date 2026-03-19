@@ -1110,10 +1110,10 @@ function setupEvmWebSocket(chainKey) {
                 }
               }
             } catch(e) { log('WARN', `EVM花费查询失败(WS): ${e.message?.slice(0,40)}`); }
-            // 如果第一次没查到，等1秒重试一次（交易可能还在pending）
+            // 如果第一次没查到，等3秒重试一次（BSC出块3秒，1秒不够）
             if (smBuyAmountUsd < 1 && logEntry.transactionHash) {
               try {
-                await sleep(1000);
+                await sleep(3000);
                 const provider2 = chainKey === 'bsc' ? bscProvider : baseProvider;
                 const tx2 = await provider2.getTransaction(logEntry.transactionHash);
                 if (tx2 && tx2.value > 0n) {
@@ -1698,7 +1698,7 @@ async function handleSignal(signal) {
     : 999;
   const confirmWallets = [...new Set(realConfirmWallets)];
   // 提取每个SM的钱包→金额映射（在delete前）
-  const smWalletAmounts = {};
+  let smWalletAmounts = {};
   for (const s of (pendingSignals[token] || [])) {
     if (s.smBuyAmountUsd > 0) {
       smWalletAmounts[s.wallet] = s.smBuyAmountUsd;
@@ -1948,10 +1948,12 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       return;
     }
     
-    // 动态仓位：SM累计金额（只算还持有的SM）≥$500才跟
+    // 动态仓位：SM累计金额（只算还持有的SM）
     const smTotal = Object.values(smWalletAmounts).reduce((a, b) => a + b, 0);
-    if (smTotal >= 500) {
-      size = 150;
+    if (smTotal >= 1000) {
+      size = 160;
+    } else if (smTotal >= 500) {
+      size = 80;
     } else {
       log('INFO', `🚫 ${symbol}(${chain}) SM累计$${Math.round(smTotal)}<$500，跳过`);
       return;

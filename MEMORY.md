@@ -291,10 +291,11 @@
 - **Token-2022兼容(2026-03-17)**：SOL查余额用{mint:token}自动兼容，但全量遍历必须同时查TokenProgram和Token-2022两个programId
 - **改完代码必须立刻重启(2026-03-17)**：旧代码还在跑会继续买，TITAN就是改了同名去重但没重启导致又买了一个
 - **仓位按余额百分比(2026-03-17)**：TOP10猎手=20%, TOP30=15%, 其他=10%，最低$5最高$200
-- **SM买入金额动态仓位(2026-03-19)**：SM中位花费×60%，上限$150，下限$30，<$30不跟
-  - SOL: preBalances/postBalances算花费 / EVM: tx.value(原生币)+receipt(稳定币USDT/USDC/BUSD/DAI)
-  - 查不到花费默认$80（pump内盘CPI/EVM查询失败）
-  - 中位数防1个大户+多个撒网拉高仓位
+- **SM买入金额动态仓位(2026-03-19)**：SM累计≥$1000→$160, ≥$500→$80, <$500不跟
+  - SOL: preBalances/postBalances+loadedAddresses(v0兼容) / EVM: tx.value+receipt(USDT/USDC/BUSD/DAI/WBNB/WETH)+3秒重试
+  - 100%识别率验证通过，无默认值
+  - 同一SM加仓累加，已卖SM从确认数+金额双剔除
+  - 确认数也只算还持有的SM（卖了的不算）
 - **BSC充值+$197(2026-03-17)**：BNB从$137→$334
 - **wSOL unwrap(2026-03-17)**：0.798 wSOL换回SOL，SOL 3.40→4.20
 
