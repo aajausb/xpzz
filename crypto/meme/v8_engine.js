@@ -2035,6 +2035,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         buyAmount = buyAmount || (size / (buyPrice || 1));
       }
       
+      const smTotalAtBuy = Object.values(smWalletAmounts).reduce((a, b) => a + b, 0);
       positions[tokenAddress] = {
         chain,
         token: tokenAddress,
@@ -2046,6 +2047,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         buyTime: Date.now(),
         confirmCount,
         confirmWallets, // 记录确认的SM钱包
+        smTotalUsd: Math.round(smTotalAtBuy), // SM累计持有金额
       };
       boughtTokens.add(tokenAddress);
       saveJSON(POSITIONS_FILE, positions);
@@ -2100,7 +2102,8 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         return w && w.status === 'hunter' ? `${w.chain === 'bsc' ? 'BSC' : w.chain === 'base' ? 'Base' : 'SOL'}猎手#${w.rank}` : null;
       }).filter(Boolean);
       const rankLine = hunterRanks.length > 0 ? `\n🏹 ${hunterRanks.join(' ')}` : '';
-      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}${rankLine}\n🔗 ${result.txHash || ''}`);
+      const smLine = smTotalAtBuy > 0 ? `\n💎 SM累计持有$${Math.round(smTotalAtBuy)}` : '';
+      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}${rankLine}${smLine}\n🔗 ${result.txHash || ''}`);
     } else if (result.error === 'SOL确认超时' && result.txHash) {
       // 交易已发送但确认超时→可能已上链，查余额确认
       log('WARN', `⚠️ ${symbol} 确认超时，查链上余额...`);
@@ -2294,7 +2297,33 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           });
         } catch {}
         
-        await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
+        // 实时查SM持仓金额
+        let smLiveUsd = 0;
+        try {
+          const smWallets = pos.confirmWallets || [];
+          if (smWallets.length > 0) {
+            const dexD = await dexScreenerGet(tokenAddress).catch(() => null);
+            const smPrice = parseFloat(dexD?.pairs?.[0]?.priceUsd || 0);
+            if (smPrice > 0 && pos.chain === 'solana') {
+              for (const w of smWallets) {
+                try { smLiveUsd += (await getSolTokenBalance(w, tokenAddress)) * smPrice; } catch {}
+              }
+            } else if (smPrice > 0) {
+              // EVM: Multicall批量查
+              const prov = pos.chain === 'bsc' ? bscProvider : baseProvider;
+              try {
+                const iface = new ethers.Interface(['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)']);
+                const erc20 = new ethers.Contract(tokenAddress, iface, prov);
+                const dec = await erc20.decimals().catch(() => 18);
+                for (const w of smWallets) {
+                  try { smLiveUsd += parseFloat(ethers.formatUnits(await erc20.balanceOf(w), dec)) * smPrice; } catch {}
+                }
+              } catch {}
+            }
+          }
+        } catch {}
+        const smInfo = smLiveUsd >= 1 ? `\n💎 SM实时持有$${Math.round(smLiveUsd)}` : (pos.smTotalUsd ? `\n💎 SM已清仓(买入时$${pos.smTotalUsd})` : '');
+        await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}${smInfo}\n🔗 ${result.txHash || ''}`);
         break;
       } else if (result.error === '余额为0') {
         // 链上确认没余额了 → 清理持仓（可能已经被手动卖了）
@@ -2601,7 +2630,7 @@ async function managePositions() {
             boughtTokens.delete(tokenAddr);
             saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
             saveJSON(POSITIONS_FILE, positions);
-            await notifyTelegram(`💀 v8归零 ${pos.symbol}(${pos.chain}) ${reason} 成本$${pos.buyCost||0}`);
+            await notifyTelegram(`💀 v8归零 ${pos.symbol}(${pos.chain}) ${reason} 成本$${pos.buyCost||0}${pos.smTotalUsd ? ` SM买入时$${pos.smTotalUsd}(已归零)` : ''}`);
             continue;
           }
         }
