@@ -36,10 +36,11 @@ for m in msgs:
             '--target', '877233818',
             '--message', msg
         ], capture_output=True, text=True, timeout=30)
-        if r.returncode == 0 and 'messageId' in r.stdout:
+        if r.returncode == 0 and ('messageId' in r.stdout or 'Message ID' in r.stdout):
             print(f'✅ 发送成功: {short}')
         else:
             print(f'❌ 发送失败(code={r.returncode}): {short}')
+            print(f'   stdout: {r.stdout[:200]}')
             print(f'   stderr: {r.stderr[:200]}')
     except subprocess.TimeoutExpired:
         print(f'⏰ 发送超时: {short}')
