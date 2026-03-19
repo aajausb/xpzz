@@ -96,7 +96,7 @@
     "sellTax": 0,
     "riskLevel": "UNKNOWN",
     "reason": "OK",
-    "_time": 1773666971640
+    "_time": 1773891218362
   },
   "2qfVE31F9GXKiWgbp5njiprmvCucJbFiu581nufspump": {
     "safe": true,
@@ -2214,5 +2214,28 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1773890630117
+  },
+  "FhvaznSrMJteFmDY7YTQ51CvKpC7MFH7oFum8J8zpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "Ab5uo59Q2usTGz9yc1DifYz9qVGcXXbcVPYp13SJohht": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "JBBqkLrgQ6SKR1cSdVzvYtvWTKXKH2j6JRN18Vk4pump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0x677a69b6d69dcad6fc7e534b7036f6ce6b724444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773892292277
   }
 }

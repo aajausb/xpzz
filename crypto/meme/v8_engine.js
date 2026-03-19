@@ -1991,10 +1991,22 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
             partialAmount = (bal * BigInt(Math.floor(ratio * 1000)) / 1000n).toString();
           }
         } catch(e) {
-          log('WARN', `查余额失败，改全卖: ${e.message}`);
+          log('WARN', `查余额失败: ${e.message}`);
           partialAmount = undefined;
         }
-        result = (partialAmount && partialAmount !== '0') ? await trader.sell(pos.chain, tokenAddress, partialAmount) : await trader.sell(pos.chain, tokenAddress);
+        // 链上余额=0时用positions估算值，绝不默认全卖
+        if (!partialAmount || partialAmount === '0') {
+          if (pos.buyAmount && pos.buyAmount > 0) {
+            const estBal = BigInt(Math.floor(pos.buyAmount * (1 - (pos.soldRatio || 0))));
+            partialAmount = (estBal * BigInt(Math.floor(ratio * 1000)) / 1000n).toString();
+            log('WARN', `链上余额=0，用估算值: ${estBal} × ${(ratio*100).toFixed(0)}% = ${partialAmount}`);
+          }
+          if (!partialAmount || partialAmount === '0') {
+            log('WARN', `无法计算部分卖出量，跳过（不全卖）`);
+            return;
+          }
+        }
+        result = await trader.sell(pos.chain, tokenAddress, partialAmount);
       } else {
         result = await trader.sell(pos.chain, tokenAddress);
       }
