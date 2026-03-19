@@ -14,12 +14,12 @@
       "EHXRqrpttvDLXxsgvav5mHQ8RX7pcUZd2nCzystxmYGe",
       "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6"
     ],
-    "currentPrice": 0.00003117,
-    "currentValue": 9.627361918604654,
-    "pnlPercent": -43.368459302325576,
-    "totalPnl": -13.123728197674417,
-    "totalPnlPercent": -25.732800387596892,
-    "_lastSmCheck": 1773930572209,
+    "currentPrice": 0.00003345,
+    "currentValue": 10.331577034883724,
+    "pnlPercent": -39.22601744186046,
+    "totalPnl": -12.419513081395344,
+    "totalPnlPercent": -24.351986434108518,
+    "_lastSmCheck": 1773932384958,
     "_sells": [
       {
         "wallet": "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6",
@@ -35,20 +35,27 @@
     "sellRevenue": 28.24890988372093,
     "soldRatio": 0.6666666666666666
   },
-  "4AGx7HoxiQfsifA6P51V4sEAUkbu3rt7i7qK4JeaV8Rx": {
-    "chain": "solana",
-    "token": "4AGx7HoxiQfsifA6P51V4sEAUkbu3rt7i7qK4JeaV8Rx",
-    "symbol": "PLATYPI",
-    "buyPrice": 0.00004981,
-    "buyAmount": 3212206.384260189,
-    "buyAmountRaw": 3212206.384260189,
+  "0x5728c7690c602161712c9f0c99996cb7d02c3ba3": {
+    "chain": "base",
+    "token": "0x5728c7690c602161712c9f0c99996cb7d02c3ba3",
+    "symbol": "SASHANUOVA",
+    "buyPrice": 0.000001105,
+    "buyAmount": 135400045.3381297,
+    "buyAmountRaw": 135400045.3381297,
     "buyCost": 160,
-    "buyTime": 1773930594066,
+    "buyTime": 1773931289126,
     "confirmCount": 2,
     "confirmWallets": [
-      "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3",
-      "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd"
+      "0x22a013b83ea41dfc3d9f81fbcb94262c2aee38ae",
+      "0x36e58200ca908713e13a095b324147221f8859ea",
+      "0xca1a2fb7f3179d887504966b25d1606978adcd42"
     ],
-    "smTotalUsd": 1040
+    "smTotalUsd": 1696,
+    "currentPrice": 0.000001832,
+    "currentValue": 248.05288305945362,
+    "pnlPercent": 65.7918552036199,
+    "totalPnl": 88.05288305945362,
+    "totalPnlPercent": 55.03305191215851,
+    "_lastSmCheck": 1773932374404
   }
 }
