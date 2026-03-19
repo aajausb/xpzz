@@ -14,12 +14,12 @@
       "EHXRqrpttvDLXxsgvav5mHQ8RX7pcUZd2nCzystxmYGe",
       "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6"
     ],
-    "currentPrice": 0.0000429,
-    "currentValue": 13.250363372093027,
-    "pnlPercent": -22.05668604651163,
-    "totalPnl": -9.50072674418604,
-    "totalPnlPercent": -18.628875968992233,
-    "_lastSmCheck": 1773925173794,
+    "currentPrice": 0.00004014,
+    "currentValue": 12.397892441860467,
+    "pnlPercent": -27.071220930232563,
+    "totalPnl": -10.353197674418603,
+    "totalPnlPercent": -20.30038759689922,
+    "_lastSmCheck": 1773926926245,
     "_sells": [
       {
         "wallet": "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6",
@@ -34,27 +34,5 @@
     ],
     "sellRevenue": 28.24890988372093,
     "soldRatio": 0.6666666666666666
-  },
-  "9TNAEnyy3HybA1i8UydSAgNiyCTSzGAVAcxeVXnZpump": {
-    "chain": "solana",
-    "token": "9TNAEnyy3HybA1i8UydSAgNiyCTSzGAVAcxeVXnZpump",
-    "symbol": "GROKHOUSE",
-    "buyPrice": 0.00007294,
-    "buyAmount": 908049.686051,
-    "buyAmountRaw": 908049.686051,
-    "buyCost": 80,
-    "buyTime": 1773925133535,
-    "confirmCount": 2,
-    "confirmWallets": [
-      "8deJ9xeUvXSJwicYptA9mHsU2rN2pDx37KWzkDkEXhU6",
-      "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3"
-    ],
-    "smTotalUsd": 893,
-    "currentPrice": 0.00008129,
-    "currentValue": 73.8153589790858,
-    "pnlPercent": 11.447765286536878,
-    "totalPnl": -6.184641020914199,
-    "totalPnlPercent": -7.730801276142748,
-    "_lastSmCheck": 1773925174022
   }
 }

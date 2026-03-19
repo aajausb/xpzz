@@ -2592,5 +2592,50 @@
     "riskLevel": "HIGH",
     "reason": "HIGH风险",
     "_time": 1773922732869
+  },
+  "9TNAEnyy3HybA1i8UydSAgNiyCTSzGAVAcxeVXnZpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0xe6c854488811fbd6472b684360ad5c393c7bae8f": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773925613538
+  },
+  "0xc0b0479b098bd6423c182dab90533cce4346ffff": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773926125644
+  },
+  "0xf0971af8b6c02dee623af297b5c0d9b177cc4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773926449688
+  },
+  "0xd42e0ba02a0a2c1ad79eb491eb350044d44f4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773926466314
+  },
+  "0x97cc46c3a14310f772d071e4231872ba1faf4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773926542547
   }
 }
