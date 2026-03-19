@@ -104,12 +104,16 @@ const SOL_PUBLIC_RPC = SOL_RPCS[0]; // 兼容旧引用
 // Token-2022兼容：查余额同时查spl-token和spl-token-2022
 async function getSolTokenBalance(owner, mint) {
   let total = 0;
+  const seenAccounts = new Set();
   for (const programId of ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb']) {
     try {
       const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
         owner, { mint }, { encoding: 'jsonParsed', programId }
       ]);
       for (const a of (balData.result?.value || [])) {
+        const pubkey = a.pubkey;
+        if (seenAccounts.has(pubkey)) continue; // 去重！
+        seenAccounts.add(pubkey);
         total += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
       }
     } catch {}
@@ -1969,12 +1973,16 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         try {
           if (pos.chain === 'solana') {
             let onChainBal = 0n;
+            const seenAccounts = new Set();
             for (const programId of ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb']) {
               try {
                 const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
                   trader.getWalletAddress('solana'), { mint: tokenAddress }, { encoding: 'jsonParsed', programId }
                 ]);
                 for (const a of (balData.result?.value || [])) {
+                  const pubkey = a.pubkey;
+                  if (seenAccounts.has(pubkey)) continue; // 去重！防止双programId返回同一账户
+                  seenAccounts.add(pubkey);
                   onChainBal += BigInt(a.account?.data?.parsed?.info?.tokenAmount?.amount || '0');
                 }
               } catch {}
@@ -2301,7 +2309,10 @@ async function managePositions() {
         }
 
         // 归零快速清仓：跌99%以上 或 绝对价值<$0.01 直接清（不等SM，币已经死了）
-        if (pos.buyPrice > 0 && pos.currentPrice > 0) {
+        // 新买入5分钟内不做归零判定（RPC/DexScreener数据可能不准）
+        const buyAge2 = Date.now() - (pos.buyTime || 0);
+        if (buyAge2 < 300000) { /* 跳过归零检查 */ }
+        else if (pos.buyPrice > 0 && pos.currentPrice > 0) {
           const dropPct = ((pos.buyPrice - pos.currentPrice) / pos.buyPrice) * 100;
           let remaining = (pos.buyAmount || 0) * (1 - (pos.soldRatio || 0));
           let absValue = remaining * pos.currentPrice;
