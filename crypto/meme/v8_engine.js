@@ -898,7 +898,26 @@ async function parseSolSignature(walletAddr, signature) {
       
       if (diff > 0) {
         // 买入: 余额增加
-        log('INFO', `🔔 [SOL] swap检测! 钱包#${rank} ${walletAddr.slice(0,10)}... 买入 ${p.mint}`);
+        // 计算SM花了多少SOL（从preBalances/postBalances）
+        let smSpendSol = 0;
+        const accountKeys = txData.result?.transaction?.message?.accountKeys?.map(k => k.pubkey || k) || [];
+        const walletIdx = accountKeys.indexOf(walletAddr);
+        if (walletIdx >= 0) {
+          const preBal = meta.preBalances?.[walletIdx] || 0;
+          const postBal = meta.postBalances?.[walletIdx] || 0;
+          smSpendSol = (preBal - postBal) / 1e9;
+          if (smSpendSol < 0) smSpendSol = 0; // 负数说明收到SOL不是花出
+        }
+        // 转USD
+        let smBuyAmountUsd = 0;
+        if (smSpendSol > 0.01) {
+          try {
+            const solPrice = await getNativePrice('solana');
+            smBuyAmountUsd = smSpendSol * solPrice;
+          } catch {}
+        }
+        const spendTag = smBuyAmountUsd > 0 ? ` $${Math.round(smBuyAmountUsd)}` : '';
+        log('INFO', `🔔 [SOL] swap检测! 钱包#${rank} ${walletAddr.slice(0,10)}... 买入 ${p.mint}${spendTag}`);
         await handleSignal({
           chain: 'solana',
           token: p.mint,
@@ -906,6 +925,7 @@ async function parseSolSignature(walletAddr, signature) {
           wallet: walletAddr,
           walletRank: rank,
           timestamp: Date.now(),
+          smBuyAmountUsd,
         });
       } else if (diff < 0 && positions[p.mint]) {
         // 卖出: 余额减少 + 我们持有该币
@@ -1259,7 +1279,13 @@ async function handleSignal(signal) {
   // 同一钱包不重复计数
   const alreadyCounted = pendingSignals[token].some(s => s.wallet === wallet);
   if (!alreadyCounted) {
-    pendingSignals[token].push({ ...signal, walletStatus });
+    pendingSignals[token].push({ ...signal, walletStatus, smBuyAmountUsd: signal.smBuyAmountUsd || 0 });
+  } else if (signal.smBuyAmountUsd > 0) {
+    // 更新已有信号的金额（WS可能多次检测到同一钱包，取最大值）
+    const existing = pendingSignals[token].find(s => s.wallet === wallet);
+    if (existing && signal.smBuyAmountUsd > (existing.smBuyAmountUsd || 0)) {
+      existing.smBuyAmountUsd = signal.smBuyAmountUsd;
+    }
   }
   
   // 清理过期信号（60分钟窗口）
@@ -1548,7 +1574,9 @@ async function handleSignal(signal) {
       }))
     : 999;
   const confirmWallets = [...new Set(realConfirmWallets)];
-  log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}`);
+  // 计算SM最大买入金额（在delete前提取）
+  const maxSmBuyUsd = Math.max(0, ...(pendingSignals[token] || []).map(s => s.smBuyAmountUsd || 0));
+  log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}${maxSmBuyUsd > 0 ? ` SM最大花费$${Math.round(maxSmBuyUsd)}` : ''}`);
   delete pendingSignals[token];
   // 提前标记boughtTokens（防另一个handleSignal并发通过检查→重复买入）
   if (boughtTokens.has(token)) { log('INFO', `${symbol} 已在买入中，跳过`); return; }
@@ -1598,7 +1626,7 @@ async function handleSignal(signal) {
     }
   } catch(e) { log('WARN', `买前SM检查异常: ${e.message?.slice(0,40)}，继续买入`); }
   
-  await executeBuy(chain, token, symbol, realHunters, confirmWallets);
+  await executeBuy(chain, token, symbol, realHunters, confirmWallets, maxSmBuyUsd);
   } finally { handleSignal._auditLock.delete(token); }
 }
 
@@ -1696,7 +1724,7 @@ async function getNativePrice(chain) {
 
 // ============ PHASE 4: 交易层 ============
 let buyLock = false;
-async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = []) {
+async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = [], maxSmBuyUsd = 0) {
   // 并发锁 — 等前一个完成再执行（不丢信号）
   const maxWait = 30000; // 最多等30秒
   const start = Date.now();
@@ -1714,7 +1742,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   }
   buyLock = true;
   try {
-    return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets);
+    return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, maxSmBuyUsd);
   } finally {
     buyLock = false;
     // 兜底：如果买入没成功且没记录持仓→解锁boughtTokens
@@ -1726,7 +1754,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   }
 }
 
-async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets) {
+async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, maxSmBuyUsd = 0) {
   // 二次检查持仓上限（防并发穿透）
   if (Object.keys(positions).length >= CONFIG.maxPositions) {
     log('WARN', `持仓已满(${CONFIG.maxPositions}个)，跳过 ${symbol}`);
@@ -1763,8 +1791,35 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       return;
     }
     
-    // 统一仓位$80（不分rank，靠数量赢不靠单笔大）
-    size = 80;
+    // 动态仓位：根据SM买入金额调整（SM花得多=信心强，我们跟得多）
+    // 取所有SM花费的中位数（防1个大户+多个撒网拉高仓位）
+    const smAmounts = (confirmWallets || []).map(w => {
+      // 从pendingSignals已删除，但signal里有smBuyAmountUsd
+      // 这里用maxSmBuyUsd作为最大单笔参考
+      return 0; // placeholder
+    });
+    const smRefAmount = maxSmBuyUsd; // 暂用最大值，后续可改中位数
+    
+    if (smRefAmount >= 200) {
+      size = 120;
+    } else if (smRefAmount >= 80) {
+      size = 80;
+    } else if (smRefAmount >= 30) {
+      size = 40;
+    } else if (smRefAmount > 0) {
+      // SM花费<$30 → 不跟（撒网试探）
+      log('INFO', `🚫 ${symbol}(${chain}) SM最大花费$${Math.round(smRefAmount)}<$30，撒网型跳过`);
+      return;
+    } else {
+      // EVM链或SOL查不到花费 → 默认$80
+      size = 80;
+    }
+    // 硬上限：不超过SM最大买入金额（我们不该比SM更有信心）
+    if (smRefAmount > 0 && size > smRefAmount) {
+      size = Math.max(30, Math.floor(smRefAmount)); // 最低$30，否则手续费占比太高
+      log('INFO', `📊 ${symbol} 仓位封顶$${size}（不超过SM花费$${Math.round(smRefAmount)}）`);
+    }
+    log('INFO', `📊 ${symbol} 仓位$${size}${smRefAmount > 0 ? ` (SM花费$${Math.round(smRefAmount)})` : ' (SM花费未知)'}`);
     
     if (chain === 'solana') {
       nativeAmount = Math.floor((size / price) * 1e9);
