@@ -1472,6 +1472,15 @@ async function handleSignal(signal) {
       if (onChainSymbol) symbol = onChainSymbol;
     } catch {}
   }
+  // SOL: DexScreener没有时从链上metadata查symbol
+  if (symbol === '?' && chain === 'solana') {
+    try {
+      const metaData = await rpcPost(getSolRpc(), 'getAccountInfo', [token, { encoding: 'jsonParsed' }]);
+      const parsed = metaData.result?.value?.data?.parsed;
+      if (parsed?.info?.symbol) symbol = parsed.info.symbol;
+      else if (parsed?.info?.name) symbol = parsed.info.name.slice(0, 20);
+    } catch {}
+  }
   
   const audit = await auditToken(chain, token);
   
