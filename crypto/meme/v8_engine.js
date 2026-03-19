@@ -2425,7 +2425,15 @@ async function managePositions() {
                 // 新买入5分钟内不做余额=0清仓（RPC可能还没同步）
                 const buyAge = Date.now() - (pos.buyTime || 0);
                 if (ourBal === 0 && buyAge > 300000) {
-                  log('INFO', `🧹 ${pos.symbol}(${pos.chain}) 链上余额=0但positions还在，清仓`);
+                  // 二次确认：等3秒换RPC再查一次，防止单次RPC故障误清仓
+                  if (!pos._zeroBalCount) pos._zeroBalCount = 0;
+                  pos._zeroBalCount++;
+                  if (pos._zeroBalCount < 3) {
+                    log('INFO', `⚠️ ${pos.symbol}(${pos.chain}) 链上余额=0 第${pos._zeroBalCount}次，等下轮确认`);
+                    saveJSON(POSITIONS_FILE, positions);
+                    continue;
+                  }
+                  log('INFO', `🧹 ${pos.symbol}(${pos.chain}) 链上余额=0连续${pos._zeroBalCount}次确认，清仓`);
                   const finalRevenue = pos.sellRevenue || 0;
                   const finalPnl = finalRevenue - (pos.busCost || pos.buyCost || 0);
                   log('INFO', `📊 ${pos.symbol} 最终PnL: 成本${pos.busCost||pos.buyCost||0} 回收${finalRevenue.toFixed(2)} 盈亏${finalPnl.toFixed(2)}`);
@@ -2436,6 +2444,9 @@ async function managePositions() {
                   continue;
                 }
               } catch(e) {} // RPC失败不处理，下轮重试
+            } else if (pos._zeroBalCount) {
+              // 余额查询正常（>0或跳过），重置归零计数
+              delete pos._zeroBalCount;
             }
             const remaining = pos.buyAmount * (1 - (pos.soldRatio || 0));
             pos.currentValue = currentPrice * remaining;

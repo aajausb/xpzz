@@ -2765,5 +2765,26 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1773934123352
+  },
+  "86RJggRHp2fie6cUiJrUDz4mMZeAhJNqD9yk3iKxpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0x56a68aa8aa603587b0ae8587affed41a03070945": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773936537278
+  },
+  "0x1e0b23fed928191e0c3ab090fe32580751d379a0": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773936767318
   }
 }
