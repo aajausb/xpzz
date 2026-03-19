@@ -2528,5 +2528,21 @@
     "riskLevel": "LOW",
     "reason": "OK",
     "_time": 1773913717383
+  },
+  "0x6e370d58c1235cce97c021b6751241705d25ffff": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773915694240
+  },
+  "0x943728fdd8d076fd4ddbb1a84eb654209ee74444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1773915970555
   }
 }
