@@ -14,12 +14,12 @@
       "EHXRqrpttvDLXxsgvav5mHQ8RX7pcUZd2nCzystxmYGe",
       "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6"
     ],
-    "currentPrice": 0.00005113,
-    "currentValue": 15.792332848837212,
-    "pnlPercent": -7.103924418604654,
-    "totalPnl": -6.958757267441854,
-    "totalPnlPercent": -13.644622093023242,
-    "_lastSmCheck": 1773906419860,
+    "currentPrice": 0.00006022,
+    "currentValue": 18.5999273255814,
+    "pnlPercent": 9.411337209302326,
+    "totalPnl": -4.1511627906976685,
+    "totalPnlPercent": -8.139534883720918,
+    "_lastSmCheck": 1773908528881,
     "_sells": [
       {
         "wallet": "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6",
@@ -52,12 +52,12 @@
       "DYAn4XpAkN5mhiXkRB7dGq4Jadnx6XYgu8L5b3WGhbrt",
       "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv"
     ],
-    "currentPrice": 0.000006375,
-    "currentValue": 10.119047619047617,
-    "pnlPercent": -36.75595238095239,
-    "totalPnl": -16.84126984126985,
-    "totalPnlPercent": -21.05158730158731,
-    "_lastSmCheck": 1773906420048,
+    "currentPrice": 0.000008157,
+    "currentValue": 12.947619047619044,
+    "pnlPercent": -19.077380952380953,
+    "totalPnl": -14.012698412698413,
+    "totalPnlPercent": -17.515873015873016,
+    "_lastSmCheck": 1773908528933,
     "_transfers": {
       "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9": {
         "subWallet": "HkJYryz2BNeMQfuuSWDYktWt5fZLV26eK6nqu7EJycoG",
@@ -92,92 +92,5 @@
     ],
     "sellRevenue": 53.03968253968254,
     "soldRatio": 0.8
-  },
-  "Ed93hvfqoct98khzKf4pr8hwNV1yJGktiQGx9St6doge": {
-    "chain": "solana",
-    "token": "Ed93hvfqoct98khzKf4pr8hwNV1yJGktiQGx9St6doge",
-    "symbol": "DOGEFATHER",
-    "buyPrice": 0.0000432,
-    "buyAmount": 1729263.222318702,
-    "buyAmountRaw": 1729263.222318702,
-    "buyCost": 80,
-    "buyTime": 1773903031792,
-    "confirmCount": 2,
-    "confirmWallets": [
-      "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3",
-      "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
-      "5sNnKuWKUtZkdC1eFNyqz3XHpNoCRQ1D1DfHcNHMV7gn",
-      "4uCT4g7YHH4xxfmfNfKUDenwGrRNGoZ9Ay1XFxfUGhQG",
-      "G8x3umuKs7Vhtce4rTX1EizAU6bjsqwJgWqoRtbozqji",
-      "TZkcwgk6WrXeU8Zj5uthAuqbmyW6Zmkwfi9XVVWMz4y",
-      "HYWo71Wk9PNDe5sBaRKazPnVyGnQDiwgXCFKvgAQ1ENp",
-      "pYffPQeb49X2QdrecP6GTER3MePTnuGLgsh6JN2FoZk"
-    ],
-    "currentPrice": 0.0000162,
-    "currentValue": 7.003516050390743,
-    "pnlPercent": -62.5,
-    "totalPnl": -11.119122696990303,
-    "totalPnlPercent": -13.898903371237878,
-    "_lastSmCheck": 1773906409708,
-    "_transfers": {
-      "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd": {
-        "subWallet": "AVUCZyuT35YSuj4RH7fwiyPu82Djn2Hfg7y2ND2XcnZH",
-        "time": 1773903173279
-      },
-      "4uCT4g7YHH4xxfmfNfKUDenwGrRNGoZ9Ay1XFxfUGhQG": {
-        "subWallet": "2ApLdwLrGayEmxgpLX9BTR47Q2QprfMg5SpjrLeaK8s7",
-        "time": 1773903173521
-      },
-      "pYffPQeb49X2QdrecP6GTER3MePTnuGLgsh6JN2FoZk": {
-        "subWallet": "BfFX9rUm8qTZiZjmeq9BktWVTNuG3YWMc5AvkrCKJike",
-        "time": 1773903664938
-      },
-      "G8x3umuKs7Vhtce4rTX1EizAU6bjsqwJgWqoRtbozqji": {
-        "subWallet": "DQyrAcCrDXQ7NeoqGgDCZwBvWDcYmFCjSb9JtteuvPpz",
-        "time": 1773903801872
-      },
-      "TZkcwgk6WrXeU8Zj5uthAuqbmyW6Zmkwfi9XVVWMz4y": {
-        "subWallet": "BWgb8wR1FEGiu1jCDSKuHKf752W27b4iN6SvoNCiK4qp",
-        "time": 1773903835874
-      },
-      "HYWo71Wk9PNDe5sBaRKazPnVyGnQDiwgXCFKvgAQ1ENp": {
-        "subWallet": "HkJYryz2BNeMQfuuSWDYktWt5fZLV26eK6nqu7EJycoG",
-        "time": 1773905353821
-      }
-    },
-    "_sells": [
-      {
-        "wallet": "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
-        "time": 1773903173528,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "4uCT4g7YHH4xxfmfNfKUDenwGrRNGoZ9Ay1XFxfUGhQG",
-        "time": 1773903173535,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "pYffPQeb49X2QdrecP6GTER3MePTnuGLgsh6JN2FoZk",
-        "time": 1773903665083,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "G8x3umuKs7Vhtce4rTX1EizAU6bjsqwJgWqoRtbozqji",
-        "time": 1773903801902,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "TZkcwgk6WrXeU8Zj5uthAuqbmyW6Zmkwfi9XVVWMz4y",
-        "time": 1773903836163,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "HYWo71Wk9PNDe5sBaRKazPnVyGnQDiwgXCFKvgAQ1ENp",
-        "time": 1773905353965,
-        "source": "sub-patrol"
-      }
-    ],
-    "sellRevenue": 61.87736125261895,
-    "soldRatio": 0.75
   }
 }
