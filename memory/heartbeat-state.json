@@ -5,9 +5,9 @@
     "weather": null
   },
   "lastWalletCheck": {
-    "time": "2026-03-19T04:28:00+08:00",
-    "result": "ok",
-    "details": "SOL hunter 7VR6WfmAwG last tx 12h ago, BSC hunter 0x10f6ac28 nonce 381, engine detected 632 swaps in 1h, just bought 5X4iVAM2DJ at 04:28",
-    "wsStatus": "SOL reconnecting but functional, BSC 4 WS active,轮询 backup working"
+    "time": "2026-03-20T04:22:00+08:00",
+    "result": "warning",
+    "details": "Engine active: 619 swaps/1h, SOL/Base buying normally. BSC balance $0 - missed CHIBIFY(3hunters,rank#4) and Chibi Trump. ? token buy showed qty=0/price=$0 (metadata issue). 5 active positions.",
+    "wsStatus": "SOL 4 WS active, BSC polling working, Base normal"
   }
 }
