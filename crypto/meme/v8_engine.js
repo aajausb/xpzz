@@ -49,6 +49,7 @@ const WALLET_DB_FILE = path.join(DATA_DIR, 'wallet_db.json');   // 钱包库（�
 const POSITIONS_FILE = path.join(DATA_DIR, 'positions.json');
 const AUDIT_CACHE_FILE = path.join(DATA_DIR, 'audit_cache.json');
 const BOUGHT_TOKENS_FILE = path.join(DATA_DIR, 'bought_tokens.json');
+const TRADE_LOG_FILE = path.join(DATA_DIR, 'trade_log.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -254,6 +255,13 @@ const saveJSON = (file, data) => {
   fs.renameSync(tmp, file); // rename是原子操作
 };
 const loadJSON = (file, def) => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return def; } };
+
+// 交易日志：追加写入，每条一行JSON（JSONL格式，方便复盘）
+function logTrade(entry) {
+  try {
+    fs.appendFileSync(TRADE_LOG_FILE, JSON.stringify(entry) + '\n');
+  } catch(e) { log('WARN', `写trade_log失败: ${e.message?.slice(0,40)}`); }
+}
 
 function httpGet(url, headers = {}, timeoutMs = 15000) {
   return new Promise((resolve, reject) => {
@@ -2057,6 +2065,16 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       
       log('INFO', `✅ 买入成功 ${symbol} | $${size} | 数量=${buyAmount} | 价格=$${buyPrice} | tx: ${result.txHash || '?'}`);
       
+      // 记录交易日志
+      const smTotal = Object.values(smWalletAmounts).reduce((a, b) => a + b, 0);
+      logTrade({
+        type: 'BUY', time: new Date().toISOString(), chain, symbol, token: tokenAddress,
+        costUsd: size, amount: buyAmount, price: buyPrice, tx: result.txHash || '',
+        hunters: confirmCount, scouts: confirmWallets.length - confirmCount,
+        smTotalUsd: Math.round(smTotal),
+        smWallets: Object.entries(smWalletAmounts).map(([w, a]) => ({ wallet: w.slice(0, 10), usd: Math.round(a) })),
+      });
+      
       // 延迟10秒回填真实余额（异步，不阻塞主流程）
       if (chain === 'solana') {
         const _ta = tokenAddress, _sym = symbol;
@@ -2256,6 +2274,23 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         saveJSON(POSITIONS_FILE, positions);
         const pctStr = ratio < 0.99 ? `${(ratio*100).toFixed(0)}%` : '全部';
         log('INFO', `✅ 卖出成功 ${pos.symbol}(${pctStr}) | tx: ${result.txHash || '?'}`);
+        
+        // 记录交易日志
+        try {
+          const curPrice = parseFloat((await dexScreenerGet(tokenAddress))?.pairs?.[0]?.priceUsd || 0);
+          const revenueUsd = ratio >= 0.99
+            ? (pos.buyAmount * curPrice)
+            : (pos.buyAmount * ratio * curPrice);
+          logTrade({
+            type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol, token: tokenAddress,
+            ratio, reason, revenueUsd: Math.round(revenueUsd * 100) / 100,
+            costUsd: pos.buyCost, buyPrice: pos.buyPrice, sellPrice: curPrice,
+            pnlUsd: Math.round((revenueUsd - pos.buyCost * ratio) * 100) / 100,
+            holdMinutes: Math.round((Date.now() - pos.buyTime) / 60000),
+            tx: result.txHash || '',
+          });
+        } catch {}
+        
         await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}\n🔗 ${result.txHash || ''}`);
         break;
       } else if (result.error === '余额为0') {
