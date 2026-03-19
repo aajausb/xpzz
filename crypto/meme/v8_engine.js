@@ -1863,6 +1863,25 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       
       log('INFO', `✅ 买入成功 ${symbol} | $${size} | 数量=${buyAmount} | 价格=$${buyPrice} | tx: ${result.txHash || '?'}`);
       
+      // 延迟10秒回填真实余额（异步，不阻塞主流程）
+      if (chain === 'solana') {
+        const _ta = tokenAddress, _sym = symbol;
+        setTimeout(async () => {
+          try {
+            const realBal = await getSolTokenBalance(require('./dex_trader.js').getWalletAddress('solana'), _ta);
+            if (realBal > 0 && positions[_ta]) {
+              const old = positions[_ta].buyAmount;
+              positions[_ta].buyAmount = realBal;
+              positions[_ta].buyAmountRaw = realBal;
+              saveJSON(POSITIONS_FILE, positions);
+              if (Math.abs(realBal - old) / Math.max(old, 1) > 0.01) {
+                log('INFO', `📝 ${_sym} 余额回填: ${old.toFixed?.(0) || old} → ${realBal} (真实值)`);
+              }
+            }
+          } catch {}
+        }, 10000);
+      }
+      
       // 通知（附带猎手排名）
       const hunterRanks = confirmWallets.map(addr => {
         const w = rankedWallets.find(rw => (rw.address || '').toLowerCase() === addr.toLowerCase());
@@ -2374,9 +2393,10 @@ async function managePositions() {
             // 部分卖出
             const alreadySold = pos.soldRatio || 0;
             const toSell = ourSellRatio - alreadySold;
-            if (toSell > 0.05) { // 至少卖5%才执行（避免频繁小额卖出）
+            if (toSell > 0.05 && alreadySold < 0.95) { // 至少卖5%，且剩余>5%才部分卖（否则全卖）
+              const ratio = Math.min(toSell / (1 - alreadySold), 0.99); // 安全帽防Infinity
               const beforeSell = Object.keys(positions).length;
-              await executeSell(tokenAddr, `跟卖${(ourSellRatio*100).toFixed(0)}%(${uniqueSellers}/${totalConfirm}SM卖出)`, toSell / (1 - alreadySold));
+              await executeSell(tokenAddr, `跟卖${(ourSellRatio*100).toFixed(0)}%(${uniqueSellers}/${totalConfirm}SM卖出)`, ratio);
               // 只在卖出成功（positions仍存在=部分卖出）或已删除（全卖）时更新soldRatio
               if (positions[tokenAddr]) {
                 pos.soldRatio = ourSellRatio;
