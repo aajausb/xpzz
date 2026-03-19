@@ -14,12 +14,12 @@
       "EHXRqrpttvDLXxsgvav5mHQ8RX7pcUZd2nCzystxmYGe",
       "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6"
     ],
-    "currentPrice": 0.00002618,
-    "currentValue": 8.086119186046513,
-    "pnlPercent": -52.434593023255815,
-    "totalPnl": -14.664970930232556,
-    "totalPnlPercent": -28.754844961240305,
-    "_lastSmCheck": 1773941385103,
+    "currentPrice": 0.00002274,
+    "currentValue": 7.0236191860465125,
+    "pnlPercent": -58.684593023255815,
+    "totalPnl": -15.727470930232556,
+    "totalPnlPercent": -30.838178294573638,
+    "_lastSmCheck": 1773943168940,
     "_sells": [
       {
         "wallet": "A2U5owsnFK2jzgBguZCDqXsPzra7ufpYG5N6CFCeQrk6",
@@ -52,12 +52,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 0.00000161,
-    "currentValue": 217.99407299438883,
-    "pnlPercent": 45.70135746606335,
-    "totalPnl": 57.99407299438883,
-    "totalPnlPercent": 36.24629562149302,
-    "_lastSmCheck": 1773941385674,
+    "currentPrice": 0.00000118,
+    "currentValue": 159.77205349899305,
+    "pnlPercent": 6.787330316742074,
+    "totalPnl": -0.22794650100695435,
+    "totalPnlPercent": -0.14246656312934647,
+    "_lastSmCheck": 1773943169321,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -71,5 +71,28 @@
         "source": "ws"
       }
     ]
+  },
+  "Hn7Urq1gfc3AVGYY1kQ9SJja15Y3RmKF7jNtt4Ewpump": {
+    "chain": "solana",
+    "token": "Hn7Urq1gfc3AVGYY1kQ9SJja15Y3RmKF7jNtt4Ewpump",
+    "symbol": "Foodrot",
+    "buyPrice": 0.0001104,
+    "buyAmount": 700805.216894,
+    "buyAmountRaw": 700805.216894,
+    "buyCost": 80,
+    "buyTime": 1773942023883,
+    "confirmCount": 1,
+    "confirmWallets": [
+      "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
+      "pYffPQeb49X2QdrecP6GTER3MePTnuGLgsh6JN2FoZk",
+      "C6TFVQV5m43yhVbMUndWSEw73D2LbQQUjW6nAbuyLt7G"
+    ],
+    "smTotalUsd": 616,
+    "currentPrice": 0.0001239,
+    "currentValue": 86.82976637316659,
+    "pnlPercent": 12.22826086956522,
+    "totalPnl": 6.829766373166592,
+    "totalPnlPercent": 8.53720796645824,
+    "_lastSmCheck": 1773943193928
   }
 }

@@ -2832,5 +2832,28 @@
     "riskLevel": "LOW",
     "reason": "OK",
     "_time": 1773940288577
+  },
+  "2vEzNnqEu2YEqBi5svYCWoy5VLQ4bGP1YcK6usmypump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "hdk6bBixNGmypyncvpixkRQD4aHtMGJcFqC1afYpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "BRhzUgcGdpA7iuUDBmG6q3D8aCbEi3TUgv4Gaasppump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0xf392b9aac50ec73c21162ad9c5f6b4106a2d3e7c": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1773942573994
   }
 }
