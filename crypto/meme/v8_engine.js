@@ -1763,22 +1763,8 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       return;
     }
     
-    // 按猎手排名决定仓位百分比
-    const bestRank = confirmWallets.length > 0 
-      ? Math.min(...confirmWallets.map(addr => {
-          const w = rankedWallets.find(rw => rw.address === addr || rw.address?.toLowerCase() === addr?.toLowerCase());
-          return w ? w.rank : 999;
-        }))
-      : 999;
-    
-    // TOP10: 20%余额, TOP30: 15%, 其他: 10%
-    let pct = 0.10;
-    if (bestRank <= 10) pct = 0.20;
-    else if (bestRank <= 30) pct = 0.15;
-    
-    size = Math.floor(available * pct);
-    // 最低$5，最高$200
-    size = Math.max(5, Math.min(200, size));
+    // 统一仓位$80（不分rank，靠数量赢不靠单笔大）
+    size = 80;
     
     if (chain === 'solana') {
       nativeAmount = Math.floor((size / price) * 1e9);
