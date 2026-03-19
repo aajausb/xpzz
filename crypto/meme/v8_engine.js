@@ -900,11 +900,15 @@ async function parseSolSignature(walletAddr, signature) {
         // 买入: 余额增加
         // 计算SM花了多少SOL（从preBalances/postBalances）
         let smSpendSol = 0;
-        const accountKeys = txData.result?.transaction?.message?.accountKeys?.map(k => k.pubkey || k) || [];
-        const walletIdx = accountKeys.indexOf(walletAddr);
+        const accountKeys = txData.result?.transaction?.message?.accountKeys?.map(k => typeof k === 'string' ? k : k.pubkey || k) || [];
+        // staticAccountKeys+writableAccounts+readonlyAccounts合并（v0交易addressTable格式）
+        const loadedW = txData.result?.meta?.loadedAddresses?.writable || [];
+        const loadedR = txData.result?.meta?.loadedAddresses?.readonly || [];
+        const allKeys = [...accountKeys, ...loadedW, ...loadedR];
+        const walletIdx = allKeys.indexOf(walletAddr);
         if (walletIdx >= 0) {
-          const preBal = meta.preBalances?.[walletIdx] || 0;
-          const postBal = meta.postBalances?.[walletIdx] || 0;
+          const preBal = (meta.preBalances || [])[walletIdx] || 0;
+          const postBal = (meta.postBalances || [])[walletIdx] || 0;
           smSpendSol = (preBal - postBal) / 1e9;
           if (smSpendSol < 0) smSpendSol = 0; // 负数说明收到SOL不是花出
         }
@@ -1080,8 +1084,10 @@ function setupEvmWebSocket(chainKey) {
                     '0x55d398326f99059ff775485246999027b3197955': { sym: 'USDT', dec: 18 }, // BSC USDT
                     '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': { sym: 'USDC', dec: 18 }, // BSC USDC
                     '0xe9e7cea3dedca5984780bafc599bd69add087d56': { sym: 'BUSD', dec: 18 }, // BSC BUSD
+                    '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': { sym: 'WBNB', dec: 18, native: 'bsc' }, // BSC WBNB
                     '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': { sym: 'USDC', dec: 6 },  // Base USDC
                     '0x50c5725949a6f0c72e6c4a641f24049a917db0cb': { sym: 'DAI', dec: 18 },  // Base DAI
+                    '0x4200000000000000000000000000000000000006': { sym: 'WETH', dec: 18, native: 'base' }, // Base WETH
                   };
                   const TRANSFER_SIG = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
                   for (const log2 of (receipt?.logs || [])) {
@@ -1090,15 +1096,57 @@ function setupEvmWebSocket(chainKey) {
                     if (log2.topics?.[0] !== TRANSFER_SIG) continue;
                     const from2 = '0x' + (log2.topics[1] || '').slice(26).toLowerCase();
                     if (from2 === toAddr) {
-                      // SM转出稳定币 = 买入花费
+                      // SM转出稳定币/WBNB/WETH = 买入花费
                       const { ethers } = require('ethers');
-                      const amt = parseFloat(ethers.formatUnits(log2.data, stableInfo.dec));
-                      if (amt > smBuyAmountUsd) smBuyAmountUsd = amt; // 取最大的稳定币转出
+                      let amt = parseFloat(ethers.formatUnits(log2.data, stableInfo.dec));
+                      if (stableInfo.native) {
+                        // WBNB/WETH需要乘以原生币价格转USD
+                        const np = await getNativePrice(stableInfo.native);
+                        amt = amt * np;
+                      }
+                      if (amt > smBuyAmountUsd) smBuyAmountUsd = amt;
                     }
                   }
                 }
               }
-            } catch(e) { /* 查失败不影响信号 */ }
+            } catch(e) { log('WARN', `EVM花费查询失败(WS): ${e.message?.slice(0,40)}`); }
+            // 如果第一次没查到，等1秒重试一次（交易可能还在pending）
+            if (smBuyAmountUsd < 1 && logEntry.transactionHash) {
+              try {
+                await sleep(1000);
+                const provider2 = chainKey === 'bsc' ? bscProvider : baseProvider;
+                const tx2 = await provider2.getTransaction(logEntry.transactionHash);
+                if (tx2 && tx2.value > 0n) {
+                  const { ethers } = require('ethers');
+                  const nativePrice2 = await getNativePrice(chainKey);
+                  smBuyAmountUsd = parseFloat(ethers.formatEther(tx2.value)) * nativePrice2;
+                }
+                if (smBuyAmountUsd < 1) {
+                  const receipt2 = await provider2.getTransactionReceipt(logEntry.transactionHash);
+                  const STABLES2 = {
+                    '0x55d398326f99059ff775485246999027b3197955': { dec: 18 },
+                    '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': { dec: 18 },
+                    '0xe9e7cea3dedca5984780bafc599bd69add087d56': { dec: 18 },
+                    '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': { dec: 18, native: 'bsc' },
+                    '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': { dec: 6 },
+                    '0x50c5725949a6f0c72e6c4a641f24049a917db0cb': { dec: 18 },
+                    '0x4200000000000000000000000000000000000006': { dec: 18, native: 'base' },
+                  };
+                  const TS2 = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+                  for (const l2 of (receipt2?.logs || [])) {
+                    const si = STABLES2[l2.address?.toLowerCase()];
+                    if (!si || l2.topics?.[0] !== TS2) continue;
+                    const f2 = '0x' + (l2.topics[1] || '').slice(26).toLowerCase();
+                    if (f2 === toAddr) {
+                      const { ethers } = require('ethers');
+                      let a2 = parseFloat(ethers.formatUnits(l2.data, si.dec));
+                      if (si.native) a2 = a2 * await getNativePrice(si.native);
+                      if (a2 > smBuyAmountUsd) smBuyAmountUsd = a2;
+                    }
+                  }
+                }
+              } catch {}
+            }
             const spendTag = smBuyAmountUsd > 1 ? ` $${Math.round(smBuyAmountUsd)}` : '';
             log("INFO", "🔔 [" + chain.name + "] 买入! 钱包#" + rank + " " + toAddr.slice(0,10) + "... 获得 " + tokenAddr + spendTag);
             await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now(), smBuyAmountUsd });
@@ -1192,15 +1240,18 @@ async function pollEvmHunters() {
                         '0x55d398326f99059ff775485246999027b3197955': { dec: 18 },
                         '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': { dec: 18 },
                         '0xe9e7cea3dedca5984780bafc599bd69add087d56': { dec: 18 },
+                        '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': { dec: 18, native: 'bsc' },
                         '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': { dec: 6 },
                         '0x50c5725949a6f0c72e6c4a641f24049a917db0cb': { dec: 18 },
+                        '0x4200000000000000000000000000000000000006': { dec: 18, native: 'base' },
                       };
                       for (const log3 of (receipt?.logs || [])) {
                         const stableInfo = STABLES[log3.address?.toLowerCase()];
                         if (!stableInfo || log3.topics?.[0] !== TRANSFER_TOPIC) continue;
                         const from3 = '0x' + (log3.topics[1] || '').slice(26).toLowerCase();
                         if (from3 === h.address.toLowerCase()) {
-                          const amt = parseFloat(ethers.formatUnits(log3.data, stableInfo.dec));
+                          let amt = parseFloat(ethers.formatUnits(log3.data, stableInfo.dec));
+                          if (stableInfo.native) amt = amt * await getNativePrice(stableInfo.native);
                           if (amt > smBuyAmountUsd) smBuyAmountUsd = amt;
                         }
                       }
@@ -1353,10 +1404,10 @@ async function handleSignal(signal) {
   if (!alreadyCounted) {
     pendingSignals[token].push({ ...signal, walletStatus, smBuyAmountUsd: signal.smBuyAmountUsd || 0 });
   } else if (signal.smBuyAmountUsd > 0) {
-    // 更新已有信号的金额（WS可能多次检测到同一钱包，取最大值）
+    // SM加仓：累加金额（同一SM多次买同一币=加仓，金额叠加）
     const existing = pendingSignals[token].find(s => s.wallet === wallet);
-    if (existing && signal.smBuyAmountUsd > (existing.smBuyAmountUsd || 0)) {
-      existing.smBuyAmountUsd = signal.smBuyAmountUsd;
+    if (existing) {
+      existing.smBuyAmountUsd = (existing.smBuyAmountUsd || 0) + signal.smBuyAmountUsd;
     }
   }
   
@@ -1646,14 +1697,16 @@ async function handleSignal(signal) {
       }))
     : 999;
   const confirmWallets = [...new Set(realConfirmWallets)];
-  // 计算SM买入金额中位数（在delete前提取）
-  const smBuyAmounts = (pendingSignals[token] || []).map(s => s.smBuyAmountUsd || 0).filter(a => a > 0).sort((a, b) => a - b);
-  let maxSmBuyUsd = 0;
-  if (smBuyAmounts.length > 0) {
-    const mid = Math.floor(smBuyAmounts.length / 2);
-    maxSmBuyUsd = smBuyAmounts.length % 2 === 1 ? smBuyAmounts[mid] : (smBuyAmounts[mid - 1] + smBuyAmounts[mid]) / 2;
+  // 提取每个SM的钱包→金额映射（在delete前）
+  const smWalletAmounts = {};
+  for (const s of (pendingSignals[token] || [])) {
+    if (s.smBuyAmountUsd > 0) {
+      smWalletAmounts[s.wallet] = s.smBuyAmountUsd;
+    }
   }
-  log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}${maxSmBuyUsd > 0 ? ` SM中位花费$${Math.round(maxSmBuyUsd)}` : ''}`);
+  const smBuyAmounts = Object.values(smWalletAmounts).sort((a, b) => a - b);
+  const smTotalUsd = smBuyAmounts.reduce((a, b) => a + b, 0);
+  log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}${smTotalUsd > 0 ? ` SM累计$${Math.round(smTotalUsd)}` : ''}`);
   delete pendingSignals[token];
   // 提前标记boughtTokens（防另一个handleSignal并发通过检查→重复买入）
   if (boughtTokens.has(token)) { log('INFO', `${symbol} 已在买入中，跳过`); return; }
@@ -1665,6 +1718,7 @@ async function handleSignal(signal) {
     const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
     if (price > 0) {
       let stillHolding = 0;
+      const holdingWallets = []; // 记录还持有的SM钱包
       const checkWallets = confirmWallets.slice(0, 5);
       
       if (chain === 'solana') {
@@ -1678,8 +1732,8 @@ async function handleSignal(signal) {
               bal2 = await getSolTokenBalance(smWallet, token);
               setCachedSolBalance(smWallet, token, bal2);
             }
-            if (bal2 * price >= 1) stillHolding++;
-          } catch { stillHolding++; }
+            if (bal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
+          } catch { stillHolding++; holdingWallets.push(smWallet); }
         }
       } else {
         // EVM: Multicall3一次查完
@@ -1687,10 +1741,10 @@ async function handleSignal(signal) {
           const balMap = await batchBalanceOf(chain, token, checkWallets);
           for (const smWallet of checkWallets) {
             const info = balMap.get(smWallet.toLowerCase());
-            if (!info) { stillHolding++; continue; } // 查询失败算持有
-            if (info.balNum * price >= 1) stillHolding++;
+            if (!info) { stillHolding++; holdingWallets.push(smWallet); continue; } // 查询失败算持有
+            if (info.balNum * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
           }
-        } catch { stillHolding = checkWallets.length; } // Multicall全失败→算都持有
+        } catch { stillHolding = checkWallets.length; holdingWallets.push(...checkWallets); }
       }
       
       if (stillHolding === 0) {
@@ -1699,11 +1753,37 @@ async function handleSignal(signal) {
         saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
         return;
       }
-      log('INFO', `✅ ${symbol} SM仍持有(${stillHolding}/${Math.min(confirmWallets.length,5)})，执行买入`);
+      // 只累计还持有的SM的金额
+      const filteredAmounts = {};
+      for (const w of holdingWallets) {
+        if (smWalletAmounts[w]) filteredAmounts[w] = smWalletAmounts[w];
+      }
+      smWalletAmounts = filteredAmounts;
+      
+      // 重新算确认数（只算还持有的SM）
+      let holdingHunters = 0, holdingScouts = 0;
+      for (const w of holdingWallets) {
+        const wLower = w.toLowerCase();
+        const info = rankedWallets.find(rw => rw.address === w || rw.address?.toLowerCase() === wLower);
+        if (info?.status === 'hunter') holdingHunters++;
+        else if (info?.status === 'scout') holdingScouts++;
+      }
+      const minH = chain === 'bsc' ? 3 : 2;
+      const altH = chain === 'bsc' ? 2 : 1;
+      const altS = chain === 'bsc' ? 3 : 2;
+      const passConfirm = holdingHunters >= minH || (holdingHunters >= altH && holdingScouts >= altS);
+      if (!passConfirm) {
+        log('WARN', `🚫 ${symbol}(${chain}) 剔除已卖SM后猎手=${holdingHunters}哨兵=${holdingScouts}，不够门槛，取消买入`);
+        boughtTokens.delete(token);
+        saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+        return;
+      }
+      realHunters = holdingHunters;
+      log('INFO', `✅ ${symbol} SM仍持有(${stillHolding}/${checkWallets.length}) 猎手=${holdingHunters}哨兵=${holdingScouts}，执行买入`);
     }
   } catch(e) { log('WARN', `买前SM检查异常: ${e.message?.slice(0,40)}，继续买入`); }
   
-  await executeBuy(chain, token, symbol, realHunters, confirmWallets, maxSmBuyUsd);
+  await executeBuy(chain, token, symbol, realHunters, confirmWallets, smWalletAmounts);
   } finally { handleSignal._auditLock.delete(token); }
 }
 
@@ -1801,7 +1881,7 @@ async function getNativePrice(chain) {
 
 // ============ PHASE 4: 交易层 ============
 let buyLock = false;
-async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = [], maxSmBuyUsd = 0) {
+async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = [], smWalletAmounts = {}) {
   // 并发锁 — 等前一个完成再执行（不丢信号）
   const maxWait = 30000; // 最多等30秒
   const start = Date.now();
@@ -1819,7 +1899,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   }
   buyLock = true;
   try {
-    return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, maxSmBuyUsd);
+    return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, smWalletAmounts);
   } finally {
     buyLock = false;
     // 兜底：如果买入没成功且没记录持仓→解锁boughtTokens
@@ -1831,7 +1911,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   }
 }
 
-async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, maxSmBuyUsd = 0) {
+async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, smWalletAmounts = {}) {
   // 二次检查持仓上限（防并发穿透）
   if (Object.keys(positions).length >= CONFIG.maxPositions) {
     log('WARN', `持仓已满(${CONFIG.maxPositions}个)，跳过 ${symbol}`);
@@ -1868,21 +1948,15 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       return;
     }
     
-    // 动态仓位：SM中位花费 × 60%，上限$150，下限$30，<$30不跟
-    const smRef = maxSmBuyUsd; // 中位数（在handleSignal计算）
-    if (smRef > 0) {
-      if (smRef < 30) {
-        log('INFO', `🚫 ${symbol}(${chain}) SM中位花费$${Math.round(smRef)}<$30，撒网型跳过`);
-        return;
-      }
-      size = Math.round(smRef * 0.6);
-      if (size > 150) size = 150;
-      if (size < 30) size = 30;
+    // 动态仓位：SM累计金额（只算还持有的SM）≥$500才跟
+    const smTotal = Object.values(smWalletAmounts).reduce((a, b) => a + b, 0);
+    if (smTotal >= 500) {
+      size = 150;
     } else {
-      // EVM链或查不到花费 → 默认$80
-      size = 80;
+      log('INFO', `🚫 ${symbol}(${chain}) SM累计$${Math.round(smTotal)}<$500，跳过`);
+      return;
     }
-    log('INFO', `📊 ${symbol} 仓位$${size}${smRef > 0 ? ` (SM中位花费$${Math.round(smRef)})` : ' (SM花费未知)'}`);
+    log('INFO', `📊 ${symbol} 仓位$${size} (SM累计$${Math.round(smTotal)})`);
     
     if (chain === 'solana') {
       nativeAmount = Math.floor((size / price) * 1e9);
