@@ -324,22 +324,44 @@ async function _getTokenBalance(chain, tokenAddress) {
   if (chain === 'solana') {
     const { conn, rpcIdx } = getSolConn();
     const w = getWallets();
+    const owner = new PublicKey(w.solana.address);
+    const mint = new PublicKey(tokenAddress);
     try {
-      const accts = await conn.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
+      // 查两个programId兼容Token-2022，去重防重复计数
       let total = 0n;
-      for (const a of accts.value) {
-        total += BigInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+      const seenAccounts = new Set();
+      for (const programId of [
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+        'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
+      ]) {
+        try {
+          const accts = await conn.getParsedTokenAccountsByOwner(owner, { mint }, { programId: new PublicKey(programId) });
+          for (const a of accts.value) {
+            if (seenAccounts.has(a.pubkey)) continue;
+            seenAccounts.add(a.pubkey);
+            total += BigInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+          }
+        } catch {}
       }
       return total.toString();
     } catch (e) {
-      // 429 → 标记down+切RPC重试一次
       if (e.message?.includes('429')) {
         markSolRpcDown(rpcIdx);
         const { conn: conn2 } = getSolConn();
-        const accts = await conn2.getParsedTokenAccountsByOwner(new PublicKey(w.solana.address), { mint: new PublicKey(tokenAddress) });
         let total = 0n;
-        for (const a of accts.value) {
-          total += BigInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+        const seenAccounts = new Set();
+        for (const programId of [
+          'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+          'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
+        ]) {
+          try {
+            const accts = await conn2.getParsedTokenAccountsByOwner(owner, { mint }, { programId: new PublicKey(programId) });
+            for (const a of accts.value) {
+              if (seenAccounts.has(a.pubkey)) continue;
+              seenAccounts.add(a.pubkey);
+              total += BigInt(a.account.data.parsed?.info?.tokenAmount?.amount || '0');
+            }
+          } catch {}
         }
         return total.toString();
       }
