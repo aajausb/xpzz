@@ -713,6 +713,80 @@ function _triggerSolWsReconnect() {
 }
 function _resetSolWsReconnectDelay() { _solWsReconnectDelay = 10000; } // WS成功连接后重置
 
+// 单连接重连：只重建断掉的那个WS，不影响其他连接
+const _singleWsReconnectTimers = {};
+const _singleWsReconnectDelays = {};
+function _reconnectSingleSolWs(ci, chunk) {
+  if (_singleWsReconnectTimers[ci]) return;
+  const delay = Math.min(_singleWsReconnectDelays[ci] || 15000, _SOL_WS_MAX_DELAY);
+  log('INFO', `🔌 [SOL] WS#${ci+1} 将在${Math.round(delay/1000)}秒后单独重连(${chunk.length}个钱包)`);
+  _singleWsReconnectTimers[ci] = setTimeout(async () => {
+    _singleWsReconnectTimers[ci] = null;
+    _singleWsReconnectDelays[ci] = Math.min((delay || 15000) * 1.5, _SOL_WS_MAX_DELAY);
+    try {
+      const ws = new WebSocket(SOL_WS_OFFICIAL);
+      if (setupOfficialSolWs._wsPool) setupOfficialSolWs._wsPool[ci] = ws;
+      if (ci === 0) solOfficialWs = ws;
+      const idToAddr = {};
+      let subscribed = 0;
+      ws.on('open', async () => {
+        _singleWsReconnectDelays[ci] = 15000;
+        for (let i = 0; i < chunk.length; i++) {
+          if (ws.readyState !== WebSocket.OPEN) break;
+          const addr = chunk[i];
+          const id = i + 1;
+          idToAddr[id] = addr;
+          ws.send(JSON.stringify({
+            jsonrpc: '2.0', id, method: 'logsSubscribe',
+            params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
+          }));
+          if ((i + 1) % 40 === 0) await new Promise(r => setTimeout(r, 1100));
+        }
+      });
+      const subIdToAddr = {};
+      ws.on('message', async (data) => {
+        try {
+          const msg = JSON.parse(data);
+          if (msg.id && msg.result !== undefined) {
+            subscribed++;
+            subIdToAddr[msg.result] = idToAddr[msg.id];
+            if (subscribed === chunk.length) log('INFO', `🔌 [SOL] WS#${ci+1} 重连完成 ${subscribed}/${chunk.length}`);
+            if (ci === 0 && subscribed === chunk.length) solWsMode = 'official';
+            return;
+          }
+          if (msg.id && msg.error) return;
+          if (msg.params?.result) {
+            const subId = msg.params.subscription;
+            const addr = subIdToAddr[subId];
+            const sig = msg.params.result.value?.signature;
+            if (sig && addr && !msg.params.result.value?.err) await parseSolSignature(addr, sig);
+          }
+        } catch(e) {}
+      });
+      ws.on('close', () => {
+        log('WARN', `🔌 [SOL] WS#${ci+1} 断开`);
+        if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
+        _reconnectSingleSolWs(ci, chunk);
+      });
+      ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS#${ci+1}重连错误: ${e.message.slice(0,40)}`); });
+      let lastMsgTime = Date.now();
+      const origOnMsg = ws.listeners('message')[0];
+      if (origOnMsg) {
+        ws.removeListener('message', origOnMsg);
+        ws.on('message', (d) => { lastMsgTime = Date.now(); origOnMsg(d); });
+      }
+      const hc = setInterval(() => {
+        if (ws.readyState !== WebSocket.OPEN) { clearInterval(hc); return; }
+        ws.ping();
+        if (Date.now() - lastMsgTime > 300000) { log('WARN', `[SOL] WS#${ci+1} 5分钟无消息，主动重连`); clearInterval(hc); ws.close(); }
+      }, 60000);
+    } catch(e) {
+      log('WARN', `[SOL] WS#${ci+1} 重连异常: ${e.message?.slice(0,40)}`);
+      _reconnectSingleSolWs(ci, chunk);
+    }
+  }, delay);
+}
+
 // QuickNode WS: 100个/连接限制，多连接分片覆盖全部钱包
 function setupOfficialSolWs() {
   // 按优先级排序: hunter > scout > watcher
@@ -760,7 +834,7 @@ function setupOfficialSolWs() {
           jsonrpc: '2.0', id, method: 'logsSubscribe',
           params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
         }));
-        if ((i + 1) % 5 === 0) await new Promise(r => setTimeout(r, 1000));
+        if ((i + 1) % 40 === 0) await new Promise(r => setTimeout(r, 1100));
       }
     });
     
@@ -796,7 +870,8 @@ function setupOfficialSolWs() {
     ws.on('close', () => {
       log('WARN', `🔌 [SOL] WS#${ci+1} 断开`);
       if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
-      _triggerSolWsReconnect();
+      // 只重连这一个连接，不影响其他连接
+      _reconnectSingleSolWs(ci, chunk);
     });
     
     ws.on('error', (e) => { if (e.message) log('WARN', `[SOL] WS#${ci+1}错误: ${e.message.slice(0,40)}`); });
@@ -1572,7 +1647,21 @@ async function handleSignal(signal) {
       } else {
         // EVM: Multicall3批量查所有SM余额（1次RPC）
         const walletAddrs = allSigs.map(s => s.wallet);
-        const balMap = await batchBalanceOf(chain, token, walletAddrs);
+        let balMap = await batchBalanceOf(chain, token, walletAddrs);
+        // 查不到的逐个重试一次
+        const missedWallets = walletAddrs.filter(w => !balMap.has(w.toLowerCase()));
+        if (missedWallets.length > 0) {
+          log('INFO', `🔄 ${missedWallets.length}个SM余额Multicall未返回，逐个重试`);
+          const provider = chain === 'bsc' ? bscProvider : baseProvider;
+          for (const w of missedWallets) {
+            try {
+              const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+              const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
+              const balNum = parseFloat(ethers.formatUnits(bal, dec));
+              balMap.set(w.toLowerCase(), { bal, balNum });
+            } catch {}
+          }
+        }
         for (const sig of allSigs) {
           const info = balMap.get(sig.wallet.toLowerCase());
           let holdingUsd = -1; // 查询失败算有效
@@ -2598,10 +2687,22 @@ async function managePositions() {
               }
             } else {
               // EVM: Multicall3批量查所有SM余额（1次RPC搞定）
-              const balMap = await batchBalanceOf(pos.chain, tokenAddr, pendingSM);
+              let balMap = await batchBalanceOf(pos.chain, tokenAddr, pendingSM);
+              // 查不到的逐个重试
+              const missed = pendingSM.filter(w => !balMap.has(w.toLowerCase()));
+              if (missed.length > 0) {
+                const prov = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                for (const w of missed) {
+                  try {
+                    const c = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], prov);
+                    const [bal, dec] = await Promise.all([c.balanceOf(w), c.decimals().catch(() => 18)]);
+                    balMap.set(w.toLowerCase(), { bal, balNum: parseFloat(ethers.formatUnits(bal, dec)) });
+                  } catch {}
+                }
+              }
               for (const smWallet of pendingSM) {
                 const info = balMap.get(smWallet.toLowerCase());
-                if (!info) continue; // 查询失败，下轮重试
+                if (!info) continue; // 二次重试仍失败，下轮再来
                 const { bal, balNum } = info;
                 const balValue = balNum * (pos.currentPrice || 0);
                 const isDust = bal === 0n || (balValue < 0.01 && pos.currentPrice > 0 && balNum > 0);
