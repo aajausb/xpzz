@@ -5,9 +5,9 @@
     "weather": null
   },
   "lastWalletCheck": {
-    "time": "2026-03-20T04:22:00+08:00",
+    "time": "2026-03-20T08:22:00+08:00",
     "result": "warning",
-    "details": "Engine active: 619 swaps/1h, SOL/Base buying normally. BSC balance $0 - missed CHIBIFY(3hunters,rank#4) and Chibi Trump. ? token buy showed qty=0/price=$0 (metadata issue). 5 active positions.",
-    "wsStatus": "SOL 4 WS active, BSC polling working, Base normal"
+    "details": "Engine active 631 swaps/h. 9 positions. SOL#10 verified real-time. Bug: token with name '?' at 04:19 lost $80 (6xT7TuJavf6 not in positions). 2nd ? buy at 06:59 was actually Penis (tracked OK). BSC still $0.",
+    "wsStatus": "SOL 4 WS active, BSC polling active, all normal"
   }
 }

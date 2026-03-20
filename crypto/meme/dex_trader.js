@@ -305,7 +305,7 @@ async function buy(chain, tokenAddress, amountNative) {
   return evmBuy(chain, tokenAddress, amountNative);
 }
 
-async function sell(chain, tokenAddress, amountRaw) {
+async function sell(chain, tokenAddress, amountRaw, slippageBps) {
   // 没传数量 → 查链上余额全卖
   if (!amountRaw) {
     amountRaw = await _getTokenBalance(chain, tokenAddress);
@@ -315,8 +315,8 @@ async function sell(chain, tokenAddress, amountRaw) {
     console.log(`[dex_trader] 自动查余额: ${amountRaw}`);
   }
   // 不在这里重试——v8_engine有自己的重试层
-  if (chain === 'solana') return solanaSell(tokenAddress, amountRaw);
-  return evmSell(chain, tokenAddress, amountRaw);
+  if (chain === 'solana') return solanaSell(tokenAddress, amountRaw, slippageBps || 500);
+  return evmSell(chain, tokenAddress, amountRaw, slippageBps ? slippageBps / 100 : 3);
 }
 
 // ============ 辅助 ============

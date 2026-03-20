@@ -2190,10 +2190,12 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
   log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 原因:${reason}`);
   
   const MAX_RETRIES = 3;
+  const SLIPPAGE_STEPS = [500, 2500, 5000]; // 5% → 25% → 50%
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
       const trader = require('./dex_trader.js');
-      if (attempt > 1) log('INFO', `🔄 重试卖出 ${pos.symbol}(${pos.chain}) 第${attempt}次...`);
+      const slippageBps = SLIPPAGE_STEPS[attempt - 1] || 5000;
+      if (attempt > 1) log('INFO', `🔄 重试卖出 ${pos.symbol}(${pos.chain}) 第${attempt}次(slippage ${slippageBps/100}%)...`);
       // ratio<1时部分卖出：查链上余额×ratio，ratio≥0.99全卖
       let result;
       if (ratio < 0.99) {
@@ -2240,9 +2242,9 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
             return;
           }
         }
-        result = await trader.sell(pos.chain, tokenAddress, partialAmount);
+        result = await trader.sell(pos.chain, tokenAddress, partialAmount, slippageBps);
       } else {
-        result = await trader.sell(pos.chain, tokenAddress);
+        result = await trader.sell(pos.chain, tokenAddress, undefined, slippageBps);
       }
       
       if (result.success) {
