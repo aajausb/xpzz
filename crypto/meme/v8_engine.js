@@ -1855,10 +1855,10 @@ async function handleSignal(signal) {
       }))
     : 999;
   const confirmWallets = [...new Set(realConfirmWallets)];
-  // 提取每个SM的钱包→金额映射（在delete前）
+  // 提取每个SM的钱包→金额映射（只算猎手+哨兵，观察不算）
   let smWalletAmounts = {};
   for (const s of (pendingSignals[token] || [])) {
-    if (s.smBuyAmountUsd > 0) {
+    if (s.smBuyAmountUsd > 0 && (s.walletStatus === 'hunter' || s.walletStatus === 'scout')) {
       smWalletAmounts[s.wallet] = s.smBuyAmountUsd;
     }
   }
