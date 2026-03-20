@@ -281,6 +281,14 @@ function httpGet(url, headers = {}, timeoutMs = 15000) {
   });
 }
 
+// fetch with timeout (防DexScreener/OKX挂住阻塞)
+async function fetchTimeout(url, opts = {}, timeoutMs = 10000) {
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), timeoutMs);
+  try { return await fetch(url, { ...opts, signal: ac.signal }); }
+  finally { clearTimeout(timer); }
+}
+
 function httpPost(url, body, headers = {}, timeoutMs = 15000) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
@@ -778,7 +786,9 @@ function _reconnectSingleSolWs(ci, chunk) {
       const hc = setInterval(() => {
         if (ws.readyState !== WebSocket.OPEN) { clearInterval(hc); return; }
         ws.ping();
-        if (Date.now() - lastMsgTime > 300000) { log('WARN', `[SOL] WS#${ci+1} 5分钟无消息，主动重连`); clearInterval(hc); ws.close(); }
+        // 动态超时：钱包少的连接消息少，给更长时间
+        const silentTimeout = chunk.length < 60 ? 600000 : 300000; // <60个钱包10分钟，否则5分钟
+        if (Date.now() - lastMsgTime > silentTimeout) { log('WARN', `[SOL] WS#${ci+1} ${silentTimeout/60000}分钟无消息，主动重连`); clearInterval(hc); ws.close(); }
       }, 60000);
     } catch(e) {
       log('WARN', `[SOL] WS#${ci+1} 重连异常: ${e.message?.slice(0,40)}`);
@@ -889,8 +899,9 @@ function setupOfficialSolWs() {
     const healthCheck = setInterval(() => {
       if (ws.readyState !== WebSocket.OPEN) { clearInterval(healthCheck); return; }
       ws.ping();
-      if (Date.now() - lastMsgTime > 300000) {
-        log('WARN', `🔌 [SOL] WS#${ci+1} 静默断连(5分钟无消息)，主动重连`);
+      const silentTimeout2 = chunk.length < 60 ? 600000 : 300000;
+      if (Date.now() - lastMsgTime > silentTimeout2) {
+        log('WARN', `🔌 [SOL] WS#${ci+1} 静默断连(${silentTimeout2/60000}分钟无消息)，主动重连`);
         clearInterval(healthCheck);
         try { ws.removeAllListeners(); ws.terminate(); } catch {}
         if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
@@ -1789,7 +1800,7 @@ async function handleSignal(signal) {
         const crypto = require('crypto');
         const qPath = `/api/v6/dex/aggregator/quote?chainIndex=${CHAIN_ID[chain]}&fromTokenAddress=${token}&toTokenAddress=${NATIVE[chain]}&amount=${(BigInt(10) ** BigInt(dec)).toString()}&slippagePercent=0.5`;
         const sign = crypto.createHmac('sha256', OKX_ENV.OKX_SECRET_KEY).update(ts + 'GET' + qPath).digest('base64');
-        const resp = await fetch('https://www.okx.com' + qPath, { headers: {
+        const resp = await fetchTimeout('https://www.okx.com' + qPath, { headers: {
           'OK-ACCESS-KEY': OKX_ENV.OKX_API_KEY, 'OK-ACCESS-SIGN': sign,
           'OK-ACCESS-TIMESTAMP': ts, 'OK-ACCESS-PASSPHRASE': OKX_ENV.OKX_PASSPHRASE
         }});
@@ -2222,7 +2233,24 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       const rankLine = hunterRanks.length > 0 ? `\n🏹 ${hunterRanks.join(' ')}` : '';
       const smLine = smTotalAtBuy > 0 ? `\n💎 SM累计持有$${Math.round(smTotalAtBuy)}` : '';
       await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}${rankLine}${smLine}\n🔗 ${result.txHash || ''}`);
-    } else if (result.error === 'SOL确认超时' && result.txHash) {
+      
+      // symbol为?时延迟重查DexScreener更新
+      if (symbol === '?') {
+        const _token = token, _chain = chain;
+        setTimeout(async () => {
+          try {
+            const r = await fetchTimeout(`https://api.dexscreener.com/latest/dex/tokens/${_token}`);
+            const d = await r.json();
+            const newSymbol = d?.pairs?.[0]?.baseToken?.symbol;
+            if (newSymbol && positions[_token]) {
+              positions[_token].symbol = newSymbol;
+              saveJSON(POSITIONS_FILE, positions);
+              log('INFO', `📝 ${_token.slice(0,10)} symbol更新: ? → ${newSymbol}`);
+              await notifyTelegram(`📝 刚才买的?币是 ${newSymbol}`);
+            }
+          } catch {}
+        }, 15000);
+      }
       // 交易已发送但确认超时→可能已上链，查余额确认
       log('WARN', `⚠️ ${symbol} 确认超时，查链上余额...`);
       await sleep(5000);
@@ -2454,7 +2482,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           const sellAmount = ratio < 0.99 ? remaining * ratio : remaining;
           // Bug fix: 用_dexCache而不是dexScreenerCache
           const dexData = _dexCache[tokenAddress]?.data || await (async()=>{
-            try { return await (await fetch('https://api.dexscreener.com/latest/dex/tokens/'+tokenAddress,{headers:{'User-Agent':'Mozilla/5.0'}})).json(); } catch{return null;}
+            try { return await (await fetchTimeout('https://api.dexscreener.com/latest/dex/tokens/'+tokenAddress,{headers:{'User-Agent':'Mozilla/5.0'}})).json(); } catch{return null;}
           })();
           const curPrice = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
           const revenue = sellAmount * curPrice;
@@ -2600,6 +2628,20 @@ async function _trySplitSell(pos, tokenAddress) {
       }
       if (ok > 0) {
         log('INFO', `✅ ${pos.symbol} 分批卖出${ok}/2成功`);
+        // 分批卖出后清仓（大概率全卖完了）
+        if (positions[tokenAddress]) {
+          try {
+            logTrade({ type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol,
+              token: tokenAddress, ratio: 1, reason: '分批卖出', costUsd: pos.buyCost||0,
+              soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: Math.round((Date.now()-(pos.buyTime||0))/60000) });
+          } catch {}
+          delete positions[tokenAddress];
+          delete sellTracker[tokenAddress];
+          delete transferTracker[tokenAddress];
+          boughtTokens.delete(tokenAddress);
+          saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+          saveJSON(POSITIONS_FILE, positions);
+        }
         return true;
       }
     } else {
@@ -2618,7 +2660,22 @@ async function _trySplitSell(pos, tokenAddress) {
         } catch(e2) { log('WARN', `❌ ${pos.symbol} 分批第${i+1}次异常: ${e2.message?.slice(0,40)}`); }
         await new Promise(r => setTimeout(r, 3000));
       }
-      if (ok > 0) return true;
+      if (ok > 0) {
+        if (positions[tokenAddress]) {
+          try {
+            logTrade({ type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol,
+              token: tokenAddress, ratio: 1, reason: '分批卖出(EVM)', costUsd: pos.buyCost||0,
+              soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: Math.round((Date.now()-(pos.buyTime||0))/60000) });
+          } catch {}
+          delete positions[tokenAddress];
+          delete sellTracker[tokenAddress];
+          delete transferTracker[tokenAddress];
+          boughtTokens.delete(tokenAddress);
+          saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+          saveJSON(POSITIONS_FILE, positions);
+        }
+        return true;
+      }
     }
   } catch(e) { log('WARN', `分批卖出异常: ${e.message?.slice(0,60)}`); }
   return false;
@@ -2862,7 +2919,7 @@ async function managePositions() {
             if (alreadySold < 0.49) { // 还没卖过回本仓
               const toSell = 0.5 - alreadySold;
               log('INFO', `🎯 ${pos.symbol}(${pos.chain}) 翻倍${multiple.toFixed(1)}x! 卖50%回本`);
-              await executeSell(tokenAddr, `止盈回本(${multiple.toFixed(1)}x)`, toSell / (1 - alreadySold));
+              await executeSell(tokenAddr, `止盈回本(${multiple.toFixed(1)}x)`, Math.min(toSell / (1 - alreadySold), 0.99));
               if (positions[tokenAddr]) {
                 // 只有卖出成功才标记（unsellable=失败，不标记，下轮重试）
                 if (!pos.unsellable) {
