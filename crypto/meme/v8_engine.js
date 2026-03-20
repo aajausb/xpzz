@@ -105,20 +105,26 @@ const SOL_PUBLIC_RPC = SOL_RPCS[0]; // 兼容旧引用
 // Token-2022兼容：查余额同时查spl-token和spl-token-2022
 async function getSolTokenBalance(owner, mint) {
   let total = 0;
+  let anySuccess = false;
   const seenAccounts = new Set();
   for (const programId of ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb']) {
     try {
       const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
         owner, { mint }, { encoding: 'jsonParsed', programId }
       ]);
+      anySuccess = true;
       for (const a of (balData.result?.value || [])) {
         const pubkey = a.pubkey;
         if (seenAccounts.has(pubkey)) continue; // 去重！
         seenAccounts.add(pubkey);
         total += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
       }
-    } catch {}
+    } catch(e) {
+      log('WARN', `getSolTokenBalance ${programId.slice(0,10)} 失败: ${e.message?.slice(0,50)}`);
+    }
   }
+  // 两个programId都RPC失败→返回-1（不是0），防止误判余额=0
+  if (!anySuccess) return -1;
   return total;
 }
 
@@ -2248,6 +2254,87 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
       }
       
       if (result.success) {
+        // 卖出后验证：等2秒查链上余额确认真的卖了
+        try {
+          await new Promise(r => setTimeout(r, 2000));
+          const trader2 = require('./dex_trader.js');
+          let postBal = -1;
+          if (pos.chain === 'solana') {
+            postBal = await getSolTokenBalance(trader2.getWalletAddress('solana'), tokenAddress);
+          } else {
+            const { ethers: eth2 } = require('ethers');
+            const prov2 = pos.chain === 'bsc' ? bscProvider : baseProvider;
+            const erc2 = new eth2.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], prov2);
+            const b2 = await erc2.balanceOf(trader2.getWalletAddress('evm'));
+            postBal = parseFloat(eth2.formatUnits(b2, 18));
+          }
+          const preBal = (pos.buyAmount || 0) * (1 - (pos.soldRatio || 0));
+          if (postBal >= 0 && preBal > 0 && postBal >= preBal * 0.95) {
+            // 余额几乎没变 → 假成功，继续重试（提高slippage）
+            log('WARN', `⚠️ ${pos.symbol} 卖出tx成功但余额未减少(pre:${preBal.toFixed(0)} post:${postBal.toFixed(0)})，第${attempt}次假成功`);
+            if (attempt < MAX_RETRIES) { await new Promise(r => setTimeout(r, 2000 * attempt)); continue; }
+            // 3次都假成功 → 尝试分批卖（一半一半）
+            log('INFO', `🔄 ${pos.symbol} 3次假成功，尝试分批卖出...`);
+            try {
+              const trader3 = require('./dex_trader.js');
+              let splitBal;
+              if (pos.chain === 'solana') {
+                const rawBal = await getSolTokenBalance(trader3.getWalletAddress('solana'), tokenAddress);
+                splitBal = Math.floor(rawBal / 2);
+              } else {
+                // EVM: 查链上余额分半
+                const { ethers: eth3 } = require('ethers');
+                const prov3 = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                const erc3 = new eth3.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], prov3);
+                const evmBal = await erc3.balanceOf(trader3.getWalletAddress('evm'));
+                splitBal = (evmBal / 2n).toString();
+              }
+              if (splitBal && splitBal !== '0' && Number(splitBal) > 0) {
+                // 分两批卖
+                for (let i = 0; i < 2; i++) {
+                  try {
+                    let sr;
+                    if (pos.chain === 'solana') {
+                      sr = await trader3.solanaSell(tokenAddress, splitBal.toString(), 5000);
+                    } else {
+                      sr = await trader3.sell(pos.chain, tokenAddress, splitBal.toString(), 5000);
+                    }
+                    if (sr.success) log('INFO', `✅ ${pos.symbol} 分批第${i+1}次成功`);
+                    else log('WARN', `❌ ${pos.symbol} 分批第${i+1}次失败: ${sr.error}`);
+                  } catch(e) { log('WARN', `❌ ${pos.symbol} 分批第${i+1}次异常: ${e.message?.slice(0,50)}`); }
+                  await new Promise(r => setTimeout(r, 3000));
+                }
+                // 分批后再查余额
+                await new Promise(r => setTimeout(r, 3000));
+                let finalBal = -1;
+                if (pos.chain === 'solana') {
+                  finalBal = await getSolTokenBalance(trader3.getWalletAddress('solana'), tokenAddress);
+                } else {
+                  const { ethers: eth4 } = require('ethers');
+                  const prov4 = pos.chain === 'bsc' ? bscProvider : baseProvider;
+                  const erc4 = new eth4.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], prov4);
+                  const fb = await erc4.balanceOf(trader3.getWalletAddress('evm'));
+                  finalBal = parseFloat(eth4.formatUnits(fb, 18));
+                }
+                if (finalBal >= 0 && finalBal < preBal * 0.1) {
+                  log('INFO', `✅ ${pos.symbol} 分批卖出成功，余额${finalBal.toFixed(0)}`);
+                  // 走正常卖出成功流程 — 不break，让下面的代码处理
+                } else {
+                  log('WARN', `⚠️ ${pos.symbol} 分批卖出后余额仍有${finalBal.toFixed(0)}，通知跑步哥`);
+                  await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖出假成功+分批也没完全卖掉\n余额剩${finalBal.toFixed(0)}\n🔧 需手动处理`);
+                  break;
+                }
+              } else {
+                await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 3次卖出假成功\n余额未减少(${postBal.toFixed(0)}/${preBal.toFixed(0)})\n🔧 需手动处理`);
+                break;
+              }
+            } catch(e) {
+              log('WARN', `分批卖出异常: ${e.message?.slice(0,80)}`);
+              await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖出假成功+分批异常\n🔧 需手动处理`);
+              break;
+            }
+          }
+        } catch(e) { log('WARN', `卖后验证异常: ${e.message?.slice(0,50)}`); }
         // 估算卖出收益（卖出数量×当前价格）
         try {
           // Bug fix: ratio是相对剩余的比例，换算成实际卖出数量
