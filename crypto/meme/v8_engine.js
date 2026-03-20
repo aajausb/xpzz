@@ -802,7 +802,7 @@ function _reconnectSingleSolWs(ci, chunk) {
         if (ws.readyState !== WebSocket.OPEN) { clearInterval(hc); return; }
         ws.ping();
         // 动态超时：钱包少的连接消息少，给更长时间
-        const silentTimeout = chunk.length < 60 ? 600000 : 300000; // <60个钱包10分钟，否则5分钟
+        const silentTimeout = chunk.length < 60 ? 900000 : 600000; // <60个钱包15分钟，否则10分钟
         if (Date.now() - lastMsgTime > silentTimeout) { log('WARN', `[SOL] WS#${ci+1} ${silentTimeout/60000}分钟无消息，主动重连`); clearInterval(hc); ws.close(); }
       }, 60000);
     } catch(e) {
@@ -914,7 +914,7 @@ function setupOfficialSolWs() {
     const healthCheck = setInterval(() => {
       if (ws.readyState !== WebSocket.OPEN) { clearInterval(healthCheck); return; }
       ws.ping();
-      const silentTimeout2 = chunk.length < 60 ? 600000 : 300000;
+      const silentTimeout2 = chunk.length < 60 ? 900000 : 600000;
       if (Date.now() - lastMsgTime > silentTimeout2) {
         log('WARN', `🔌 [SOL] WS#${ci+1} 静默断连(${silentTimeout2/60000}分钟无消息)，主动重连`);
         clearInterval(healthCheck);
@@ -2127,10 +2127,6 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     // SM二次买入加成：验证过的币信心更高，仓位×1.5（最高$200）
     const history = tradeHistory[token];
     const isRebuy = history && history.soldCount >= 1;
-    if (isRebuy) {
-      size = Math.min(Math.round(size * 1.5), 200);
-      log('INFO', `🔄 ${symbol} SM二次买入加成! 仓位$${size} (第${history.soldCount+1}次)`);
-    }
     log('INFO', `📊 ${symbol} ${grade}级信号${isRebuy?'(二次)':''} 仓位$${size} (猎手${confirmCount} SM累计$${Math.round(smTotal)})`);
     
     if (chain === 'solana') {
