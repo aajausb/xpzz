@@ -16,12 +16,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 0.000001125,
-    "currentValue": 152.32505100539592,
-    "pnlPercent": 1.8099547511312237,
-    "totalPnl": -7.67494899460408,
-    "totalPnlPercent": -4.79684312162755,
-    "_lastSmCheck": 1773977393906,
+    "currentPrice": 0.000001108,
+    "currentValue": 150.02325023464772,
+    "pnlPercent": 0.2714932126696845,
+    "totalPnl": -9.976749765352281,
+    "totalPnlPercent": -6.235468603345176,
+    "_lastSmCheck": 1773979170641,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -52,7 +52,7 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 847,
-    "_lastSmCheck": 1773977395064,
+    "_lastSmCheck": 1773979171513,
     "_transfers": {
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -66,61 +66,5 @@
         "source": "patrol"
       }
     ]
-  },
-  "BRC1jBGyYvx5ngo4A4J6gmzx8qSQHWBctMcFDMc2pump": {
-    "chain": "solana",
-    "token": "BRC1jBGyYvx5ngo4A4J6gmzx8qSQHWBctMcFDMc2pump",
-    "symbol": "IMAGINE",
-    "buyPrice": 0.000009476,
-    "buyAmount": 7007701.045259,
-    "buyAmountRaw": 7007701.045259,
-    "buyCost": 160,
-    "buyTime": 1773972349986,
-    "confirmCount": 1,
-    "confirmWallets": [
-      "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk",
-      "BCnqsPEtA1TkgednYEebRpkmwFRJDCjMQcKZMMtEdArc",
-      "BCagckXeMChUKrHEd6fKFA1uiWDtcmCXMsqaheLiUPJd",
-      "FFn8s7cj38ht2xpKr15K14LoMHCQ3EiDKDMda9mAZHcS"
-    ],
-    "smTotalUsd": 1168,
-    "currentPrice": 0.000002588,
-    "currentValue": 4.533982576282573,
-    "pnlPercent": -72.68889826931195,
-    "totalPnl": -155.46601742371743,
-    "totalPnlPercent": -97.16626088982339,
-    "_lastSmCheck": 1773977360625,
-    "_sells": [
-      {
-        "wallet": "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk",
-        "time": 1773972363497,
-        "source": "patrol"
-      },
-      {
-        "wallet": "BCagckXeMChUKrHEd6fKFA1uiWDtcmCXMsqaheLiUPJd",
-        "time": 1773972368388,
-        "source": "patrol"
-      },
-      {
-        "wallet": "BCnqsPEtA1TkgednYEebRpkmwFRJDCjMQcKZMMtEdArc",
-        "time": 1773972368552,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "FFn8s7cj38ht2xpKr15K14LoMHCQ3EiDKDMda9mAZHcS",
-        "time": 1773972590711,
-        "source": "patrol"
-      }
-    ],
-    "_transfers": {
-      "BCnqsPEtA1TkgednYEebRpkmwFRJDCjMQcKZMMtEdArc": {
-        "subWallet": "2ApLdwLrGayEmxgpLX9BTR47Q2QprfMg5SpjrLeaK8s7",
-        "time": 1773972364047
-      }
-    },
-    "soldRatio": 0.75,
-    "unsellable": true,
-    "unsellableReason": "OKX报价失败: Insufficient liquidity",
-    "unsellableSince": 1773976059665
   }
 }
