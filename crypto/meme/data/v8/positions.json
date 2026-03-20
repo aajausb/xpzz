@@ -16,12 +16,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 0.000001091,
-    "currentValue": 147.72144946389952,
-    "pnlPercent": -1.2669683257918545,
-    "totalPnl": -12.278550536100482,
-    "totalPnlPercent": -7.674094085062802,
-    "_lastSmCheck": 1773970191377,
+    "currentPrice": 0.000001168,
+    "currentValue": 158.1472529549355,
+    "pnlPercent": 5.701357466063355,
+    "totalPnl": -1.8527470450644898,
+    "totalPnlPercent": -1.1579669031653061,
+    "_lastSmCheck": 1773971980123,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -35,74 +35,6 @@
         "source": "ws"
       }
     ]
-  },
-  "Hn7Urq1gfc3AVGYY1kQ9SJja15Y3RmKF7jNtt4Ewpump": {
-    "chain": "solana",
-    "token": "Hn7Urq1gfc3AVGYY1kQ9SJja15Y3RmKF7jNtt4Ewpump",
-    "symbol": "Foodrot",
-    "buyPrice": 0.0001104,
-    "buyAmount": 700805.216894,
-    "buyAmountRaw": 700805.216894,
-    "buyCost": 80,
-    "buyTime": 1773942023883,
-    "confirmCount": 1,
-    "confirmWallets": [
-      "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
-      "pYffPQeb49X2QdrecP6GTER3MePTnuGLgsh6JN2FoZk",
-      "C6TFVQV5m43yhVbMUndWSEw73D2LbQQUjW6nAbuyLt7G",
-      "E9CAsaxaMiRDNS1X2Vb7FC3RdyGtoLZNWhVffADBTWQo",
-      "7UTGA27uZXUrQfUwZrFbA4QnzR1sGou9ombWmF8nPN5o",
-      "5B79fMkcFeRTiwm7ehsZsFiKsC7m7n1Bgv9yLxPp9q2X",
-      "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
-      "15YYejZ7Br4JPfEahPuxUQVJQ33TQQV1yDu73upF3ym"
-    ],
-    "smTotalUsd": 616,
-    "currentPrice": 0.0001375,
-    "currentValue": 16.06011955382083,
-    "pnlPercent": 24.54710144927537,
-    "totalPnl": -2.5084631419459527,
-    "totalPnlPercent": -3.1355789274324404,
-    "_lastSmCheck": 1773970192213,
-    "_sells": [
-      {
-        "wallet": "C6TFVQV5m43yhVbMUndWSEw73D2LbQQUjW6nAbuyLt7G",
-        "time": 1773943720239,
-        "source": "patrol"
-      },
-      {
-        "wallet": "pYffPQeb49X2QdrecP6GTER3MePTnuGLgsh6JN2FoZk",
-        "time": 1773946167354,
-        "source": "patrol"
-      },
-      {
-        "wallet": "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
-        "time": 1773948204933,
-        "source": "patrol"
-      },
-      {
-        "wallet": "5B79fMkcFeRTiwm7ehsZsFiKsC7m7n1Bgv9yLxPp9q2X",
-        "time": 1773955163174,
-        "source": "patrol"
-      },
-      {
-        "wallet": "7UTGA27uZXUrQfUwZrFbA4QnzR1sGou9ombWmF8nPN5o",
-        "time": 1773960162088,
-        "source": "sub-patrol"
-      },
-      {
-        "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
-        "time": 1773965562126,
-        "source": "patrol"
-      }
-    ],
-    "sellRevenue": 61.43141730423322,
-    "soldRatio": 0.8333333333333334,
-    "_transfers": {
-      "7UTGA27uZXUrQfUwZrFbA4QnzR1sGou9ombWmF8nPN5o": {
-        "subWallet": "9yMwSPk9mrXSN7yDHUuZurAh1sjbJsfpUqjZ7SvVtdco",
-        "time": 1773960161943
-      }
-    }
   },
   "0x414d5648cebafb42d2bba825b017daf2a210bba3": {
     "chain": "base",
@@ -120,7 +52,7 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 847,
-    "_lastSmCheck": 1773970192532,
+    "_lastSmCheck": 1773971992088,
     "_transfers": {
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",

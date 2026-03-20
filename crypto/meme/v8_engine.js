@@ -814,17 +814,18 @@ function setupOfficialSolWs() {
   for (const old of setupOfficialSolWs._wsPool) { try { old.close(); } catch {} }
   setupOfficialSolWs._wsPool = [];
   
-  for (let ci = 0; ci < chunks.length; ci++) {
-    const chunk = chunks[ci];
+  // 串行创建连接：一个连接订阅完再开下一个，避免并发超50/s
+  async function _setupSingleWs(ci, chunk) {
+    return new Promise((resolve) => {
     const ws = new WebSocket(SOL_WS_OFFICIAL);
     setupOfficialSolWs._wsPool.push(ws);
-    if (ci === 0) solOfficialWs = ws; // 第一个连接作为主连接
+    if (ci === 0) solOfficialWs = ws;
     
     const idToAddr = {};
     let subscribed = 0;
     
     ws.on('open', async () => {
-      if (ci === 0) _resetSolWsReconnectDelay(); // 主连接成功→重置退避
+      if (ci === 0) _resetSolWsReconnectDelay();
       for (let i = 0; i < chunk.length; i++) {
         if (ws.readyState !== WebSocket.OPEN) break;
         const addr = chunk[i];
@@ -834,7 +835,8 @@ function setupOfficialSolWs() {
           jsonrpc: '2.0', id, method: 'logsSubscribe',
           params: [{ mentions: [addr] }, { commitment: 'confirmed' }]
         }));
-        if ((i + 1) % 40 === 0) await new Promise(r => setTimeout(r, 1100));
+        // 每30个等1秒（单连接独占50/s限额）
+        if ((i + 1) % 30 === 0) await new Promise(r => setTimeout(r, 1100));
       }
     });
     
@@ -892,10 +894,26 @@ function setupOfficialSolWs() {
         clearInterval(healthCheck);
         try { ws.removeAllListeners(); ws.terminate(); } catch {}
         if (ci === 0) { solOfficialWs = null; solWsMode = 'polling'; }
-        _triggerSolWsReconnect();
+        _reconnectSingleSolWs(ci, chunk);
       }
     }, 30000);
-  } // end for each chunk
+    // 等订阅完成再resolve（或超时30秒）
+    const checkDone = setInterval(() => {
+      if (subscribed >= chunk.length || ws.readyState !== WebSocket.OPEN) { clearInterval(checkDone); resolve(); }
+    }, 1000);
+    setTimeout(() => { clearInterval(checkDone); resolve(); }, 30000);
+    }); // end Promise
+  } // end _setupSingleWs
+  
+  // 串行：一个连接订完再开下一个
+  (async () => {
+    for (let ci = 0; ci < chunks.length; ci++) {
+      await _setupSingleWs(ci, chunks[ci]);
+      // 连接之间等2秒
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    log('INFO', `🔌 [SOL] 全部${chunks.length}个WS连接建立完成`);
+  })();
 }
 // 公共RPC轮询: 每10秒查每个钱包最近1条签名，检测新交易
 async function pollSolanaWallets() {
@@ -2517,13 +2535,16 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
         continue;
       } else if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
-        // 非异常路径也标记unsellable
-        positions[tokenAddress].unsellable = true;
-        positions[tokenAddress].unsellableReason = result?.error?.substring?.(0, 200) || 'sell failed';
-        positions[tokenAddress].unsellableSince = Date.now();
-        saveJSON(POSITIONS_FILE, positions);
-        log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次卖出全失败，标记unsellable停止重试`);
-        await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次全失败: ${result?.error || 'unknown'}\n🔧 需手动处理`);
+        // 3次递增slippage都失败 → 尝试分批卖
+        const splitOk = await _trySplitSell(pos, tokenAddress);
+        if (!splitOk) {
+          positions[tokenAddress].unsellable = true;
+          positions[tokenAddress].unsellableReason = result?.error?.substring?.(0, 200) || 'sell failed';
+          positions[tokenAddress].unsellableSince = Date.now();
+          saveJSON(POSITIONS_FILE, positions);
+          log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次+分批全失败，标记unsellable`);
+          await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次+分批全失败: ${result?.error || 'unknown'}\n🔧 需手动处理`);
+        }
       }
     } catch(e) {
       log('ERROR', `卖出异常 ${pos.symbol}(第${attempt}次): ${e.message}`);
@@ -2531,17 +2552,71 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
         continue;
       }
-      // 3次全失败 → 标记unsellable，停止重试，通知跑步哥
       if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
-        positions[tokenAddress].unsellable = true;
-        positions[tokenAddress].unsellableReason = e.message?.substring(0, 200);
-        positions[tokenAddress].unsellableSince = Date.now();
-        saveJSON(POSITIONS_FILE, positions);
-        log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次卖出全失败，标记unsellable停止重试`);
-        await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次全失败: ${e.message?.substring(0, 100)}\n🔧 可能是貔貅币/流动性耗尽，需手动处理`);
+        const splitOk = await _trySplitSell(pos, tokenAddress);
+        if (!splitOk) {
+          positions[tokenAddress].unsellable = true;
+          positions[tokenAddress].unsellableReason = e.message?.substring(0, 200);
+          positions[tokenAddress].unsellableSince = Date.now();
+          saveJSON(POSITIONS_FILE, positions);
+          log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次+分批全失败，标记unsellable`);
+          await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次+分批全失败: ${e.message?.substring(0, 100)}\n🔧 需手动处理`);
+        }
       }
     }
   }
+}
+
+// 分批卖出：分两半用50% slippage卖
+async function _trySplitSell(pos, tokenAddress) {
+  log('INFO', `🔄 ${pos.symbol} 尝试分批卖出...`);
+  try {
+    const trader = require('./dex_trader.js');
+    let rawBal;
+    if (pos.chain === 'solana') {
+      const balNum = await getSolTokenBalance(trader.getWalletAddress('solana'), tokenAddress);
+      if (balNum <= 0) return false;
+      // 需要raw balance
+      const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+        trader.getWalletAddress('solana'), { mint: tokenAddress }, { encoding: 'jsonParsed' }
+      ]);
+      let raw = 0n;
+      for (const a of (balData.result?.value || [])) raw += BigInt(a.account?.data?.parsed?.info?.tokenAmount?.amount || '0');
+      if (raw <= 0n) return false;
+      const half = (raw / 2n).toString();
+      let ok = 0;
+      for (let i = 0; i < 2; i++) {
+        try {
+          const r = await trader.solanaSell(tokenAddress, half, 5000);
+          if (r.success) { ok++; log('INFO', `✅ ${pos.symbol} 分批第${i+1}次成功`); }
+          else log('WARN', `❌ ${pos.symbol} 分批第${i+1}次: ${r.error}`);
+        } catch(e) { log('WARN', `❌ ${pos.symbol} 分批第${i+1}次异常: ${e.message?.slice(0,40)}`); }
+        await new Promise(r => setTimeout(r, 3000));
+      }
+      if (ok > 0) {
+        log('INFO', `✅ ${pos.symbol} 分批卖出${ok}/2成功`);
+        return true;
+      }
+    } else {
+      const { ethers: e2 } = require('ethers');
+      const prov = pos.chain === 'bsc' ? bscProvider : baseProvider;
+      const erc = new e2.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], prov);
+      const bal = await erc.balanceOf(trader.getWalletAddress('evm'));
+      if (bal <= 0n) return false;
+      const half = (bal / 2n).toString();
+      let ok = 0;
+      for (let i = 0; i < 2; i++) {
+        try {
+          const r = await trader.sell(pos.chain, tokenAddress, half, 5000);
+          if (r.success) { ok++; log('INFO', `✅ ${pos.symbol} 分批第${i+1}次成功`); }
+          else log('WARN', `❌ ${pos.symbol} 分批第${i+1}次: ${r.error}`);
+        } catch(e2) { log('WARN', `❌ ${pos.symbol} 分批第${i+1}次异常: ${e2.message?.slice(0,40)}`); }
+        await new Promise(r => setTimeout(r, 3000));
+      }
+      if (ok > 0) return true;
+    }
+  } catch(e) { log('WARN', `分批卖出异常: ${e.message?.slice(0,60)}`); }
+  return false;
 }
 
 // ============ 持仓管理 ============
