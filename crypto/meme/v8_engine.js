@@ -1217,6 +1217,7 @@ function setupEvmWebSocket(chainKey) {
                     '0x55d398326f99059ff775485246999027b3197955': { sym: 'USDT', dec: 18 }, // BSC USDT
                     '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': { sym: 'USDC', dec: 18 }, // BSC USDC
                     '0xe9e7cea3dedca5984780bafc599bd69add087d56': { sym: 'BUSD', dec: 18 }, // BSC BUSD
+                    '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d': { sym: 'USD1', dec: 18 }, // BSC USD1
                     '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': { sym: 'WBNB', dec: 18, native: 'bsc' }, // BSC WBNB
                     '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': { sym: 'USDC', dec: 6 },  // Base USDC
                     '0x50c5725949a6f0c72e6c4a641f24049a917db0cb': { sym: 'DAI', dec: 18 },  // Base DAI
@@ -1260,6 +1261,7 @@ function setupEvmWebSocket(chainKey) {
                     '0x55d398326f99059ff775485246999027b3197955': { dec: 18 },
                     '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': { dec: 18 },
                     '0xe9e7cea3dedca5984780bafc599bd69add087d56': { dec: 18 },
+                    '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d': { dec: 18 },
                     '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': { dec: 18, native: 'bsc' },
                     '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': { dec: 6 },
                     '0x50c5725949a6f0c72e6c4a641f24049a917db0cb': { dec: 18 },
@@ -1374,6 +1376,7 @@ async function pollEvmHunters() {
                         '0x55d398326f99059ff775485246999027b3197955': { dec: 18 },
                         '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': { dec: 18 },
                         '0xe9e7cea3dedca5984780bafc599bd69add087d56': { dec: 18 },
+                        '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d': { dec: 18 },
                         '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': { dec: 18, native: 'bsc' },
                         '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': { dec: 6 },
                         '0x50c5725949a6f0c72e6c4a641f24049a917db0cb': { dec: 18 },
