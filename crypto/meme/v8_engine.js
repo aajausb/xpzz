@@ -1281,6 +1281,7 @@ function setupEvmWebSocket(chainKey) {
               } catch {}
             }
             const spendTag = smBuyAmountUsd > 1 ? ` $${Math.round(smBuyAmountUsd)}` : '';
+            if (smBuyAmountUsd < 1 && logEntry.transactionHash) log('DEBUG', `💰0检测 tx:${logEntry.transactionHash.slice(0,15)} wallet:${toAddr.slice(0,10)}`);
             log("INFO", "🔔 [" + chain.name + "] 买入! 钱包#" + rank + " " + toAddr.slice(0,10) + "... 获得 " + tokenAddr + spendTag);
             await handleSignal({ chain: chainKey, token: tokenAddr, symbol: "?", wallet: toAddr, walletRank: rank, timestamp: Date.now(), smBuyAmountUsd });
           }
