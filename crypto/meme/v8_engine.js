@@ -707,7 +707,7 @@ let solWsMode = 'none'; // 'official' | 'polling'
 const solWsSubscribedAddrs = new Set(); // WS已订阅的钱包（轮询时跳过）
 
 function setupSolanaMonitor() {
-  const solWallets = rankedWallets.filter(w => w.chain === 'solana');
+  const solWallets = rankedWallets.filter(w => w.chain === 'solana' && (w.status === 'hunter' || w.status === 'scout'));
   for (const w of solWallets) solWalletSet.add(w.address);
   
   if (solWalletSet.size === 0) return;
@@ -817,7 +817,7 @@ function setupOfficialSolWs() {
   // 按优先级排序: hunter > scout > watcher
   const priorityOrder = { hunter: 0, scout: 1, watcher: 2 };
   const sorted = rankedWallets
-    .filter(w => w.chain === 'solana')
+    .filter(w => w.chain === 'solana' && (w.status === 'hunter' || w.status === 'scout'))
     .sort((a, b) => (priorityOrder[a.status] || 2) - (priorityOrder[b.status] || 2) || (a.rank || 999) - (b.rank || 999));
   const walletList = sorted.map(w => w.address);
   if (walletList.length === 0) return;
@@ -1133,7 +1133,7 @@ const _evmWsRefs = {}; // 存WS引用，重连前关旧的
 function setupEvmWebSocket(chainKey) {
   const chain = CHAINS[chainKey];
   const walletSet = chainKey === "bsc" ? bscWalletSet : baseWalletSet;
-  const wallets = rankedWallets.filter(w => w.chain === chainKey);
+  const wallets = rankedWallets.filter(w => w.chain === chainKey && (w.status === 'hunter' || w.status === 'scout'));
   for (const w of wallets) walletSet.add(w.address.toLowerCase());
   
   if (walletSet.size === 0) return;
@@ -3162,18 +3162,23 @@ async function main() {
         rank: w.rank, address: w.address, chain: w.chain,
         pnl: w.pnl, winRate: w.winRate, tokens: w.tokens, status: w.status,
       })));
-      // 更新walletSet（新钱包加入轮询监控；EVM WS需重连才能订阅新钱包）
+      // 更新walletSet（只监控猎手+哨兵，观察级不监控省credits）
       let newBsc = 0, newBase = 0, newSol = 0;
+      // 先清空旧set，重建只包含猎手+哨兵的
+      bscWalletSet.clear(); baseWalletSet.clear(); solWalletSet.clear();
       for (const w of rankedWallets) {
-        if (w.chain === 'bsc' && !bscWalletSet.has(w.address.toLowerCase())) { bscWalletSet.add(w.address.toLowerCase()); newBsc++; }
-        else if (w.chain === 'base' && !baseWalletSet.has(w.address.toLowerCase())) { baseWalletSet.add(w.address.toLowerCase()); newBase++; }
-        else if (w.chain === 'solana' && !solWalletSet.has(w.address)) { solWalletSet.add(w.address); newSol++; }
+        if (w.status !== 'hunter' && w.status !== 'scout') continue;
+        if (w.chain === 'bsc') { bscWalletSet.add(w.address.toLowerCase()); }
+        else if (w.chain === 'base') { baseWalletSet.add(w.address.toLowerCase()); }
+        else if (w.chain === 'solana') { solWalletSet.add(w.address); }
       }
-      if (newBsc + newBase + newSol > 0) {
-        log('INFO', `  新增监控钱包: SOL+${newSol} BSC+${newBsc} Base+${newBase}`);
-        // 有新EVM钱包→重连WS以订阅新地址
-        if (newBsc > 0 && CONFIG.enabledChains.includes('bsc')) { log('INFO', '  🔌 BSC WS重连(新钱包)'); setupEvmWebSocket('bsc'); }
-        if (newBase > 0 && CONFIG.enabledChains.includes('base')) { log('INFO', '  🔌 Base WS重连(新钱包)'); setupEvmWebSocket('base'); }
+      // 检测变化并重连WS
+      const needReconnect = true; // 升降级后WS订阅列表可能变化
+      if (needReconnect) {
+        log('INFO', `  🔌 排名刷新→重连WS(猎手+哨兵: SOL=${[...solWalletSet].length} BSC=${bscWalletSet.size} Base=${baseWalletSet.size})`);
+        if (CONFIG.enabledChains.includes('solana')) setupOfficialSolWs();
+        if (CONFIG.enabledChains.includes('bsc')) setupEvmWebSocket('bsc');
+        if (CONFIG.enabledChains.includes('base')) setupEvmWebSocket('base');
       }
       log('INFO', `  排名更新: ${rankedWallets.length}个钱包 (库${Object.keys(walletDb).length}个)`);
     } catch(e) {
