@@ -1810,6 +1810,11 @@ async function handleSignal(signal) {
     return;
   }
   
+  // 内盘检测（暂时关闭，数据显示pump地址币反而赚钱）
+  // const topPair = dexData?.pairs?.[0];
+  // const dexId = (topPair?.dexId || '').toLowerCase();
+  // const liquidity = parseFloat(topPair?.liquidity?.usd || 0);
+  
   // 通过审计 → 买入（用降权+空投过滤后的真实SM列表）
   const bestRank = realConfirmWallets.length > 0
     ? Math.min(...realConfirmWallets.map(addr => {
@@ -2977,6 +2982,16 @@ async function main() {
   
   // 加载状态
   positions = loadJSON(POSITIONS_FILE, {});
+  
+  // Bug fix: buyPrice=0时用buyCost/buyAmount回填
+  for (const [k, pos] of Object.entries(positions)) {
+    if ((!pos.buyPrice || pos.buyPrice === 0) && pos.buyCost > 0 && pos.buyAmount > 0) {
+      pos.buyPrice = pos.buyCost / pos.buyAmount;
+      log('INFO', `📝 ${pos.symbol} buyPrice回填: ${pos.buyPrice}`);
+    }
+  }
+  saveJSON(POSITIONS_FILE, positions);
+  
   restoreSellTracker(); // 从positions恢复SM卖出记录（重启不丢）
   auditCache = loadJSON(AUDIT_CACHE_FILE, {});
   // 已买过的token（从持仓+历史记录双重加载）
