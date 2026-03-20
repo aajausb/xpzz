@@ -59,7 +59,22 @@ let rankedWallets = [];    // 排名后的钱包列表（从walletDb生成）
 let positions = {};        // tokenAddress -> position
 let pendingSignals = {};   // tokenAddress -> [{wallet, chain, timestamp}]
 let boughtTokens = new Set(); // 已买过的token（防重复）
+let tradeHistory = {};     // tokenAddress -> { lastSoldTime, lastBuyPrice, soldCount, pnl } SM二次买入参考
 const lowBalNotified = {};    // 低余额通知去重（chain → timestamp）
+
+// 记录交易历史（清仓时调用）
+function recordTradeHistory(tokenAddr, pos) {
+  tradeHistory[tokenAddr] = {
+    lastSoldTime: Date.now(),
+    lastBuyPrice: pos.buyPrice || 0,
+    buyCost: pos.buyCost || 0,
+    symbol: pos.symbol,
+    chain: pos.chain,
+    soldCount: (tradeHistory[tokenAddr]?.soldCount || 0) + 1,
+    confirmWallets: pos.confirmWallets || [],
+  };
+}
+
 // 稳定币/大币过滤（symbol级别，不走审计直接跳过）
 const SKIP_SYMBOLS = new Set(['USDT','USDC','BUSD','DAI','TUSD','FDUSD','USD1','WBNB','WETH','WBTC','CBBTC','CBETH','STETH','RETH','BNB','ETH','BTC','SOL','WSOL']);
 let auditCache = {};
@@ -1585,13 +1600,19 @@ async function handleSignal(signal) {
       log('INFO', `🚫 ${earlySymbol}(${chain}) 已持有同名币，跳过`);
       return;
     }
-    // 检查2: 清仓后1小时冷却
+    // 检查2: 清仓后1小时冷却（同token二次买入除外）
     if (!handleSignal._symbolCooldown) handleSignal._symbolCooldown = {};
     const cooldownUntil = handleSignal._symbolCooldown[symKey] || 0;
     if (Date.now() < cooldownUntil) {
-      const minLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
-      log('INFO', `🚫 ${earlySymbol}(${chain}) 同名冷却中(${minLeft}分钟后解除)，跳过`);
-      return;
+      // 同token二次买入：SM验证过的币，跳过冷却
+      const history = tradeHistory[token];
+      if (history && history.soldCount >= 1) {
+        log('INFO', `🔄 ${earlySymbol}(${chain}) SM二次买入! 跳过冷却(第${history.soldCount+1}次)`);
+      } else {
+        const minLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
+        log('INFO', `🚫 ${earlySymbol}(${chain}) 同名冷却中(${minLeft}分钟后解除)，跳过`);
+        return;
+      }
     }
   }
 
@@ -2085,17 +2106,32 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       return;
     }
     
-    // 动态仓位：SM累计金额（只算还持有的SM）
+    // 动态仓位：信号质量分层（猎手数×SM累计金额）
     const smTotal = Object.values(smWalletAmounts).reduce((a, b) => a + b, 0);
-    if (smTotal >= 1000) {
-      size = 160;
-    } else if (smTotal >= 500) {
-      size = 80;
-    } else {
+    if (smTotal < 500) {
       log('INFO', `🚫 ${symbol}(${chain}) SM累计$${Math.round(smTotal)}<$500，跳过`);
       return;
     }
-    log('INFO', `📊 ${symbol} 仓位$${size} (SM累计$${Math.round(smTotal)})`);
+    // S级: 3+猎手 且 SM>$1500 → $160
+    // A级: 2+猎手 且 SM>$1000 → $120
+    // B级: SM$500-1000 → $80
+    // C级: 1猎手+哨兵（刚过门槛） → $40
+    if (confirmCount >= 3 && smTotal >= 1500) {
+      size = 160;
+    } else if (confirmCount >= 2 && smTotal >= 1000) {
+      size = 120;
+    } else if (smTotal >= 500) {
+      size = confirmCount >= 2 ? 80 : 40;
+    }
+    const grade = size >= 160 ? 'S' : size >= 120 ? 'A' : size >= 80 ? 'B' : 'C';
+    // SM二次买入加成：验证过的币信心更高，仓位×1.5（最高$200）
+    const history = tradeHistory[token];
+    const isRebuy = history && history.soldCount >= 1;
+    if (isRebuy) {
+      size = Math.min(Math.round(size * 1.5), 200);
+      log('INFO', `🔄 ${symbol} SM二次买入加成! 仓位$${size} (第${history.soldCount+1}次)`);
+    }
+    log('INFO', `📊 ${symbol} ${grade}级信号${isRebuy?'(二次)':''} 仓位$${size} (猎手${confirmCount} SM累计$${Math.round(smTotal)})`);
     
     if (chain === 'solana') {
       nativeAmount = Math.floor((size / price) * 1e9);
@@ -2496,6 +2532,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           const finalRevenue = pos.sellRevenue || 0;
           const finalPnl = finalRevenue - (pos.buyCost || 0);
           log('INFO', `📊 ${pos.symbol} 最终PnL: 成本${pos.buyCost||0} 回收${finalRevenue.toFixed(2)} 盈亏${finalPnl.toFixed(2)}`);
+          recordTradeHistory(tokenAddress, pos);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
           delete transferTracker[tokenAddress];
@@ -2635,6 +2672,7 @@ async function _trySplitSell(pos, tokenAddress) {
               token: tokenAddress, ratio: 1, reason: '分批卖出', costUsd: pos.buyCost||0,
               soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: Math.round((Date.now()-(pos.buyTime||0))/60000) });
           } catch {}
+          recordTradeHistory(tokenAddress, pos);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
           delete transferTracker[tokenAddress];
@@ -2667,6 +2705,7 @@ async function _trySplitSell(pos, tokenAddress) {
               token: tokenAddress, ratio: 1, reason: '分批卖出(EVM)', costUsd: pos.buyCost||0,
               soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: Math.round((Date.now()-(pos.buyTime||0))/60000) });
           } catch {}
+          recordTradeHistory(tokenAddress, pos);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
           delete transferTracker[tokenAddress];
@@ -2752,7 +2791,9 @@ async function managePositions() {
                   const finalRevenue = pos.sellRevenue || 0;
                   const finalPnl = finalRevenue - (pos.busCost || pos.buyCost || 0);
                   log('INFO', `📊 ${pos.symbol} 最终PnL: 成本${pos.busCost||pos.buyCost||0} 回收${finalRevenue.toFixed(2)} 盈亏${finalPnl.toFixed(2)}`);
-                  delete positions[tokenAddr];
+                  recordTradeHistory(tokenAddr, pos);
+                  recordTradeHistory(tokenAddr, pos);
+            delete positions[tokenAddr];
                   boughtTokens.delete(tokenAddr);
                   saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
                   saveJSON(POSITIONS_FILE, positions);
@@ -2962,6 +3003,7 @@ async function managePositions() {
               if (!handleSignal._symbolCooldown) handleSignal._symbolCooldown = {};
               handleSignal._symbolCooldown[pos.symbol.toUpperCase() + '_' + pos.chain] = Date.now() + 3600000;
             }
+            recordTradeHistory(tokenAddr, pos);
             delete positions[tokenAddr];
             delete sellTracker[tokenAddr];
             delete transferTracker[tokenAddr];

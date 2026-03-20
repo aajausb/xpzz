@@ -16,12 +16,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 0.00000111,
-    "currentValue": 150.29405032532395,
-    "pnlPercent": 0.45248868778280116,
-    "totalPnl": -9.705949674676049,
-    "totalPnlPercent": -6.0662185466725305,
-    "_lastSmCheck": 1773975573703,
+    "currentPrice": 0.000001125,
+    "currentValue": 152.32505100539592,
+    "pnlPercent": 1.8099547511312237,
+    "totalPnl": -7.67494899460408,
+    "totalPnlPercent": -4.79684312162755,
+    "_lastSmCheck": 1773977393906,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -52,7 +52,7 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 847,
-    "_lastSmCheck": 1773975574704,
+    "_lastSmCheck": 1773977395064,
     "_transfers": {
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -84,12 +84,12 @@
       "FFn8s7cj38ht2xpKr15K14LoMHCQ3EiDKDMda9mAZHcS"
     ],
     "smTotalUsd": 1168,
-    "currentPrice": 0.000002306,
-    "currentValue": 4.039939652591814,
-    "pnlPercent": -75.66483748417055,
-    "totalPnl": -155.9600603474082,
-    "totalPnlPercent": -97.47503771713012,
-    "_lastSmCheck": 1773975575329,
+    "currentPrice": 0.000002588,
+    "currentValue": 4.533982576282573,
+    "pnlPercent": -72.68889826931195,
+    "totalPnl": -155.46601742371743,
+    "totalPnlPercent": -97.16626088982339,
+    "_lastSmCheck": 1773977360625,
     "_sells": [
       {
         "wallet": "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk",
@@ -121,6 +121,6 @@
     "soldRatio": 0.75,
     "unsellable": true,
     "unsellableReason": "OKX报价失败: Insufficient liquidity",
-    "unsellableSince": 1773974240160
+    "unsellableSince": 1773976059665
   }
 }
