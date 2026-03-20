@@ -2114,16 +2114,20 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     }
     // S级: 3+猎手 且 SM>$1500 → $160
     // A级: 2+猎手 且 SM>$1000 → $120
-    // B级: SM$500-1000 → $80
-    // C级: 1猎手+哨兵（刚过门槛） → $40
+    // B级: 2+猎手 且 SM$500+ → $80
+    // 1猎手+哨兵不买（信号太弱）
+    if (confirmCount < 2) {
+      log('INFO', `🚫 ${symbol}(${chain}) 猎手${confirmCount}<2，信号太弱，跳过`);
+      return;
+    }
     if (confirmCount >= 3 && smTotal >= 1500) {
       size = 160;
     } else if (confirmCount >= 2 && smTotal >= 1000) {
       size = 120;
-    } else if (smTotal >= 500) {
-      size = confirmCount >= 2 ? 80 : 40;
+    } else {
+      size = 80;
     }
-    const grade = size >= 160 ? 'S' : size >= 120 ? 'A' : size >= 80 ? 'B' : 'C';
+    const grade = size >= 160 ? 'S' : size >= 120 ? 'A' : 'B';
     // SM二次买入加成：验证过的币信心更高，仓位×1.5（最高$200）
     const history = tradeHistory[token];
     const isRebuy = history && history.soldCount >= 1;
