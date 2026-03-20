@@ -2112,17 +2112,17 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       log('INFO', `🚫 ${symbol}(${chain}) SM累计$${Math.round(smTotal)}<$500，跳过`);
       return;
     }
-    // S级: 3+猎手 且 SM>$1500 → $160
-    // A级: 2+猎手 且 SM>$1000 → $120
-    // B级: 2+猎手 且 SM$500+ → $80
+    // S级: ≥3猎手 或 2猎手+≥3哨兵，SM≥$1500 → $160
+    // A级: ≥2猎手+≥2哨兵 且 SM≥$500，或 ≥2猎手 且 SM≥$1000 → $120
+    // B级: ≥2猎手 且 SM≥$500 → $80
     // 1猎手+哨兵不买（信号太弱）
     if (confirmCount < 2) {
       log('INFO', `🚫 ${symbol}(${chain}) 猎手${confirmCount}<2，信号太弱，跳过`);
       return;
     }
-    if (confirmCount >= 3 && smTotal >= 1500) {
+    if ((confirmCount >= 3 || (confirmCount >= 2 && watchCount >= 3)) && smTotal >= 1500) {
       size = 160;
-    } else if (confirmCount >= 2 && smTotal >= 1000) {
+    } else if ((confirmCount >= 2 && watchCount >= 2 && smTotal >= 500) || (confirmCount >= 2 && smTotal >= 1000)) {
       size = 120;
     } else {
       size = 80;
