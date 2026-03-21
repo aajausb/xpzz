@@ -4995,5 +4995,29 @@
     "riskLevel": "HIGH",
     "reason": "HIGH风险",
     "_time": 1774122094165
+  },
+  "0xa9e23871156718c1d55e90dad1c4ea8a33480dfd": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1774123693337
+  },
+  "0x7709a1e3fe44a0e0c6da02e0801d5e09b92062a8": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1774123886927
+  },
+  "0xf2b2b76e43961872e3c55823b843c52dd5cb149c": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1774124749090
   }
 }
