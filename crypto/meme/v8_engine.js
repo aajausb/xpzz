@@ -1590,7 +1590,7 @@ async function handleSignal(signal) {
     return;
   }
   
-  // 同名币去重：持仓中→拒绝；清仓后1小时冷却期内也拒绝
+  // 同名币去重：持仓中→拒绝
   let earlyDexData = null;
   try { earlyDexData = await dexScreenerGet(token); } catch {}
   const earlySymbol = earlyDexData?.pairs?.[0]?.baseToken?.symbol || '?';
@@ -1602,14 +1602,6 @@ async function handleSignal(signal) {
     );
     if (sameNameHeld) {
       log('INFO', `🚫 ${earlySymbol}(${chain}) 已持有同名币，跳过`);
-      return;
-    }
-    // 检查2: 清仓后1小时冷却
-    if (!handleSignal._symbolCooldown) handleSignal._symbolCooldown = {};
-    const cooldownUntil = handleSignal._symbolCooldown[symKey] || 0;
-    if (Date.now() < cooldownUntil) {
-      const minLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
-      log('INFO', `🚫 ${earlySymbol}(${chain}) 同名冷却中(${minLeft}分钟后解除)，跳过`);
       return;
     }
   }
@@ -3059,11 +3051,6 @@ async function managePositions() {
           if (dropPct >= 99 || (absValue < 0.01 && pos.buyCost > 1)) {
             const reason = absValue < 0.01 ? `价值$${absValue.toExponential(1)}归零` : `跌${dropPct.toFixed(0)}%归零`;
             log('INFO', `💀 ${pos.symbol}(${pos.chain}) ${reason}，清仓`);
-            // 同名冷却1小时
-            if (pos.symbol && pos.symbol !== '?') {
-              if (!handleSignal._symbolCooldown) handleSignal._symbolCooldown = {};
-              handleSignal._symbolCooldown[pos.symbol.toUpperCase() + '_' + pos.chain] = Date.now() + 3600000;
-            }
             recordTradeHistory(tokenAddr, pos);
             delete positions[tokenAddr];
             delete sellTracker[tokenAddr];
@@ -3085,11 +3072,6 @@ async function managePositions() {
           // 我们的卖出比例 = SM卖出比例
           const ourSellRatio = Math.min(sellRatio, 1.0);
           if (ourSellRatio >= 0.99) {
-            // SM全卖清仓 → 同名冷却1小时
-            if (pos.symbol && pos.symbol !== '?') {
-              if (!handleSignal._symbolCooldown) handleSignal._symbolCooldown = {};
-              handleSignal._symbolCooldown[pos.symbol.toUpperCase() + '_' + pos.chain] = Date.now() + 3600000;
-            }
             await executeSell(tokenAddr, `SM全部卖出(${uniqueSellers}/${totalConfirm})`);
           } else {
             // 部分卖出
