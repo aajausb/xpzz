@@ -247,7 +247,8 @@
 - **土狗钱包(2026-03-14)**:
   - Solana: BubdLnFR8AX7nXuJtEXwHa3xyX1G4ufx2FYSaJ8kSgVQ (~$98)
   - EVM(BSC+Base): 0xe00ca1d766f329eFfC05E704499f10dB1F14FD47 (~$99×2)
-  - 私钥3片XOR分片存三地（secrets/ + /opt/ + github_shard/）
+  - 私钥3片XOR分片+3把enc_key，GitHub历史只有分片(key已清)，跑步哥手上有3把key
+  - 恢复文档: crypto/WALLET_RECOVERY.md
   - 总计~$297
 - **聪明钱挖掘v6方法论(2026-03-14 17:00)**：
   - 从"种子币"（曾拉过大倍数的币）里找早期赚钱的钱包
