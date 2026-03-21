@@ -1830,6 +1830,7 @@ async function handleSignal(signal) {
     const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
     if (price > 0) {
       let stillHolding = 0;
+      let holdingHuntersOuter = null, holdingScoutsOuter = null;
       const holdingWallets = []; // 记录还持有的SM钱包
       const checkWallets = confirmWallets.slice(0, 5);
       
@@ -1910,6 +1911,8 @@ async function handleSignal(signal) {
         if (info?.status === 'hunter') holdingHunters++;
         else if (info?.status === 'scout') holdingScouts++;
       }
+      holdingHuntersOuter = holdingHunters;
+      holdingScoutsOuter = holdingScouts;
       const minH = chain === 'bsc' ? 3 : 2;
       const altH = chain === 'bsc' ? 2 : 1;
       const altS = chain === 'bsc' ? 3 : 2;
@@ -1925,7 +1928,8 @@ async function handleSignal(signal) {
     }
   } catch(e) { log('WARN', `买前SM检查异常: ${e.message?.slice(0,40)}，继续买入`); }
   
-  await executeBuy(chain, token, symbol, realHunters, confirmWallets, smWalletAmounts, holdingScouts ?? realScouts);
+  const finalScouts = holdingScoutsOuter !== null ? holdingScoutsOuter : realScouts;
+  await executeBuy(chain, token, symbol, realHunters, confirmWallets, smWalletAmounts, finalScouts);
   } finally { handleSignal._auditLock.delete(token); }
 }
 
