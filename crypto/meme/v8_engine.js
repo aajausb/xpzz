@@ -1670,30 +1670,40 @@ async function handleSignal(signal) {
       if (chain === 'solana') {
         // SOL: 逐个查，走缓存
         const results = await Promise.all(allSigs.map(async (sig) => {
-          try {
-            const cachedSolBal = getCachedSolBalance(sig.wallet, token);
-            let bal;
-            if (cachedSolBal !== undefined) {
-              bal = cachedSolBal;
-            } else {
-              bal = await getSolTokenBalance(sig.wallet, token);
-              setCachedSolBalance(sig.wallet, token, bal);
-            }
-            let holdingUsd = bal * price;
-            // 余额=0但有买入信号 → 可能转仓到小号，不算空投
+          const cachedSolBal = getCachedSolBalance(sig.wallet, token);
+          if (cachedSolBal !== undefined) {
+            let holdingUsd = cachedSolBal * price;
             if (holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet)) {
-              holdingUsd = -1; // -1=算有效（有买入记录证明是真买）
-              log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${(bal*price).toFixed(2)}但有买入信号，算有效(可能转仓)`);
+              holdingUsd = -2;
+              log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${(cachedSolBal*price).toFixed(2)}但有买入信号，算有效(可能转仓)`);
             }
             return { sig, holdingUsd };
-          } catch { return { sig, holdingUsd: -1 }; }
+          }
+          // 无缓存，查一次失败再查一次
+          for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+              const bal = await getSolTokenBalance(sig.wallet, token);
+              setCachedSolBalance(sig.wallet, token, bal);
+              let holdingUsd = bal * price;
+              if (holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet)) {
+                holdingUsd = -2;
+                log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${(bal*price).toFixed(2)}但有买入信号，算有效(可能转仓)`);
+              }
+              return { sig, holdingUsd };
+            } catch {
+              if (attempt === 1) await new Promise(r => setTimeout(r, 500));
+            }
+          }
+          return { sig, holdingUsd: -1 };
         }));
         for (const { sig, holdingUsd } of results) {
-          if (holdingUsd < 0 || holdingUsd >= MIN_SM_HOLDING_USD) {
+          if (holdingUsd === -1) {
+            // 查询失败，不计入确认（宁可漏跟不误跟）
+            log('WARN', `⚠️ ${sig.wallet.slice(0,10)} SOL余额查询失败，不计入确认`);
+          } else if (holdingUsd === -2 || holdingUsd >= MIN_SM_HOLDING_USD) {
             realConfirmWallets.push(sig.wallet);
             if (sig.walletStatus === 'hunter') realHunters++;
             else realScouts++;
-            if (holdingUsd < 0) log('WARN', `查SM ${sig.wallet.slice(0,10)} 余额失败，默认算有效`);
           } else {
             log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，不算确认`);
           }
@@ -1702,36 +1712,43 @@ async function handleSignal(signal) {
         // EVM: Multicall3批量查所有SM余额（1次RPC）
         const walletAddrs = allSigs.map(s => s.wallet);
         let balMap = await batchBalanceOf(chain, token, walletAddrs);
-        // 查不到的逐个重试一次
+        // 查不到的逐个重试最多3次
         const missedWallets = walletAddrs.filter(w => !balMap.has(w.toLowerCase()));
         if (missedWallets.length > 0) {
-          log('INFO', `🔄 ${missedWallets.length}个SM余额Multicall未返回，逐个重试`);
+          log('INFO', `🔄 ${missedWallets.length}个SM余额Multicall未返回，逐个重试(最多3次)`);
           const provider = chain === 'bsc' ? bscProvider : baseProvider;
           for (const w of missedWallets) {
-            try {
-              const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
-              const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
-              const balNum = parseFloat(ethers.formatUnits(bal, dec));
-              balMap.set(w.toLowerCase(), { bal, balNum });
-            } catch {}
+            for (let attempt = 1; attempt <= 3; attempt++) {
+              try {
+                const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+                const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
+                const balNum = parseFloat(ethers.formatUnits(bal, dec));
+                balMap.set(w.toLowerCase(), { bal, balNum });
+                break;
+              } catch {
+                if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
+              }
+            }
           }
         }
         for (const sig of allSigs) {
           const info = balMap.get(sig.wallet.toLowerCase());
-          let holdingUsd = -1; // 查询失败算有效
+          let holdingUsd = -1; // -1=查询失败
           if (info) {
             holdingUsd = info.balNum * price;
           }
           // 余额=0但有买入信号 → 可能转仓到小号，不算空投
           if (holdingUsd >= 0 && holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet || s.wallet?.toLowerCase() === sig.wallet?.toLowerCase())) {
             log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${holdingUsd.toFixed(2)}但有买入信号，算有效(可能转仓)`);
-            holdingUsd = -1;
+            holdingUsd = -2; // -2=余额0但有买入信号，算有效
           }
-          if (holdingUsd < 0 || holdingUsd >= MIN_SM_HOLDING_USD) {
+          if (holdingUsd === -1) {
+            // 查询失败，不计入确认（宁可漏跟不误跟）
+            log('WARN', `⚠️ ${sig.wallet.slice(0,10)} EVM余额查询失败，不计入确认`);
+          } else if (holdingUsd === -2 || holdingUsd >= MIN_SM_HOLDING_USD) {
             realConfirmWallets.push(sig.wallet);
             if (sig.walletStatus === 'hunter') realHunters++;
             else realScouts++;
-            if (holdingUsd < 0) log('WARN', `查SM ${sig.wallet.slice(0,10)} 余额失败，默认算有效`);
           } else {
             log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，不算确认`);
           }
@@ -1883,30 +1900,65 @@ async function handleSignal(signal) {
       const holdingWallets = []; // 记录还持有的SM钱包
       const checkWallets = confirmWallets.slice(0, 5);
       
+      let queryFailed = 0;
       if (chain === 'solana') {
         for (const smWallet of checkWallets) {
-          try {
-            const cachedSolBal2 = getCachedSolBalance(smWallet, token);
-            let bal2;
-            if (cachedSolBal2 !== undefined) {
-              bal2 = cachedSolBal2;
-            } else {
-              bal2 = await getSolTokenBalance(smWallet, token);
+          const cachedSolBal2 = getCachedSolBalance(smWallet, token);
+          if (cachedSolBal2 !== undefined) {
+            if (cachedSolBal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
+            continue;
+          }
+          let ok = false;
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              const bal2 = await getSolTokenBalance(smWallet, token);
               setCachedSolBalance(smWallet, token, bal2);
+              if (bal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
+              ok = true;
+              break;
+            } catch {
+              if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
             }
-            if (bal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
-          } catch { stillHolding++; holdingWallets.push(smWallet); }
+          }
+          if (!ok) { queryFailed++; log('WARN', `⚠️ 龙虾检查: ${smWallet.slice(0,10)} SOL余额3次查询失败，不计入`); await notifyTelegram(`⚠️ 龙虾检查: ${smWallet.slice(0,10)} SOL余额3次查询失败 ${symbol}(${chain})`); }
         }
       } else {
         // EVM: Multicall3一次查完
         try {
           const balMap = await batchBalanceOf(chain, token, checkWallets);
+          // Multicall未返回的逐个重试3次
+          const missed = checkWallets.filter(w => !balMap.has(w.toLowerCase()));
+          if (missed.length > 0) {
+            const provider = chain === 'bsc' ? bscProvider : baseProvider;
+            for (const w of missed) {
+              for (let attempt = 1; attempt <= 3; attempt++) {
+                try {
+                  const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+                  const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
+                  balMap.set(w.toLowerCase(), { bal, balNum: parseFloat(ethers.formatUnits(bal, dec)) });
+                  break;
+                } catch {
+                  if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
+                }
+              }
+            }
+          }
           for (const smWallet of checkWallets) {
             const info = balMap.get(smWallet.toLowerCase());
-            if (!info) { stillHolding++; holdingWallets.push(smWallet); continue; } // 查询失败算持有
+            if (!info) { queryFailed++; log('WARN', `⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败，不计入`); await notifyTelegram(`⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败 ${symbol}(${chain})`); continue; }
             if (info.balNum * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
           }
-        } catch { stillHolding = checkWallets.length; holdingWallets.push(...checkWallets); }
+        } catch(e) {
+          log('WARN', `⚠️ 龙虾检查Multicall整体失败: ${e.message?.slice(0,40)}，全部不计入`);
+          await notifyTelegram(`⚠️ 龙虾检查Multicall整体失败 ${symbol}(${chain}): ${e.message?.slice(0,40)}`);
+          queryFailed = checkWallets.length;
+        }
+      }
+      // 如果全部查询失败（RPC挂了），保守处理：继续买入（不能因为RPC问题错过已确认的信号）
+      if (queryFailed === checkWallets.length) {
+        log('WARN', `⚠️ 龙虾检查全部查询失败，跳过龙虾检查继续买入`);
+        stillHolding = checkWallets.length;
+        holdingWallets.push(...checkWallets);
       }
       
       if (stillHolding === 0) {
@@ -1945,7 +1997,7 @@ async function handleSignal(signal) {
     }
   } catch(e) { log('WARN', `买前SM检查异常: ${e.message?.slice(0,40)}，继续买入`); }
   
-  await executeBuy(chain, token, symbol, realHunters, confirmWallets, smWalletAmounts);
+  await executeBuy(chain, token, symbol, realHunters, confirmWallets, smWalletAmounts, holdingScouts ?? realScouts);
   } finally { handleSignal._auditLock.delete(token); }
 }
 
@@ -2043,7 +2095,7 @@ async function getNativePrice(chain) {
 
 // ============ PHASE 4: 交易层 ============
 let buyLock = false;
-async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = [], smWalletAmounts = {}) {
+async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWallets = [], smWalletAmounts = {}, watchCount = 0) {
   // 并发锁 — 等前一个完成再执行（不丢信号）
   const maxWait = 30000; // 最多等30秒
   const start = Date.now();
@@ -2148,6 +2200,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     }
   } catch(e) {
     log('ERROR', `价格转换失败 ${symbol}(${chain}): ${e.message}`);
+    await notifyTelegram(`❌ 价格转换失败 ${symbol}(${chain}): ${e.message?.slice(0,80)}\n信号已丢失，请检查代码!`);
     return;
   }
   
