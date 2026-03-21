@@ -4809,5 +4809,45 @@
     "riskLevel": "LOW",
     "reason": "OK",
     "_time": 1774096180882
+  },
+  "0xe1cd79f4cf72b0e97d77bada0131e0f02a6d4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1774098427733
+  },
+  "0xf3eaf462cfdd77a02de03aecf98c923125577777": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0.03,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1774098911785
+  },
+  "0x65017c3009d6f3c83e5ee90ef9d02ef2cf444444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1774098955985
+  },
+  "0x835554d3998d2a342586264eba9ac6c62a474444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "UNKNOWN",
+    "reason": "OK",
+    "_time": 1774099312098
+  },
+  "0x13fb17db3432c0c883de611d42f67ed3601b4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1774099775986
   }
 }
