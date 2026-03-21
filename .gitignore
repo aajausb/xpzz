@@ -13,3 +13,7 @@ crypto/trash/*.log
 *.swp
 .env.save
 trading_key
+*.enc.json
+*.swp
+decrypt_secret.sh
+encrypt_secret.sh
