@@ -802,7 +802,7 @@ function _reconnectSingleSolWs(ci, chunk) {
         if (ws.readyState !== WebSocket.OPEN) { clearInterval(hc); return; }
         ws.ping();
         // 动态超时：钱包少的连接消息少，给更长时间
-        const silentTimeout = chunk.length < 60 ? 900000 : 600000; // <60个钱包15分钟，否则10分钟
+        const silentTimeout = 3600000; // 60分钟无消息才判死（减少无意义重连）
         if (Date.now() - lastMsgTime > silentTimeout) { log('WARN', `[SOL] WS#${ci+1} ${silentTimeout/60000}分钟无消息，主动重连`); clearInterval(hc); ws.close(); }
       }, 60000);
     } catch(e) {
@@ -914,7 +914,7 @@ function setupOfficialSolWs() {
     const healthCheck = setInterval(() => {
       if (ws.readyState !== WebSocket.OPEN) { clearInterval(healthCheck); return; }
       ws.ping();
-      const silentTimeout2 = chunk.length < 60 ? 900000 : 600000;
+      const silentTimeout2 = 3600000;
       if (Date.now() - lastMsgTime > silentTimeout2) {
         log('WARN', `🔌 [SOL] WS#${ci+1} 静默断连(${silentTimeout2/60000}分钟无消息)，主动重连`);
         clearInterval(healthCheck);
@@ -2185,10 +2185,30 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
               buyAmount = await getSolTokenBalance(require('./dex_trader.js').getWalletAddress('solana'), tokenAddress);
             } catch(e) { if (_try < 2) log('WARN', `查SOL余额第${_try+1}次失败: ${e.message?.slice(0,40)}`); }
           }
-          // fallback: 查不到余额用cost÷price估算，不记0
-          if (buyAmount === 0 && buyPrice > 0) {
-            buyAmount = size / buyPrice;
-            log('WARN', `⚠️ ${symbol} 余额查询返回0，用估算值: ${buyAmount.toFixed(0)}`);
+          // fallback: 查不到余额，延长重试（RPC同步慢）
+          if (buyAmount === 0) {
+            for (let _retry = 0; _retry < 5 && buyAmount === 0; _retry++) {
+              await sleep(3000); // 每次多等3秒
+              try {
+                buyAmount = await getSolTokenBalance(require('./dex_trader.js').getWalletAddress('solana'), tokenAddress);
+              } catch {}
+            }
+            // 最终fallback: 用OKX报价估算
+            if (buyAmount === 0) {
+              try {
+                const qPath = `/api/v6/dex/aggregator/quote?chainIndex=${CHAIN_ID[chain]}&fromTokenAddress=${tokenAddress}&toTokenAddress=${NATIVE[chain]}&amount=1000000000&slippagePercent=1`;
+                const qRes = await okxGet(qPath);
+                if (qRes?.data?.[0]?.toTokenAmount) {
+                  buyPrice = parseFloat(qRes.data[0].fromTokenUsdPrice || 0);
+                }
+              } catch {}
+              if (buyPrice > 0) {
+                buyAmount = size / buyPrice;
+                log('WARN', `⚠️ ${symbol} 余额15次查询全返回0，用OKX报价估算: ${buyAmount.toFixed(0)}`);
+              } else {
+                log('ERROR', `❌ ${symbol} 买入后无法确认余额和价格！需手动检查 token=${tokenAddress}`);
+              }
+            }
           }
         } else {
           // EVM查ERC20余额
