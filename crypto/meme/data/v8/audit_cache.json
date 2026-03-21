@@ -188,7 +188,7 @@
     "sellTax": 0,
     "riskLevel": "MID",
     "reason": "OK",
-    "_time": 1773983597881
+    "_time": 1774070082234
   },
   "0xd9c60d690593b8095d75a1f3c2e0b542a8ae4444": {
     "safe": true,
@@ -2626,9 +2626,9 @@
     "safe": true,
     "isHoneypot": false,
     "sellTax": 0,
-    "riskLevel": "UNKNOWN",
+    "riskLevel": "LOW",
     "reason": "OK",
-    "_time": 1773926466314
+    "_time": 1774070192813
   },
   "0x97cc46c3a14310f772d071e4231872ba1faf4444": {
     "safe": true,
@@ -4466,5 +4466,13 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1774068306777
+  },
+  "0x141df4af4e01847d35681361ccc49101276e4444": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1774070359000
   }
 }
