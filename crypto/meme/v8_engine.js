@@ -18,8 +18,8 @@ const CONFIG = {
   // 数据刷新
   rankRefreshInterval: 4 * 3600 * 1000,  // 4小时刷新币安排名
   // 不限数量，验证通过的全部跟踪，排名只决定优先级
-  hunterMinWinRate: 60,                     // 猎手: 胜率≥60%
-  scoutMinWinRate: 50,                      // 哨兵: 胜率50-65%
+  hunterMinWinRate: 70,                     // 猎手: 胜率≥70%
+  scoutMinWinRate: 60,                      // 哨兵: 胜率60-70%
   // <50% = 观察(watcher)，30天没涨回50%就踢
   watcherEvictDays: 30,                     // 观察期30天
 
@@ -455,22 +455,28 @@ function mergeToWalletDb(verifiedWallets) {
   const now = Date.now();
   const seenKeys = new Set();
   
-  // 更新/新增
+  // 更新/新增（WR<60%不入库）
   for (const w of verifiedWallets) {
+    const wr = w.winRate || 0;
     const key = w.address + '_' + w.chain;
     seenKeys.add(key);
     
     if (walletDb[key]) {
-      // 已有 → 更新lastSeen + 核心数据（winRate/pnl/tokens可能变化）
+      // 已有 → 更新数据
       walletDb[key].lastSeen = now;
       walletDb[key].missCount = 0;
-      // 更新胜率和PnL（币安排名每次刷新数据不同）
       if (w.winRate !== undefined) walletDb[key].winRate = w.winRate;
       if (w.pnl !== undefined) walletDb[key].pnl = w.pnl;
       if (w.tokens !== undefined) walletDb[key].tokens = w.tokens;
       if (w.txCount !== undefined) walletDb[key].txCount = w.txCount;
+      // 已有钱包WR跌到<60%→踢出
+      if (walletDb[key].winRate < CONFIG.scoutMinWinRate) {
+        delete walletDb[key];
+        continue;
+      }
     } else {
-      // 新钱包 → 入库
+      // 新钱包 → WR≥60%才入库
+      if (wr < CONFIG.scoutMinWinRate) continue;
       walletDb[key] = {
         ...w,
         addedAt: now,
@@ -491,50 +497,26 @@ function mergeToWalletDb(verifiedWallets) {
 }
 
 function rankWallets(wallets) {
-  // 综合评分: 胜率 × 样本量 × 盈利能力 × 活跃度
-  const now = Date.now();
+  // 综合评分: 胜率 × 样本量 × 盈利能力
   for (const w of wallets) {
     const wr = (w.winRate || 0) / 100;                        // 0~1
     const sampleWeight = Math.log2((w.tokens || 1) + 1);      // 交易币数，log防大户碾压
     const pnlWeight = Math.log10(Math.max(w.pnl, 1) + 1);    // PnL取log
-    const age = now - (w.lastSeen || w.lastActivity || 0);
-    const activityMul = age < 7 * 86400000 ? 1.5              // 7天内活跃
-                      : age < 30 * 86400000 ? 1.2             // 30天内
-                      : 1.0;
-    w.score = wr * sampleWeight * pnlWeight * activityMul;
+    w.score = wr * sampleWeight * pnlWeight;
     
     // 三级状态: ≥60%=hunter(猎手), 50-60%=scout(哨兵), <50%=watcher(观察)
     const winRate = w.winRate || 0;
+    const tokens = w.tokens || 0;
     const key2 = w.address + '_' + w.chain;
-    // 过时降级的钱包不自动升回（等重新出现在排名时lastSeen更新后才解锁）
-    if (walletDb[key2]?._staleDemoted) {
-      if (walletDb[key2].lastSeen && (Date.now() - walletDb[key2].lastSeen) < 48 * 3600000) {
-        // 重新出现在排名了，解锁
-        delete walletDb[key2]._staleDemoted;
-      } else {
-        // 还是过时的，不升级
-        w.status = walletDb[key2].status || 'scout';
-        // 跳过下面的分级
-      }
-    }
-    if (!walletDb[key2]?._staleDemoted) {
-      // SOL空壳过滤：余额<0.5 SOL强制观察（无swap的空地址/bot）
-      if (w.chain === 'solana' && (w.verifiedBal || 0) < 0.5) {
-        w.status = 'watcher';
-        const key = w.address + '_' + w.chain;
-        if (walletDb[key] && !walletDb[key].watcherSince) walletDb[key].watcherSince = Date.now();
-      } else if (winRate >= CONFIG.hunterMinWinRate) {
-        w.status = 'hunter';
-      } else if (winRate >= CONFIG.scoutMinWinRate) {
-        w.status = 'scout';
-      } else {
-        w.status = 'watcher';
-        // 观察期：记录降级时间，超过30天没涨回50%就踢
-        const key = w.address + '_' + w.chain;
-        if (walletDb[key] && !walletDb[key].watcherSince) {
-          walletDb[key].watcherSince = Date.now();
-        }
-      }
+    // SOL空壳过滤：余额<0.5 SOL强制观察（无swap的空地址/bot）
+    if (w.chain === 'solana' && (w.verifiedBal || 0) < 0.5) {
+      w.status = 'watcher';
+    } else if (winRate >= CONFIG.hunterMinWinRate && tokens >= 6) {
+      w.status = 'hunter';
+    } else if (winRate >= CONFIG.scoutMinWinRate) {
+      w.status = 'scout';
+    } else {
+      w.status = 'watcher';
     }
   }
   // 按链独立排名（SOL/BSC/Base各自TOP10/TOP30）
@@ -557,40 +539,13 @@ function rankWallets(wallets) {
       if (oldStatus && oldStatus !== w.status) {
         log('INFO', `📊 ${w.address.slice(0,10)}(${w.chain}) ${oldStatus}→${w.status} WR:${w.winRate?.toFixed(1)}%`);
       }
-      // 脱离观察状态 → 清除watcherSince
-      if (w.status !== 'watcher') {
-        delete walletDb[key].watcherSince;
-      }
-      // 观察超过30天 → 踢出
-      if (w.status === 'watcher' && walletDb[key].watcherSince) {
-        const days = (Date.now() - walletDb[key].watcherSince) / (24 * 3600 * 1000);
-        if (days >= CONFIG.watcherEvictDays) {
-          log('INFO', `🗑 踢出观察钱包 ${w.address.slice(0,10)}...(${w.chain}) WR=${w.winRate}% 观察${Math.round(days)}天`);
-          evictKeys.push(key);
-        }
+      // 观察钱包直接踢出（不再入库）
+      if (w.status === 'watcher') {
+        evictKeys.push(key);
       }
     }
   }
   for (const k of evictKeys) delete walletDb[k];
-  
-  // 超过48小时不在币安排名的钱包，降级保护（数据可能过时）
-  // 必须在rankWallets里做，不能在mergeToWalletDb里（会被覆盖）
-  const STALE_HOURS = 48;
-  const now2 = Date.now();
-  for (const [key, dbw] of Object.entries(walletDb)) {
-    if (dbw.lastSeen) {
-      const hours = (now2 - dbw.lastSeen) / 3600000;
-      if (hours >= STALE_HOURS && dbw.status === 'hunter' && !dbw._staleDemoted) {
-        log('INFO', `📊 ${dbw.address?.slice(0,10)}(${dbw.chain}) hunter→scout (${Math.round(hours)}h未出现在排名)`);
-        dbw.status = 'scout';
-        dbw._staleDemoted = true;
-      } else if (hours >= STALE_HOURS * 2 && dbw.status === 'scout') {
-        log('INFO', `📊 ${dbw.address?.slice(0,10)}(${dbw.chain}) scout→watcher (${Math.round(hours)}h未出现在排名)`);
-        dbw.status = 'watcher';
-        if (!dbw.watcherSince) dbw.watcherSince = now2;
-      }
-    }
-  }
   
   saveJSON(WALLET_DB_FILE, walletDb);
   
