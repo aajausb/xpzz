@@ -1604,19 +1604,13 @@ async function handleSignal(signal) {
       log('INFO', `🚫 ${earlySymbol}(${chain}) 已持有同名币，跳过`);
       return;
     }
-    // 检查2: 清仓后1小时冷却（同token二次买入除外）
+    // 检查2: 清仓后1小时冷却
     if (!handleSignal._symbolCooldown) handleSignal._symbolCooldown = {};
     const cooldownUntil = handleSignal._symbolCooldown[symKey] || 0;
     if (Date.now() < cooldownUntil) {
-      // 同token二次买入：SM验证过的币，跳过冷却
-      const history = tradeHistory[token];
-      if (history && history.soldCount >= 1) {
-        log('INFO', `🔄 ${earlySymbol}(${chain}) SM二次买入! 跳过冷却(第${history.soldCount+1}次)`);
-      } else {
-        const minLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
-        log('INFO', `🚫 ${earlySymbol}(${chain}) 同名冷却中(${minLeft}分钟后解除)，跳过`);
-        return;
-      }
+      const minLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
+      log('INFO', `🚫 ${earlySymbol}(${chain}) 同名冷却中(${minLeft}分钟后解除)，跳过`);
+      return;
     }
   }
 
@@ -1712,23 +1706,18 @@ async function handleSignal(signal) {
         // EVM: Multicall3批量查所有SM余额（1次RPC）
         const walletAddrs = allSigs.map(s => s.wallet);
         let balMap = await batchBalanceOf(chain, token, walletAddrs);
-        // 查不到的逐个重试最多3次
+        // 查不到的再查一次
         const missedWallets = walletAddrs.filter(w => !balMap.has(w.toLowerCase()));
         if (missedWallets.length > 0) {
-          log('INFO', `🔄 ${missedWallets.length}个SM余额Multicall未返回，逐个重试(最多3次)`);
+          log('INFO', `🔄 ${missedWallets.length}个SM余额Multicall未返回，逐个重试`);
           const provider = chain === 'bsc' ? bscProvider : baseProvider;
           for (const w of missedWallets) {
-            for (let attempt = 1; attempt <= 3; attempt++) {
-              try {
-                const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
-                const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
-                const balNum = parseFloat(ethers.formatUnits(bal, dec));
-                balMap.set(w.toLowerCase(), { bal, balNum });
-                break;
-              } catch {
-                if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
-              }
-            }
+            try {
+              const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+              const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
+              const balNum = parseFloat(ethers.formatUnits(bal, dec));
+              balMap.set(w.toLowerCase(), { bal, balNum });
+            } catch {}
           }
         }
         for (const sig of allSigs) {
@@ -1909,7 +1898,7 @@ async function handleSignal(signal) {
             continue;
           }
           let ok = false;
-          for (let attempt = 1; attempt <= 3; attempt++) {
+          for (let attempt = 1; attempt <= 2; attempt++) {
             try {
               const bal2 = await getSolTokenBalance(smWallet, token);
               setCachedSolBalance(smWallet, token, bal2);
@@ -1917,30 +1906,25 @@ async function handleSignal(signal) {
               ok = true;
               break;
             } catch {
-              if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
+              if (attempt === 1) await new Promise(r => setTimeout(r, 500));
             }
           }
-          if (!ok) { queryFailed++; log('WARN', `⚠️ 龙虾检查: ${smWallet.slice(0,10)} SOL余额3次查询失败，不计入`); await notifyTelegram(`⚠️ 龙虾检查: ${smWallet.slice(0,10)} SOL余额3次查询失败 ${symbol}(${chain})`); }
+          if (!ok) { queryFailed++; log('WARN', `⚠️ 龙虾检查: ${smWallet.slice(0,10)} SOL余额查询失败，不计入`); await notifyTelegram(`⚠️ 龙虾检查: ${smWallet.slice(0,10)} SOL余额查询失败 ${symbol}(${chain})`); }
         }
       } else {
         // EVM: Multicall3一次查完
         try {
           const balMap = await batchBalanceOf(chain, token, checkWallets);
-          // Multicall未返回的逐个重试3次
+          // Multicall未返回的再查一次
           const missed = checkWallets.filter(w => !balMap.has(w.toLowerCase()));
           if (missed.length > 0) {
             const provider = chain === 'bsc' ? bscProvider : baseProvider;
             for (const w of missed) {
-              for (let attempt = 1; attempt <= 3; attempt++) {
-                try {
-                  const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
-                  const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
-                  balMap.set(w.toLowerCase(), { bal, balNum: parseFloat(ethers.formatUnits(bal, dec)) });
-                  break;
-                } catch {
-                  if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
-                }
-              }
+              try {
+                const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+                const [bal, dec] = await Promise.all([erc20.balanceOf(w), erc20.decimals().catch(() => 18)]);
+                balMap.set(w.toLowerCase(), { bal, balNum: parseFloat(ethers.formatUnits(bal, dec)) });
+              } catch {}
             }
           }
           for (const smWallet of checkWallets) {
@@ -2171,9 +2155,12 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
     // S级: ≥3猎手 或 2猎手+≥3哨兵，SM≥$1500 → $160
     // A级: ≥2猎手+≥2哨兵 且 SM≥$500，或 ≥2猎手 且 SM≥$1000 → $120
     // B级: ≥2猎手 且 SM≥$500 → $80
-    // 1猎手+哨兵不买（信号太弱）
-    if (confirmCount < 2) {
-      log('INFO', `🚫 ${symbol}(${chain}) 猎手${confirmCount}<2，信号太弱，跳过`);
+    // 1猎手+哨兵不买（信号太弱）— 但1猎手+2哨兵在SOL/Base可以买
+    const minHunters = chain === 'bsc' ? 3 : 2;
+    const altHunters = chain === 'bsc' ? 2 : 1;
+    const altScouts = chain === 'bsc' ? 3 : 2;
+    if (!(confirmCount >= minHunters || (confirmCount >= altHunters && watchCount >= altScouts))) {
+      log('INFO', `🚫 ${symbol}(${chain}) 猎手=${confirmCount}哨兵=${watchCount}，不够门槛，跳过`);
       return;
     }
     if ((confirmCount >= 3 || (confirmCount >= 2 && watchCount >= 3)) && smTotal >= 1500) {
@@ -2184,10 +2171,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       size = 80;
     }
     const grade = size >= 160 ? 'S' : size >= 120 ? 'A' : 'B';
-    // SM二次买入加成：验证过的币信心更高，仓位×1.5（最高$200）
-    const history = tradeHistory[token];
-    const isRebuy = history && history.soldCount >= 1;
-    log('INFO', `📊 ${symbol} ${grade}级信号${isRebuy?'(二次)':''} 仓位$${size} (猎手${confirmCount} SM累计$${Math.round(smTotal)})`);
+    log('INFO', `📊 ${symbol} ${grade}级信号 仓位$${size} (猎手${confirmCount} SM累计$${Math.round(smTotal)})`);
     
     if (chain === 'solana') {
       nativeAmount = Math.floor((size / price) * 1e9);
