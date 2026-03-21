@@ -27,7 +27,7 @@
   - EVM(BSC+Base): 0xe00ca1d766f329eFfC05E704499f10dB1F14FD47
   - 私钥3片XOR分片+3把enc_key，GitHub历史只有分片(key已清)，跑步哥手上有3把key
   - 恢复文档: crypto/WALLET_RECOVERY.md
-- **钱包库**: 707个（猎手107/哨兵158/观察450）
+- **钱包库**: 177个（猎手77/哨兵100），观察直接踢出不入库
 - **QuickNode $49/月**: 三链RPC全包
 - **数据源**: 币安PnL Rank API（免费，钱包+种子币一起拿）
 - **确认逻辑**: SOL/Base ≥2猎手或1猎手+2哨兵 | BSC ≥3猎手或2猎手+3哨兵

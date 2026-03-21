@@ -20,8 +20,7 @@ const CONFIG = {
   // 不限数量，验证通过的全部跟踪，排名只决定优先级
   hunterMinWinRate: 70,                     // 猎手: 胜率≥70%
   scoutMinWinRate: 60,                      // 哨兵: 胜率60-70%
-  // <50% = 观察(watcher)，30天没涨回50%就踢
-  watcherEvictDays: 30,                     // 观察期30天
+  // <60% 不入库; ≥70% = 猎手(hunter); 60-70% = 哨兵(scout)
 
   // 监控
   
@@ -464,7 +463,6 @@ function mergeToWalletDb(verifiedWallets) {
     if (walletDb[key]) {
       // 已有 → 更新数据
       walletDb[key].lastSeen = now;
-      walletDb[key].missCount = 0;
       if (w.winRate !== undefined) walletDb[key].winRate = w.winRate;
       if (w.pnl !== undefined) walletDb[key].pnl = w.pnl;
       if (w.tokens !== undefined) walletDb[key].tokens = w.tokens;
@@ -481,7 +479,6 @@ function mergeToWalletDb(verifiedWallets) {
         ...w,
         addedAt: now,
         lastSeen: now,
-        missCount: 0,
       };
     }
   }
@@ -511,7 +508,7 @@ function rankWallets(wallets) {
     // SOL空壳过滤：余额<0.5 SOL强制观察（无swap的空地址/bot）
     if (w.chain === 'solana' && (w.verifiedBal || 0) < 0.5) {
       w.status = 'watcher';
-    } else if (winRate >= CONFIG.hunterMinWinRate && tokens >= 6) {
+    } else if (winRate >= CONFIG.hunterMinWinRate) {
       w.status = 'hunter';
     } else if (winRate >= CONFIG.scoutMinWinRate) {
       w.status = 'scout';
