@@ -2752,16 +2752,16 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
                   // 走正常卖出成功流程 — 不break，让下面的代码处理
                 } else {
                   log('WARN', `⚠️ ${pos.symbol} 分批卖出后余额仍有${finalBal.toFixed(0)}，通知跑步哥`);
-                  await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖出假成功+分批也没完全卖掉\n余额剩${finalBal.toFixed(0)}\n🔧 需手动处理`);
+                  await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖出假成功+分批也没完全卖掉\n余额剩${finalBal.toFixed(0)}\n🔄 下轮巡检自动重试`);
                   break;
                 }
               } else {
-                await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 3次卖出假成功\n余额未减少(${postBal.toFixed(0)}/${preBal.toFixed(0)})\n🔧 需手动处理`);
+                await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 3次卖出假成功\n余额未减少(${postBal.toFixed(0)}/${preBal.toFixed(0)})\n🔄 下轮巡检自动重试`);
                 break;
               }
             } catch(e) {
               log('WARN', `分批卖出异常: ${e.message?.slice(0,80)}`);
-              await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖出假成功+分批异常\n🔧 需手动处理`);
+              await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖出假成功+分批异常\n🔄 下轮巡检自动重试`);
               break;
             }
           }
@@ -2868,7 +2868,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           positions[tokenAddress].unsellableSince = Date.now();
           saveJSON(POSITIONS_FILE, positions);
           log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次+分批全失败，标记unsellable`);
-          await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次+分批全失败: ${result?.error || 'unknown'}\n🔧 需手动处理`);
+          await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次+分批全失败: ${result?.error || 'unknown'}\n🔄 下轮巡检自动重试`);
         }
       }
     } catch(e) {
@@ -2885,7 +2885,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           positions[tokenAddress].unsellableSince = Date.now();
           saveJSON(POSITIONS_FILE, positions);
           log('WARN', `🚫 ${pos.symbol}(${pos.chain}) 3次+分批全失败，标记unsellable`);
-          await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次+分批全失败: ${e.message?.substring(0, 100)}\n🔧 需手动处理`);
+          await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 卖不出!\n❌ 3次+分批全失败: ${e.message?.substring(0, 100)}\n🔄 下轮巡检自动重试`);
         }
       }
     }
