@@ -1854,7 +1854,7 @@ async function handleSignal(signal) {
               else realScouts++;
               log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${holdingUsd.toFixed(2)}但转到普通钱包（转仓），算确认`);
             } else {
-              log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，${action === 'sold' ? 'DEX卖出' : '不算确认'}`);
+              log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，${action === 'sold' ? 'SM已卖出不跟' : '不算确认'}`);
             }
           }
         }
@@ -1899,7 +1899,7 @@ async function handleSignal(signal) {
               else realScouts++;
               log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${holdingUsd.toFixed(2)}但转到EOA（转仓），算确认`);
             } else {
-              log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，${action === 'sold' ? 'DEX卖出' : '不算确认'}`);
+              log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，${action === 'sold' ? 'SM已卖出不跟' : '不算确认'}`);
             }
           }
         }
@@ -2529,6 +2529,39 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         return w && w.status === 'hunter' ? `${w.chain === 'bsc' ? 'BSC' : w.chain === 'base' ? 'Base' : 'SOL'}猎手#${w.rank}` : null;
       }).filter(Boolean);
       const rankLine = hunterRanks.length > 0 ? `\n🏹 ${hunterRanks.join(' ')}` : '';
+
+      // 异步补扫钱包库：找出所有持有该token的SM，更新allSMWallets（卖出比例分母）
+      const _tokenAddr = tokenAddress, _chain = chain, _sym2 = symbol;
+      setTimeout(async () => {
+        try {
+          const samChainSMs = rankedWallets.filter(w => w.chain === _chain);
+          const foundSMs = [];
+          if (_chain === 'solana') {
+            for (const w of samChainSMs) {
+              try {
+                const bal = await getSolTokenBalance(w.address, _tokenAddr);
+                if (bal > 0) foundSMs.push(w.address);
+              } catch {}
+              await new Promise(r => setTimeout(r, 100)); // 防RPC限速
+            }
+          } else {
+            // EVM: 用Multicall批量查
+            const addrs = samChainSMs.map(w => w.address);
+            const balMap = await batchBalanceOf(_chain, _tokenAddr, addrs);
+            for (const w of samChainSMs) {
+              const info = balMap.get(w.address.toLowerCase());
+              if (info && info.bal > 0n) foundSMs.push(w.address);
+            }
+          }
+          if (positions[_tokenAddr] && foundSMs.length > 0) {
+            const existing = positions[_tokenAddr].allSMWallets || positions[_tokenAddr].confirmWallets || [];
+            const merged = [...new Set([...existing, ...foundSMs])];
+            positions[_tokenAddr].allSMWallets = merged;
+            saveJSON(POSITIONS_FILE, positions);
+            log('INFO', `📎 ${_sym2} 补扫钱包库: ${foundSMs.length}个SM持有，总跟踪${merged.length}个`);
+          }
+        } catch(e) { log('WARN', `补扫钱包库异常: ${e.message?.slice(0,50)}`); }
+      }, 20000); // 买入20秒后补扫（等链上同步）
       const smLine = smTotalAtBuy > 0 ? `\n💎 SM累计持有$${Math.round(smTotalAtBuy)}` : '';
       await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}${rankLine}${smLine}\n🔗 ${result.txHash || ''}`);
       
