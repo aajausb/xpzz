@@ -173,6 +173,109 @@ async function getSolTokenBalance(owner, mint) {
   return total;
 }
 
+
+// 已知DEX程序ID（SOL）
+const SOL_DEX_PROGRAMS = new Set([
+  'pAMMBay6oceH9fJKkHRpqjoYXGmXnrfLz',        // Pump.fun AMM
+  '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', // Raydium AMM V4
+  'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4',  // Jupiter V6
+  'JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB',  // Jupiter V4
+  'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc',  // Orca Whirlpool
+  'CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK',  // Raydium CLMM
+  '6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P',  // Pump.fun (old)
+  'routeUGWgWzqBWFcrCfv8tritsqukccJPu3q5GPP3xS',  // Raydium Route
+]);
+
+// 查SM余额=0时，判断是DEX卖出还是转仓
+// 返回 'sold'（DEX卖出）、'transferred'（转到普通钱包）、'unknown'（查不到）
+async function checkSolSellOrTransfer(smWallet, mint) {
+  try {
+    // 先找SM的token account
+    const ataResp = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+      smWallet, { mint }, { encoding: 'jsonParsed', programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }
+    ]);
+    let tokenAccount = ataResp.result?.value?.[0]?.pubkey;
+    if (!tokenAccount) {
+      // 试Token-2022
+      const ata2 = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
+        smWallet, { mint }, { encoding: 'jsonParsed', programId: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb' }
+      ]);
+      tokenAccount = ata2.result?.value?.[0]?.pubkey;
+    }
+    if (!tokenAccount) return 'unknown';
+    
+    // 查token account最近1笔交易
+    const sigsResp = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [tokenAccount, { limit: 1 }]);
+    const sig = sigsResp.result?.[0]?.signature;
+    if (!sig) return 'unknown';
+    
+    // 解析交易，看是否涉及DEX程序
+    const txResp = await rpcPost(getSolRpc(), 'getTransaction', [sig, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
+    const tx = txResp.result;
+    if (!tx) return 'unknown';
+    
+    // 先看SM的token余额变化方向：增加=买入，减少=卖出/转出
+    const pre = (tx.meta?.preTokenBalances || []).find(b => b.mint === mint && b.owner === smWallet);
+    const post = (tx.meta?.postTokenBalances || []).find(b => b.mint === mint && b.owner === smWallet);
+    const preBal = pre?.uiTokenAmount?.uiAmount || 0;
+    const postBal = post?.uiTokenAmount?.uiAmount || 0;
+    
+    if (postBal > preBal) return 'transferred'; // 余额增加=刚买入，不是卖出（算持有）
+    if (postBal >= preBal && postBal > 0) return 'transferred'; // 余额没变且>0=无关交易
+    
+    // 余额减少了，检查是DEX卖出还是转仓
+    const instructions = tx.transaction?.message?.instructions || [];
+    const innerInstructions = tx.meta?.innerInstructions || [];
+    const allPrograms = new Set();
+    for (const ix of instructions) {
+      const pid = ix.programId || ix.program;
+      if (pid) allPrograms.add(pid);
+    }
+    for (const inner of innerInstructions) {
+      for (const ix of (inner.instructions || [])) {
+        const pid = ix.programId || ix.program;
+        if (pid) allPrograms.add(pid);
+      }
+    }
+    
+    for (const p of allPrograms) {
+      if (SOL_DEX_PROGRAMS.has(p)) return 'sold';
+    }
+    return 'transferred';
+  } catch(e) {
+    console.warn(`[WARN] checkSolSellOrTransfer ${smWallet.slice(0,10)} 异常: ${e.message?.slice(0,50)}`);
+    return 'unknown';
+  }
+}
+
+// EVM: 判断是DEX卖出还是转仓（查最近一笔token Transfer事件的接收方是否是合约）
+async function checkEvmSellOrTransfer(chain, smWallet, tokenAddress) {
+  try {
+    const provider = chain === 'bsc' ? bscProvider : baseProvider;
+    const erc20 = new ethers.Contract(tokenAddress, ['event Transfer(address indexed from, address indexed to, uint256 value)'], provider);
+    const currentBlock = await provider.getBlockNumber();
+    // 查最近500个块的Transfer事件（约25分钟BSC/约16分钟Base）
+    const fromBlock = Math.max(0, currentBlock - 500);
+    const filter = erc20.filters.Transfer(smWallet, null);
+    const events = await erc20.queryFilter(filter, fromBlock, currentBlock);
+    if (events.length === 0) return 'unknown';
+    
+    // 取最近一笔转出
+    const lastEvent = events[events.length - 1];
+    const toAddr = lastEvent.args?.[1] || lastEvent.args?.to;
+    if (!toAddr) return 'unknown';
+    
+    // 查接收方是合约（DEX Router）还是EOA（转仓）
+    const code = await provider.getCode(toAddr);
+    if (code && code !== '0x') return 'sold';  // 合约地址 = DEX
+    return 'transferred';  // EOA = 转仓
+  } catch(e) {
+    console.warn(`[WARN] checkEvmSellOrTransfer ${smWallet.slice(0,10)} 异常: ${e.message?.slice(0,50)}`);
+    return 'unknown';
+  }
+}
+
+
 const OKX_ENV = {
   ...process.env,
   OKX_API_KEY: process.env.OKX_API_KEY || '',
@@ -1655,10 +1758,6 @@ async function handleSignal(signal) {
           const cachedSolBal = getCachedSolBalance(sig.wallet, token);
           if (cachedSolBal !== undefined) {
             let holdingUsd = cachedSolBal * price;
-            if (holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet)) {
-              holdingUsd = -2;
-              log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${(cachedSolBal*price).toFixed(2)}但有买入信号，算有效(可能转仓)`);
-            }
             return { sig, holdingUsd };
           }
           // 无缓存，查一次失败再查一次
@@ -1667,10 +1766,6 @@ async function handleSignal(signal) {
               const bal = await getSolTokenBalance(sig.wallet, token);
               setCachedSolBalance(sig.wallet, token, bal);
               let holdingUsd = bal * price;
-              if (holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet)) {
-                holdingUsd = -2;
-                log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${(bal*price).toFixed(2)}但有买入信号，算有效(可能转仓)`);
-              }
               return { sig, holdingUsd };
             } catch {
               if (attempt === 1) await new Promise(r => setTimeout(r, 500));
@@ -1682,12 +1777,21 @@ async function handleSignal(signal) {
           if (holdingUsd === -1) {
             // 查询失败，不计入确认（宁可漏跟不误跟）
             log('WARN', `⚠️ ${sig.wallet.slice(0,10)} SOL余额查询失败，不计入确认`);
-          } else if (holdingUsd === -2 || holdingUsd >= MIN_SM_HOLDING_USD) {
+          } else if (holdingUsd >= MIN_SM_HOLDING_USD) {
             realConfirmWallets.push(sig.wallet);
             if (sig.walletStatus === 'hunter') realHunters++;
             else realScouts++;
           } else {
-            log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，不算确认`);
+            // 余额<$1，查是DEX卖出还是转仓
+            const action = await checkSolSellOrTransfer(sig.wallet, token);
+            if (action === 'transferred') {
+              realConfirmWallets.push(sig.wallet);
+              if (sig.walletStatus === 'hunter') realHunters++;
+              else realScouts++;
+              log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${holdingUsd.toFixed(2)}但转到普通钱包（转仓），算确认`);
+            } else {
+              log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，${action === 'sold' ? 'DEX卖出' : '不算确认'}`);
+            }
           }
         }
       } else {
@@ -1714,20 +1818,25 @@ async function handleSignal(signal) {
           if (info) {
             holdingUsd = info.balNum * price;
           }
-          // 余额=0但有买入信号 → 可能转仓到小号，不算空投
-          if (holdingUsd >= 0 && holdingUsd < MIN_SM_HOLDING_USD && pendingSignals[token]?.some(s => s.wallet === sig.wallet || s.wallet?.toLowerCase() === sig.wallet?.toLowerCase())) {
-            log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${holdingUsd.toFixed(2)}但有买入信号，算有效(可能转仓)`);
-            holdingUsd = -2; // -2=余额0但有买入信号，算有效
-          }
+          // 余额=0但有买入信号的情况：不再特殊处理，余额=0就是卖了
           if (holdingUsd === -1) {
             // 查询失败，不计入确认（宁可漏跟不误跟）
             log('WARN', `⚠️ ${sig.wallet.slice(0,10)} EVM余额查询失败，不计入确认`);
-          } else if (holdingUsd === -2 || holdingUsd >= MIN_SM_HOLDING_USD) {
+          } else if (holdingUsd >= MIN_SM_HOLDING_USD) {
             realConfirmWallets.push(sig.wallet);
             if (sig.walletStatus === 'hunter') realHunters++;
             else realScouts++;
           } else {
-            log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，不算确认`);
+            // 余额<$1，查是DEX卖出还是转仓
+            const action = await checkEvmSellOrTransfer(chain, sig.wallet, token);
+            if (action === 'transferred') {
+              realConfirmWallets.push(sig.wallet);
+              if (sig.walletStatus === 'hunter') realHunters++;
+              else realScouts++;
+              log('INFO', `📎 ${sig.wallet.slice(0,10)} 余额$${holdingUsd.toFixed(2)}但转到EOA（转仓），算确认`);
+            } else {
+              log('INFO', `🚫 ${sig.wallet.slice(0,10)} 持仓$${holdingUsd.toFixed(2)}<$${MIN_SM_HOLDING_USD}，${action === 'sold' ? 'DEX卖出' : '不算确认'}`);
+            }
           }
         }
       }
@@ -1863,7 +1972,7 @@ async function handleSignal(signal) {
   const smBuyAmounts = Object.values(smWalletAmounts).sort((a, b) => a - b);
   const smTotalUsd = smBuyAmounts.reduce((a, b) => a + b, 0);
   log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}${smTotalUsd > 0 ? ` SM累计$${Math.round(smTotalUsd)}` : ''}`);
-  const savedSignals = [...(pendingSignals[token] || [])]; // 龙虾检查用
+  // savedSignals removed - 龙虾检查不再特殊处理余额=0有买入信号的情况
   delete pendingSignals[token];
   // 提前标记boughtTokens（防另一个handleSignal并发通过检查→重复买入）
   if (boughtTokens.has(token)) { log('INFO', `${symbol} 已在买入中，跳过`); return; }
@@ -1885,9 +1994,15 @@ async function handleSignal(signal) {
           const cachedSolBal2 = getCachedSolBalance(smWallet, token);
           if (cachedSolBal2 !== undefined) {
             if (cachedSolBal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
-            else if (savedSignals.some(s => s.wallet === smWallet)) {
-              stillHolding++; holdingWallets.push(smWallet);
-              log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(cachedSolBal2*price).toFixed(2)}但有买入信号，算持有`);
+            else {
+              // 余额=0，查是DEX卖出还是转仓
+              const action = await checkSolSellOrTransfer(smWallet, token);
+              if (action === 'transferred') {
+                stillHolding++; holdingWallets.push(smWallet);
+                log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额=0但转到普通钱包（转仓），算持有`);
+              } else {
+                log('INFO', `🦞 龙虾检查: ${smWallet.slice(0,10)} 余额=0，${action === 'sold' ? 'DEX卖出' : '无法判断'}，不算持有`);
+              }
             }
             continue;
           }
@@ -1897,9 +2012,14 @@ async function handleSignal(signal) {
               const bal2 = await getSolTokenBalance(smWallet, token);
               setCachedSolBalance(smWallet, token, bal2);
               if (bal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
-              else if (savedSignals.some(s => s.wallet === smWallet)) {
-                stillHolding++; holdingWallets.push(smWallet);
-                log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(bal2*price).toFixed(2)}但有买入信号，算持有`);
+              else {
+                const action = await checkSolSellOrTransfer(smWallet, token);
+                if (action === 'transferred') {
+                  stillHolding++; holdingWallets.push(smWallet);
+                  log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额=0但转到普通钱包（转仓），算持有`);
+                } else {
+                  log('INFO', `🦞 龙虾检查: ${smWallet.slice(0,10)} 余额=0，${action === 'sold' ? 'DEX卖出' : '无法判断'}，不算持有`);
+                }
               }
               ok = true;
               break;
@@ -1929,9 +2049,14 @@ async function handleSignal(signal) {
             const info = balMap.get(smWallet.toLowerCase());
             if (!info) { queryFailed++; log('WARN', `⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败，不计入`); await notifyTelegram(`⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败 ${symbol}(${chain})`); continue; }
             if (info.balNum * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
-            else if (savedSignals.some(s => s.wallet === smWallet || s.wallet?.toLowerCase() === smWallet?.toLowerCase())) {
-              stillHolding++; holdingWallets.push(smWallet);
-              log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(info.balNum*price).toFixed(2)}但有买入信号，算持有`);
+            else {
+              const action = await checkEvmSellOrTransfer(chain, smWallet, token);
+              if (action === 'transferred') {
+                stillHolding++; holdingWallets.push(smWallet);
+                log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额=0但转到EOA（转仓），算持有`);
+              } else {
+                log('INFO', `🦞 龙虾检查: ${smWallet.slice(0,10)} 余额=0，${action === 'sold' ? 'DEX卖出' : '无法判断'}，不算持有`);
+              }
             }
           }
         } catch(e) {
