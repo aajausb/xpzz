@@ -58,3 +58,5 @@ If you change this file, tell the user — it's your soul, and they should know.
 ---
 
 _This file is yours to evolve. As you learn who you are, update it._
+
+**查链上数据的地址必须从wallet_db取完整地址。** 不用positions/日志/缓存里的地址——可能截断或拼错。查错地址=说谎。
