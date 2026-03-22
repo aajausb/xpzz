@@ -49,6 +49,7 @@ const POSITIONS_FILE = path.join(DATA_DIR, 'positions.json');
 const AUDIT_CACHE_FILE = path.join(DATA_DIR, 'audit_cache.json');
 const BOUGHT_TOKENS_FILE = path.join(DATA_DIR, 'bought_tokens.json');
 const TRADE_LOG_FILE = path.join(DATA_DIR, 'trade_log.json');
+const PENDING_SIGNALS_FILE = path.join(DATA_DIR, 'pending_signals.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -57,6 +58,19 @@ let walletDb = {};         // 钱包库 { "addr_chain": { address, chain, pnl, w
 let rankedWallets = [];    // 排名后的钱包列表（从walletDb生成）
 let positions = {};        // tokenAddress -> position
 let pendingSignals = {};   // tokenAddress -> [{wallet, chain, timestamp}]
+// 恢复持久化的确认数据
+try {
+  if (fs.existsSync(PENDING_SIGNALS_FILE)) {
+    const saved = JSON.parse(fs.readFileSync(PENDING_SIGNALS_FILE, 'utf8'));
+    const now = Date.now();
+    let restored = 0;
+    for (const [token, signals] of Object.entries(saved)) {
+      const valid = signals.filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
+      if (valid.length > 0) { pendingSignals[token] = valid; restored += valid.length; }
+    }
+    if (restored > 0) log('INFO', `📦 恢复确认数据: ${Object.keys(pendingSignals).length}个币 ${restored}条信号`);
+  }
+} catch(e) { log('WARN', `恢复确认数据失败: ${e.message}`); }
 let boughtTokens = new Set(); // 已买过的token（防重复）
 let tradeHistory = {};     // tokenAddress -> { lastSoldTime, lastBuyPrice, soldCount, pnl } SM二次买入参考
 const lowBalNotified = {};    // 低余额通知去重（chain → timestamp）
@@ -274,6 +288,16 @@ const saveJSON = (file, data) => {
   fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
   fs.renameSync(tmp, file); // rename是原子操作
 };
+
+// 防抖保存pendingSignals（最多每5秒写一次磁盘）
+let _pendingSaveTimer = null;
+function savePendingSignals() {
+  if (_pendingSaveTimer) return;
+  _pendingSaveTimer = setTimeout(() => {
+    _pendingSaveTimer = null;
+    try { saveJSON(PENDING_SIGNALS_FILE, pendingSignals); } catch {}
+  }, 5000);
+}
 const loadJSON = (file, def) => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return def; } };
 
 // 交易日志：追加写入，每条一行JSON（JSONL格式，方便复盘）
@@ -1504,7 +1528,10 @@ async function handleSignal(signal) {
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
   // 过期后清空的key直接删除（防内存泄漏）
-  if (pendingSignals[token].length === 0) { delete pendingSignals[token]; return; }
+  if (pendingSignals[token].length === 0) { delete pendingSignals[token]; savePendingSignals(); return; }
+  
+  // 持久化确认数据
+  savePendingSignals();
   
   // 三级计数: 猎手=确认, 哨兵=佐证, 观察=只记录不算
   const activeSignals = pendingSignals[token].filter(s => s.walletStatus === "hunter");
