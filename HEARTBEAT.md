@@ -28,6 +28,12 @@
 2. 挂了用 `systemctl restart meme-v8` 拉起
 3. scanner-daemon / auto-trader / arbitrage-live 已永久停止，不要拉起
 
+## 引擎日志自检（每次heartbeat执行）
+1. 查最近30分钟 `journalctl -u meme-v8` 里的ERROR和WARN（排除coalesce）
+2. 如果有**重复出现的同一条WARN/ERROR**（比如同一个变量undefined反复报） → 说明有bug，立刻通知跑步哥
+3. 如果有"执行买入"但没有对应"买入成功" → 说明买入链路断了，立刻通知
+4. **不要等跑步哥问才去查**
+
 ## 内存检查（每次heartbeat执行）
 1. 运行 `free -m` 检查可用内存
 2. 如果可用内存 < 1000MB：清理系统缓存
