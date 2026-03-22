@@ -155,7 +155,7 @@ async function getSolTokenBalance(owner, mint) {
   for (const programId of ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb']) {
     try {
       const balData = await rpcPost(getSolRpc(), 'getTokenAccountsByOwner', [
-        owner, { mint }, { encoding: 'jsonParsed', programId }
+        owner, { mint }, { encoding: 'jsonParsed', programId, commitment: 'confirmed' }
       ]);
       anySuccess = true;
       for (const a of (balData.result?.value || [])) {
@@ -1674,8 +1674,11 @@ async function handleSignal(signal) {
     if (pos.confirmWallets && !pos.confirmWallets.includes(wallet) && pos.confirmWallets.length < 20
         && !ALL_ROUTERS.has(walletLower)) {
       pos.confirmWallets.push(wallet);
+      // 同步加到allSMWallets
+      if (!pos.allSMWallets) pos.allSMWallets = [...pos.confirmWallets];
+      if (!pos.allSMWallets.includes(wallet)) pos.allSMWallets.push(wallet);
       saveJSON(POSITIONS_FILE, positions);
-      log('INFO', `📎 ${pos.symbol}(${chain}) 新增SM跟踪: ${wallet.slice(0,10)} (共${pos.confirmWallets.length}个)`);
+      log('INFO', `📎 ${pos.symbol}(${chain}) 新增SM跟踪: ${wallet.slice(0,10)} (共${pos.allSMWallets.length}个)`);
     }
     return;
   }
@@ -2466,6 +2469,10 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         confirmWallets, // 记录确认的SM钱包
         smTotalUsd: Math.round(smTotalAtBuy), // SM累计持有金额
       };
+      // 存钱包库里所有曾买过该token的SM（用于卖出比例计算）
+      const allSMForToken = (pendingSignals[tokenAddress] || []).map(s => s.wallet).filter(Boolean);
+      const uniqueAllSM = [...new Set([...confirmWallets, ...allSMForToken])];
+      positions[tokenAddress].allSMWallets = uniqueAllSM;
       boughtTokens.add(tokenAddress);
       saveJSON(POSITIONS_FILE, positions);
       saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]); // 持久化防重启重复买
@@ -2685,9 +2692,9 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
       }
       
       if (result.success) {
-        // 卖出后验证：等2秒查链上余额确认真的卖了
+        // 卖出后验证：等5秒查链上余额确认真的卖了（2秒太短RPC可能返回旧数据）
         try {
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise(r => setTimeout(r, 5000));
           const trader2 = require('./dex_trader.js');
           let postBal = -1;
           if (pos.chain === 'solana') {
@@ -3092,8 +3099,10 @@ async function managePositions() {
         if (pos.confirmWallets && (Date.now() - pos._lastSmCheck >= smCheckInterval)) {
           pos._lastSmCheck = Date.now();
           try {
+            // 用allSMWallets（所有曾买过该token的SM）做巡检，不只是confirmWallets
+            const smWalletList = pos.allSMWallets || pos.confirmWallets;
             // 过滤已确认卖出的SM
-            const pendingSM = pos.confirmWallets.filter(w => !sellTracker[tokenAddr]?.some(s => s.wallet === w));
+            const pendingSM = smWalletList.filter(w => !sellTracker[tokenAddr]?.some(s => s.wallet === w));
             
             if (pos.chain === 'solana') {
               // SOL: 逐个查（没有Multicall），走缓存
@@ -3274,7 +3283,7 @@ async function managePositions() {
 
         const sells = sellTracker[tokenAddr] || [];
         const uniqueSellers = new Set(sells.map(s => s.wallet)).size;
-        const totalConfirm = (pos.confirmWallets || []).length || pos.confirmCount || 2;
+        const totalConfirm = (pos.allSMWallets || pos.confirmWallets || []).length || pos.confirmCount || 2;
         const sellRatio = uniqueSellers / totalConfirm; // SM卖出比例
         
         if (sellRatio >= CONFIG.sellThreshold) {
