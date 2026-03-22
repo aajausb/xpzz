@@ -1884,6 +1884,10 @@ async function handleSignal(signal) {
           const cachedSolBal2 = getCachedSolBalance(smWallet, token);
           if (cachedSolBal2 !== undefined) {
             if (cachedSolBal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
+            else if (pendingSignals[token]?.some(s => s.wallet === smWallet)) {
+              stillHolding++; holdingWallets.push(smWallet);
+              log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(cachedSolBal2*price).toFixed(2)}但有买入信号，算持有`);
+            }
             continue;
           }
           let ok = false;
@@ -1892,6 +1896,10 @@ async function handleSignal(signal) {
               const bal2 = await getSolTokenBalance(smWallet, token);
               setCachedSolBalance(smWallet, token, bal2);
               if (bal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
+              else if (pendingSignals[token]?.some(s => s.wallet === smWallet)) {
+                stillHolding++; holdingWallets.push(smWallet);
+                log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(bal2*price).toFixed(2)}但有买入信号，算持有`);
+              }
               ok = true;
               break;
             } catch {
@@ -1920,6 +1928,10 @@ async function handleSignal(signal) {
             const info = balMap.get(smWallet.toLowerCase());
             if (!info) { queryFailed++; log('WARN', `⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败，不计入`); await notifyTelegram(`⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败 ${symbol}(${chain})`); continue; }
             if (info.balNum * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
+            else if (pendingSignals[token]?.some(s => s.wallet === smWallet || s.wallet?.toLowerCase() === smWallet?.toLowerCase())) {
+              stillHolding++; holdingWallets.push(smWallet);
+              log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(info.balNum*price).toFixed(2)}但有买入信号，算持有`);
+            }
           }
         } catch(e) {
           log('WARN', `⚠️ 龙虾检查Multicall整体失败: ${e.message?.slice(0,40)}，全部不计入`);
