@@ -16,12 +16,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 7.794e-7,
-    "currentValue": 105.53079533653829,
-    "pnlPercent": -29.466063348416288,
-    "totalPnl": -54.46920466346171,
-    "totalPnlPercent": -34.04325291466357,
-    "_lastSmCheck": 1774175388776,
+    "currentPrice": 7.544e-7,
+    "currentValue": 102.14579420308505,
+    "pnlPercent": -31.728506787330314,
+    "totalPnl": -57.854205796914954,
+    "totalPnlPercent": -36.15887862307184,
+    "_lastSmCheck": 1774177190616,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -52,7 +52,7 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 847,
-    "_lastSmCheck": 1774175389634,
+    "_lastSmCheck": 1774177191506,
     "_transfers": {
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -82,12 +82,12 @@
       "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.001779,
-    "currentValue": 124.879948538106,
-    "pnlPercent": 4.9557522123893865,
-    "totalPnl": 4.879948538106007,
-    "totalPnlPercent": 4.0666237817550055,
-    "_lastSmCheck": 1774175365203
+    "currentPrice": 0.00181,
+    "currentValue": 127.05604657334001,
+    "pnlPercent": 6.784660766961657,
+    "totalPnl": 7.056046573340012,
+    "totalPnlPercent": 5.880038811116677,
+    "_lastSmCheck": 1774177165867
   },
   "7mtXLUoAcT9Sxrf1K5PjSmfkPbYMyMP5pmrdFFixbonk": {
     "chain": "solana",
@@ -104,11 +104,33 @@
       "33WDPWD74LAB9m79MgJtpxwACwNxVsmwwrv7n4S1kRn2",
       "93cDUw2LgUvEJh2h7TaMDNcPRz9DqBZf5ykwknYiNo9V"
     ],
-    "currentPrice": 0.0007833,
-    "currentValue": 238.9012008039573,
-    "pnlPercent": -13.666923839964728,
-    "totalPnl": 78.9012008039573,
-    "totalPnlPercent": 49.31325050247331,
-    "_lastSmCheck": 1774175378213
+    "currentPrice": 0.0007539,
+    "currentValue": 229.93439970139588,
+    "pnlPercent": -16.907307395569276,
+    "totalPnl": 69.93439970139588,
+    "totalPnlPercent": 43.70899981337242,
+    "_lastSmCheck": 1774177179188
+  },
+  "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3": {
+    "chain": "base",
+    "token": "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3",
+    "symbol": "Aleister",
+    "buyPrice": 0.000001651,
+    "buyAmount": 71581764.22736801,
+    "buyAmountRaw": 71581764.22736801,
+    "buyCost": 120,
+    "buyTime": 1774176210968,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0xbf7f99f6e5d6ee5955d189292bd5ae2e663f2d1b",
+      "0x3e7a3dbf8c99beba8afdea55317ef999a339a016"
+    ],
+    "smTotalUsd": 2689,
+    "currentPrice": 0.00000166,
+    "currentValue": 118.8257286174309,
+    "pnlPercent": 0.5451241671714138,
+    "totalPnl": -1.1742713825691027,
+    "totalPnlPercent": -0.9785594854742523,
+    "_lastSmCheck": 1774177179746
   }
 }
