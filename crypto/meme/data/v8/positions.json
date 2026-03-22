@@ -21,7 +21,7 @@
     "pnlPercent": -32.84162895927602,
     "totalPnl": -59.51962635457396,
     "totalPnlPercent": -37.199766471608726,
-    "_lastSmCheck": 1774182568381,
+    "_lastSmCheck": 1774184379279,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -52,7 +52,7 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 847,
-    "_lastSmCheck": 1774182569232,
+    "_lastSmCheck": 1774184379980,
     "_transfers": {
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -82,12 +82,12 @@
       "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.001771,
-    "currentValue": 124.31837485159402,
-    "pnlPercent": 4.483775811209447,
-    "totalPnl": 4.318374851594015,
-    "totalPnlPercent": 3.598645709661679,
-    "_lastSmCheck": 1774182569774,
+    "currentPrice": 0.001783,
+    "currentValue": 125.16073538136202,
+    "pnlPercent": 5.191740412979363,
+    "totalPnl": 5.1607353813620165,
+    "totalPnlPercent": 4.300612817801681,
+    "_lastSmCheck": 1774184380859,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -111,12 +111,12 @@
       "33WDPWD74LAB9m79MgJtpxwACwNxVsmwwrv7n4S1kRn2",
       "93cDUw2LgUvEJh2h7TaMDNcPRz9DqBZf5ykwknYiNo9V"
     ],
-    "currentPrice": 0.0008659,
-    "currentValue": 264.0936419968679,
-    "pnlPercent": -4.562989088504358,
-    "totalPnl": 104.09364199686792,
-    "totalPnlPercent": 65.05852624804245,
-    "_lastSmCheck": 1774182597229,
+    "currentPrice": 0.0008051,
+    "currentValue": 245.55005332218312,
+    "pnlPercent": -11.264190455196736,
+    "totalPnl": 85.55005332218312,
+    "totalPnlPercent": 53.468783326364445,
+    "_lastSmCheck": 1774184395442,
     "_sells": [
       {
         "wallet": "33WDPWD74LAB9m79MgJtpxwACwNxVsmwwrv7n4S1kRn2",
@@ -140,12 +140,12 @@
       "0x3e7a3dbf8c99beba8afdea55317ef999a339a016"
     ],
     "smTotalUsd": 2689,
-    "currentPrice": 0.000001507,
-    "currentValue": 107.87371869064359,
-    "pnlPercent": -8.721986674742583,
-    "totalPnl": -12.126281309356415,
-    "totalPnlPercent": -10.105234424463678,
-    "_lastSmCheck": 1774182598032
+    "currentPrice": 0.000001509,
+    "currentValue": 108.01688221909833,
+    "pnlPercent": -8.600847970926703,
+    "totalPnl": -11.983117780901665,
+    "totalPnlPercent": -9.985931484084722,
+    "_lastSmCheck": 1774184367354
   },
   "0xe6c854488811fbd6472b684360ad5c393c7bae8f": {
     "chain": "base",
@@ -162,11 +162,11 @@
       "0xbc53811a4d05e5a18b521bc40a809611eb010b65"
     ],
     "smTotalUsd": 697,
-    "currentPrice": 0.0001501,
-    "currentValue": 81.38257528310112,
-    "pnlPercent": 2.878684030157638,
-    "totalPnl": 1.3825752831011187,
-    "totalPnlPercent": 1.7282191038763983,
-    "_lastSmCheck": 1774182584755
+    "currentPrice": 0.0001444,
+    "currentValue": 78.29209774070489,
+    "pnlPercent": -1.028101439342003,
+    "totalPnl": -1.7079022592951105,
+    "totalPnlPercent": -2.134877824118888,
+    "_lastSmCheck": 1774184396955
   }
 }
