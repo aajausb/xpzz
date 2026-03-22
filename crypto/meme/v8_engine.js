@@ -202,7 +202,7 @@ async function checkSolSellOrTransfer(smWallet, mint) {
       ]);
       tokenAccount = ata2.result?.value?.[0]?.pubkey;
     }
-    if (!tokenAccount) return 'unknown';
+    if (!tokenAccount) return 'transferred'; // account不存在=可能刚创建还没索引，保守算持有
     
     // 查token account最近1笔交易
     const sigsResp = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [tokenAccount, { limit: 1 }]);
