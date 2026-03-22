@@ -21,7 +21,7 @@
     "pnlPercent": -45.81900452488688,
     "totalPnl": -78.93599285606174,
     "totalPnlPercent": -49.33499553503859,
-    "_lastSmCheck": 1774207762755,
+    "_lastSmCheck": 1774209600216,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -51,12 +51,12 @@
       "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.001658,
-    "currentValue": 116.386146529612,
-    "pnlPercent": -2.1828908554572224,
-    "totalPnl": -3.613853470387994,
-    "totalPnlPercent": -3.0115445586566616,
-    "_lastSmCheck": 1774207763317,
+    "currentPrice": 0.001668,
+    "currentValue": 117.088113637752,
+    "pnlPercent": -1.592920353982295,
+    "totalPnl": -2.911886362247998,
+    "totalPnlPercent": -2.426571968539998,
+    "_lastSmCheck": 1774209586490,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -80,12 +80,12 @@
       "0x3e7a3dbf8c99beba8afdea55317ef999a339a016"
     ],
     "smTotalUsd": 2689,
-    "currentPrice": 0.000001502,
-    "currentValue": 107.51580986950675,
-    "pnlPercent": -9.024833434282252,
-    "totalPnl": -12.484190130493246,
-    "totalPnlPercent": -10.40349177541104,
-    "_lastSmCheck": 1774207777399
+    "currentPrice": 0.000001493,
+    "currentValue": 106.87157399146044,
+    "pnlPercent": -9.569957601453666,
+    "totalPnl": -13.128426008539563,
+    "totalPnlPercent": -10.940355007116302,
+    "_lastSmCheck": 1774209587303
   },
   "0xe6c854488811fbd6472b684360ad5c393c7bae8f": {
     "chain": "base",
@@ -102,12 +102,12 @@
       "0xbc53811a4d05e5a18b521bc40a809611eb010b65"
     ],
     "smTotalUsd": 697,
-    "currentPrice": 0.0001498,
-    "currentValue": 81.21991857034344,
-    "pnlPercent": 2.6730637422892487,
-    "totalPnl": 1.219918570343438,
-    "totalPnlPercent": 1.5248982129292976,
-    "_lastSmCheck": 1774207777943
+    "currentPrice": 0.0001578,
+    "currentValue": 85.55743091054869,
+    "pnlPercent": 8.15627141877998,
+    "totalPnl": 5.557430910548689,
+    "totalPnlPercent": 6.94678863818586,
+    "_lastSmCheck": 1774209587851
   },
   "2ADZRiE8gsW5pWVWvbER5LeFnzNT2RNYQQwPcjompump": {
     "chain": "solana",
@@ -124,12 +124,12 @@
       "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
       "5dd3zjBQQvQqtmWF67nR6XaRKe79cYu4fP6LFXZ1YRR9"
     ],
-    "currentPrice": 0.00001482,
-    "currentValue": 11.84020216438839,
-    "pnlPercent": -66.09471516815374,
-    "totalPnl": 6.6683624016769585,
-    "totalPnlPercent": 8.335453002096198,
-    "_lastSmCheck": 1774207778821,
+    "currentPrice": 0.00001122,
+    "currentValue": 8.96403969530619,
+    "pnlPercent": -74.33081674673988,
+    "totalPnl": 3.7921999325947553,
+    "totalPnlPercent": 4.740249915743444,
+    "_lastSmCheck": 1774209574867,
     "_sells": [
       {
         "wallet": "5dd3zjBQQvQqtmWF67nR6XaRKe79cYu4fP6LFXZ1YRR9",
@@ -145,5 +145,34 @@
     "sellRevenue": 74.82816023728857,
     "soldRatio": 0.5,
     "_tpDone": true
+  },
+  "NV2RYH954cTJ3ckFUpvfqaQXU4ARqqDH3562nFSpump": {
+    "chain": "solana",
+    "token": "NV2RYH954cTJ3ckFUpvfqaQXU4ARqqDH3562nFSpump",
+    "symbol": "Punch",
+    "buyPrice": 0.01035,
+    "buyAmount": 11736.451446,
+    "buyAmountRaw": 11736.451446,
+    "buyCost": 120,
+    "buyTime": 1774209552792,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "BgJrk3AJEWf41WxThAvDCkZmxuxbt3Q4aZc1P2rrHtZV",
+      "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv"
+    ],
+    "currentPrice": 0.01015,
+    "currentValue": 119.12498217689998,
+    "pnlPercent": -1.9323671497584591,
+    "totalPnl": -0.8750178231000234,
+    "totalPnlPercent": -0.7291815192500195,
+    "_lastSmCheck": 1774209562139,
+    "allSMWallets": [
+      "BgJrk3AJEWf41WxThAvDCkZmxuxbt3Q4aZc1P2rrHtZV",
+      "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
+      "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
+      "32mRYcNZJfG8gFrn9gvqusUtaWekXVAVQpkc97j5M9iT",
+      "FfyLxGLJu6WnCMahP9AKEDkC3VFWRvcH8wUx42CQTGhB",
+      "99xnE2zEFi8YhmKDaikc1EvH6ELTQJppnqUwMzmpLXrs"
+    ]
   }
 }
