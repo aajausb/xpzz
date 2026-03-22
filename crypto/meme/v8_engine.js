@@ -141,7 +141,7 @@ function markSolRpcDown(url) {
   if (idx >= 0) {
     solRpcCooldown[idx] = Date.now() + 600000; // 10分钟冷却
     solRpcIdx = (idx + 1) % SOL_RPCS.length;
-    log('WARN', `🔌 SOL RPC #${idx} 限速，切换到 #${solRpcIdx}`);
+    console.warn(`[WARN] 🔌 SOL RPC #${idx} 限速，切换到 #${solRpcIdx}`);
   }
 }
 const SOL_QN_RPC = SOL_RPCS[0];
@@ -165,7 +165,7 @@ async function getSolTokenBalance(owner, mint) {
         total += parseFloat(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0);
       }
     } catch(e) {
-      log('WARN', `getSolTokenBalance ${programId.slice(0,10)} 失败: ${e.message?.slice(0,50)}`);
+      console.warn(`[WARN] getSolTokenBalance ${programId.slice(0,10)} 失败: ${e.message?.slice(0,50)}`);
     }
   }
   // 两个programId都RPC失败→返回-1（不是0），防止误判余额=0
@@ -242,7 +242,7 @@ async function batchBalanceOf(chainKey, tokenAddr, wallets) {
     }
   } catch(e) {
     // Multicall失败→逐个查（fallback）
-    log('WARN', `Multicall3失败(${chainKey}): ${e.message?.slice(0,40)}，逐个查`);
+    console.warn(`[WARN] Multicall3失败(${chainKey}): ${e.message?.slice(0,40)}，逐个查`);
     for (const w of wallets) {
       try {
         const erc20 = new ethers.Contract(tokenAddr, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
