@@ -28,6 +28,12 @@
 2. 挂了用 `systemctl restart meme-v8` 拉起
 3. scanner-daemon / auto-trader / arbitrage-live 已永久停止，不要拉起
 
+## 买入链路验证（每次heartbeat执行）
+1. 查最近6小时有没有达标信号（通过审计）
+2. 如果有达标信号但没有对应的"买入成功"记录 → 立刻查日志找原因，通知跑步哥
+3. 引擎跑了>6小时且0笔成功买入 → 主动排查，不要等跑步哥问
+4. **不要假设"没报错就没问题"**
+
 ## 引擎日志自检（每次heartbeat执行）
 1. 查最近30分钟 `journalctl -u meme-v8` 里的ERROR和WARN（排除coalesce）
 2. 如果有**重复出现的同一条WARN/ERROR**（比如同一个变量undefined反复报） → 说明有bug，立刻通知跑步哥
