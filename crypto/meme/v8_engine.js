@@ -13,6 +13,23 @@ const path = require('path');
 const https = require('https');
 const WebSocket = require('ws');
 const { ethers } = require('ethers');
+
+// 全局异常兜底 — 防止未捕获异常导致进程崩溃丢数据
+process.on('uncaughtException', (err) => {
+  console.error(`[FATAL] uncaughtException: ${err.message}\n${err.stack}`);
+  try {
+    const fs2 = require('fs'), path2 = require('path');
+    const dir = path2.join(__dirname, 'data', 'v8');
+    const save = (f, d) => { try { fs2.writeFileSync(path2.join(dir, f), JSON.stringify(d, null, 2)); } catch {} };
+    if (typeof pendingSignals !== 'undefined' && Object.keys(pendingSignals).length > 0) save('pending_signals.json', pendingSignals);
+    if (typeof positions !== 'undefined' && Object.keys(positions).length > 0) save('positions.json', positions);
+    // walletDb不在崩溃时保存（防止空数据覆盖）
+  } catch {}
+});
+process.on('unhandledRejection', (reason) => {
+  console.error(`[FATAL] unhandledRejection: ${reason?.message || reason}`);
+});
+
 // ============ CONFIG ============
 const CONFIG = {
   // 数据刷新
@@ -68,9 +85,9 @@ try {
       const valid = signals.filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
       if (valid.length > 0) { pendingSignals[token] = valid; restored += valid.length; }
     }
-    if (restored > 0) log('INFO', `📦 恢复确认数据: ${Object.keys(pendingSignals).length}个币 ${restored}条信号`);
+    if (restored > 0) console.log(`📦 恢复确认数据: ${Object.keys(pendingSignals).length}个币 ${restored}条信号`);
   }
-} catch(e) { log('WARN', `恢复确认数据失败: ${e.message}`); }
+} catch(e) { console.warn(`恢复确认数据失败: ${e.message}`); }
 let boughtTokens = new Set(); // 已买过的token（防重复）
 let tradeHistory = {};     // tokenAddress -> { lastSoldTime, lastBuyPrice, soldCount, pnl } SM二次买入参考
 const lowBalNotified = {};    // 低余额通知去重（chain → timestamp）
@@ -1524,7 +1541,7 @@ async function handleSignal(signal) {
     }
   }
   
-  // 清理过期信号（60分钟窗口）
+  // 清理过期信号（72小时窗口）
   const now = Date.now();
   pendingSignals[token] = pendingSignals[token].filter(s => now - s.timestamp < CONFIG.confirmWindowMs);
   // 过期后清空的key直接删除（防内存泄漏）
