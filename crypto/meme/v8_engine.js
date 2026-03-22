@@ -224,7 +224,14 @@ async function checkSolSellOrTransfer(smWallet, mint) {
           for (const ix of (tx2.transaction?.message?.instructions || [])) { const p = ix.programId || ix.program; if (p) allPrograms.add(p); }
           for (const inner of (tx2.meta?.innerInstructions || [])) { for (const ix of (inner.instructions || [])) { const p = ix.programId || ix.program; if (p) allPrograms.add(p); } }
           for (const p of allPrograms) { if (SOL_DEX_PROGRAMS.has(p)) return 'sold'; }
-          return 'transferred';
+          // 没DEX，查接收方小号有没有余额
+          const otherOwners2 = (tx2.meta?.postTokenBalances || [])
+            .filter(b => b.mint === mint && b.owner && b.owner !== smWallet)
+            .map(b => b.owner);
+          for (const recv of otherOwners2) {
+            try { if (await getSolTokenBalance(recv, mint) > 0) return 'transferred'; } catch {}
+          }
+          return 'sold';
         } catch {}
       }
       return 'unknown'; // 3笔都查不到涉及token的交易
@@ -267,7 +274,18 @@ async function checkSolSellOrTransfer(smWallet, mint) {
     for (const p of allPrograms) {
       if (SOL_DEX_PROGRAMS.has(p)) return 'sold';
     }
-    return 'transferred';
+    // 没DEX程序，查接收方有没有持有该token（转仓验证）
+    // 从postTokenBalances找其他owner（不是SM自己的）
+    const otherOwners = (tx.meta?.postTokenBalances || [])
+      .filter(b => b.mint === mint && b.owner && b.owner !== smWallet)
+      .map(b => b.owner);
+    for (const receiver of otherOwners) {
+      try {
+        const recvBal = await getSolTokenBalance(receiver, mint);
+        if (recvBal > 0) return 'transferred'; // 小号确实持有，是转仓
+      } catch {}
+    }
+    return 'sold'; // 没找到持有的小号，算卖出
   } catch(e) {
     console.warn(`[WARN] checkSolSellOrTransfer ${smWallet.slice(0,10)} 异常: ${e.message?.slice(0,50)}`);
     return 'unknown';
@@ -303,7 +321,13 @@ async function checkEvmSellOrTransfer(chain, smWallet, tokenAddress) {
       if (!toAddr) return 'unknown';
       const code = await provider.getCode(toAddr);
       if (code && code !== '0x') return 'sold';
-      return 'transferred';
+      // EOA，查这个地址有没有余额（转仓验证）
+      try {
+        const erc20Check = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+        const recvBal = await erc20Check.balanceOf(toAddr);
+        if (recvBal > 0n) return 'transferred'; // 小号确实持有
+      } catch {}
+      return 'sold'; // EOA但没余额，不算转仓
     }
     return 'transferred'; // 最近一笔是转入=刚买入
   } catch(e) {
@@ -2264,7 +2288,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   }
   buyLock = true;
   try {
-    return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, smWalletAmounts);
+    return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, smWalletAmounts, watchCount);
   } finally {
     buyLock = false;
     // 兜底：如果买入没成功且没记录持仓→解锁boughtTokens
@@ -2276,7 +2300,7 @@ async function executeBuy(chain, tokenAddress, symbol, confirmCount, confirmWall
   }
 }
 
-async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, smWalletAmounts = {}) {
+async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, smWalletAmounts = {}, watchCount = 0) {
   // 二次检查持仓上限（防并发穿透）
   if (Object.keys(positions).length >= CONFIG.maxPositions) {
     log('WARN', `持仓已满(${CONFIG.maxPositions}个)，跳过 ${symbol}`);

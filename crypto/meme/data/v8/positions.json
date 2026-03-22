@@ -16,12 +16,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 7.73e-7,
-    "currentValue": 104.66423504637426,
-    "pnlPercent": -30.045248868778273,
-    "totalPnl": -55.33576495362574,
-    "totalPnlPercent": -34.58485309601609,
-    "_lastSmCheck": 1774169977928,
+    "currentPrice": 7.658e-7,
+    "currentValue": 103.68935471993973,
+    "pnlPercent": -30.696832579185518,
+    "totalPnl": -56.31064528006027,
+    "totalPnlPercent": -35.19415330003767,
+    "_lastSmCheck": 1774171775184,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -52,7 +52,7 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 847,
-    "_lastSmCheck": 1774169978949,
+    "_lastSmCheck": 1774171776035,
     "_transfers": {
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -66,5 +66,27 @@
         "source": "patrol"
       }
     ]
+  },
+  "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump": {
+    "chain": "solana",
+    "token": "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump",
+    "symbol": "TripleT",
+    "buyPrice": 0.001695,
+    "buyAmount": 70196.710814,
+    "buyAmountRaw": 70196.710814,
+    "buyCost": 120,
+    "buyTime": 1774171526206,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "87rRdssFiTJKY4MGARa4G5vQ31hmR7MxSmhzeaJ5AAxJ",
+      "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
+      "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
+    ],
+    "currentPrice": 0.001701,
+    "currentValue": 119.40460509461401,
+    "pnlPercent": 0.35398230088496435,
+    "totalPnl": -0.5953949053859873,
+    "totalPnlPercent": -0.49616242115498943,
+    "_lastSmCheck": 1774171788257
   }
 }
