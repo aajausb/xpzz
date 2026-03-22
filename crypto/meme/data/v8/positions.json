@@ -16,12 +16,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 5.753e-7,
-    "currentValue": 77.89564608302602,
-    "pnlPercent": -47.93665158371041,
-    "totalPnl": -82.10435391697398,
-    "totalPnlPercent": -51.31522119810874,
-    "_lastSmCheck": 1774196967120,
+    "currentPrice": 5.384e-7,
+    "currentValue": 72.89938441004902,
+    "pnlPercent": -51.276018099547514,
+    "totalPnl": -87.10061558995098,
+    "totalPnlPercent": -54.43788474371936,
+    "_lastSmCheck": 1774198788123,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -51,12 +51,12 @@
       "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.001734,
-    "currentValue": 121.72109655147601,
-    "pnlPercent": 2.300884955752224,
-    "totalPnl": 1.721096551476009,
-    "totalPnlPercent": 1.4342471262300074,
-    "_lastSmCheck": 1774196967826,
+    "currentPrice": 0.001706,
+    "currentValue": 119.75558864868401,
+    "pnlPercent": 0.6489675516224284,
+    "totalPnl": -0.24441135131598912,
+    "totalPnlPercent": -0.20367612609665758,
+    "_lastSmCheck": 1774198789142,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -80,12 +80,12 @@
       "0x3e7a3dbf8c99beba8afdea55317ef999a339a016"
     ],
     "smTotalUsd": 2689,
-    "currentPrice": 0.000001515,
-    "currentValue": 108.44637280446253,
-    "pnlPercent": -8.237431859479107,
-    "totalPnl": -11.553627195537473,
-    "totalPnlPercent": -9.628022662947894,
-    "_lastSmCheck": 1774196968442
+    "currentPrice": 0.000001512,
+    "currentValue": 108.23162751178045,
+    "pnlPercent": -8.419139915202898,
+    "totalPnl": -11.768372488219555,
+    "totalPnlPercent": -9.806977073516295,
+    "_lastSmCheck": 1774198790019
   },
   "0xe6c854488811fbd6472b684360ad5c393c7bae8f": {
     "chain": "base",
@@ -102,11 +102,11 @@
       "0xbc53811a4d05e5a18b521bc40a809611eb010b65"
     ],
     "smTotalUsd": 697,
-    "currentPrice": 0.0001345,
-    "currentValue": 72.92442621970088,
-    "pnlPercent": -7.813570938999319,
-    "totalPnl": -7.075573780299123,
-    "totalPnlPercent": -8.844467225373904,
-    "_lastSmCheck": 1774196969122
+    "currentPrice": 0.0001348,
+    "currentValue": 73.08708293245857,
+    "pnlPercent": -7.607950651130911,
+    "totalPnl": -6.912917067541429,
+    "totalPnlPercent": -8.641146334426786,
+    "_lastSmCheck": 1774198790693
   }
 }
