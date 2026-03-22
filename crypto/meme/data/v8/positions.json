@@ -21,7 +21,7 @@
     "pnlPercent": -31.728506787330314,
     "totalPnl": -57.854205796914954,
     "totalPnlPercent": -36.15887862307184,
-    "_lastSmCheck": 1774177190616,
+    "_lastSmCheck": 1774178981814,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -52,7 +52,7 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 847,
-    "_lastSmCheck": 1774177191506,
+    "_lastSmCheck": 1774178982492,
     "_transfers": {
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -82,12 +82,12 @@
       "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.00181,
-    "currentValue": 127.05604657334001,
-    "pnlPercent": 6.784660766961657,
-    "totalPnl": 7.056046573340012,
-    "totalPnlPercent": 5.880038811116677,
-    "_lastSmCheck": 1774177165867
+    "currentPrice": 0.001762,
+    "currentValue": 123.68660445426801,
+    "pnlPercent": 3.9528023598820066,
+    "totalPnl": 3.686604454268007,
+    "totalPnlPercent": 3.0721703785566725,
+    "_lastSmCheck": 1774178983099
   },
   "7mtXLUoAcT9Sxrf1K5PjSmfkPbYMyMP5pmrdFFixbonk": {
     "chain": "solana",
@@ -104,12 +104,12 @@
       "33WDPWD74LAB9m79MgJtpxwACwNxVsmwwrv7n4S1kRn2",
       "93cDUw2LgUvEJh2h7TaMDNcPRz9DqBZf5ykwknYiNo9V"
     ],
-    "currentPrice": 0.0007539,
-    "currentValue": 229.93439970139588,
-    "pnlPercent": -16.907307395569276,
-    "totalPnl": 69.93439970139588,
-    "totalPnlPercent": 43.70899981337242,
-    "_lastSmCheck": 1774177179188
+    "currentPrice": 0.0007138,
+    "currentValue": 217.7041709866778,
+    "pnlPercent": -21.327014218009477,
+    "totalPnl": 57.70417098667781,
+    "totalPnlPercent": 36.06510686667363,
+    "_lastSmCheck": 1774178969959
   },
   "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3": {
     "chain": "base",
@@ -131,6 +131,29 @@
     "pnlPercent": 0.5451241671714138,
     "totalPnl": -1.1742713825691027,
     "totalPnlPercent": -0.9785594854742523,
-    "_lastSmCheck": 1774177179746
+    "_lastSmCheck": 1774178970574
+  },
+  "EncFm8nRh1VBwcRmGugTUzoGsC1n2srWesKDkiMAYWLt": {
+    "chain": "solana",
+    "token": "EncFm8nRh1VBwcRmGugTUzoGsC1n2srWesKDkiMAYWLt",
+    "symbol": "TERAFAB",
+    "buyPrice": 0.001503,
+    "buyAmount": 52750.29723,
+    "buyAmountRaw": 52750.29723,
+    "buyCost": 80,
+    "buyTime": 1774177411114,
+    "confirmCount": 1,
+    "confirmWallets": [
+      "BgJrk3AJEWf41WxThAvDCkZmxuxbt3Q4aZc1P2rrHtZV",
+      "6kSdHG4CgGi6CwDFt9FYa4jwN5BegcJ479RzrThXLKEv",
+      "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3",
+      "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
+    ],
+    "currentPrice": 0.001306,
+    "currentValue": 68.89188818238,
+    "pnlPercent": -13.107119095143041,
+    "totalPnl": -11.10811181762,
+    "totalPnlPercent": -13.885139772025,
+    "_lastSmCheck": 1774178971178
   }
 }
