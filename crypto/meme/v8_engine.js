@@ -1863,6 +1863,7 @@ async function handleSignal(signal) {
   const smBuyAmounts = Object.values(smWalletAmounts).sort((a, b) => a - b);
   const smTotalUsd = smBuyAmounts.reduce((a, b) => a + b, 0);
   log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}${smTotalUsd > 0 ? ` SM累计$${Math.round(smTotalUsd)}` : ''}`);
+  const savedSignals = [...(pendingSignals[token] || [])]; // 龙虾检查用
   delete pendingSignals[token];
   // 提前标记boughtTokens（防另一个handleSignal并发通过检查→重复买入）
   if (boughtTokens.has(token)) { log('INFO', `${symbol} 已在买入中，跳过`); return; }
@@ -1884,7 +1885,7 @@ async function handleSignal(signal) {
           const cachedSolBal2 = getCachedSolBalance(smWallet, token);
           if (cachedSolBal2 !== undefined) {
             if (cachedSolBal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
-            else if (pendingSignals[token]?.some(s => s.wallet === smWallet)) {
+            else if (savedSignals.some(s => s.wallet === smWallet)) {
               stillHolding++; holdingWallets.push(smWallet);
               log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(cachedSolBal2*price).toFixed(2)}但有买入信号，算持有`);
             }
@@ -1896,7 +1897,7 @@ async function handleSignal(signal) {
               const bal2 = await getSolTokenBalance(smWallet, token);
               setCachedSolBalance(smWallet, token, bal2);
               if (bal2 * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
-              else if (pendingSignals[token]?.some(s => s.wallet === smWallet)) {
+              else if (savedSignals.some(s => s.wallet === smWallet)) {
                 stillHolding++; holdingWallets.push(smWallet);
                 log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(bal2*price).toFixed(2)}但有买入信号，算持有`);
               }
@@ -1928,7 +1929,7 @@ async function handleSignal(signal) {
             const info = balMap.get(smWallet.toLowerCase());
             if (!info) { queryFailed++; log('WARN', `⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败，不计入`); await notifyTelegram(`⚠️ 龙虾检查: ${smWallet.slice(0,10)} EVM余额3次查询失败 ${symbol}(${chain})`); continue; }
             if (info.balNum * price >= 1) { stillHolding++; holdingWallets.push(smWallet); }
-            else if (pendingSignals[token]?.some(s => s.wallet === smWallet || s.wallet?.toLowerCase() === smWallet?.toLowerCase())) {
+            else if (savedSignals.some(s => s.wallet === smWallet || s.wallet?.toLowerCase() === smWallet?.toLowerCase())) {
               stillHolding++; holdingWallets.push(smWallet);
               log('INFO', `📎 龙虾检查: ${smWallet.slice(0,10)} 余额$${(info.balNum*price).toFixed(2)}但有买入信号，算持有`);
             }
