@@ -202,7 +202,33 @@ async function checkSolSellOrTransfer(smWallet, mint) {
       ]);
       tokenAccount = ata2.result?.value?.[0]?.pubkey;
     }
-    if (!tokenAccount) return 'transferred'; // account不存在=可能刚创建还没索引，保守算持有
+    if (!tokenAccount) {
+      // token account还没索引到，改查SM主钱包最近交易
+      const walletSigsResp = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [smWallet, { limit: 3 }]);
+      const walletSigs = walletSigsResp.result || [];
+      for (const ws of walletSigs) {
+        if (!ws.signature) continue;
+        try {
+          const txResp2 = await rpcPost(getSolRpc(), 'getTransaction', [ws.signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
+          const tx2 = txResp2.result;
+          if (!tx2) continue;
+          // 这笔交易涉及目标token吗？
+          const postBals = (tx2.meta?.postTokenBalances || []).filter(b => b.mint === mint && b.owner === smWallet);
+          if (postBals.length === 0) continue;
+          // 涉及目标token，看余额变化
+          const preBal = (tx2.meta?.preTokenBalances || []).find(b => b.mint === mint && b.owner === smWallet)?.uiTokenAmount?.uiAmount || 0;
+          const postBal = postBals[0]?.uiTokenAmount?.uiAmount || 0;
+          if (postBal > preBal) return 'transferred'; // 买入
+          // 余额减少，查是否DEX
+          const allPrograms = new Set();
+          for (const ix of (tx2.transaction?.message?.instructions || [])) { const p = ix.programId || ix.program; if (p) allPrograms.add(p); }
+          for (const inner of (tx2.meta?.innerInstructions || [])) { for (const ix of (inner.instructions || [])) { const p = ix.programId || ix.program; if (p) allPrograms.add(p); } }
+          for (const p of allPrograms) { if (SOL_DEX_PROGRAMS.has(p)) return 'sold'; }
+          return 'transferred';
+        } catch {}
+      }
+      return 'unknown'; // 3笔都查不到涉及token的交易
+    }
     
     // 查token account最近1笔交易
     const sigsResp = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [tokenAccount, { limit: 1 }]);
@@ -254,21 +280,32 @@ async function checkEvmSellOrTransfer(chain, smWallet, tokenAddress) {
     const provider = chain === 'bsc' ? bscProvider : baseProvider;
     const erc20 = new ethers.Contract(tokenAddress, ['event Transfer(address indexed from, address indexed to, uint256 value)'], provider);
     const currentBlock = await provider.getBlockNumber();
-    // 查最近500个块的Transfer事件（约25分钟BSC/约16分钟Base）
     const fromBlock = Math.max(0, currentBlock - 500);
-    const filter = erc20.filters.Transfer(smWallet, null);
-    const events = await erc20.queryFilter(filter, fromBlock, currentBlock);
-    if (events.length === 0) return 'unknown';
     
-    // 取最近一笔转出
-    const lastEvent = events[events.length - 1];
-    const toAddr = lastEvent.args?.[1] || lastEvent.args?.to;
-    if (!toAddr) return 'unknown';
+    // 先查有没有转入（买入）
+    const inFilter = erc20.filters.Transfer(null, smWallet);
+    const inEvents = await erc20.queryFilter(inFilter, fromBlock, currentBlock);
     
-    // 查接收方是合约（DEX Router）还是EOA（转仓）
-    const code = await provider.getCode(toAddr);
-    if (code && code !== '0x') return 'sold';  // 合约地址 = DEX
-    return 'transferred';  // EOA = 转仓
+    // 再查转出（卖出/转仓）
+    const outFilter = erc20.filters.Transfer(smWallet, null);
+    const outEvents = await erc20.queryFilter(outFilter, fromBlock, currentBlock);
+    
+    if (inEvents.length === 0 && outEvents.length === 0) return 'unknown';
+    
+    // 比较最近一笔：转入更新=刚买入，转出更新=卖出/转仓
+    const lastIn = inEvents.length > 0 ? inEvents[inEvents.length - 1] : null;
+    const lastOut = outEvents.length > 0 ? outEvents[outEvents.length - 1] : null;
+    
+    if (!lastOut) return 'transferred'; // 只有转入没有转出=刚买入
+    if (!lastIn || lastOut.blockNumber > lastIn.blockNumber) {
+      // 最近一笔是转出，查接收方是合约（DEX）还是EOA（转仓）
+      const toAddr = lastOut.args?.[1] || lastOut.args?.to;
+      if (!toAddr) return 'unknown';
+      const code = await provider.getCode(toAddr);
+      if (code && code !== '0x') return 'sold';
+      return 'transferred';
+    }
+    return 'transferred'; // 最近一笔是转入=刚买入
   } catch(e) {
     console.warn(`[WARN] checkEvmSellOrTransfer ${smWallet.slice(0,10)} 异常: ${e.message?.slice(0,50)}`);
     return 'unknown';
@@ -1973,18 +2010,18 @@ async function handleSignal(signal) {
   const smTotalUsd = smBuyAmounts.reduce((a, b) => a + b, 0);
   log('INFO', `✅ ${symbol}(${chain}) 通过审计! 真实猎手=${realHunters} 哨兵=${realScouts} 最高#${bestRank}${smTotalUsd > 0 ? ` SM累计$${Math.round(smTotalUsd)}` : ''}`);
   // savedSignals removed - 龙虾检查不再特殊处理余额=0有买入信号的情况
-  delete pendingSignals[token];
+  // pendingSignals在买入成功后再删（防买入失败丢信号）
   // 提前标记boughtTokens（防另一个handleSignal并发通过检查→重复买入）
   if (boughtTokens.has(token)) { log('INFO', `${symbol} 已在买入中，跳过`); return; }
   boughtTokens.add(token);
   saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
   
   // Bug fix: 买入前再次检查SM是否还持有（防龙虾问题：SM已卖我们才买）
+  let holdingHuntersOuter = null, holdingScoutsOuter = null;
   try {
     const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
     if (price > 0) {
       let stillHolding = 0;
-      let holdingHuntersOuter = null, holdingScoutsOuter = null;
       const holdingWallets = []; // 记录还持有的SM钱包
       const checkWallets = confirmWallets.slice(0, 5);
       
@@ -2408,6 +2445,9 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       boughtTokens.add(tokenAddress);
       saveJSON(POSITIONS_FILE, positions);
       saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]); // 持久化防重启重复买
+      // 买入成功，清掉pendingSignals
+      delete pendingSignals[tokenAddress];
+      savePendingSignals();
       
       // 把EVM token加入known_tokens（看板扫描用）
       if (chain !== 'solana') {
@@ -3364,6 +3404,27 @@ async function main() {
   }, CONFIG.rankRefreshInterval);
   
   console.log('🟢 引擎运行中...');
+  
+  // 启动后扫描pendingSignals，已达门槛的重新触发审计
+  setTimeout(async () => {
+    for (const [token, sigs] of Object.entries(pendingSignals)) {
+      if (boughtTokens.has(token)) continue;
+      const chain = sigs[0]?.chain;
+      let hunters = 0, scouts = 0;
+      for (const s of sigs) {
+        if (s.walletStatus === 'hunter') hunters++;
+        else if (s.walletStatus === 'scout') scouts++;
+      }
+      let confirmed;
+      if (chain === 'bsc') confirmed = hunters >= 3 || (hunters >= 2 && scouts >= 3);
+      else confirmed = hunters >= 2 || (hunters >= 1 && scouts >= 2);
+      if (confirmed) {
+        log('INFO', `🔄 启动重审: ${token.slice(0,10)}(${chain}) 猎手=${hunters} 哨兵=${scouts}`);
+        handleSignal({ token, chain, wallet: sigs[0].wallet, walletStatus: sigs[0].walletStatus, walletRank: sigs[0].walletRank, timestamp: sigs[0].timestamp, smBuyAmountUsd: sigs[0].smBuyAmountUsd });
+        await new Promise(r => setTimeout(r, 2000)); // 间隔2秒防RPC限速
+      }
+    }
+  }, 15000); // 启动15秒后开始（等WS初始化完成）
   
   // 内存管理
   if (global.gc) setInterval(() => global.gc(), 300000);
