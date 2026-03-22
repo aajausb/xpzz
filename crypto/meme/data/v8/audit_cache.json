@@ -5165,5 +5165,18 @@
     "riskLevel": "UNKNOWN",
     "reason": "OK",
     "_time": 1774182734549
+  },
+  "3mecmcGqs4q9RMzFKZFZTBEcbtA7SPFKPKb9kDvxpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0x6cc1f4b40ea8f12796e6db1eb38478cc5dd90e1b": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1774191188781
   }
 }

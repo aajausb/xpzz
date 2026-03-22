@@ -2711,14 +2711,16 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
               let splitBal;
               if (pos.chain === 'solana') {
                 const rawBal = await getSolTokenBalance(trader3.getWalletAddress('solana'), tokenAddress);
-                splitBal = Math.floor(rawBal / 2);
+                const sellBal = ratio < 0.99 ? Math.floor(rawBal * ratio) : rawBal;
+                splitBal = Math.floor(sellBal / 2);
               } else {
                 // EVM: 查链上余额分半
                 const { ethers: eth3 } = require('ethers');
                 const prov3 = pos.chain === 'bsc' ? bscProvider : baseProvider;
                 const erc3 = new eth3.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], prov3);
                 const evmBal = await erc3.balanceOf(trader3.getWalletAddress('evm'));
-                splitBal = (evmBal / 2n).toString();
+                const sellBal = ratio < 0.99 ? (evmBal * BigInt(Math.round(ratio * 100)) / 100n) : evmBal;
+                splitBal = (sellBal / 2n).toString();
               }
               if (splitBal && splitBal !== '0' && Number(splitBal) > 0) {
                 // 分两批卖
@@ -2861,7 +2863,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         continue;
       } else if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
         // 3次递增slippage都失败 → 尝试分批卖
-        const splitOk = await _trySplitSell(pos, tokenAddress);
+        const splitOk = await _trySplitSell(pos, tokenAddress, ratio);
         if (!splitOk) {
           positions[tokenAddress].unsellable = true;
           positions[tokenAddress].unsellableReason = result?.error?.substring?.(0, 200) || 'sell failed';
@@ -2878,7 +2880,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         continue;
       }
       if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
-        const splitOk = await _trySplitSell(pos, tokenAddress);
+        const splitOk = await _trySplitSell(pos, tokenAddress, ratio);
         if (!splitOk) {
           positions[tokenAddress].unsellable = true;
           positions[tokenAddress].unsellableReason = e.message?.substring(0, 200);
@@ -2893,7 +2895,8 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
 }
 
 // 分批卖出：分两半用50% slippage卖
-async function _trySplitSell(pos, tokenAddress) {
+// sellRatio: 要卖的比例(0-1)，默认1=全卖
+async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
   log('INFO', `🔄 ${pos.symbol} 尝试分批卖出...`);
   try {
     const trader = require('./dex_trader.js');
@@ -2908,7 +2911,9 @@ async function _trySplitSell(pos, tokenAddress) {
       let raw = 0n;
       for (const a of (balData.result?.value || [])) raw += BigInt(a.account?.data?.parsed?.info?.tokenAmount?.amount || '0');
       if (raw <= 0n) return false;
-      const half = (raw / 2n).toString();
+      // 按sellRatio只卖对应比例，不是全部
+      const sellTotal = sellRatio < 0.99 ? (raw * BigInt(Math.round(sellRatio * 100)) / 100n) : raw;
+      const half = (sellTotal / 2n).toString();
       let ok = 0;
       for (let i = 0; i < 2; i++) {
         try {
@@ -2922,11 +2927,13 @@ async function _trySplitSell(pos, tokenAddress) {
         log('INFO', `✅ ${pos.symbol} 分批卖出${ok}/2成功`);
         // 分批卖出后清仓（大概率全卖完了）
         if (positions[tokenAddress]) {
+          const holdMin = Math.round((Date.now()-(pos.buyTime||0))/60000);
           try {
             logTrade({ type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol,
               token: tokenAddress, ratio: 1, reason: '分批卖出', costUsd: pos.buyCost||0,
-              soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: Math.round((Date.now()-(pos.buyTime||0))/60000) });
+              soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: holdMin });
           } catch {}
+          await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain}) | 分批清仓 | 买入$${Math.round(pos.buyCost||0)} | 持有${holdMin}分钟`);
           recordTradeHistory(tokenAddress, pos);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
