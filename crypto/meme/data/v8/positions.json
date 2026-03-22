@@ -21,7 +21,7 @@
     "pnlPercent": -45.81900452488688,
     "totalPnl": -78.93599285606174,
     "totalPnlPercent": -49.33499553503859,
-    "_lastSmCheck": 1774211382692,
+    "_lastSmCheck": 1774213170153,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -51,19 +51,26 @@
       "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.001719,
-    "currentValue": 120.66814588926601,
-    "pnlPercent": 1.415929203539832,
-    "totalPnl": 0.6681458892660146,
-    "totalPnlPercent": 0.5567882410550121,
-    "_lastSmCheck": 1774211396705,
+    "currentPrice": 0.001703,
+    "currentValue": 39.84833283874734,
+    "pnlPercent": 0.47197640117995254,
+    "totalPnl": -0.5953949053860015,
+    "totalPnlPercent": -0.49616242115500125,
+    "_lastSmCheck": 1774213184554,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
         "time": 1774179603111,
         "source": "patrol"
+      },
+      {
+        "wallet": "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
+        "time": 1774211975888,
+        "source": "patrol"
       }
-    ]
+    ],
+    "sellRevenue": 79.55627225586666,
+    "soldRatio": 0.6666666666666666
   },
   "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3": {
     "chain": "base",
@@ -80,12 +87,12 @@
       "0x3e7a3dbf8c99beba8afdea55317ef999a339a016"
     ],
     "smTotalUsd": 2689,
-    "currentPrice": 0.000001486,
-    "currentValue": 106.37050164186887,
-    "pnlPercent": -9.993943064809201,
-    "totalPnl": -13.62949835813113,
-    "totalPnlPercent": -11.357915298442608,
-    "_lastSmCheck": 1774211397253
+    "currentPrice": 0.000001465,
+    "currentValue": 104.86728459309414,
+    "pnlPercent": -11.265899454875832,
+    "totalPnl": -15.13271540690586,
+    "totalPnlPercent": -12.610596172421548,
+    "_lastSmCheck": 1774213197429
   },
   "0xe6c854488811fbd6472b684360ad5c393c7bae8f": {
     "chain": "base",
@@ -102,12 +109,12 @@
       "0xbc53811a4d05e5a18b521bc40a809611eb010b65"
     ],
     "smTotalUsd": 697,
-    "currentPrice": 0.0001486,
-    "currentValue": 80.56929171931264,
-    "pnlPercent": 1.8505825908156348,
-    "totalPnl": 0.5692917193126448,
-    "totalPnlPercent": 0.711614649140806,
-    "_lastSmCheck": 1774211397794
+    "currentPrice": 0.0001411,
+    "currentValue": 76.5028739003702,
+    "pnlPercent": -3.289924605894454,
+    "totalPnl": -3.4971260996297957,
+    "totalPnlPercent": -4.371407624537245,
+    "_lastSmCheck": 1774213198127
   },
   "2ADZRiE8gsW5pWVWvbER5LeFnzNT2RNYQQwPcjompump": {
     "chain": "solana",
@@ -124,12 +131,12 @@
       "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
       "5dd3zjBQQvQqtmWF67nR6XaRKe79cYu4fP6LFXZ1YRR9"
     ],
-    "currentPrice": 0.00001033,
-    "currentValue": 8.252988418227535,
-    "pnlPercent": -76.3669640814459,
-    "totalPnl": 3.0811486555161025,
-    "totalPnlPercent": 3.8514358193951286,
-    "_lastSmCheck": 1774211398335,
+    "currentPrice": 0.000006371,
+    "currentValue": 5.090008636256305,
+    "pnlPercent": -85.4243880118966,
+    "totalPnl": -0.08183112645512836,
+    "totalPnlPercent": -0.10228890806891044,
+    "_lastSmCheck": 1774213198670,
     "_sells": [
       {
         "wallet": "5dd3zjBQQvQqtmWF67nR6XaRKe79cYu4fP6LFXZ1YRR9",
@@ -160,12 +167,12 @@
       "BgJrk3AJEWf41WxThAvDCkZmxuxbt3Q4aZc1P2rrHtZV",
       "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv"
     ],
-    "currentPrice": 0.01039,
-    "currentValue": 121.94173052394,
-    "pnlPercent": 0.38647342995169187,
-    "totalPnl": 1.9417305239399951,
-    "totalPnlPercent": 1.6181087699499959,
-    "_lastSmCheck": 1774211372079,
+    "currentPrice": 0.01055,
+    "currentValue": 123.8195627553,
+    "pnlPercent": 1.9323671497584591,
+    "totalPnl": 3.819562755299998,
+    "totalPnlPercent": 3.182968962749998,
+    "_lastSmCheck": 1774213199230,
     "allSMWallets": [
       "BgJrk3AJEWf41WxThAvDCkZmxuxbt3Q4aZc1P2rrHtZV",
       "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
