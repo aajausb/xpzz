@@ -2563,7 +2563,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
         } catch(e) { log('WARN', `补扫钱包库异常: ${e.message?.slice(0,50)}`); }
       }, 20000); // 买入20秒后补扫（等链上同步）
       const smLine = smTotalAtBuy > 0 ? `\n💎 SM累计持有$${Math.round(smTotalAtBuy)}` : '';
-      await notifyTelegram(`🟢 v8买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}${rankLine}${smLine}\n🔗 ${result.txHash || ''}`);
+      await notifyTelegram(`🟢 冲狗买入 ${symbol}(${chain})\n💰 $${size} | 猎手${confirmCount}+哨兵${confirmWallets.length - confirmCount}${rankLine}${smLine}\n🔗 ${result.txHash || ''}`);
       
       // symbol为?时延迟重查DexScreener更新
       if (symbol === '?') {
@@ -2886,7 +2886,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           }
         } catch {}
         const smInfo = smLiveUsd >= 1 ? `\n💎 SM实时持有$${Math.round(smLiveUsd)}` : (pos.smTotalUsd ? `\n💎 SM已清仓(买入时$${pos.smTotalUsd})` : '');
-        await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}${smInfo}\n🔗 ${result.txHash || ''}`);
+        await notifyTelegram(`🔴 冲狗卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}${smInfo}\n🔗 ${result.txHash || ''}`);
         break;
       } else if (result.error === '余额为0') {
         // 链上确认没余额了 → 清理持仓（可能已经被手动卖了）
@@ -2973,7 +2973,7 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
               token: tokenAddress, ratio: 1, reason: '分批卖出', costUsd: pos.buyCost||0,
               soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: holdMin });
           } catch {}
-          await notifyTelegram(`🔴 v8卖出 ${pos.symbol}(${pos.chain}) | 分批清仓 | 买入$${Math.round(pos.buyCost||0)} | 持有${holdMin}分钟`);
+          await notifyTelegram(`🔴 冲狗卖出 ${pos.symbol}(${pos.chain}) | 分批清仓 | 买入$${Math.round(pos.buyCost||0)} | 持有${holdMin}分钟`);
           recordTradeHistory(tokenAddress, pos);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
@@ -3368,7 +3368,7 @@ async function notifyTelegram(msg) {
 
 // ============ MAIN ============
 async function main() {
-  console.log('⚡ v8 跟单引擎');
+  console.log('⚡ 第8代冲狗引擎');
   console.log('  数据源: 币安PnL Rank');
   console.log('  监控: SOL WebSocket + BSC/Base 5s轮询');
   console.log('  过滤: 多钱包确认 + 合约审计 + 流动性');
