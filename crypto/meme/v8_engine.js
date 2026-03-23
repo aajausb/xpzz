@@ -2602,7 +2602,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
           confirmCount, confirmWallets,
         };
         saveJSON(POSITIONS_FILE, positions);
-        await notifyTelegram(`🟢 v8买入 ${symbol}(${chain}) [确认超时但成功]\n💰 $${size} | 猎手${confirmCount}${rankLine}\n🔗 ${result.txHash}`);
+        // 不发重复通知（第一条已发过）
       } else {
         log('WARN', `❌ ${symbol} 确认超时且链上无余额，买入失败`);
       }
