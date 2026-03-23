@@ -2608,7 +2608,43 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       }
     } else {
       lastBuyError = result.error || 'unknown';
-      log('WARN', `❌ 买入失败 ${symbol}: ${result.error}`);
+      // 确认超时且有txHash → 查链上余额确认
+      if (result.txHash && (result.error || '').includes('确认超时')) {
+        log('WARN', `⚠️ ${symbol} 确认超时(有txHash)，等5秒查链上...`);
+        await sleep(5000);
+        let actualAmount = 0;
+        try {
+          const trader2 = require('./dex_trader.js');
+          if (chain === 'solana') {
+            actualAmount = await getSolTokenBalance(trader2.getWalletAddress('solana'), tokenAddress);
+          } else {
+            try {
+              const provider = getEvmProvider(chain);
+              const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+              const [rawBal, dec] = await Promise.all([erc20.balanceOf(trader2.getWalletAddress('evm')), erc20.decimals().catch(() => 18)]);
+              actualAmount = parseFloat(ethers.formatUnits(rawBal, dec));
+            } catch {}
+          }
+        } catch {}
+        if (actualAmount > 0) {
+          log('INFO', `✅ ${symbol} 确认超时但链上有余额(${actualAmount})，记录持仓`);
+          const d = await dexScreenerGet(tokenAddress).catch(() => null);
+          const buyPrice = parseFloat(d?.pairs?.[0]?.priceUsd || 0);
+          positions[tokenAddress] = {
+            chain, token: tokenAddress, symbol, buyPrice, buyAmount: actualAmount,
+            buyAmountRaw: actualAmount, buyCost: size, buyTime: Date.now(),
+            confirmCount, confirmWallets,
+          };
+          saveJSON(POSITIONS_FILE, positions);
+          txSucceeded = true;
+          await notifyTelegram(`🟢 冲狗买入 ${symbol}(${chain}) [确认超时→链上确认]\n💰 $${size} | 猎手${confirmCount}\n🔗 ${result.txHash}`);
+          break;
+        } else {
+          log('WARN', `❌ ${symbol} 确认超时且链上无余额，第${attempt}次失败`);
+        }
+      } else {
+        log('WARN', `❌ 买入失败 ${symbol}: ${result.error}`);
+      }
       if (attempt < MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt)); // 递增等待
         continue;
@@ -2627,6 +2663,35 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
   
   // 买入完全失败（3次重试+无链上余额）
   if (!txSucceeded && !positions[tokenAddress]) {
+    // 查SM是否还在持有，还在就继续重试
+    let smStillHolding = 0;
+    try {
+      for (const w of confirmWallets) {
+        let bal = 0;
+        if (chain === 'solana') {
+          bal = await getSolTokenBalance(w, tokenAddress);
+        } else {
+          // EVM内联查余额
+          try {
+            const provider = getEvmProvider(chain);
+            const erc20 = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+            const rawBal = await erc20.balanceOf(w);
+            bal = rawBal > 0n ? 1 : 0;
+          } catch {}
+        }
+        if (bal > 0) smStillHolding++;
+      }
+    } catch {}
+    
+    if (smStillHolding > 0) {
+      await notifyTelegram(`⚠️ 冲狗买入失败 ${symbol}(${chain}) 3次重试均失败\n原因: ${lastBuyError}\nSM仍持有: ${smStillHolding}/${confirmWallets.length}，10秒后重试`);
+      log('WARN', `⚠️ ${symbol} 3次失败但SM还在(${smStillHolding}/${confirmWallets.length})，10秒后重试`);
+      await sleep(10000);
+      // 递归重试（SM还在就一直买）
+      return await _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confirmWallets, smWalletAmounts, watchCount);
+    }
+    
+    await notifyTelegram(`❌ 冲狗买入失败 ${symbol}(${chain})\n原因: ${lastBuyError}\nSM已全部离场，放弃`);
     // 区分错误类型：只有纯网络问题(timeout/429)临时跳过，其他全拉黑
     const lastErr = (lastBuyError || '').toLowerCase();
     const isNetworkOnly = (lastErr.includes('timeout') || lastErr.includes('429')) && !lastErr.includes('liquidity') && !lastErr.includes('revert');
