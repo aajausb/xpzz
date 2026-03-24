@@ -4986,7 +4986,7 @@
     "sellTax": 0,
     "riskLevel": "UNKNOWN",
     "reason": "OK",
-    "_time": 1774121653452
+    "_time": 1774380546562
   },
   "0x0697a11c5378296b246285a4e7e3221c145d94b5": {
     "safe": false,
@@ -5695,5 +5695,10 @@
     "riskLevel": "LOW",
     "reason": "OK",
     "_time": 1774377226666
+  },
+  "FN9ZSeNDdPV6bBF9DeDYxvqYK4JvFKeF7DBrhGGXJZ3Q": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
   }
 }
