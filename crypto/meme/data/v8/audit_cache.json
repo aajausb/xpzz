@@ -5700,5 +5700,18 @@
     "safe": true,
     "reason": "SOL跳过审计",
     "source": "skip"
+  },
+  "BjcPbtWmeWNFVeE1LWLtMVs4UqiegG4y7MaraZYopump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0xaa6fdc589e2cd67ce419ef154059dd9c7e7167e2": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "LOW",
+    "reason": "OK",
+    "_time": 1774383126704
   }
 }
