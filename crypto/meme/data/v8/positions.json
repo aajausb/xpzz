@@ -16,12 +16,12 @@
       "0x498581ff718922c3f8e6a244956af099b2652b2b"
     ],
     "smTotalUsd": 1696,
-    "currentPrice": 4.741e-7,
-    "currentValue": 64.19316149480728,
-    "pnlPercent": -57.095022624434385,
-    "totalPnl": -95.80683850519272,
-    "totalPnlPercent": -59.87927406574545,
-    "_lastSmCheck": 1774375198550,
+    "currentPrice": 4.366e-7,
+    "currentValue": 29.557829897313713,
+    "pnlPercent": -60.48868778280543,
+    "totalPnl": -100.89111020763949,
+    "totalPnlPercent": -63.05694387977467,
+    "_lastSmCheck": 1774376965156,
     "_transfers": {
       "0xca1a2fb7f3179d887504966b25d1606978adcd42": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
@@ -29,7 +29,7 @@
       },
       "0x36e58200ca908713e13a095b324147221f8859ea": {
         "subWallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
-        "time": 1774375198873
+        "time": 1774376848842
       }
     },
     "_sells": [
@@ -37,8 +37,15 @@
         "wallet": "0x498581ff718922c3f8e6a244956af099b2652b2b",
         "time": 1773935929395,
         "source": "ws"
+      },
+      {
+        "wallet": "0x36e58200ca908713e13a095b324147221f8859ea",
+        "time": 1774376892363,
+        "source": "patrol"
       }
-    ]
+    ],
+    "sellRevenue": 29.55105989504681,
+    "soldRatio": 0.5
   },
   "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump": {
     "chain": "solana",
@@ -57,12 +64,12 @@
       "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
       "F4YRDqkXKmSdUcwAoZGJBjcXVYDetXMAGaV8W7DYtsmX"
     ],
-    "currentPrice": 0.001294,
-    "currentValue": 30.278181264438672,
-    "pnlPercent": -23.65781710914454,
-    "totalPnl": -10.165546479694669,
-    "totalPnlPercent": -8.471288733078891,
-    "_lastSmCheck": 1774375199542,
+    "currentPrice": 0.001303,
+    "currentValue": 30.48877139688067,
+    "pnlPercent": -23.12684365781711,
+    "totalPnl": -9.954956347252676,
+    "totalPnlPercent": -8.295796956043896,
+    "_lastSmCheck": 1774376993694,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -100,12 +107,12 @@
       "0x3e7a3dbf8c99beba8afdea55317ef999a339a016"
     ],
     "smTotalUsd": 2689,
-    "currentPrice": 0.000001271,
-    "currentValue": 90.98042233298474,
-    "pnlPercent": -23.01635372501514,
-    "totalPnl": -29.019577667015255,
-    "totalPnlPercent": -24.18298138917938,
-    "_lastSmCheck": 1774375200438
+    "currentPrice": 0.000001266,
+    "currentValue": 90.6225135118479,
+    "pnlPercent": -23.319200484554813,
+    "totalPnl": -29.3774864881521,
+    "totalPnlPercent": -24.481238740126752,
+    "_lastSmCheck": 1774376994464
   },
   "0xe6c854488811fbd6472b684360ad5c393c7bae8f": {
     "chain": "base",
@@ -130,7 +137,7 @@
     "pnlPercent": -92.89239204934887,
     "totalPnl": -62.43687034546639,
     "totalPnlPercent": -78.04608793183299,
-    "_lastSmCheck": 1774375168610,
+    "_lastSmCheck": 1774376995273,
     "_transfers": {
       "0xbc53811a4d05e5a18b521bc40a809611eb010b65": {
         "subWallet": "0x6cf73856f7f45af1d3f98ce532d115a69c12a956",
@@ -194,7 +201,7 @@
     "pnlPercent": -94.25531914893617,
     "totalPnl": -2.2562632153492217,
     "totalPnlPercent": -2.820329019186527,
-    "_lastSmCheck": 1774375168652,
+    "_lastSmCheck": 1774376995394,
     "_sells": [
       {
         "wallet": "5dd3zjBQQvQqtmWF67nR6XaRKe79cYu4fP6LFXZ1YRR9",
@@ -241,12 +248,12 @@
       "B32QbbdDAyhvUQzjcaM5j6ZVKwjCxAwGH5Xgvb9SJqnC",
       "G6fUXjMKPJzCY1rveAE6Qm7wy5U3vZgKDJmN1VPAdiZC"
     ],
-    "currentPrice": 0.01182,
-    "currentValue": 37.83405166137818,
-    "pnlPercent": 14.202898550724646,
-    "totalPnl": 15.902772994022712,
-    "totalPnlPercent": 13.25231082835226,
-    "_lastSmCheck": 1774375168686,
+    "currentPrice": 0.0117,
+    "currentValue": 37.449949614054546,
+    "pnlPercent": 13.04347826086957,
+    "totalPnl": 15.518670946699103,
+    "totalPnlPercent": 12.932225788915918,
+    "_lastSmCheck": 1774376995498,
     "allSMWallets": [
       "BgJrk3AJEWf41WxThAvDCkZmxuxbt3Q4aZc1P2rrHtZV",
       "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
@@ -338,12 +345,12 @@
       "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
       "94LBANHCUJCBRcKB3z1x55R951j1PS6GM1jPSGQHDPrU"
     ],
-    "currentPrice": 0.000007049,
-    "currentValue": 7.206690776550422,
-    "pnlPercent": -74.35794834485267,
-    "totalPnl": 19.158707863079684,
-    "totalPnlPercent": 23.948384828849605,
-    "_lastSmCheck": 1774375185320,
+    "currentPrice": 0.000008206,
+    "currentValue": 8.38957362922014,
+    "pnlPercent": -70.14914514368861,
+    "totalPnl": 20.341590715749405,
+    "totalPnlPercent": 25.426988394686756,
+    "_lastSmCheck": 1774376995555,
     "_transfers": {
       "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o": {
         "subWallet": "5vPNE6VFyXmCmzmWotdxmRk57LEWiXxuAfZL3hKbi2LH",
@@ -386,12 +393,12 @@
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
       "Bkqq4U3SLK7atxrgriQwriwVHmPLbcpUZbNHbocEoUKF"
     ],
-    "currentPrice": 0.00008643,
-    "currentValue": 5.763746485096747,
-    "pnlPercent": -70.60204081632652,
-    "totalPnl": -2.52785833470503,
-    "totalPnlPercent": -3.159822918381287,
-    "_lastSmCheck": 1774375185352,
+    "currentPrice": 0.00008179,
+    "currentValue": 5.454319391600867,
+    "pnlPercent": -72.18027210884355,
+    "totalPnl": -2.8372854282009143,
+    "totalPnlPercent": -3.5466067852511425,
+    "_lastSmCheck": 1774376995598,
     "allSMWallets": [
       "G15bKHgJHv8Z4qg6Q5sy2uz9DXqG93sZoRPxALPCmdrq",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -441,12 +448,12 @@
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
       "4L1pUujGWX2ZjFHZDKz9TX2SQtegfyK4DnJUAZqLry73"
     ],
-    "currentPrice": 0.0009281,
-    "currentValue": 33.235405735338794,
-    "pnlPercent": 47.998724286397696,
-    "totalPnl": 21.78673146051119,
-    "totalPnlPercent": 18.155609550425993,
-    "_lastSmCheck": 1774375185382,
+    "currentPrice": 0.0009065,
+    "currentValue": 32.46190636686199,
+    "pnlPercent": 44.55429756019773,
+    "totalPnl": 21.0132320920344,
+    "totalPnlPercent": 17.511026743362,
+    "_lastSmCheck": 1774376995638,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -513,12 +520,12 @@
         "source": "patrol"
       }
     ],
-    "currentPrice": 0.0001515,
-    "currentValue": 31.0134812579205,
-    "pnlPercent": -30.119926199261997,
-    "totalPnl": -8.842996136942801,
-    "totalPnlPercent": -11.053745171178502,
-    "_lastSmCheck": 1774375185417,
+    "currentPrice": 0.000148,
+    "currentValue": 30.296998192556,
+    "pnlPercent": -31.73431734317344,
+    "totalPnl": -9.559479202307301,
+    "totalPnlPercent": -11.949349002884126,
+    "_lastSmCheck": 1774376995957,
     "allSMWallets": [
       "6c2asHNf5gWgZvPXVYQ4ebJCUYspEbmaz2A7M7p84RcN",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -546,12 +553,12 @@
       "ED2AhgH5m9D5Zit7jKm9Ktcp8vKhmJHqt5t3wiuKJkYE",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.0006275,
-    "currentValue": 29.92654141312214,
-    "pnlPercent": -10.357142857142854,
-    "totalPnl": -20.383962746360368,
-    "totalPnlPercent": -16.986635621966972,
-    "_lastSmCheck": 1774375185465,
+    "currentPrice": 0.0006328,
+    "currentValue": 30.179307420276796,
+    "pnlPercent": -9.600000000000001,
+    "totalPnl": -20.131196739205706,
+    "totalPnlPercent": -16.77599728267142,
+    "_lastSmCheck": 1774376996004,
     "allSMWallets": [
       "4L1pUujGWX2ZjFHZDKz9TX2SQtegfyK4DnJUAZqLry73",
       "ik1fCERApPcHVQCt5TFKZwcfUjS7XiCFyJuQih6Gqqh",
@@ -614,12 +621,12 @@
       "0xe7bc2a2a98382a4ec9097bc1dabc8c197a95f547",
       "0xbf7f99f6e5d6ee5955d189292bd5ae2e663f2d1b"
     ],
-    "currentPrice": 0.00001253,
-    "currentValue": 51.98379615724192,
-    "pnlPercent": -11.884669479606183,
-    "totalPnl": -4.166992122091429,
-    "totalPnlPercent": -3.472493435076191,
-    "_lastSmCheck": 1774375185901,
+    "currentPrice": 0.00001136,
+    "currentValue": 47.129762517659074,
+    "pnlPercent": -20.112517580872012,
+    "totalPnl": -9.02102576167428,
+    "totalPnlPercent": -7.517521468061901,
+    "_lastSmCheck": 1774376996115,
     "_sells": [
       {
         "wallet": "0xbf7f99f6e5d6ee5955d189292bd5ae2e663f2d1b",
@@ -656,12 +663,12 @@
       "4EsYuWFZAt1PfNJq8Jr7monip43gNqrQ7k2Kne1npqJx",
       "7KyVVpmPypusZxLSgtWJYTBRpvv2dsE8rLETvf5sc7XD"
     ],
-    "currentPrice": 0.9227,
-    "currentValue": 30.02581978325754,
-    "pnlPercent": 13.633004926108363,
-    "totalPnl": 10.572086488285137,
-    "totalPnlPercent": 13.215108110356422,
-    "_lastSmCheck": 1774375170239,
+    "currentPrice": 0.9215,
+    "currentValue": 29.98677027232234,
+    "pnlPercent": 13.485221674876838,
+    "totalPnl": 10.533036977349937,
+    "totalPnlPercent": 13.166296221687421,
+    "_lastSmCheck": 1774376996219,
     "allSMWallets": [
       "4L1pUujGWX2ZjFHZDKz9TX2SQtegfyK4DnJUAZqLry73",
       "4EsYuWFZAt1PfNJq8Jr7monip43gNqrQ7k2Kne1npqJx",
@@ -697,12 +704,12 @@
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
       "ED2AhgH5m9D5Zit7jKm9Ktcp8vKhmJHqt5t3wiuKJkYE"
     ],
-    "currentPrice": 0.0005854,
-    "currentValue": 9.608370493773718,
-    "pnlPercent": -14.063417498531994,
-    "totalPnl": -2.5602104088251423,
-    "totalPnlPercent": -3.2002630110314274,
-    "_lastSmCheck": 1774375186253,
+    "currentPrice": 0.0006004,
+    "currentValue": 9.854570626002289,
+    "pnlPercent": -11.861421021726368,
+    "totalPnl": -2.3140102765965764,
+    "totalPnlPercent": -2.8925128457457205,
+    "_lastSmCheck": 1774376996530,
     "allSMWallets": [
       "6c2asHNf5gWgZvPXVYQ4ebJCUYspEbmaz2A7M7p84RcN",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -771,12 +778,12 @@
       "GTtLBJF4BNRER7nuBFgKSkCgJvvTHFS5xSBCu5ExExQh",
       "A2vZY74JHBBwfjo3F1Bo5iiLXpABfAhmgdyfUGzABY9F"
     ],
-    "currentPrice": 0.0006354,
-    "currentValue": 109.98858229561216,
-    "pnlPercent": 425.9933774834438,
-    "totalPnl": 94.74578820809012,
-    "totalPnlPercent": 118.43223526011263,
-    "_lastSmCheck": 1774375186287,
+    "currentPrice": 0.0004489,
+    "currentValue": 51.80345671230751,
+    "pnlPercent": 271.60596026490066,
+    "totalPnl": 65.26086241171103,
+    "totalPnlPercent": 81.57607801463878,
+    "_lastSmCheck": 1774376996572,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -797,10 +804,15 @@
         "wallet": "A2vZY74JHBBwfjo3F1Bo5iiLXpABfAhmgdyfUGzABY9F",
         "time": 1774366409973,
         "source": "patrol"
+      },
+      {
+        "wallet": "GTtLBJF4BNRER7nuBFgKSkCgJvvTHFS5xSBCu5ExExQh",
+        "time": 1774376377475,
+        "source": "sub-patrol"
       }
     ],
-    "sellRevenue": 64.75720591247797,
-    "soldRatio": 0.75,
+    "sellRevenue": 93.45740569940352,
+    "soldRatio": 0.8333333333333334,
     "allSMWallets": [
       "5p2bA4wza1WmyEiWwyDJVNrXXsAM4M9yQcKDvTK5mWKv",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -808,62 +820,13 @@
       "4EsYuWFZAt1PfNJq8Jr7monip43gNqrQ7k2Kne1npqJx",
       "GTtLBJF4BNRER7nuBFgKSkCgJvvTHFS5xSBCu5ExExQh",
       "A2vZY74JHBBwfjo3F1Bo5iiLXpABfAhmgdyfUGzABY9F"
-    ]
-  },
-  "Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump": {
-    "chain": "solana",
-    "token": "Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump",
-    "symbol": "neet",
-    "buyPrice": 0.01703,
-    "buyAmount": 7047.344356,
-    "buyAmountRaw": 7047.344356,
-    "buyCost": 120,
-    "buyTime": 1774337117932,
-    "confirmCount": 2,
-    "confirmWallets": [
-      "ik1fCERApPcHVQCt5TFKZwcfUjS7XiCFyJuQih6Gqqh",
-      "3SK8DLRi7ZawwPmFYkQLyx5m9xLWNcb7dmmVZWq1LTdA",
-      "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
-      "G15bKHgJHv8Z4qg6Q5sy2uz9DXqG93sZoRPxALPCmdrq"
-    ],
-    "currentPrice": 0.01889,
-    "currentValue": 53.249733953936,
-    "pnlPercent": 10.921902524955964,
-    "totalPnl": 19.38237667296798,
-    "totalPnlPercent": 16.15198056080665,
-    "_lastSmCheck": 1774375186335,
-    "allSMWallets": [
-      "ik1fCERApPcHVQCt5TFKZwcfUjS7XiCFyJuQih6Gqqh",
-      "3SK8DLRi7ZawwPmFYkQLyx5m9xLWNcb7dmmVZWq1LTdA",
-      "DNfuF1L62WWyW3pNakVkyGGFzVVhj4Yr52jSmdTyeBHm",
-      "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
-      "G15bKHgJHv8Z4qg6Q5sy2uz9DXqG93sZoRPxALPCmdrq"
-    ],
-    "_sells": [
-      {
-        "wallet": "3SK8DLRi7ZawwPmFYkQLyx5m9xLWNcb7dmmVZWq1LTdA",
-        "time": 1774337324888,
-        "source": "patrol"
-      },
-      {
-        "wallet": "G15bKHgJHv8Z4qg6Q5sy2uz9DXqG93sZoRPxALPCmdrq",
-        "time": 1774337655040,
-        "source": "patrol"
-      },
-      {
-        "wallet": "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
-        "time": 1774337735222,
-        "source": "sub-patrol"
-      }
     ],
     "_transfers": {
-      "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9": {
-        "subWallet": "FbruxBVHi463Agw2B3Vy27cBkGnEN5g1f4NcHe3REXfe",
-        "time": 1774337735078
+      "GTtLBJF4BNRER7nuBFgKSkCgJvvTHFS5xSBCu5ExExQh": {
+        "subWallet": "EqGzowSp6cKAsMSRyyrFTaBxnZEVeNY81LC18YFy8Cx9",
+        "time": 1774376377467
       }
-    },
-    "sellRevenue": 86.13264271903198,
-    "soldRatio": 0.6
+    }
   },
   "4btUt5tQrN9MSfiHzZMdHf2ognjQZrWErjSJ9aiApump": {
     "chain": "solana",
@@ -880,12 +843,12 @@
       "87rRdssFiTJKY4MGARa4G5vQ31hmR7MxSmhzeaJ5AAxJ",
       "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp"
     ],
-    "currentPrice": 0.0002014,
-    "currentValue": 119.8014504199226,
-    "pnlPercent": 2.598064187468155,
-    "totalPnl": -0.19854958007739754,
-    "totalPnlPercent": -0.16545798339783127,
-    "_lastSmCheck": 1774375186376,
+    "currentPrice": 0.000203,
+    "currentValue": 120.753199777777,
+    "pnlPercent": 3.413143148242486,
+    "totalPnl": 0.7531997777769988,
+    "totalPnlPercent": 0.6276664814808323,
+    "_lastSmCheck": 1774376996671,
     "_sells": [
       {
         "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
@@ -914,12 +877,12 @@
       "2HjBsjTCg9ZpWmU2KRtKDuF8ZUpQzWB16BK9ZzdFVgWL",
       "F4YRDqkXKmSdUcwAoZGJBjcXVYDetXMAGaV8W7DYtsmX"
     ],
-    "currentPrice": 0.00284,
-    "currentValue": 79.18340987684,
-    "pnlPercent": 0.88809946714033,
-    "totalPnl": -0.8165901231599975,
-    "totalPnlPercent": -1.0207376539499968,
-    "_lastSmCheck": 1774375187211,
+    "currentPrice": 0.00285,
+    "currentValue": 79.46222470034999,
+    "pnlPercent": 1.2433392539964587,
+    "totalPnl": -0.5377752996500078,
+    "totalPnlPercent": -0.6722191245625098,
+    "_lastSmCheck": 1774376997532,
     "allSMWallets": [
       "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
       "2HjBsjTCg9ZpWmU2KRtKDuF8ZUpQzWB16BK9ZzdFVgWL",
@@ -932,46 +895,6 @@
         "time": 1774370333098,
         "source": "patrol"
       }
-    ]
-  },
-  "5yyF5FZRKSpRYzFRgucHRiAUJmk77aW4U9gdkhRSpump": {
-    "chain": "solana",
-    "token": "5yyF5FZRKSpRYzFRgucHRiAUJmk77aW4U9gdkhRSpump",
-    "symbol": "TOGETHER",
-    "buyPrice": 0.0006085,
-    "buyAmount": 190895.82645,
-    "buyAmountRaw": 190895.82645,
-    "buyCost": 80,
-    "buyTime": 1774374779245,
-    "confirmCount": 1,
-    "confirmWallets": [
-      "8jPdopp914jE6MPH9Cki3xcRDY4xpEq56v89yaou2Wym",
-      "39q2g5tTQn9n7KnuapzwS2smSx3NGYqBoea11tBjsGEt",
-      "99xnE2zEFi8YhmKDaikc1EvH6ELTQJppnqUwMzmpLXrs"
-    ],
-    "currentPrice": 0.0005934,
-    "currentValue": 113.27758341543,
-    "pnlPercent": -2.4815119145439586,
-    "totalPnl": 33.27758341543,
-    "totalPnlPercent": 41.5969792692875,
-    "_lastSmCheck": 1774375187769,
-    "_transfers": {
-      "39q2g5tTQn9n7KnuapzwS2smSx3NGYqBoea11tBjsGEt": {
-        "subWallet": "AVUCZyuT35YSuj4RH7fwiyPu82Djn2Hfg7y2ND2XcnZH",
-        "time": 1774374792226
-      }
-    },
-    "_sells": [
-      {
-        "wallet": "39q2g5tTQn9n7KnuapzwS2smSx3NGYqBoea11tBjsGEt",
-        "time": 1774374792234,
-        "source": "sub-patrol"
-      }
-    ],
-    "allSMWallets": [
-      "8jPdopp914jE6MPH9Cki3xcRDY4xpEq56v89yaou2Wym",
-      "39q2g5tTQn9n7KnuapzwS2smSx3NGYqBoea11tBjsGEt",
-      "99xnE2zEFi8YhmKDaikc1EvH6ELTQJppnqUwMzmpLXrs"
     ]
   }
 }
