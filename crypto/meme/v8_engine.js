@@ -55,7 +55,7 @@ const CONFIG = {
   sellThreshold: 0.5,                      // SM卖出比例≥50%才触发跟卖
   
   // 启用的链（关掉的链不监控、不交易）
-  enabledChains: ['solana', 'bsc', 'base'],  // 三链全开
+  enabledChains: ['solana', 'base'],  // BSC暂停(没钱+省credits)，充BNB后加回'bsc'
 };
 
 // ============ PATHS ============
