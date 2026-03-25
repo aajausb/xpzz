@@ -34357,7 +34357,7 @@
       "wallet": "GqJpZnAvH2FXqQrcY7Bktwf8js6aCBWuWAdApYr648yA",
       "walletRank": 56,
       "timestamp": 1774416805360,
-      "smBuyAmountUsd": 9.26592028164,
+      "smBuyAmountUsd": 27.74102719392,
       "walletStatus": "scout"
     }
   ],
@@ -49223,6 +49223,26 @@
       "timestamp": 1774394908371,
       "smBuyAmountUsd": 0,
       "walletStatus": "hunter"
+    },
+    {
+      "chain": "base",
+      "token": "0xd7c61432426f58e09133631a83410a7bc2783d09",
+      "symbol": "?",
+      "wallet": "0xc5ae2fada22b1fc35f066a45b67719f85f06356d",
+      "walletRank": 18,
+      "timestamp": 1774431914428,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "hunter"
+    },
+    {
+      "chain": "base",
+      "token": "0xd7c61432426f58e09133631a83410a7bc2783d09",
+      "symbol": "?",
+      "wallet": "0xbc53811a4d05e5a18b521bc40a809611eb010b65",
+      "walletRank": 21,
+      "timestamp": 1774432560822,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "hunter"
     }
   ],
   "3tbqrcZBuHhs4Z4kPXghNa7r14p57FfgcS3cFCrHpump": [
@@ -51227,7 +51247,7 @@
       "wallet": "GqJpZnAvH2FXqQrcY7Bktwf8js6aCBWuWAdApYr648yA",
       "walletRank": 56,
       "timestamp": 1774414490698,
-      "smBuyAmountUsd": 27.62144096099,
+      "smBuyAmountUsd": 64.61228526933999,
       "walletStatus": "scout"
     }
   ],
@@ -51501,6 +51521,16 @@
       "wallet": "0x45e8ec806a08059b7e08de08f4b95ed356f83b6f",
       "walletRank": 4,
       "timestamp": 1774422168506,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "hunter"
+    },
+    {
+      "chain": "base",
+      "token": "0xe949de83f860732c9fdbe12809cc15f5bc0eba68",
+      "symbol": "?",
+      "wallet": "0x4e7be9a8343f6fac55e2f9554415a1e8efaa3b07",
+      "walletRank": 7,
+      "timestamp": 1774431420926,
       "smBuyAmountUsd": 0,
       "walletStatus": "hunter"
     }
@@ -51809,7 +51839,7 @@
       "wallet": "GqJpZnAvH2FXqQrcY7Bktwf8js6aCBWuWAdApYr648yA",
       "walletRank": 56,
       "timestamp": 1774426546291,
-      "smBuyAmountUsd": 607.4612028400201,
+      "smBuyAmountUsd": 630.57515786832,
       "walletStatus": "scout"
     }
   ],
@@ -52313,6 +52343,16 @@
       "timestamp": 1774427240384,
       "smBuyAmountUsd": 0,
       "walletStatus": "scout"
+    },
+    {
+      "chain": "solana",
+      "token": "84ETtR1k8SsZifVSjd6FvxTnK19W3Dp318A6xpQApump",
+      "symbol": "?",
+      "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
+      "walletRank": 22,
+      "timestamp": 1774431131873,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "scout"
     }
   ],
   "73j2iGNwcHmAZbeRN1uc2gkx8hyd8huV9QEN5Keapump": [
@@ -52466,6 +52506,90 @@
       "walletRank": 6,
       "timestamp": 1774430935908,
       "smBuyAmountUsd": 163.458910946,
+      "walletStatus": "scout"
+    }
+  ],
+  "GjizUFkU7VxRN2Cd83FYFFrrRPRHMRbM5mnwcDcRpump": [
+    {
+      "chain": "solana",
+      "token": "GjizUFkU7VxRN2Cd83FYFFrrRPRHMRbM5mnwcDcRpump",
+      "symbol": "?",
+      "wallet": "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
+      "walletRank": 6,
+      "timestamp": 1774431025597,
+      "smBuyAmountUsd": 133.412660946,
+      "walletStatus": "scout"
+    }
+  ],
+  "3vMNPBKm3QpBwt1fEcVMvNRxPTcyaBasfszU6V5tpump": [
+    {
+      "chain": "solana",
+      "token": "3vMNPBKm3QpBwt1fEcVMvNRxPTcyaBasfszU6V5tpump",
+      "symbol": "?",
+      "wallet": "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
+      "walletRank": 6,
+      "timestamp": 1774431149893,
+      "smBuyAmountUsd": 124.61643015519999,
+      "walletStatus": "scout"
+    }
+  ],
+  "FtqgXUy4GjFAjk8kwMWStGnHRa5GpWrHMKZbm7gCpump": [
+    {
+      "chain": "solana",
+      "token": "FtqgXUy4GjFAjk8kwMWStGnHRa5GpWrHMKZbm7gCpump",
+      "symbol": "?",
+      "wallet": "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
+      "walletRank": 6,
+      "timestamp": 1774431183322,
+      "smBuyAmountUsd": 135.1555145552,
+      "walletStatus": "scout"
+    }
+  ],
+  "CYNskKRcTYZPFA3snCt8mRHqfJa6Muufbdi5r5vjpump": [
+    {
+      "chain": "solana",
+      "token": "CYNskKRcTYZPFA3snCt8mRHqfJa6Muufbdi5r5vjpump",
+      "symbol": "?",
+      "wallet": "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
+      "walletRank": 6,
+      "timestamp": 1774431317524,
+      "smBuyAmountUsd": 163.4058685736,
+      "walletStatus": "scout"
+    }
+  ],
+  "0x00e701eff4f9dc647f1510f835c5d1ee7e41d28f": [
+    {
+      "chain": "base",
+      "token": "0x00e701eff4f9dc647f1510f835c5d1ee7e41d28f",
+      "symbol": "?",
+      "wallet": "0x4e7be9a8343f6fac55e2f9554415a1e8efaa3b07",
+      "walletRank": 7,
+      "timestamp": 1774431334569,
+      "smBuyAmountUsd": 872.4770000000001,
+      "walletStatus": "hunter"
+    }
+  ],
+  "2Z5BMaPjri6gsK7i7LHDmdfQrkpV9kbkVnrsosvNpump": [
+    {
+      "chain": "solana",
+      "token": "2Z5BMaPjri6gsK7i7LHDmdfQrkpV9kbkVnrsosvNpump",
+      "symbol": "?",
+      "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
+      "walletRank": 22,
+      "timestamp": 1774432355380,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "scout"
+    }
+  ],
+  "8wnQxqavrkJp3eX74rakW5PW1f7zPLUpGzFwfJdSpump": [
+    {
+      "chain": "solana",
+      "token": "8wnQxqavrkJp3eX74rakW5PW1f7zPLUpGzFwfJdSpump",
+      "symbol": "?",
+      "wallet": "BTf4A2exGK9BCVDNzy65b9dUzXgMqB4weVkvTMFQsadd",
+      "walletRank": 6,
+      "timestamp": 1774432730516,
+      "smBuyAmountUsd": 124.495103038,
       "walletStatus": "scout"
     }
   ]
