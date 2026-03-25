@@ -2975,7 +2975,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           const pnlStr = pnl2 >= 0 ? `+$${Math.round(pnl2)}` : `-$${Math.abs(Math.round(pnl2))}`;
           const holdMin2 = Math.round((Date.now()-(pos.buyTime||0))/60000);
           const holdStr = holdMin2 >= 60 ? `${(holdMin2/60).toFixed(1)}小时` : `${holdMin2}分钟`;
-          await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n📉 原因: ${reason}\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRev)} ${pnlStr}\n⏱️ 持有${holdStr}\n${chainConfirm}`);
+          await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRev)} ${pnlStr}\n⏱️ 持有${holdStr}`);
         } else {
           await notifyTelegram(`🔴 冲狗卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}${smInfo}\n🔗 ${result.txHash || ''}`);
         }
@@ -3102,7 +3102,7 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
           const pnl = totalRevenue - (pos.buyCost || 0);
           const pnlStr = pnl >= 0 ? `+$${Math.round(pnl)}` : `-$${Math.abs(Math.round(pnl))}`;
           const holdStr = holdMin >= 60 ? `${(holdMin/60).toFixed(1)}小时` : `${holdMin}分钟`;
-          await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRevenue)} ${pnlStr}\n⏱️ 持有${holdStr}\n${chainConfirm}`);
+          await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRevenue)} ${pnlStr}\n⏱️ 持有${holdStr}`);
           recordTradeHistory(tokenAddress, pos);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];
