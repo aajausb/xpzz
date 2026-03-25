@@ -2359,11 +2359,11 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       return;
     }
     if ((confirmCount >= 3 || (confirmCount >= 2 && watchCount >= 3)) && smTotal >= 1500) {
-      size = 160;
+      size = 200;
     } else if ((confirmCount >= 2 && watchCount >= 2 && smTotal >= 500) || (confirmCount >= 2 && smTotal >= 1000)) {
-      size = 120;
+      size = 180;
     } else {
-      size = 80;
+      size = 150;
     }
     const grade = size >= 160 ? 'S' : size >= 120 ? 'A' : 'B';
     log('INFO', `📊 ${symbol} ${grade}级信号 仓位$${size} (猎手${confirmCount} SM累计$${Math.round(smTotal)})`);
