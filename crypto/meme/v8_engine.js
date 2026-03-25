@@ -344,8 +344,8 @@ const OKX_ENV = {
   OKX_PASSPHRASE: process.env.OKX_PASSPHRASE || '',
 };
 
-const bscProvider = new ethers.JsonRpcProvider('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/');
-const baseProvider = new ethers.JsonRpcProvider('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/');
+const bscProvider = new ethers.JsonRpcProvider('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/', 56, { staticNetwork: true });
+const baseProvider = new ethers.JsonRpcProvider('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/', 8453, { staticNetwork: true });
 
 // Multicall3: 一次RPC批量查N个EVM余额（BSC/Base都有）
 const MULTICALL3_ADDR = '0xcA11bde05977b3631167028862bE2a173976CA11';
@@ -2951,7 +2951,33 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           }
         } catch {}
         const smInfo = smLiveUsd >= 1 ? `\n💎 SM实时持有$${Math.round(smLiveUsd)}` : (pos.smTotalUsd ? `\n💎 SM已清仓(买入时$${pos.smTotalUsd})` : '');
-        await notifyTelegram(`🔴 冲狗卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}${smInfo}\n🔗 ${result.txHash || ''}`);
+        if (ratio >= 0.99) {
+          // 完全清仓：链上确认+盈亏
+          let chainConfirm = '';
+          try {
+            if (pos.chain === 'solana') {
+              await new Promise(r => setTimeout(r, 3000));
+              const { Connection: C2, PublicKey: P2 } = require('@solana/web3.js');
+              const c2 = new C2(getSolRpc());
+              const r2 = await c2.getParsedTokenAccountsByOwner(new P2(require('./dex_trader.js').getWalletAddress('solana')), { mint: new P2(tokenAddress) }, { commitment: 'confirmed' });
+              const remain = r2.value[0]?.account.data.parsed.info.tokenAmount.uiAmount || 0;
+              chainConfirm = remain === 0 ? '✅链上确认清零' : `⚠️链上还剩${remain.toFixed(2)}`;
+            } else {
+              await new Promise(r => setTimeout(r, 3000));
+              const erc = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], pos.chain === 'bsc' ? bscProvider : baseProvider);
+              const rb = await erc.balanceOf(require('./dex_trader.js').getWalletAddress('evm'));
+              chainConfirm = rb === 0n ? '✅链上确认清零' : '⚠️链上有残留';
+            }
+          } catch { chainConfirm = '⚠️链上未验证'; }
+          const totalRev = finalRevenue || (pos.sellRevenue || 0);
+          const pnl2 = totalRev - (pos.buyCost || 0);
+          const pnlStr = pnl2 >= 0 ? `+$${Math.round(pnl2)}` : `-$${Math.abs(Math.round(pnl2))}`;
+          const holdMin2 = Math.round((Date.now()-(pos.buyTime||0))/60000);
+          const holdStr = holdMin2 >= 60 ? `${(holdMin2/60).toFixed(1)}小时` : `${holdMin2}分钟`;
+          await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n📉 原因: ${reason}\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRev)} ${pnlStr}\n⏱️ 持有${holdStr}\n${chainConfirm}`);
+        } else {
+          await notifyTelegram(`🔴 冲狗卖出 ${pos.symbol}(${pos.chain}) ${pctStr}\n📉 原因: ${reason}${smInfo}\n🔗 ${result.txHash || ''}`);
+        }
         break;
       } else if (result.error === '余额为0') {
         // 链上确认没余额了 → 清理持仓（可能已经被手动卖了）
@@ -3038,7 +3064,27 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
               token: tokenAddress, ratio: 1, reason: '分批卖出', costUsd: pos.buyCost||0,
               soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: holdMin });
           } catch {}
-          await notifyTelegram(`🔴 冲狗卖出 ${pos.symbol}(${pos.chain}) | 分批清仓 | 买入$${Math.round(pos.buyCost||0)} | 持有${holdMin}分钟`);
+          // 链上确认余额（等5秒让链确认）
+          await new Promise(r => setTimeout(r, 5000));
+          let chainConfirm = '';
+          try {
+            if (pos.chain === 'solana') {
+              const { Connection: C2, PublicKey: P2 } = require('@solana/web3.js');
+              const c2 = new C2(getSolRpc());
+              const r2 = await c2.getParsedTokenAccountsByOwner(new P2(require('./dex_trader.js').getWalletAddress('solana')), { mint: new P2(tokenAddress) }, { commitment: 'confirmed' });
+              const remain = r2.value[0]?.account.data.parsed.info.tokenAmount.uiAmount || 0;
+              chainConfirm = remain === 0 ? '✅链上确认清零' : `⚠️链上还剩${remain.toFixed(2)}`;
+            } else {
+              const erc = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], pos.chain === 'bsc' ? bscProvider : baseProvider);
+              const rb = await erc.balanceOf(require('./dex_trader.js').getWalletAddress('evm'));
+              chainConfirm = rb === 0n ? '✅链上确认清零' : '⚠️链上有残留';
+            }
+          } catch { chainConfirm = '⚠️链上未验证'; }
+          const totalRevenue = pos.sellRevenue || 0;
+          const pnl = totalRevenue - (pos.buyCost || 0);
+          const pnlStr = pnl >= 0 ? `+$${Math.round(pnl)}` : `-$${Math.abs(Math.round(pnl))}`;
+          const holdStr = holdMin >= 60 ? `${(holdMin/60).toFixed(1)}小时` : `${holdMin}分钟`;
+          await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRevenue)} ${pnlStr}\n⏱️ 持有${holdStr}\n${chainConfirm}`);
           recordTradeHistory(tokenAddress, pos);
           delete positions[tokenAddress];
           delete sellTracker[tokenAddress];

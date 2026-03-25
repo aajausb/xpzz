@@ -92,3 +92,9 @@
 - one涨2.1x触发止盈回本50%，但正常卖出假成功→分批fallback取了全部余额卖100%
 - 分批函数没接收ratio参数，固定卖全部。已修复：传ratio进分批函数
 - **教训：所有fallback/重试路径必须和主路径保持同样的参数**
+
+## BSC暂停 (2026-03-25)
+- enabledChains去掉bsc，省credits（BSC占47%流量），跑步哥说BSC都是PVP割子不值得跟
+- 钱包库保留BSC钱包，币安PnL继续更新，充BNB后加回
+- staticNetwork修复：Provider加chainId+staticNetwork避免eth_chainId限速
+- 清仓通知升级：完全清仓时显示盈亏+持有时间+链上确认
