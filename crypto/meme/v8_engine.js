@@ -1770,41 +1770,7 @@ async function handleSignal(signal) {
     }
   }
 
-  // SM频率降权：1小时内买>5个不同币的SM临时降为观察（撒网型打法）
-  if (!handleSignal._smBuyFreq) handleSignal._smBuyFreq = {};
-  const smNow = Date.now();
-  for (const sig of [...activeSignals, ...watchSignals]) {
-    if (!handleSignal._smBuyFreq[sig.wallet]) handleSignal._smBuyFreq[sig.wallet] = [];
-    // 记录这个SM买了这个token（去重）
-    const existing = handleSignal._smBuyFreq[sig.wallet];
-    if (!existing.some(r => r.token === token)) {
-      existing.push({ token, time: smNow });
-    }
-    // 清理1小时前的记录
-    handleSignal._smBuyFreq[sig.wallet] = existing.filter(r => smNow - r.time < 3600000);
-  }
-  // 过滤掉撒网SM（1小时内买>5个不同币）
-  const nonSpamHunters = activeSignals.filter(s => {
-    const freq = (handleSignal._smBuyFreq[s.wallet] || []).length;
-    if (freq > 5) { log('INFO', `⚡ ${s.wallet.slice(0,10)} 1h内买${freq}个币，降权(撒网)`); return false; }
-    return true;
-  });
-  const nonSpamScouts = watchSignals.filter(s => {
-    const freq = (handleSignal._smBuyFreq[s.wallet] || []).length;
-    return freq <= 5;
-  });
-  const filteredConfirmCount = new Set(nonSpamHunters.map(s => s.wallet)).size;
-  const filteredWatchCount = new Set(nonSpamScouts.map(s => s.wallet)).size;
-  let stillConfirmed;
-  if (chain === 'bsc') {
-    stillConfirmed = filteredConfirmCount >= 3 || (filteredConfirmCount >= 2 && filteredWatchCount >= 3);
-  } else {
-    stillConfirmed = filteredConfirmCount >= 2 || (filteredConfirmCount >= 1 && filteredWatchCount >= 2);
-  }
-  if (!stillConfirmed) {
-    log('INFO', `🚫 ${token.slice(0,10)}(${chain}) 过滤撒网SM后不达标: 猎手=${filteredConfirmCount} 哨兵=${filteredWatchCount}`);
-    return;
-  }
+  // 撒网过滤已移除(2026-03-25) — $500累计金额门槛+猎手/哨兵数量门槛已足够过滤垃圾
 
   // 验证SM真实持仓（过滤空投/撒币：持仓<$1的不算有效确认）
   const MIN_SM_HOLDING_USD = 1; // SM至少持有$1才算有效
