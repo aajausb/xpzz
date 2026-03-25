@@ -98,3 +98,11 @@
 - 钱包库保留BSC钱包，币安PnL继续更新，充BNB后加回
 - staticNetwork修复：Provider加chainId+staticNetwork避免eth_chainId限速
 - 清仓通知升级：完全清仓时显示盈亏+持有时间+链上确认
+
+## 重要教训补充 (2026-03-25)
+- **SM累计$500规则是防钓鱼防线** — Ghibli事件：7猎手买入但SM$0，实际是空投钓鱼币（合约不同）
+- **不要拿通知/日志数据当链上事实** — 先查链上再开口
+- **solanaSell参数是raw amount不是百分比** — 传100=0.0001个token
+- **unknown≠已卖出** — checkSolTransferTarget查不到不代表SM卖了，连续3轮才判定
+- **dex_trader余额查询必须用confirmed** — 旧数据导致残留token未卖
+- 持仓报告按SOL/Base分链，简洁格式
