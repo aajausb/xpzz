@@ -823,7 +823,7 @@ async function checkEvmTransferTarget(chain, tokenAddr, smWallet) {
 // 检查SOL最后一笔交易是swap(卖出)还是transfer(转仓)
 async function checkSolTransferTarget(tokenAddr, smWallet) {
   try {
-    const sigs = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [smWallet, { limit: 3 }]);
+    const sigs = await rpcPost(getSolRpc(), 'getSignaturesForAddress', [smWallet, { limit: 10 }]);
     if (!sigs?.result?.length) return { type: 'unknown' };
     for (const sig of sigs.result) {
       const tx = await rpcPost(getSolRpc(), 'getTransaction', [sig.signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]);
@@ -1236,6 +1236,7 @@ async function parseSolSignature(walletAddr, signature) {
 
 // 跟踪聪明钱卖出 — 积累到阈值触发跟卖（持久化到positions）
 const sellTracker = {}; // token -> [{wallet, time, source}]
+const unknownSMCounter = {}; // token:wallet -> count (连续unknown次数，3次才判定已卖出)
 
 // 启动时从positions恢复sellTracker和transferTracker
 function restoreSellTracker() {
@@ -2980,8 +2981,25 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         }
         break;
       } else if (result.error === '余额为0') {
-        // 链上确认没余额了 → 清理持仓（可能已经被手动卖了）
-        log('WARN', `${pos.symbol} 链上余额为0，清理持仓`);
+        // 链上余额为0：等5秒用confirmed再查一次确认
+        await new Promise(r => setTimeout(r, 5000));
+        let realBal = 0;
+        try {
+          if (pos.chain === 'solana') {
+            const { Connection: C3, PublicKey: P3 } = require('@solana/web3.js');
+            const c3 = new C3(getSolRpc());
+            const r3 = await c3.getParsedTokenAccountsByOwner(new P3(require('./dex_trader.js').getWalletAddress('solana')), { mint: new P3(tokenAddress) }, { commitment: 'confirmed' });
+            realBal = r3.value[0]?.account.data.parsed.info.tokenAmount.uiAmount || 0;
+          } else {
+            const erc = new ethers.Contract(tokenAddress, ['function balanceOf(address) view returns (uint256)'], pos.chain === 'bsc' ? bscProvider : baseProvider);
+            realBal = parseFloat(ethers.formatEther(await erc.balanceOf(require('./dex_trader.js').getWalletAddress('evm'))));
+          }
+        } catch {}
+        if (realBal > 0) {
+          log('WARN', `${pos.symbol} 余额为0误报! 实际还有${realBal}，重试卖出`);
+          continue; // 回到retry循环重新卖
+        }
+        log('INFO', `${pos.symbol} 链上confirmed确认余额=0，清理持仓`);
         delete positions[tokenAddress];
         delete sellTracker[tokenAddress];
         delete transferTracker[tokenAddress];
@@ -3268,12 +3286,29 @@ async function managePositions() {
                     if (!transferTracker[tokenAddr]) transferTracker[tokenAddr] = {};
                     transferTracker[tokenAddr][smWallet] = { subWallet: check.to, time: Date.now() };
                     saveTransferTracker(tokenAddr);
-                  } else {
-                    log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检确认${check.type === 'sell' ? '(DEX)' : ''}`);
+                    delete unknownSMCounter[`${tokenAddr}:${smWallet}`];
+                  } else if (check.type === 'sell') {
+                    log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检确认(DEX)`);
                     if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
                     if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
                       sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
                       saveSellTracker(tokenAddr);
+                    }
+                    delete unknownSMCounter[`${tokenAddr}:${smWallet}`];
+                  } else {
+                    // unknown: 连续3轮才判定已卖出
+                    const key = `${tokenAddr}:${smWallet}`;
+                    unknownSMCounter[key] = (unknownSMCounter[key] || 0) + 1;
+                    if (unknownSMCounter[key] >= 3) {
+                      log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 连续3轮unknown`);
+                      if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                      if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
+                        sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                        saveSellTracker(tokenAddr);
+                      }
+                      delete unknownSMCounter[key];
+                    } else {
+                      log('INFO', `⏳ SM ${smWallet.slice(0,10)}... ${pos.symbol} 余额0但unknown(${unknownSMCounter[key]}/3)，等下轮`);
                     }
                   }
                 }
@@ -3307,12 +3342,28 @@ async function managePositions() {
                     if (!transferTracker[tokenAddr]) transferTracker[tokenAddr] = {};
                     transferTracker[tokenAddr][smWallet] = { subWallet: check.to, time: Date.now() };
                     saveTransferTracker(tokenAddr);
-                  } else {
-                    log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检确认${check.type === 'sell' ? '(DEX)' : ''}`);
+                    delete unknownSMCounter[`${tokenAddr}:${smWallet}`];
+                  } else if (check.type === 'sell') {
+                    log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 巡检确认(DEX)`);
                     if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
                     if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
                       sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
                       saveSellTracker(tokenAddr);
+                    }
+                    delete unknownSMCounter[`${tokenAddr}:${smWallet}`];
+                  } else {
+                    const key = `${tokenAddr}:${smWallet}`;
+                    unknownSMCounter[key] = (unknownSMCounter[key] || 0) + 1;
+                    if (unknownSMCounter[key] >= 3) {
+                      log('INFO', `🔴 SM ${smWallet.slice(0,10)}... 已卖出 ${pos.symbol || tokenAddr.slice(0,10)}(${pos.chain}) — 连续3轮unknown`);
+                      if (!sellTracker[tokenAddr]) sellTracker[tokenAddr] = [];
+                      if (!sellTracker[tokenAddr].some(s => s.wallet === smWallet)) {
+                        sellTracker[tokenAddr].push({ wallet: smWallet, time: Date.now(), source: 'patrol' });
+                        saveSellTracker(tokenAddr);
+                      }
+                      delete unknownSMCounter[key];
+                    } else {
+                      log('INFO', `⏳ SM ${smWallet.slice(0,10)}... ${pos.symbol} EVM余额0但unknown(${unknownSMCounter[key]}/3)，等下轮`);
                     }
                   }
                 }

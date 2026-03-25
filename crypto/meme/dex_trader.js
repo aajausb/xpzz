@@ -335,7 +335,7 @@ async function _getTokenBalance(chain, tokenAddress) {
         'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
       ]) {
         try {
-          const accts = await conn.getParsedTokenAccountsByOwner(owner, { mint }, { programId: new PublicKey(programId) });
+          const accts = await conn.getParsedTokenAccountsByOwner(owner, { mint }, { programId: new PublicKey(programId), commitment: 'confirmed' });
           for (const a of accts.value) {
             if (seenAccounts.has(a.pubkey)) continue;
             seenAccounts.add(a.pubkey);
