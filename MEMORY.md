@@ -32,14 +32,18 @@
 - **数据源**: 币安PnL Rank API（免费，钱包+种子币一起拿，每6小时刷新）
 - **确认逻辑**: SOL/Base ≥2猎手 或 1猎手+2哨兵 或 ≥3哨兵 | BSC ≥3猎手或2猎手+3哨兵
 - **仓位**: 统一$300（2026-03-29改，去掉S/A/B分级）
-- **止盈**: PnL≥+30% → 全卖
-- **止损**: PnL≤-30% → 全卖
+- **止盈**: PnL≥+30%开始追踪，回撤20%或跌回+5%卖出
+- **止损**: PnL≤-50% → 全卖（无宽限期）
 - **灰尘清仓**: 余额<$1清掉
 - **SM跟卖**: 已禁用（2026-03-29）
-- **巡检价格**: OKX v6 quote优先，DexScreener fallback
-- **审计**: 达标后查SM链上余额（≥$1有效，<$1查链上交易：转仓算有效/DEX卖出踢掉）+ SM累计<$500不买 + 市值<$10000不买 + 币安已上架不买 + 龙虾二次检查（买入前再查SM还在不在）（撒网过滤已于2026-03-25移除，靠$500门槛+猎手数量门槛足够过滤）
+- **巡检价格**: OKX钱包API批量优先，OKX v6 quote fallback，DexScreener最后。间隔5秒
+- **巡检价格不准问题(2026-03-30)**: ADOGE/POOR/oskkpu/GGG四次误止损，OKX返回虚低价格。根因未确定，跑步哥说先观察
+- **审计**: 达标后查SM链上余额（≥$1有效，<$1查链上交易：转仓算有效/DEX卖出踢掉）+ SM累计<$500不买 + 市值门槛(SOL/BSC $100K, Base $30K) + 币安已上架不买 + 龙虾二次检查
 - **确认窗口72小时**
-- **确认门槛5处必须同步改**: 首次确认(1647) / 空投过滤后(1800) / 龙虾检查(2072) / 买入函数(2317) / re-audit(3783)
+- **确认门槛5处必须同步改**: 首次确认(1635) / 空投过滤后(1785) / 龙虾检查(2055) / 买入函数(2300) / re-audit(3932-3933)
+- **确认门槛(2026-03-30)**: ≥2猎手 / 1猎手+2哨兵 / ≥4哨兵（三链统一，去掉纯3哨兵因67%亏损率）
+- **minMarketCap**: `{ solana: 100000, bsc: 100000, base: 30000 }`，fallback $30K
+- **卖出变量**: SELL_MAX_RETRIES=2（区别于买入MAX_RETRIES=3）
 - **分批卖出第二次查链上余额卖全部** — 固定half会残留
 - **EVM预approve**: 买入后5秒自动approve max，dex_trader.preApprove()
 - **卖出递增slippage**: 5%→25%→50%三次重试，失败后分批（按ratio分两半）
@@ -58,7 +62,7 @@
 - **OKX API调用必须带header**: httpGet调OKX聚合器要加`{'OK-ACCESS-KEY': process.env.OKX_API_KEY}`，不带key永远返回empty
 - **审计时回写symbol到pending_signals**: 防止re-audit交错导致symbol串台（PIXEL/SlapMac串台事件）
 - **DexScreener刚收录的币价格不稳定**: 创建6分钟内可能返回空，OKX fallback兜底
-- **巡检**: 20秒一轮，查价格+SM持仓+止盈+跟卖+归零清仓
+- **巡检**: 5秒一轮，查价格+止盈+止损+归零清仓
 - **SM检查间隔**: 120秒（省QuickNode credits）
 - **SOL RPC顺序**: 公共优先(`api.mainnet-beta.solana.com`)，QuickNode fallback
 - **QuickNode用途**: SOL WS信号检测 + Base RPC + 公共429时fallback
