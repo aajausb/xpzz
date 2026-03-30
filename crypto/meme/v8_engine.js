@@ -1126,7 +1126,7 @@ async function pollSolanaWallets() {
   log('INFO', `🔌 [SOL] 初始化完成, ${solLastSigs.size}/${solWalletSet.size} 钱包有历史签名`);
   
   while (true) {
-    const interval = 15000;
+    const interval = 5000;
     await sleep(interval);
     
     // 收集要轮询的钱包
@@ -1628,7 +1628,7 @@ async function handleSignal(signal) {
   
   // 分级确认:
   // ≥2个猎手 → 买
-  // BSC门槛更高：≥3猎手 或 2猎手+3哨兵（信号多但质量参差不齐）
+  // 三链统一门槛（2026-03-30）
   // SOL/Base：≥2猎手 或 1猎手+2哨兵
   let confirmed;
   // 三链统一门槛：≥2猎手 / 1猎手+2哨兵 / ≥4哨兵
@@ -2728,9 +2728,9 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
 
   log('INFO', `💸 卖出 ${pos.symbol}(${pos.chain}) ${(ratio*100).toFixed(0)}% 原因:${reason}`);
   
-  const MAX_RETRIES = 2;
+  const SELL_MAX_RETRIES = 2;
   const SLIPPAGE_STEPS = [2500, 5000]; // 25% → 50%
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+  for (let attempt = 1; attempt <= SELL_MAX_RETRIES; attempt++) {
     try {
       const trader = require('./dex_trader.js');
       const slippageBps = SLIPPAGE_STEPS[attempt - 1] || 5000;
@@ -2826,7 +2826,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
           if (postBal >= 0 && preBal > 0 && postBal >= preBal * 0.95) {
             // 余额几乎没变 → 假成功，继续重试（提高slippage）
             log('WARN', `⚠️ ${pos.symbol} 卖出tx成功但余额未减少(pre:${preBal.toFixed(0)} post:${postBal.toFixed(0)})，第${attempt}次假成功`);
-            if (attempt < MAX_RETRIES) { await new Promise(r => setTimeout(r, 2000 * attempt)); continue; }
+            if (attempt < SELL_MAX_RETRIES) { await new Promise(r => setTimeout(r, 2000 * attempt)); continue; }
             // 3次都假成功 → 尝试分批卖（一半一半）
             log('INFO', `🔄 ${pos.symbol} 3次假成功，尝试分批卖出...`);
             try {
@@ -3048,10 +3048,10 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
         saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
         saveJSON(POSITIONS_FILE, positions);
         break;
-      } else if (attempt < MAX_RETRIES) {
+      } else if (attempt < SELL_MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
         continue;
-      } else if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
+      } else if (attempt >= SELL_MAX_RETRIES && positions[tokenAddress]) {
         // 3次递增slippage都失败 → 尝试分批卖
         const splitOk = await _trySplitSell(pos, tokenAddress, ratio);
         if (!splitOk) {
@@ -3065,11 +3065,11 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
       }
     } catch(e) {
       log('ERROR', `卖出异常 ${pos.symbol}(第${attempt}次): ${e.message}`);
-      if (attempt < MAX_RETRIES) {
+      if (attempt < SELL_MAX_RETRIES) {
         await new Promise(r => setTimeout(r, 2000 * attempt));
         continue;
       }
-      if (attempt >= MAX_RETRIES && positions[tokenAddress]) {
+      if (attempt >= SELL_MAX_RETRIES && positions[tokenAddress]) {
         const splitOk = await _trySplitSell(pos, tokenAddress, ratio);
         if (!splitOk) {
           positions[tokenAddress].unsellable = true;
