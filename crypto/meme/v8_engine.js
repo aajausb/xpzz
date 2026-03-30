@@ -44,7 +44,7 @@ const CONFIG = {
   // 过滤
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
   confirmWindowMs: 72 * 60 * 60 * 1000,          // 72小时确认窗口
-  minMarketCap: 30000, // 三链统一 $30K
+  minMarketCap: { solana: 100000, bsc: 100000, base: 30000 }, // SOL/BSC $100K, Base $30K
   maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
   
   // 交易 — 动态仓位(余额×百分比): TOP10=20% TOP30=15% 其他=10% min$5 max$200
@@ -3004,7 +3004,7 @@ async function _executeSellInner(tokenAddress, pos, reason, ratio) {
               chainConfirm = rb === 0n ? '✅链上确认清零' : '⚠️链上有残留';
             }
           } catch { chainConfirm = '⚠️链上未验证'; }
-          const totalRev = finalRevenue || (pos.sellRevenue || 0);
+          const totalRev = (typeof finalRevenue !== 'undefined' ? finalRevenue : null) || (pos.sellRevenue || 0);
           const pnl2 = totalRev - (pos.buyCost || 0);
           const pnlStr = pnl2 >= 0 ? `+$${Math.round(pnl2)}` : `-$${Math.abs(Math.round(pnl2))}`;
           const holdMin2 = Math.round((Date.now()-(pos.buyTime||0))/60000);
