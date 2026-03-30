@@ -1781,8 +1781,8 @@ async function handleSignal(signal) {
   
   // 重新检查确认门槛（过滤空投后）
   let realConfirmed;
-  if (chain === 'bsc') {
-    realConfirmed = realHunters >= 2 || (realHunters >= 1 && realScouts >= 2) || realScouts >= 4;
+  // 三链统一门槛
+  realConfirmed = realHunters >= 2 || (realHunters >= 1 && realScouts >= 2) || realScouts >= 4;
   if (!realConfirmed) {
     log('INFO', `🚫 ${token.slice(0,10)}(${chain}) 过滤空投后不达标: 真实猎手=${realHunters} 哨兵=${realScouts}`);
     return;
