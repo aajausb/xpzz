@@ -1861,7 +1861,7 @@ async function handleSignal(signal) {
   
   // 市值过滤（DexScreener fdv → OKX报价反推）
   let mcap = parseFloat(dexData?.pairs?.[0]?.fdv || dexData?.pairs?.[0]?.marketCap || 0);
-  const minMcap = typeof CONFIG.minMarketCap === 'object' ? (CONFIG.minMarketCap[chain] || 100000) : CONFIG.minMarketCap;
+  const minMcap = typeof CONFIG.minMarketCap === 'object' ? (CONFIG.minMarketCap[chain] || 30000) : CONFIG.minMarketCap;
   const maxMcap = CONFIG.maxMarketCap;
   
   // DexScreener没市值（内盘/新币）→ 用OKX报价 × totalSupply反推
@@ -2293,7 +2293,7 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       log('INFO', `🚫 ${symbol}(${chain}) SM累计$${Math.round(smTotal)}<$500，跳过`);
       return;
     }
-    // 确认门槛: ≥2猎手 / 1猎手+2哨兵 / ≥3哨兵 (BSC: ≥3猎手 / 2猎手+3哨兵)
+    // 确认门槛: 三链统一 ≥2猎手 / 1猎手+2哨兵 / ≥4哨兵
     const minHunters = 2;
     const altHunters = 1;
     const altScouts = 2;
