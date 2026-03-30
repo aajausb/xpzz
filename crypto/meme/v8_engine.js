@@ -3681,7 +3681,7 @@ async function managePositions() {
         //           }
         //         }
         
-        // === 新策略：+30%止盈 / -30%止损 ===
+        // === 新策略：+30%追踪止盈 / -50%止损 ===
         if (pos.currentPrice > 0 && pos.buyPrice > 0) {
           const pnlPct = ((pos.currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
           
@@ -3721,7 +3721,7 @@ async function managePositions() {
             continue;
           }
           
-          // -30%止损：全卖
+          // -50%止损：全卖
           if (pnlPct <= -50) {
             {
               log('INFO', `🛑 ${pos.symbol}(${pos.chain}) 止损! PnL${pnlPct.toFixed(0)}% 买$${pos.buyPrice.toFixed(8)} 现$${pos.currentPrice.toFixed(8)}`);
