@@ -44,7 +44,7 @@ const CONFIG = {
   // 过滤
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
   confirmWindowMs: 72 * 60 * 60 * 1000,          // 72小时确认窗口
-  minMarketCap: { solana: 100000, base: 30000, bsc: 100000 }, // SOL/BSC $100K, Base $30K
+  minMarketCap: 30000, // 三链统一 $30K
   maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
   
   // 交易 — 动态仓位(余额×百分比): TOP10=20% TOP30=15% 其他=10% min$5 max$200
@@ -1631,11 +1631,8 @@ async function handleSignal(signal) {
   // BSC门槛更高：≥3猎手 或 2猎手+3哨兵（信号多但质量参差不齐）
   // SOL/Base：≥2猎手 或 1猎手+2哨兵
   let confirmed;
-  if (chain === 'bsc') {
-    confirmed = confirmCount >= 3 || (confirmCount >= 2 && watchCount >= 3);
-  } else {
-    confirmed = confirmCount >= 2 || (confirmCount >= 1 && watchCount >= 2) || watchCount >= 3;
-  }
+  // 三链统一门槛：≥2猎手 / 1猎手+2哨兵 / ≥4哨兵
+  confirmed = confirmCount >= 2 || (confirmCount >= 1 && watchCount >= 2) || watchCount >= 4;
   if (!confirmed) {
     const bestRank = Math.min(...pendingSignals[token].map(s => s.walletRank || 999));
     // 去重日志：同token+同确认数 60秒内不重复打印
@@ -1785,10 +1782,7 @@ async function handleSignal(signal) {
   // 重新检查确认门槛（过滤空投后）
   let realConfirmed;
   if (chain === 'bsc') {
-    realConfirmed = realHunters >= 3 || (realHunters >= 2 && realScouts >= 3);
-  } else {
-    realConfirmed = realHunters >= 2 || (realHunters >= 1 && realScouts >= 2) || realScouts >= 3;
-  }
+    realConfirmed = realHunters >= 2 || (realHunters >= 1 && realScouts >= 2) || realScouts >= 4;
   if (!realConfirmed) {
     log('INFO', `🚫 ${token.slice(0,10)}(${chain}) 过滤空投后不达标: 真实猎手=${realHunters} 哨兵=${realScouts}`);
     return;
@@ -2055,10 +2049,10 @@ async function handleSignal(signal) {
       }
       holdingHuntersOuter = holdingHunters;
       holdingScoutsOuter = holdingScouts;
-      const minH = chain === 'bsc' ? 3 : 2;
-      const altH = chain === 'bsc' ? 2 : 1;
-      const altS = chain === 'bsc' ? 3 : 2;
-      const pureS = chain === 'bsc' ? 999 : 3;
+      const minH = 2;
+      const altH = 1;
+      const altS = 2;
+      const pureS = 4;
       const passConfirm = holdingHunters >= minH || (holdingHunters >= altH && holdingScouts >= altS) || holdingScouts >= pureS;
       if (!passConfirm) {
         log('WARN', `🚫 ${symbol}(${chain}) 剔除已卖SM后猎手=${holdingHunters}哨兵=${holdingScouts}，不够门槛，取消买入`);
@@ -2300,10 +2294,10 @@ async function _executeBuyInner(chain, tokenAddress, symbol, confirmCount, confi
       return;
     }
     // 确认门槛: ≥2猎手 / 1猎手+2哨兵 / ≥3哨兵 (BSC: ≥3猎手 / 2猎手+3哨兵)
-    const minHunters = chain === 'bsc' ? 3 : 2;
-    const altHunters = chain === 'bsc' ? 2 : 1;
-    const altScouts = chain === 'bsc' ? 3 : 2;
-    const pureScouts = chain === 'bsc' ? 999 : 3; // SOL/Base: ≥3哨兵也可以
+    const minHunters = 2;
+    const altHunters = 1;
+    const altScouts = 2;
+    const pureScouts = 4;
     if (!(confirmCount >= minHunters || (confirmCount >= altHunters && watchCount >= altScouts) || (watchCount >= pureScouts))) {
       log('INFO', `🚫 ${symbol}(${chain}) 猎手=${confirmCount}哨兵=${watchCount}，不够门槛，跳过`);
       return;
@@ -3935,8 +3929,8 @@ async function main() {
         else if (s.walletStatus === 'scout') scouts++;
       }
       let confirmed;
-      if (chain === 'bsc') confirmed = hunters >= 3 || (hunters >= 2 && scouts >= 3);
-      else confirmed = hunters >= 2 || (hunters >= 1 && scouts >= 2) || scouts >= 3;
+      if (chain === 'bsc') confirmed = hunters >= 2 || (hunters >= 1 && scouts >= 2) || scouts >= 4;
+      else confirmed = hunters >= 2 || (hunters >= 1 && scouts >= 2) || scouts >= 4;
       if (confirmed) {
         log('INFO', `🔄 启动重审: ${token.slice(0,10)}(${chain}) 猎手=${hunters} 哨兵=${scouts}`);
         handleSignal({ token, chain, wallet: sigs[0].wallet, walletStatus: sigs[0].walletStatus, walletRank: sigs[0].walletRank, timestamp: sigs[0].timestamp, smBuyAmountUsd: sigs[0].smBuyAmountUsd });
