@@ -3721,8 +3721,8 @@ async function managePositions() {
             continue;
           }
           
-          // -50%止损：全卖
-          if (pnlPct <= -50) {
+          // -50%止损：全卖（买入5分钟内不止损，防OKX虚低价误杀）
+          if (pnlPct <= -50 && buyAge > 300000) {
             {
               log('INFO', `🛑 ${pos.symbol}(${pos.chain}) 止损! PnL${pnlPct.toFixed(0)}% 买$${pos.buyPrice.toFixed(8)} 现$${pos.currentPrice.toFixed(8)}`);
               await executeSell(tokenAddr, `止损${pnlPct.toFixed(0)}%`);
