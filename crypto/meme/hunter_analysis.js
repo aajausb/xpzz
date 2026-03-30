@@ -7,7 +7,7 @@ const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
 const hunters = Object.values(db).filter(w => w.chain === 'solana' && w.status === 'hunter')
   .sort((a,b) => (b.winRate||0) - (a.winRate||0));
 
-const SOL_RPC = 'https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/';
+const SOL_RPC = 'https://morning-dry-market.solana-mainnet.quiknode.pro/6664c189556346b5503ea032fb269e81291957ab/';
 
 function rpcPost(url, method, params) {
   return new Promise((resolve, reject) => {

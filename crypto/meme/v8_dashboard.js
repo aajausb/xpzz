@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * v8 跟单引擎看板
+ * 第八代冲狗引擎看板
  * - Telegram消息实时更新（editMessage保持一条消息）
  * - HTTP server port 9877 支持一键刷新
  * - 显示钱包库/持仓/信号/余额
@@ -46,15 +46,15 @@ async function getBalances() {
   
   const [solBal, bnbBal, ethBal, solR, bnbR, ethR] = await Promise.all([
     // SOL: QuickNode
-    fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
+    fetchWithRetry('https://morning-dry-market.solana-mainnet.quiknode.pro/6664c189556346b5503ea032fb269e81291957ab/', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [SOL_WALLET] })
     }),
-    fetch('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/', {
+    fetch('https://bsc-dataseed1.binance.org', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })
     }).then(r => r.json()).catch(() => null),
-    fetch('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/', {
+    fetch('https://blue-fluent-vineyard.base-mainnet.quiknode.pro/b732585029ad7cdbd7fcbe4c4729884a3b211d5c/', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [EVM_WALLET, 'latest'] })
     }).then(r => r.json()).catch(() => null),
@@ -85,7 +85,7 @@ async function scanWalletTokens() {
       const solRpcBody = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner', params: [
         SOL_WALLET, { programId: pid }, { encoding: 'jsonParsed' }
       ]});
-      const d = await fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
+      const d = await fetchWithRetry('https://morning-dry-market.solana-mainnet.quiknode.pro/6664c189556346b5503ea032fb269e81291957ab/', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: solRpcBody
     });
     for (const a of (d.result?.value || [])) {
@@ -119,8 +119,8 @@ async function scanWalletTokens() {
   try { knownTokens = JSON.parse(fs.readFileSync(knownTokensFile, 'utf8')); } catch {}
   
   const { ethers } = require('ethers');
-  const bscProvider = new ethers.JsonRpcProvider('https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/');
-  const baseProvider = new ethers.JsonRpcProvider('https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/');
+  const bscProvider = new ethers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
+  const baseProvider = new ethers.JsonRpcProvider('https://blue-fluent-vineyard.base-mainnet.quiknode.pro/b732585029ad7cdbd7fcbe4c4729884a3b211d5c/');
 
   for (const kt of knownTokens) {
     try {
@@ -189,7 +189,7 @@ async function buildDashboard() {
       let onChainAmount = 0;
       try {
         if (pos.chain === 'solana') {
-          const balData = await fetchWithRetry('https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/', {
+          const balData = await fetchWithRetry('https://morning-dry-market.solana-mainnet.quiknode.pro/6664c189556346b5503ea032fb269e81291957ab/', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner',
               params: [SOL_WALLET, { mint: token }, { encoding: 'jsonParsed' }] })
@@ -265,7 +265,7 @@ async function buildDashboard() {
 
   const now2 = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
 
-  const text = `⚡ v8 跟单引擎看板
+  const text = `⚡ 第八代冲狗引擎看板
 ━━━━━━━━━━━━━━━━━━
 
 💰 余额

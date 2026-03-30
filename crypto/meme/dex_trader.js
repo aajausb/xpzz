@@ -12,12 +12,11 @@ const bs58 = require('bs58');
 
 // ============ 配置 ============
 const SOL_RPCS = [
-  "https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/",
-  "https://shy-practical-bird.solana-mainnet.quiknode.pro/3c58be160716ec5df2d95aa0710baede37f182a5/",
+  "https://morning-dry-market.solana-mainnet.quiknode.pro/6664c189556346b5503ea032fb269e81291957ab/",
   "https://api.mainnet-beta.solana.com",
 ];
-const BSC_RPC = 'https://smart-snowy-patina.bsc.quiknode.pro/4ef7626a956d23dd691755d8f81d3b4489072098/';
-const BASE_RPC = 'https://green-polished-glitter.base-mainnet.quiknode.pro/e2d252d6fc15ae83fa0369621e55fc847b63c0e1/';
+const BSC_RPC = 'https://bsc-dataseed1.binance.org';
+const BASE_RPC = 'https://blue-fluent-vineyard.base-mainnet.quiknode.pro/b732585029ad7cdbd7fcbe4c4729884a3b211d5c/';
 const BSC_PRIVATE_RPC = BSC_RPC;
 const BASE_PRIVATE_RPC = BASE_RPC;
 
@@ -179,7 +178,8 @@ async function _solanaSwap(fromToken, toToken, amount, action, slippageBps) {
   }
 
   console.log(`[dex_trader] ✅ solana ${action}确认 sig=${sig.slice(0, 20)}`);
-  return { chain: 'solana', action, txHash: sig, success: true };
+  const rr = quote.data[0].routerResult || {};
+  return { chain: 'solana', action, txHash: sig, success: true, routerResult: rr };
 }
 
 // ============ EVM 买入 ============
@@ -226,7 +226,8 @@ async function evmBuy(chain, tokenAddress, amountWei, slippage = 3) {
     return { chain, action: 'buy', txHash: tx.hash, success: false, error: 'revert' };
   }
   console.log(`[dex_trader] ✅ ${chain} 买入确认 block=${receipt.blockNumber}`);
-  return { chain, action: 'buy', txHash: tx.hash, success: true, mev: 'private' };
+  const rr = quote.data[0].routerResult || {};
+  return { chain, action: 'buy', txHash: tx.hash, success: true, mev: 'private', routerResult: rr };
 }
 
 // ============ EVM 卖出 ============
@@ -383,4 +384,32 @@ function getWalletAddress(chain) {
   return chain === 'solana' ? w.solana.address : w.evm.address;
 }
 
-module.exports = { buy, sell, solanaBuy, solanaSell, evmBuy, evmSell, getWalletAddress };
+// 预approve：买入后立刻调用，卖出时不用等
+async function preApprove(chain, tokenAddress) {
+  if (chain === 'solana') return; // SOL不需要approve
+  const chainId = chain === 'bsc' ? 56 : 8453;
+  const w = getWallets();
+  const provider = getProvider(chain);
+  const wallet = new ethers.Wallet(w.evm.privateKey, provider);
+  try {
+    const approveResult = await okxApprove(chainId, tokenAddress, '0');
+    const spender = approveResult.data?.[0]?.dexContractAddress;
+    if (!spender) return;
+    const erc20 = new ethers.Contract(tokenAddress, [
+      'function allowance(address,address) view returns (uint256)',
+      'function approve(address,uint256) returns (bool)'
+    ], wallet);
+    const allowance = await erc20.allowance(wallet.address, spender);
+    if (allowance < ethers.MaxUint256 / 2n) {
+      console.log(`[dex_trader] ${chain} pre-approve ${tokenAddress.slice(0,10)} to ${spender.slice(0,10)}...`);
+      const tx = await erc20.approve(spender, ethers.MaxUint256);
+      await tx.wait();
+      _approvedTokens.add(`${chain}_${tokenAddress.toLowerCase()}`);
+      console.log(`[dex_trader] ✅ ${chain} pre-approve done`);
+    } else {
+      _approvedTokens.add(`${chain}_${tokenAddress.toLowerCase()}`);
+    }
+  } catch(e) { console.log(`[dex_trader] pre-approve failed: ${e.message?.slice(0,40)}`); }
+}
+
+module.exports = { buy, sell, solanaBuy, solanaSell, evmBuy, evmSell, getWalletAddress, preApprove };

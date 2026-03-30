@@ -30,18 +30,38 @@
 - **钱包库**: 180个（猎手79/哨兵101），观察直接踢出不入库
 - **QuickNode $49/月**: 三链RPC全包
 - **数据源**: 币安PnL Rank API（免费，钱包+种子币一起拿，每6小时刷新）
-- **确认逻辑**: SOL/Base ≥2猎手或1猎手+2哨兵 | BSC ≥3猎手或2猎手+3哨兵
-- **审计**: 达标后查SM链上余额（≥$1有效，<$1查链上交易：转仓算有效/DEX卖出踢掉）+ 撒网过滤（1h买>5币降权）+ SM累计<$500不买 + 市值<$10000不买 + 币安已上架不买 + 龙虾二次检查（买入前再查SM还在不在）
-- **仓位分级**: S级$160（≥3猎手或2猎手+3哨兵，SM≥$1500）/ A级$120（≥2猎手+2哨兵+SM≥$500，或≥2猎手+SM≥$1000）/ B级$80（其他达标）
-- **止盈回本2x**: 涨到2倍卖50%回本
-- **跟卖**: allSMWallets里X/N个SM卖了→跟卖X/N比例，sellThreshold≥50%触发
+- **确认逻辑**: SOL/Base ≥2猎手 或 1猎手+2哨兵 或 ≥3哨兵 | BSC ≥3猎手或2猎手+3哨兵
+- **仓位**: 统一$300（2026-03-29改，去掉S/A/B分级）
+- **止盈**: PnL≥+30% → 全卖
+- **止损**: PnL≤-30% → 全卖
+- **灰尘清仓**: 余额<$1清掉
+- **SM跟卖**: 已禁用（2026-03-29）
+- **巡检价格**: OKX v6 quote优先，DexScreener fallback
+- **审计**: 达标后查SM链上余额（≥$1有效，<$1查链上交易：转仓算有效/DEX卖出踢掉）+ SM累计<$500不买 + 市值<$10000不买 + 币安已上架不买 + 龙虾二次检查（买入前再查SM还在不在）（撒网过滤已于2026-03-25移除，靠$500门槛+猎手数量门槛足够过滤）
 - **确认窗口72小时**
+- **确认门槛5处必须同步改**: 首次确认(1647) / 空投过滤后(1800) / 龙虾检查(2072) / 买入函数(2317) / re-audit(3783)
+- **分批卖出第二次查链上余额卖全部** — 固定half会残留
+- **EVM预approve**: 买入后5秒自动approve max，dex_trader.preApprove()
 - **卖出递增slippage**: 5%→25%→50%三次重试，失败后分批（按ratio分两半）
 - **卖出验证**: 5秒等待+confirmed commitment查余额，假成功用原ratio重试
-- **补扫**: 买入20秒后异步扫全库同链SM→更新allSMWallets（卖出分母）
 - **三链速度**: SOL 3秒 / BSC 0.7秒 / Base 1.4秒
+- **分批卖出revenue bug**: `_trySplitSell`成功后清仓路径没计算sellRevenue，通知显示回收$0但链上实际有回收（SCS事件：显示亏$150实际亏$14）
+- **余额误报attempt耗尽bug (2026-03-30)**: 卖出失败→"余额为0"→查到误报→continue→但attempt已用完→positions被清sellRevenue=0。修复：`attempt--`误报不算重试次数
+- **smWalletAmounts falsy过滤bug (2026-03-28)**: `if(smWalletAmounts[w])`把0当false过滤掉所有SM→链上查0个→$0→被$500拦。改smBuyAmountUsd=0后没检查下游使用处
+- **pending_signals永不过期**: re-audit只在启动时执行一次，之后老达标信号永远不被重新检查。85+个达标信号躺死在pending里
+- **pendingSignals定时清理已加**: 排名刷新时（每4小时）自动清理过期信号
+- **smBuyAmountUsd查不到时保守估算**: 猎手≥2+持有验证通过→每SM按$200估算，防止好信号被$500门槛拦住（#37修复前1小时拦了55个）
+- **smBuyAmountUsd异常值**: 部分信号SM金额$10M+，计算逻辑可能有bug
 - **DexScreener价格不可靠**: 流动性差的币报价虚高≠真实可卖价值，报价值要标注来源
-- **巡检**: 10秒一轮，查价格+SM持仓+止盈+跟卖+归零清仓
+- **查持仓价值用OKX钱包API**: `/api/v5/wallet/asset/all-token-balances-by-address?chains=501&address=...`，不要自己算，不要用DexScreener算，不要用OKX quote算
+- **positions记录的余额≠链上真实余额**: 重复买入时positions只记第二次的量，链上有两次总量，OKX钱包API才是真
+- **OKX API调用必须带header**: httpGet调OKX聚合器要加`{'OK-ACCESS-KEY': process.env.OKX_API_KEY}`，不带key永远返回empty
+- **审计时回写symbol到pending_signals**: 防止re-audit交错导致symbol串台（PIXEL/SlapMac串台事件）
+- **DexScreener刚收录的币价格不稳定**: 创建6分钟内可能返回空，OKX fallback兜底
+- **巡检**: 20秒一轮，查价格+SM持仓+止盈+跟卖+归零清仓
+- **SM检查间隔**: 120秒（省QuickNode credits）
+- **SOL RPC顺序**: 公共优先(`api.mainnet-beta.solana.com`)，QuickNode fallback
+- **QuickNode用途**: SOL WS信号检测 + Base RPC + 公共429时fallback
 
 ## 重要规则
 - SOUL.md: "跑步哥说做就做——但要先确认"
@@ -60,6 +80,13 @@
 - **"没报错"≠"没bug"，测试必须覆盖边界条件（RPC限速/查询失败/崩溃恢复/文件依赖）**
 - **BSC没钱要主动提醒跑步哥充值，不能只记录不催**
 - **改代码后全文扫描前向引用（函数在定义前被调用）**
+
+## 2026-03-27教训
+- **不要一口气改太多** — 37个修改越改越不过脑子，#37直接绕过防钓鱼门槛造成错误买入
+- **防护逻辑的改动必须先问跑步哥** — $500门槛是防线不是bug
+- **清仓时positions+boughtTokens+pendingSignals三个都要同步** — 只清positions会导致re-audit重复买入
+- **改完不要急着找下一个bug** — 先验证刚改的有没有问题
+- **日志里$0被拦≠bug** — 可能就是正确行为（稳定币/DeFi操作）
 
 ## 安全
 - 所有私钥和API key加密存储（AES-256），绝不明文
@@ -82,6 +109,11 @@
 - **发合约地址前从日志确认完整地址**
 - **不要硬编码价格** — 用API查实时价格
 - **手动删positions/boughtTokens后必须重启引擎** — 否则内存和文件不同步，重启又读回来
+- **查SOL链上余额必须同时查SPL Token Program + Token-2022程序** — Token-2022漏查导致误判余额0→删positions→re-audit重复买$500
+- **改positions绝不删entry，加flag标记** — 删了boughtTokens也没清→重启re-audit又买一遍
+- **改文件必须先停引擎→改→启引擎一步到位** — 引擎内存save会覆盖你写的文件
+- **不要频繁重启引擎** — 每次重启都触发re-audit扫积压信号，可能重复买入
+- **改代码后6小时内必须有买卖活动** — 没有就立刻排查，不等跑步哥问。每次改代码都会引入隐藏bug（变量残留、文件覆盖、链路断裂），跑步哥经验：正常情况每晚都有达标信号
 - **2026-03-22深夜教训：不要凭猜测改代码** — 空投过滤来回改三次，系统本来没问题是我乱分析
 
 ## 铁律（2026-03-22）
