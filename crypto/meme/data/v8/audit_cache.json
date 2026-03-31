@@ -6718,5 +6718,28 @@
     "safe": true,
     "reason": "SOL跳过审计",
     "source": "skip"
+  },
+  "HbKnArfBSaVRW6b53GVDeXwav3VHc7r8u5mww4HMMzUm": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "8iMp8qWhHpXH7uYTm2iYo6CEfxpCtxonQAiJ6CZQpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "9waLvgPLKmpvGxUpAMmv1KTej7WZ9zHnBBEsF1oVpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0xb945124e9b79712c073d9a2c2a041d93f2d7236f": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1774914405746
   }
 }

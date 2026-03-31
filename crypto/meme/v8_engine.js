@@ -3686,7 +3686,7 @@ async function managePositions() {
           const pnlPct = ((pos.currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
           
           // 追踪止盈：到+30%后开始追踪最高价，从最高点回撤20%才卖
-          if (pnlPct >= 30) {
+          if (pnlPct >= 30 || pos.peakPnl) {
             // 记录/更新最高PnL
             if (!pos.peakPnl || pnlPct > pos.peakPnl) {
               pos.peakPnl = pnlPct;
