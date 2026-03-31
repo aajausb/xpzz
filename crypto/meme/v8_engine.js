@@ -3138,11 +3138,6 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
         // 分批卖出后清仓（大概率全卖完了）
         if (positions[tokenAddress]) {
           const holdMin = Math.round((Date.now()-(pos.buyTime||0))/60000);
-          try {
-            logTrade({ type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol,
-              token: tokenAddress, ratio: 1, reason: '分批卖出', costUsd: pos.buyCost||0,
-              soldRatio: pos.soldRatio||0, buyPrice: pos.buyPrice, holdMinutes: holdMin });
-          } catch {}
           // 链上确认余额（等5秒让链确认）
           await new Promise(r => setTimeout(r, 5000));
           let chainConfirm = '';
@@ -3188,6 +3183,12 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
               }
             }
           } catch(e) { log('WARN', `分批卖出收益估算失败: ${e.message?.slice(0,40)}`); }
+          // fallback: 如果splitRevenue仍然是0，用现价×卖出数量估算
+          if (splitRevenue <= 0 && pos.currentPrice > 0) {
+            const soldAmount = (pos.buyAmount || 0) * (sellRatio || 1) * (ok / 2); // ok/2 = 成功比例
+            splitRevenue = soldAmount * pos.currentPrice;
+            log('INFO', `💵 ${pos.symbol} 分批回收fallback估算(现价): ~$${splitRevenue.toFixed(2)}`);
+          }
           const totalRevenue = (pos.sellRevenue || 0) + splitRevenue;
           if (splitRevenue > 0) log('INFO', `💰 ${pos.symbol} 分批卖出回收 ~$${Math.round(splitRevenue)}`);
           const pnl = totalRevenue - (pos.buyCost || 0);
@@ -3242,6 +3243,11 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
               const finalPnl = finalRevenue - (pos.buyCost || 0);
               const finalPnlStr = finalPnl >= 0 ? `+$${Math.round(finalPnl)}` : `-$${Math.abs(Math.round(finalPnl))}`;
               // 残留也卖掉了，完全清仓
+              try {
+                logTrade({ type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol,
+                  token: tokenAddress, ratio: sellRatio || 1, reason: '分批卖出+残留', costUsd: pos.buyCost||0,
+                  sellRevenue: finalRevenue, soldRatio: 1, buyPrice: pos.buyPrice, holdMinutes: holdMin });
+              } catch {}
               await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(finalRevenue)} ${finalPnlStr}\n⏱️ 持有${holdStr}`);
               recordTradeHistory(tokenAddress, pos);
               delete positions[tokenAddress];
@@ -3257,6 +3263,11 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
               await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) 分批${ok}/2成功 ${chainConfirm}\n💰 已回收~$${Math.round(splitRevenue)}\n🔄 残留部分下轮巡检自动重试`);
             }
           } else {
+            try {
+              logTrade({ type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol,
+                token: tokenAddress, ratio: sellRatio || 1, reason: '分批卖出', costUsd: pos.buyCost||0,
+                sellRevenue: totalRevenue, soldRatio: 1, buyPrice: pos.buyPrice, holdMinutes: holdMin });
+            } catch {}
             await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRevenue)} ${pnlStr}\n⏱️ 持有${holdStr}`);
             recordTradeHistory(tokenAddress, pos);
             delete positions[tokenAddress];
@@ -3321,6 +3332,11 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
               }
             }
           } catch(e) { log('WARN', `EVM分批卖出收益估算失败: ${e.message?.slice(0,40)}`); }
+          if (splitRevenue <= 0 && pos.currentPrice > 0) {
+            const soldAmount = (pos.buyAmount || 0) * (sellRatio || 1) * (ok / 2);
+            splitRevenue = soldAmount * pos.currentPrice;
+            log('INFO', `💵 ${pos.symbol} EVM分批回收fallback估算(现价): ~$${splitRevenue.toFixed(2)}`);
+          }
           const totalRevenue = (pos.sellRevenue || 0) + splitRevenue;
           if (splitRevenue > 0) log('INFO', `💰 ${pos.symbol} 分批卖出回收 ~$${Math.round(splitRevenue)}`);
           const pnl = totalRevenue - (pos.buyCost || 0);
@@ -3339,6 +3355,11 @@ async function _trySplitSell(pos, tokenAddress, sellRatio = 1) {
             saveJSON(POSITIONS_FILE, positions);
             await notifyTelegram(`⚠️ ${pos.symbol}(${pos.chain}) EVM分批${ok}/2成功但链上有残留\n💰 已回收~$${Math.round(splitRevenue)}\n🔄 下轮巡检自动重试`);
           } else {
+            try {
+              logTrade({ type: 'SELL', time: new Date().toISOString(), chain: pos.chain, symbol: pos.symbol,
+                token: tokenAddress, ratio: sellRatio || 1, reason: '分批卖出(EVM)', costUsd: pos.buyCost||0,
+                sellRevenue: totalRevenue, soldRatio: 1, buyPrice: pos.buyPrice, holdMinutes: holdMin });
+            } catch {}
             await notifyTelegram(`🔴 完全清仓 ${pos.symbol}(${pos.chain})\n💰 买入$${Math.round(pos.buyCost||0)} → 回收$${Math.round(totalRevenue)} ${pnlStr}\n⏱️ 持有${holdStr}`);
             recordTradeHistory(tokenAddress, pos);
             delete positions[tokenAddress];
