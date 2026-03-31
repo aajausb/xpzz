@@ -7026,5 +7026,21 @@
     "riskLevel": "MID",
     "reason": "OK",
     "_time": 1774982616198
+  },
+  "0xa77f62c1e519c5dd2424944b686a36579c6a3cde": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1774986192282
+  },
+  "0x0f127e9ff1d201c34f539e9a0dee44aa1c2f5fa9": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "MID",
+    "reason": "OK",
+    "_time": 1774986493929
   }
 }
