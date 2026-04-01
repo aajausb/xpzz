@@ -39498,5 +39498,29 @@
       "smBuyAmountUsd": 0,
       "walletStatus": "scout"
     }
+  ],
+  "0xadfb42e92c3387a4d395069e9f9e59e39209b9d8": [
+    {
+      "chain": "base",
+      "token": "0xadfb42e92c3387a4d395069e9f9e59e39209b9d8",
+      "symbol": "?",
+      "wallet": "0x37156ef4af2d101fc661771311c4262019fd9142",
+      "walletRank": 10,
+      "timestamp": 1775038886041,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "hunter"
+    }
+  ],
+  "FBNembQZgeAFk94wv3CWK2gc7v2PujqZt3qnEa9apump": [
+    {
+      "chain": "solana",
+      "token": "FBNembQZgeAFk94wv3CWK2gc7v2PujqZt3qnEa9apump",
+      "symbol": "?",
+      "wallet": "99xnE2zEFi8YhmKDaikc1EvH6ELTQJppnqUwMzmpLXrs",
+      "walletRank": 14,
+      "timestamp": 1775039049162,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "scout"
+    }
   ]
 }
