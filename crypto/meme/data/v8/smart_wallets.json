@@ -1494,7 +1494,7 @@
     "status": "scout"
   },
   {
-    "rank": 12,
+    "rank": 13,
     "address": "0x45e8ec806a08059b7e08de08f4b95ed356f83b6f",
     "chain": "base",
     "pnl": 1805.4201599073847,
@@ -1503,7 +1503,7 @@
     "status": "hunter"
   },
   {
-    "rank": 16,
+    "rank": 17,
     "address": "0x8a5adc20b7e17d6535e34ff31bc9549ac2771286",
     "chain": "base",
     "pnl": 7907.9122056743645,
@@ -1791,13 +1791,13 @@
     "status": "scout"
   },
   {
-    "rank": 5,
+    "rank": 4,
     "address": "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3",
     "chain": "solana",
-    "pnl": 60182.825459310916,
-    "winRate": 69.88,
-    "tokens": 585,
-    "status": "scout"
+    "pnl": 60790.10363415154,
+    "winRate": 70.19,
+    "tokens": 598,
+    "status": "hunter"
   },
   {
     "rank": 15,
@@ -1872,7 +1872,7 @@
     "status": "scout"
   },
   {
-    "rank": 25,
+    "rank": 26,
     "address": "0xe7ac8fdfe061efdf6bdc4429151d6723c587d0cb",
     "chain": "base",
     "pnl": 5048.603388524394,
@@ -1935,7 +1935,7 @@
     "status": "scout"
   },
   {
-    "rank": 4,
+    "rank": 5,
     "address": "5fHJszey2UdB2nETS1y6NS2wSG4ic9byKtbgJzaYzGeV",
     "chain": "solana",
     "pnl": 33493.63582530895,
@@ -1998,21 +1998,21 @@
     "status": "scout"
   },
   {
-    "rank": 17,
+    "rank": 16,
     "address": "0x4e20d0cf1cbc84e3886a9aa60c3f041f1081c0f7",
     "chain": "base",
-    "pnl": 5252.125799850084,
+    "pnl": 6757.093535249008,
     "winRate": 65.22,
-    "tokens": 30,
+    "tokens": 31,
     "status": "scout"
   },
   {
-    "rank": 26,
+    "rank": 25,
     "address": "0x2a21979eec8462e8aaeba015bc7f9dcf78ae7bfc",
     "chain": "base",
-    "pnl": 2657.4977277147414,
-    "winRate": 69.23,
-    "tokens": 19,
+    "pnl": 2676.68818205568,
+    "winRate": 68.75,
+    "tokens": 23,
     "status": "scout"
   },
   {
@@ -2034,12 +2034,12 @@
     "status": "scout"
   },
   {
-    "rank": 13,
+    "rank": 12,
     "address": "0x37d11c206956b489f34dc2515cd2005657fa75fd",
     "chain": "base",
-    "pnl": 8617.468806250501,
-    "winRate": 61.29,
-    "tokens": 41,
+    "pnl": 8737.942176423969,
+    "winRate": 62.5,
+    "tokens": 42,
     "status": "scout"
   }
 ]
