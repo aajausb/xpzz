@@ -5741,9 +5741,9 @@
     "safe": true,
     "isHoneypot": false,
     "sellTax": 0,
-    "riskLevel": "LOW",
+    "riskLevel": "MID",
     "reason": "OK",
-    "_time": 1774405587140
+    "_time": 1775232535682
   },
   "0x7acb17cec93e3536e04b2e711df68b05cb5716f6": {
     "safe": false,
@@ -7579,5 +7579,10 @@
     "riskLevel": "MID",
     "reason": "OK",
     "_time": 1775225400686
+  },
+  "5BMAcPsGtAt43GuMJDLMXe7z13YuiazXfQV72Ye7pump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
   }
 }
