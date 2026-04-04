@@ -7366,12 +7366,12 @@
     "source": "skip"
   },
   "0xfbb5aa899e14d4148f3d70ae325381c0a75c952a": {
-    "safe": true,
+    "safe": false,
     "isHoneypot": false,
     "sellTax": 0,
-    "riskLevel": "MID",
-    "reason": "OK",
-    "_time": 1775098085923
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1775338398375
   },
   "5ePB8Z3tgxwNc1CwCa6BrvpLk1JWbuDEr1svNeP9pump": {
     "safe": true,
