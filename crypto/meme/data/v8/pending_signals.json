@@ -39061,18 +39061,6 @@
       "walletStatus": "watcher"
     }
   ],
-  "0x05bc0488fd91c2dbee0a6cbe81fd63c2dd7a4c0b": [
-    {
-      "chain": "base",
-      "token": "0x05bc0488fd91c2dbee0a6cbe81fd63c2dd7a4c0b",
-      "symbol": "?",
-      "wallet": "0x4e7be9a8343f6fac55e2f9554415a1e8efaa3b07",
-      "walletRank": 12,
-      "timestamp": 1775397415319,
-      "smBuyAmountUsd": 0,
-      "walletStatus": "hunter"
-    }
-  ],
   "GZLgNDgB9pQptuAJDPHc3L2fzhsi3ntkai2L8525SrPv": [
     {
       "chain": "solana",
@@ -39081,6 +39069,66 @@
       "wallet": "Bi4rd5FH5bYEN8scZ7wevxNZyNmKHdaBcvewdPFxYdLt",
       "walletRank": 4,
       "timestamp": 1775397466826,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "scout"
+    }
+  ],
+  "7XdCaKpqLmKE2K7yr9xaeWB1H2CVZ1oGwxB6hmd9pump": [
+    {
+      "chain": "solana",
+      "token": "7XdCaKpqLmKE2K7yr9xaeWB1H2CVZ1oGwxB6hmd9pump",
+      "symbol": "?",
+      "wallet": "BCrTEXmWutwPz8qv6w1S5gDbaLnSLpXKM5kSGVWyyfxu",
+      "walletRank": 21,
+      "timestamp": 1775398016498,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "hunter"
+    }
+  ],
+  "82JiQ1JL212nKhk6Mk3aFNYVesXhvXoqUkeKtQ5Mpump": [
+    {
+      "chain": "solana",
+      "token": "82JiQ1JL212nKhk6Mk3aFNYVesXhvXoqUkeKtQ5Mpump",
+      "symbol": "?",
+      "wallet": "Bi4rd5FH5bYEN8scZ7wevxNZyNmKHdaBcvewdPFxYdLt",
+      "walletRank": 4,
+      "timestamp": 1775398068414,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "scout"
+    }
+  ],
+  "85cQsFgbi8mBZxiPppbpPXuV7j1hA8tBwhjF4gKW6mHg": [
+    {
+      "chain": "solana",
+      "token": "85cQsFgbi8mBZxiPppbpPXuV7j1hA8tBwhjF4gKW6mHg",
+      "symbol": "?",
+      "wallet": "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp",
+      "walletRank": 28,
+      "timestamp": 1775398125027,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "scout"
+    }
+  ],
+  "0x6325911a6a0826434d4b9a5805dc4151146ed289": [
+    {
+      "chain": "base",
+      "token": "0x6325911a6a0826434d4b9a5805dc4151146ed289",
+      "symbol": "?",
+      "wallet": "0x92e9b91aa2171694d740e7066f787739ca1af9de",
+      "walletRank": 61,
+      "timestamp": 1775399067095,
+      "smBuyAmountUsd": 0,
+      "walletStatus": "hunter"
+    }
+  ],
+  "H8xQ6poBjB9DTPMDTKWzWPrnxu4bDEhybxiouF8Ppump": [
+    {
+      "chain": "solana",
+      "token": "H8xQ6poBjB9DTPMDTKWzWPrnxu4bDEhybxiouF8Ppump",
+      "symbol": "?",
+      "wallet": "F4YRDqkXKmSdUcwAoZGJBjcXVYDetXMAGaV8W7DYtsmX",
+      "walletRank": 60,
+      "timestamp": 1775399115015,
       "smBuyAmountUsd": 0,
       "walletStatus": "scout"
     }
