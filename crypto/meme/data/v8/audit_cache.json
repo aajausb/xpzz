@@ -8081,5 +8081,26 @@
     "riskLevel": "MID",
     "reason": "OK",
     "_time": 1775494929787
+  },
+  "FvoeLbYgK8PmjERQZZSvAz8jHuY9BbtgKnNe4KAbpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0x7e3ee42b141cc49ed7b950a19e4fbc13c225667b": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "MID",
+    "reason": "OK",
+    "_time": 1775496603751
+  },
+  "0xef0bddb9036a88398f91cdcaf5f449238e682aad": {
+    "safe": false,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1775496873713
   }
 }
