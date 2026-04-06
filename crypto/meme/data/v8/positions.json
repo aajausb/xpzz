@@ -1,1 +1,27 @@
-{}
+{
+  "0xadf8a6f0c5e4fe31de86342428eea9e1d70c8e74": {
+    "chain": "base",
+    "token": "0xadf8a6f0c5e4fe31de86342428eea9e1d70c8e74",
+    "symbol": "A2A",
+    "buyPrice": 0.000053883594613551755,
+    "buyAmount": 5567531.158433,
+    "buyAmountRaw": 5567531.158433,
+    "buyCost": 300,
+    "buyTime": 1775461737321,
+    "confirmCount": 2,
+    "confirmWallets": [
+      "0x37156ef4af2d101fc661771311c4262019fd9142",
+      "0x1c80235bba932059bf5fbff65ea4dbc2181593dd"
+    ],
+    "smTotalUsd": 685,
+    "allSMWallets": [
+      "0x37156ef4af2d101fc661771311c4262019fd9142",
+      "0x1c80235bba932059bf5fbff65ea4dbc2181593dd"
+    ],
+    "currentPrice": 0.000055,
+    "currentValue": 306.214213713815,
+    "pnlPercent": 2.0718836492906703,
+    "totalPnl": 6.214213713815013,
+    "totalPnlPercent": 2.071404571271671
+  }
+}
