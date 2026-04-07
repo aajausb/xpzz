@@ -2079,6 +2079,10 @@ async function handleSignal(signal) {
       dexInfo.liquidity = parseFloat(mainPair.liquidity?.usd || 0);
       dexInfo.quoteSymbol = mainPair.quoteToken?.symbol || '?';
       dexInfo.tokenName = mainPair.baseToken?.name || symbol;
+      dexInfo.priceChange24h = parseFloat(mainPair.priceChange?.h24 || 0);
+      dexInfo.buys = mainPair.txns?.h24?.buys || 0;
+      dexInfo.sells = mainPair.txns?.h24?.sells || 0;
+      dexInfo.pairCreatedAt = mainPair.pairCreatedAt || 0;
       const info = mainPair.info;
       if (info?.websites?.[0]?.url) dexInfo.website = info.websites[0].url;
       if (info?.socials) {
@@ -2136,12 +2140,84 @@ async function handleSignal(signal) {
   const mcapStr = dexInfo.mcap >= 1e6 ? `$${(dexInfo.mcap / 1e6).toFixed(1)}M` : `$${Math.round(dexInfo.mcap / 1000)}K`;
   const liqStr = dexInfo.liquidity >= 1e6 ? `$${(dexInfo.liquidity / 1e6).toFixed(1)}M` : `$${Math.round(dexInfo.liquidity / 1000)}K`;
   
+  // === 综合评分 + 叙事 ===
+  let score = 5; // 基础分5/10
+  const flags = [];
+  const goods = [];
+  
+  // 1. 主池quote token检查
+  const mainstreamQuotes = ['WETH', 'SOL', 'WSOL', 'USDC', 'USDT', 'WBNB', 'ETH'];
+  if (!mainstreamQuotes.includes(dexInfo.quoteSymbol?.toUpperCase())) {
+    score -= 3;
+    flags.push(`⚠️ 野鸡池(${dexInfo.quoteSymbol})非主流配对`);
+  } else {
+    score += 1;
+    goods.push('主流池配对');
+  }
+  
+  // 2. 24h涨跌幅
+  const priceChange24h = dexInfo.priceChange24h || 0;
+  if (priceChange24h < -30) { score -= 1; flags.push(`📉 24h跌${Math.abs(priceChange24h).toFixed(0)}%`); }
+  else if (priceChange24h > 50) { score += 1; goods.push(`📈 24h涨${priceChange24h.toFixed(0)}%`); }
+  
+  // 3. 有无社交/官网
+  if (!dexInfo.website && !dexInfo.twitter) { score -= 1; flags.push('无官网/社交'); }
+  else { score += 1; goods.push('有社交链接'); }
+  
+  // 4. 买卖比
+  if (dexInfo.sells > dexInfo.buys * 1.3 && dexInfo.sells > 20) { score -= 1; flags.push(`卖压(买${dexInfo.buys}/卖${dexInfo.sells})`); }
+  else if (dexInfo.buys > dexInfo.sells * 1.3 && dexInfo.buys > 20) { score += 1; goods.push(`买盘强(买${dexInfo.buys}/卖${dexInfo.sells})`); }
+  
+  // 5. 流动性/市值比
+  const liqRatio = dexInfo.liquidity / (dexInfo.mcap || 1);
+  if (liqRatio < 0.03) { score -= 1; flags.push('流动性极低'); }
+  else if (liqRatio > 0.15) { score += 1; goods.push('流动性充足'); }
+  
+  // 6. 币龄
+  const ageHours = dexInfo.pairCreatedAt ? (Date.now() - dexInfo.pairCreatedAt) / 3600000 : 0;
+  if (ageHours > 72 && priceChange24h < -20) { flags.push(`币龄${Math.round(ageHours/24)}天且在跌`); score -= 1; }
+  else if (ageHours < 24) { goods.push('新币(<24h)'); }
+  
+  // 7. SM持有金额加分
+  if (smLiveTotal > 5000) { score += 1; goods.push(`SM重仓$${Math.round(smLiveTotal)}`); }
+  if (smLiveTotal > 20000) { score += 1; }
+  
+  // 8. 猎手数加分
+  if (realHunters >= 3) { score += 1; goods.push(`${realHunters}猎手共识`); }
+  
+  score = Math.max(1, Math.min(10, score));
+  const scoreEmoji = score >= 7 ? '🟢' : score >= 5 ? '🟡' : '🔴';
+  
+  // 叙事：从DexScreener的tokenName推断
+  let narrative = dexInfo.tokenName || symbol;
+  if (narrative === symbol) narrative = '未知叙事';
+  
+  // 尝试从网站获取一句话描述
+  if (dexInfo.website) {
+    try {
+      const fetch = require('node-fetch');
+      const ctrl = new AbortController();
+      const timeout = setTimeout(() => ctrl.abort(), 5000);
+      const html = await fetch(dexInfo.website, { signal: ctrl.signal }).then(r => r.text());
+      clearTimeout(timeout);
+      // 尝试提取meta description
+      const descMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']{10,200})["']/i)
+        || html.match(/<meta[^>]*content=["']([^"']{10,200})["'][^>]*name=["']description["']/i);
+      if (descMatch) narrative = descMatch[1].trim();
+    } catch {}
+  }
+  
+  const scoreSection = `${scoreEmoji} 评分: ${score}/10\n` +
+    (goods.length ? `✅ ${goods.join(' | ')}\n` : '') +
+    (flags.length ? `🚩 ${flags.join(' | ')}\n` : '') +
+    `📖 ${narrative}`;
+  
   const notifyMsg = `🔔 信号达标 ${symbol}(${chain})\n` +
     `📊 猎手${realHunters}+哨兵${finalScouts} | SM实时持有$${Math.round(smLiveTotal > 0 ? smLiveTotal : smTotal2)}\n` +
     `🏹 ${smLabels}\n` +
     `💰 市值: ${mcapStr} | 流动性: ${liqStr}\n` +
-    `🏊 主池: ${symbol}/${dexInfo.quoteSymbol}\n` +
-    `📖 ${dexInfo.tokenName}${dexInfo.website ? ' | ' + dexInfo.website : ''}${dexInfo.twitter ? ' | ' + dexInfo.twitter : ''}\n` +
+    `🏊 主池: ${symbol}/${dexInfo.quoteSymbol}${dexInfo.website ? ' | ' + dexInfo.website : ''}${dexInfo.twitter ? ' | ' + dexInfo.twitter : ''}\n` +
+    `${scoreSection}\n` +
     `\`${token}\``;
   
   const tokenShort = token.slice(0, 20);
@@ -3887,19 +3963,56 @@ async function managePositions() {
 // ============ 通知 ============
 async function notifyTelegram(msg, buttons = null) {
   console.log('📢 ' + msg.replace(/\n/g, ' | '));
-  // 写入本地通知队列文件，由OpenClaw heartbeat转发给跑步哥
-  try {
-    const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
-    let queue = [];
-    try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
-    const entry = { ts: Date.now(), msg };
-    if (buttons) entry.buttons = buttons;
-    queue.push(entry);
-    // 原子写入
-    const tmp = queueFile + '.tmp';
-    fs.writeFileSync(tmp, JSON.stringify(queue));
-    fs.renameSync(tmp, queueFile);
-  } catch(e) { log('WARN', `通知队列写入失败: ${e.message?.slice(0,60)}`); }
+  
+  // 直接调TG Bot API发消息（带inline keyboard）
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (botToken && chatId) {
+    try {
+      const body = {
+        chat_id: chatId,
+        text: msg,
+        parse_mode: 'Markdown',
+        disable_web_page_preview: true
+      };
+      if (buttons && buttons.length > 0) {
+        // buttons是一维数组，转成二维：买入按钮一行，跳过按钮一行
+        const buyBtns = buttons.filter(b => !b.callback_data.startsWith('x_'));
+        const skipBtns = buttons.filter(b => b.callback_data.startsWith('x_'));
+        const keyboard = [];
+        if (buyBtns.length) keyboard.push(buyBtns);
+        if (skipBtns.length) keyboard.push(skipBtns);
+        body.reply_markup = JSON.stringify({ inline_keyboard: keyboard });
+      }
+      const res = await httpPost(`https://api.telegram.org/bot${botToken}/sendMessage`, body, { 'Content-Type': 'application/json' });
+      if (!res.ok) log('WARN', `TG发送失败: ${res.description || JSON.stringify(res).slice(0,100)}`);
+    } catch(e) {
+      log('WARN', `TG直发失败: ${e.message?.slice(0,60)}`);
+      // fallback: 写入队列让heartbeat转发（无按钮）
+      try {
+        const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
+        let queue = [];
+        try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
+        queue.push({ ts: Date.now(), msg });
+        const tmp = queueFile + '.tmp';
+        fs.writeFileSync(tmp, JSON.stringify(queue));
+        fs.renameSync(tmp, queueFile);
+      } catch {}
+    }
+  } else {
+    // 没有TG配置，走队列
+    try {
+      const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
+      let queue = [];
+      try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
+      const entry = { ts: Date.now(), msg };
+      if (buttons) entry.buttons = buttons;
+      queue.push(entry);
+      const tmp = queueFile + '.tmp';
+      fs.writeFileSync(tmp, JSON.stringify(queue));
+      fs.renameSync(tmp, queueFile);
+    } catch(e) { log('WARN', `通知队列写入失败: ${e.message?.slice(0,60)}`); }
+  }
 }
 
 // ============ MAIN ============

@@ -41,6 +41,9 @@
 - **审计**: 达标后查SM链上余额（≥$1有效，<$1查链上交易：转仓算有效/DEX卖出踢掉）+ SM累计<$500不买 + 市值门槛(SOL/BSC $100K, Base $30K) + 币安已上架不买 + 龙虾二次检查
 - **确认窗口72小时**
 - **确认门槛5处必须同步改**: 首次确认(1635) / 空投过滤后(1785) / 龙虾检查(2055) / 买入函数(2300) / re-audit(3932-3933)
+- **通知模式(2026-04-07)**: 审计通过不自动买，发TG通知(带按钮)给跑步哥决定。引擎直发TG Bot API不走notify_queue
+- **市值门槛(2026-04-07)**: $10K ~ $10M（三链统一）
+- **SM金额用实时持有**: 链上余额×DexScreener价格，<$500不发通知
 - **确认门槛(2026-03-30)**: ≥2猎手 / 1猎手+2哨兵 / ≥4哨兵（三链统一，去掉纯3哨兵因67%亏损率）
 - **minMarketCap**: `{ solana: 100000, bsc: 100000, base: 30000 }`，fallback $30K
 - **卖出变量**: SELL_MAX_RETRIES=2（区别于买入MAX_RETRIES=3）
@@ -61,7 +64,11 @@
 - **positions记录的余额≠链上真实余额**: 重复买入时positions只记第二次的量，链上有两次总量，OKX钱包API才是真
 - **OKX API调用必须带header**: httpGet调OKX聚合器要加`{'OK-ACCESS-KEY': process.env.OKX_API_KEY}`，不带key永远返回empty
 - **审计时回写symbol到pending_signals**: 防止re-audit交错导致symbol串台（PIXEL/SlapMac串台事件）
-- **DexScreener刚收录的币价格不稳定**: 创建6分钟内可能返回空，OKX fallback兜底
+- **Base野鸡池子教训(2026-04-07)**: OKX聚合器会走野鸡中间币路由(ADS/SCOUT)，$300打穿小池子。通知模式后由跑步哥自己判断
+- **OKX聚合器priceImpactProtectionPercentage**: 可设0.10防大滑点，但还没加
+- **引擎直发TG**: notifyTelegram直接调Bot API，fallback写notify_queue。解决heartbeat漏转buttons问题
+- **callback_data缩短**: `b_s_tokenShort20_100` 格式，避免超TG 64字节限制
+- **decimals≠18卖出会revert**: BACKGROUNDMUSIC是6位，传错amount。巡检卖出也可能有这个bug待查
 - **巡检**: 5秒一轮，查价格+止盈+止损+归零清仓
 - **SM检查间隔**: 120秒（省QuickNode credits）
 - **SOL RPC顺序**: 公共优先(`api.mainnet-beta.solana.com`)，QuickNode fallback
