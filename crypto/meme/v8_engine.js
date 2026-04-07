@@ -2146,7 +2146,8 @@ async function handleSignal(signal) {
     `🏹 ${smLabels}\n` +
     `💰 市值: ${mcapStr} | 流动性: ${liqStr}\n` +
     `🏊 主池: ${symbol}/${dexInfo.quoteSymbol}\n` +
-    `${token}`;
+    `🌐 ${dexInfo.website || '-'} | ${dexInfo.twitter || '-'}\n\n` +
+    `<code>${token}</code>`;
   
   const tokenShort = token.slice(0, 20);
   const buttons = [
@@ -2157,9 +2158,9 @@ async function handleSignal(signal) {
   ];
   
   log('INFO', `🔔 通知模式: ${symbol}(${chain}) 猎手=${realHunters} 哨兵=${finalScouts} 市值=${mcapStr}`);
-  await notifyTelegram(notifyMsg, buttons);
+  // 不直发TG，写完整数据到队列，等AI分析后合成一条消息发出
   
-  // 写AI分析请求到notify_queue
+  // 写AI分析请求到notify_queue（包含通知数据+按钮）
   try {
     const analyzeData = {
       type: 'analyze',
@@ -2176,6 +2177,9 @@ async function handleSignal(signal) {
       tokenName: dexInfo.tokenName || symbol,
       website: dexInfo.website || '', twitter: dexInfo.twitter || '',
       pairCreatedAt: dexInfo.pairCreatedAt || 0,
+      notifyMsg,
+      buttons,
+      mcapStr, liqStr,
     };
     const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
     let queue = [];
@@ -3927,7 +3931,8 @@ async function notifyTelegram(msg, buttons = null) {
       const body = {
         chat_id: chatId,
         text: msg,
-        disable_web_page_preview: true
+        disable_web_page_preview: true,
+        parse_mode: 'HTML'
       };
       if (buttons && buttons.length > 0) {
         // buttons是一维数组，转成二维：买入按钮一行，跳过按钮一行
