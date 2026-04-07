@@ -3829,49 +3829,50 @@ async function managePositions() {
         //           }
         //         }
         
-        // === 新策略：+30%追踪止盈 / -50%止损 ===
+        // === 止盈策略：翻倍出本 + 阶梯减仓 / -50%止损 ===
         if (pos.currentPrice > 0 && pos.buyPrice > 0) {
           const pnlPct = ((pos.currentPrice - pos.buyPrice) / pos.buyPrice) * 100;
           
-          // 追踪止盈：到+30%后开始追踪最高价，从最高点回撤20%才卖
-          if (pnlPct >= 30 || pos.peakPnl) {
-            // 记录/更新最高PnL
-            if (!pos.peakPnl || pnlPct > pos.peakPnl) {
-              pos.peakPnl = pnlPct;
-              pos.peakPrice = pos.currentPrice;
-              saveJSON(POSITIONS_FILE, positions);
-              if (!pos._peakLogged || pnlPct > pos._peakLogged + 20) {
-                log('INFO', `📈 ${pos.symbol}(${pos.chain}) 新高PnL+${pnlPct.toFixed(0)}% 价格$${pos.currentPrice.toFixed(8)}`);
-                pos._peakLogged = pnlPct;
+          // --- 翻倍出本 + 阶梯减仓 ---
+          // lastSellPrice: 上次卖出时的价格（用于计算"再翻倍"）
+          // capitalRecovered: 是否已回本
+          const refPrice = pos.lastSellPrice || pos.buyPrice;
+          const gainSinceRef = ((pos.currentPrice - refPrice) / refPrice) * 100;
+          
+          if (gainSinceRef >= 100) {
+            if (!pos.capitalRecovered) {
+              // 第一次翻倍：卖50%回本
+              log('INFO', `🎯 ${pos.symbol}(${pos.chain}) 翻倍出本! PnL+${pnlPct.toFixed(0)}% 现价$${pos.currentPrice.toFixed(8)}`);
+              await executeSell(tokenAddr, `翻倍出本+${pnlPct.toFixed(0)}%`, 0.5);
+              if (positions[tokenAddr]) {
+                pos.capitalRecovered = true;
+                pos.lastSellPrice = pos.currentPrice;
+                pos.soldRatio = (pos.soldRatio || 0) + 0.5 * (1 - (pos.soldRatio || 0));
+                saveJSON(POSITIONS_FILE, positions);
+                const rev = pos.sellRevenue || 0;
+                await notifyTelegram(`🟢 翻倍出本 ${pos.symbol}(${pos.chain}) +${pnlPct.toFixed(0)}%\n💰 卖出50%回本 | 成本$${pos.buyCost||0} 已回收$${Math.round(rev)}\n🔓 剩余仓位纯利润，继续奔跑`);
               }
-            }
-            // 从最高点回撤20%才触发卖出
-            const drawdown = (pos.peakPnl - pnlPct) / pos.peakPnl;
-            if (drawdown >= 0.20 || pnlPct <= 5) {
-              // 回撤20%或PnL跌回+5%以下，止盈卖出
-              log('INFO', `🎯 ${pos.symbol}(${pos.chain}) 追踪止盈! PnL+${pnlPct.toFixed(0)}% 最高+${pos.peakPnl.toFixed(0)}% 回撤${(drawdown*100).toFixed(0)}%`);
-              await executeSell(tokenAddr, `追踪止盈+${pnlPct.toFixed(0)}%(峰值+${pos.peakPnl.toFixed(0)}%)`);
-              if (positions[tokenAddr] && !positions[tokenAddr]._splitNotified) {
-                recordTradeHistory(tokenAddr, pos);
+              continue;
+            } else {
+              // 已回本后，每再翻倍卖30%剩余
+              log('INFO', `🎯 ${pos.symbol}(${pos.chain}) 再翻倍减仓! PnL+${pnlPct.toFixed(0)}% 现价$${pos.currentPrice.toFixed(8)}`);
+              await executeSell(tokenAddr, `再翻倍减仓+${pnlPct.toFixed(0)}%`, 0.3);
+              if (positions[tokenAddr]) {
+                pos.lastSellPrice = pos.currentPrice;
+                pos.soldRatio = (pos.soldRatio || 0) + 0.3 * (1 - (pos.soldRatio || 0));
+                saveJSON(POSITIONS_FILE, positions);
                 const rev = pos.sellRevenue || 0;
                 const pnl = rev - (pos.buyCost || 0);
-                await notifyTelegram(`🟢 追踪止盈 ${pos.symbol}(${pos.chain}) +${pnlPct.toFixed(0)}%\n📈 最高+${pos.peakPnl.toFixed(0)}% 回撤${(drawdown*100).toFixed(0)}%\n💰 成本$${pos.buyCost||0} 回收$${Math.round(rev)} 盈亏$${Math.round(pnl)}`);
-                delete positions[tokenAddr];
-                delete sellTracker[tokenAddr];
-                delete transferTracker[tokenAddr];
-                boughtTokens.delete(tokenAddr);
-                saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
-                saveJSON(POSITIONS_FILE, positions);
+                await notifyTelegram(`🟢 再翻倍减仓 ${pos.symbol}(${pos.chain}) +${pnlPct.toFixed(0)}%\n💰 卖出30%剩余 | 总回收$${Math.round(rev)} 盈亏$${Math.round(pnl)}`);
               }
               continue;
             }
-            // 还在涨，继续追踪
-            continue;
           }
           
-          // -50%止损：全卖（买入5分钟内不止损，防OKX虚低价误杀）
+          // --- 止损：仅限未回本的仓位 ---
+          // 已回本的仓位不止损（纯利润，让它跑到归零）
           const buyAge2 = Date.now() - (pos.buyTime || 0);
-          if (pnlPct <= -50 && buyAge2 > 300000) {
+          if (!pos.capitalRecovered && pnlPct <= -50 && buyAge2 > 300000) {
             {
               log('INFO', `🛑 ${pos.symbol}(${pos.chain}) 止损! PnL${pnlPct.toFixed(0)}% 买$${pos.buyPrice.toFixed(8)} 现$${pos.currentPrice.toFixed(8)}`);
               await executeSell(tokenAddr, `止损${pnlPct.toFixed(0)}%`);
