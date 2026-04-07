@@ -44,8 +44,8 @@ const CONFIG = {
   // 过滤
   minSmartMoneyConfirm: 2,                 // 至少2个钱包确认才跟
   confirmWindowMs: 72 * 60 * 60 * 1000,          // 72小时确认窗口
-  minMarketCap: { solana: 100000, bsc: 100000, base: 30000 }, // SOL/BSC $100K, Base $30K
-  maxMarketCap: 50000000,                  // 最高市值$50M，过滤CAKE/BNB等大币
+  minMarketCap: 10000,                     // 最低市值$10K
+  maxMarketCap: 10000000,                  // 最高市值$10M
   
   // 交易 — 动态仓位(余额×百分比): TOP10=20% TOP30=15% 其他=10% min$5 max$200
   maxPositions: 999,
@@ -1861,7 +1861,7 @@ async function handleSignal(signal) {
   
   // 市值过滤（DexScreener fdv → OKX报价反推）
   let mcap = parseFloat(dexData?.pairs?.[0]?.fdv || dexData?.pairs?.[0]?.marketCap || 0);
-  const minMcap = typeof CONFIG.minMarketCap === 'object' ? (CONFIG.minMarketCap[chain] || 30000) : CONFIG.minMarketCap;
+  const minMcap = CONFIG.minMarketCap;
   const maxMcap = CONFIG.maxMarketCap;
   
   // DexScreener没市值（内盘/新币）→ 用OKX报价 × totalSupply反推
@@ -2066,7 +2066,106 @@ async function handleSignal(signal) {
   } catch(e) { log('WARN', `买前SM检查异常: ${e.message?.slice(0,40)}，继续买入`); }
   
   const finalScouts = holdingScoutsOuter !== null ? holdingScoutsOuter : realScouts;
-  await executeBuy(chain, token, symbol, realHunters, confirmWallets, smWalletAmounts, finalScouts);
+  
+  // === 通知模式：不自动买，发通知给跑步哥决定 ===
+  const smTotal2 = Object.values(smWalletAmounts).reduce((a, b) => a + b, 0);
+  // SM累计<$500不发通知（防钓鱼）
+  if (smTotal2 < 500) {
+    log('INFO', `🚫 ${symbol}(${chain}) SM累计$${Math.round(smTotal2)}<$500，跳过通知`);
+    boughtTokens.delete(token);
+    saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+    handleSignal._auditLock.delete(token);
+    return;
+  }
+  // 查DexScreener获取市值、主池、网站信息
+  let dexInfo = { mcap: mcap, liquidity: 0, quoteSymbol: '?', website: '', twitter: '', tokenName: symbol };
+  try {
+    const dexRes = await httpGet(`https://api.dexscreener.com/latest/dex/tokens/${token}`);
+    const mainPair = dexRes?.pairs?.[0];
+    if (mainPair) {
+      dexInfo.mcap = parseFloat(mainPair.fdv || mainPair.marketCap || mcap);
+      dexInfo.liquidity = parseFloat(mainPair.liquidity?.usd || 0);
+      dexInfo.quoteSymbol = mainPair.quoteToken?.symbol || '?';
+      dexInfo.tokenName = mainPair.baseToken?.name || symbol;
+      const info = mainPair.info;
+      if (info?.websites?.[0]?.url) dexInfo.website = info.websites[0].url;
+      if (info?.socials) {
+        const tw = info.socials.find(s => s.type === 'twitter');
+        if (tw) dexInfo.twitter = tw.url;
+      }
+    }
+  } catch(e) { log('WARN', `DexScreener查询失败: ${e.message?.slice(0,40)}`); }
+  
+  // 查SM实时持有总金额（链上余额×当前价格）
+  let smLiveTotal = 0;
+  try {
+    const price = parseFloat(dexData?.pairs?.[0]?.priceUsd || 0);
+    if (price > 0) {
+      const checkSM = confirmWallets.slice(0, 5);
+      if (chain === 'solana') {
+        for (const smW of checkSM) {
+          try {
+            const bal = await getSolTokenBalance(smW, token);
+            smLiveTotal += bal * price;
+          } catch {}
+        }
+      } else {
+        const { ethers } = require('ethers');
+        const provider = chain === 'bsc' ? bscProvider : baseProvider;
+        const erc20 = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'], provider);
+        const dec = await erc20.decimals().catch(() => 18);
+        for (const smW of checkSM) {
+          try {
+            const bal = await erc20.balanceOf(smW);
+            smLiveTotal += parseFloat(ethers.formatUnits(bal, dec)) * price;
+          } catch {}
+        }
+      }
+    }
+  } catch(e) { log('WARN', `SM实时持有查询失败: ${e.message?.slice(0,40)}`); }
+  
+  // SM实时持有<$500也不发通知
+  if (smLiveTotal < 500 && smLiveTotal > 0) {
+    log('INFO', `🚫 ${symbol}(${chain}) SM实时持有$${Math.round(smLiveTotal)}<$500，跳过通知`);
+    boughtTokens.delete(token);
+    saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+    handleSignal._auditLock.delete(token);
+    return;
+  }
+  
+  // 构建SM钱包标签
+  const smLabels = confirmWallets.slice(0, 5).map(w => {
+    const info = rankedWallets.find(rw => rw.address === w || rw.address?.toLowerCase() === w?.toLowerCase());
+    const tier = info?.status === 'hunter' ? '猎手' : '哨兵';
+    const chainLabel = chain === 'solana' ? 'SOL' : chain === 'bsc' ? 'BSC' : 'Base';
+    return `${chainLabel}${tier}#${info?.rank || '?'}`;
+  }).join(' ');
+  
+  const mcapStr = dexInfo.mcap >= 1e6 ? `$${(dexInfo.mcap / 1e6).toFixed(1)}M` : `$${Math.round(dexInfo.mcap / 1000)}K`;
+  const liqStr = dexInfo.liquidity >= 1e6 ? `$${(dexInfo.liquidity / 1e6).toFixed(1)}M` : `$${Math.round(dexInfo.liquidity / 1000)}K`;
+  
+  const notifyMsg = `🔔 信号达标 ${symbol}(${chain})\n` +
+    `📊 猎手${realHunters}+哨兵${finalScouts} | SM实时持有$${Math.round(smLiveTotal > 0 ? smLiveTotal : smTotal2)}\n` +
+    `🏹 ${smLabels}\n` +
+    `📍 ${token}\n` +
+    `💰 市值: ${mcapStr} | 流动性: ${liqStr}\n` +
+    `🏊 主池: ${symbol}/${dexInfo.quoteSymbol}\n` +
+    `📖 ${dexInfo.tokenName}${dexInfo.website ? ' | ' + dexInfo.website : ''}${dexInfo.twitter ? ' | ' + dexInfo.twitter : ''}`;
+  
+  const buttons = [
+    { text: '买$100', callback_data: `buy_${chain}_${token}_100` },
+    { text: '买$200', callback_data: `buy_${chain}_${token}_200` },
+    { text: '买$300', callback_data: `buy_${chain}_${token}_300` },
+    { text: '❌ 跳过', callback_data: `skip_${token}` }
+  ];
+  
+  log('INFO', `🔔 通知模式: ${symbol}(${chain}) 猎手=${realHunters} 哨兵=${finalScouts} 市值=${mcapStr}`);
+  await notifyTelegram(notifyMsg, buttons);
+  
+  // 解锁boughtTokens（不自动买，保留pending信号等跑步哥决定）
+  boughtTokens.delete(token);
+  saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+  
   } finally { handleSignal._auditLock.delete(token); }
 }
 
@@ -3793,14 +3892,16 @@ async function managePositions() {
 }
 
 // ============ 通知 ============
-async function notifyTelegram(msg) {
+async function notifyTelegram(msg, buttons = null) {
   console.log('📢 ' + msg.replace(/\n/g, ' | '));
   // 写入本地通知队列文件，由OpenClaw heartbeat转发给跑步哥
   try {
     const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
     let queue = [];
     try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
-    queue.push({ ts: Date.now(), msg });
+    const entry = { ts: Date.now(), msg };
+    if (buttons) entry.buttons = buttons;
+    queue.push(entry);
     // 原子写入
     const tmp = queueFile + '.tmp';
     fs.writeFileSync(tmp, JSON.stringify(queue));
