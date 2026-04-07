@@ -23,6 +23,19 @@
 3. 用 `message` 工具发送，**msg是消息文本，buttons是按钮数组，必须传！**
 4. 格式：`message(action=send, message=msg, buttons=buttons)`
 5. **不要自己读notify_queue.json，用脚本读！脚本会自动清空队列**
+
+## AI信号分析（每次heartbeat执行）
+1. 读取 `crypto/meme/data/v8/notify_queue.json`
+2. 找 `type: 'analyze'` 的条目
+3. 对每条分析请求，用AI能力做以下事：
+   a. 查DexScreener获取更多数据
+   b. 如果有website，用web_fetch读取了解项目
+   c. 如果有twitter，用web_fetch读取看社区热度
+   d. 综合分析写出：叙事（这个币是什么/做什么/为什么热）+ 100分评分
+   e. 评分维度(满分100)：主池质量(15分) + 流动性深度(10分) + 24h趋势(10分) + 交易活跃度(10分) + 社交热度(15分) + SM共识度(15分) + 猎手信号强度(10分) + 项目基本面(15分)
+   f. 用 `message` 工具发送分析结果给跑步哥，reply到原通知消息
+4. 处理完后从队列中删除已分析的条目
+5. **分析必须客观，不确定就说不确定，不要编**
 4. **不要跳过**——引擎直连TG API被墙，所有买卖通知都靠这个转发
 
 ## 进程存活检查（每次heartbeat执行）
