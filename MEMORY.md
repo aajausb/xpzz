@@ -69,6 +69,14 @@
 - **引擎直发TG**: notifyTelegram直接调Bot API，fallback写notify_queue。解决heartbeat漏转buttons问题
 - **callback_data缩短**: `b_s_tokenShort20_100` 格式，避免超TG 64字节限制
 - **decimals≠18卖出会revert**: BACKGROUNDMUSIC是6位，传错amount。巡检卖出也可能有这个bug待查
+- **信号通知格式(2026-04-07)**:
+  - 纯文本+emoji分段，不用Markdown加粗（TG会吃内容）
+  - 内容：信号基本信息 → AI分析（叙事/SM态度/盘面/社区/推特热度）→ 评分 → 合约地址(HTML `<code>`标签，点一下复制) → inline买入按钮
+  - 用HTML parse_mode发送（通过TG API直接发，不用message工具的Markdown）
+  - AI分析思路：土狗冲单思维，重点看叙事宏大性+唯一性、SM力度、推特热度
+  - 不看24h涨跌、币龄，不说"小仓试探"废话
+  - 搜推特热度：用Exa搜+项目主页粉丝数据（xreach未配认证，配了后用xreach search）
+  - 搜同概念竞品币判断唯一性
 - **巡检**: 5秒一轮，查价格+止盈+止损+归零清仓
 - **SM检查间隔**: 120秒（省QuickNode credits）
 - **SOL RPC顺序**: 公共优先(`api.mainnet-beta.solana.com`)，QuickNode fallback
