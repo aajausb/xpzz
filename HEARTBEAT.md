@@ -17,25 +17,24 @@
 4. 抽查结果记入 `memory/heartbeat-state.json` 的 `lastWalletCheck`
 5. **不要跳过这步**——BSC WS超限漏了5个猎手买骡子快跑，差点错过大机会
 
-## 引擎通知转发（每次heartbeat执行）
-1. 运行 `node crypto/meme/forward_notify.js`
-2. 解析每行 `NOTIFY:{...}` 输出
-3. 用 `message` 工具发送，**msg是消息文本，buttons是按钮数组，必须传！**
-4. 格式：`message(action=send, message=msg, buttons=buttons)`
-5. **不要自己读notify_queue.json，用脚本读！脚本会自动清空队列**
-
-## AI信号分析（每次heartbeat执行）
-1. 读取 `crypto/meme/data/v8/notify_queue.json`
+## AI信号分析（每次heartbeat执行，最优先！）
+1. 直接读取 `crypto/meme/data/v8/analyze_queue.json`（不是notify_queue.json！）
 2. 找 `type: 'analyze'` 的条目
-3. 对每条分析请求，用AI能力做以下事：
-   a. 查DexScreener获取更多数据
-   b. 如果有website，用web_fetch读取了解项目
-   c. 如果有twitter，用web_fetch读取看社区热度
-   d. 综合分析写出：叙事（这个币是什么/做什么/为什么热）+ 100分评分
-   e. 评分维度(满分100)：主池质量(15分) + 流动性深度(10分) + 24h趋势(10分) + 交易活跃度(10分) + 社交热度(15分) + SM共识度(15分) + 猎手信号强度(10分) + 项目基本面(15分)
-   f. 用 `message` 工具发送分析结果给跑步哥，reply到原通知消息
-4. 处理完后从队列中删除已分析的条目
+3. 对每条分析请求：
+   a. 用 `curl -s "https://r.jina.ai/网站URL"` 读取网站内容（如果有website）
+   b. 用 `curl -s "https://r.jina.ai/Twitter链接"` 读取Twitter/社区信息（如果有twitter）
+   c. 综合所有数据写出AI分析：叙事 + 100分评分 + 建议
+   d. 评分维度(满分100)：主池质量(10) + 流动性(10) + 趋势动能(10) + 交易活跃度(10) + 梗/传播力(15) + 社区规模(15) + SM共识(15) + 猎手信号(10) + 跑路风险(5)
+   e. **合成一条消息发送**：数据部分用 `notifyMsg` 字段 + 追加AI分析部分
+   f. 用引擎的TG Bot直发（node脚本），parse_mode=HTML，带buttons，合约用<code>包裹
+   g. 发送脚本：`node -e "require('node-fetch')('https://api.telegram.org/bot'+process.env.TELEGRAM_BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:'877233818',text:消息,parse_mode:'HTML',disable_web_page_preview:true,reply_markup:JSON.stringify({inline_keyboard:按钮})})})"`
+4. 处理完后清空队列（写入 `[]`）
 5. **分析必须客观，不确定就说不确定，不要编**
+6. **meme币评分标准：越抽象越有梗=传播力高分，不要用传统项目标准**
+7. **网站/Twitter读不到时标注"无法访问"，不扣分不加分**
+
+## 引擎通知转发（已废弃）
+引擎通知现在走AI分析流程合成一条发送，不再单独转发。
 4. **不要跳过**——引擎直连TG API被墙，所有买卖通知都靠这个转发
 
 ## 进程存活检查（每次heartbeat执行）

@@ -6707,12 +6707,12 @@
     "source": "skip"
   },
   "0xdfc59c5bc3e909cebda70eae541655ae34e64627": {
-    "safe": true,
+    "safe": false,
     "isHoneypot": false,
     "sellTax": 0,
-    "riskLevel": "MID",
-    "reason": "OK",
-    "_time": 1774897113814
+    "riskLevel": "HIGH",
+    "reason": "HIGH风险",
+    "_time": 1775567031547
   },
   "DKsDntN4MeSBVvNZbDKfHgp2msz5Zc75tNbxizNJpump": {
     "safe": true,

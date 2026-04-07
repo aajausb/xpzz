@@ -2181,7 +2181,7 @@ async function handleSignal(signal) {
       buttons,
       mcapStr, liqStr,
     };
-    const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
+    const queueFile = path.join(__dirname, 'data/v8/analyze_queue.json');
     let queue = [];
     try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
     queue.push(analyzeData);
@@ -3955,7 +3955,7 @@ async function notifyTelegram(msg, buttons = null) {
       log('WARN', `TG直发失败: ${e.message?.slice(0,60)}`);
       // fallback: 写入队列让heartbeat转发（无按钮）
       try {
-        const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
+        const queueFile = path.join(__dirname, 'data/v8/analyze_queue.json');
         let queue = [];
         try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
         queue.push({ ts: Date.now(), msg });
@@ -3967,7 +3967,7 @@ async function notifyTelegram(msg, buttons = null) {
   } else {
     // 没有TG配置，走队列
     try {
-      const queueFile = path.join(__dirname, 'data/v8/notify_queue.json');
+      const queueFile = path.join(__dirname, 'data/v8/analyze_queue.json');
       let queue = [];
       try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
       const entry = { ts: Date.now(), msg };
