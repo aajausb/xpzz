@@ -34,13 +34,16 @@ process.stdin.on('end', async () => {
 });
 
 async function processSignal(s) {
-  // 1. 搜索项目信息（Exa）
+  // 1. 用Jina Reader抓项目网站和推特内容
   let searchContext = '';
   try {
-    const query = `${s.tokenName || s.symbol} ${s.chain === 'solana' ? 'solana' : s.chain} meme token`;
-    searchContext = await exaSearch(query);
+    const fetches = [];
+    if (s.website) fetches.push(jinaFetch(s.website).then(t => t ? `[网站] ${t}` : ''));
+    if (s.twitter) fetches.push(jinaFetch(s.twitter).then(t => t ? `[推特] ${t}` : ''));
+    const results = await Promise.all(fetches);
+    searchContext = results.filter(r => r).join('\n\n');
   } catch (e) {
-    searchContext = '(搜索失败)';
+    searchContext = '(抓取失败)';
   }
 
   // 2. 调AI分析
@@ -55,42 +58,30 @@ async function processSignal(s) {
 }
 
 async function exaSearch(query) {
-  return new Promise((resolve, reject) => {
-    const postData = JSON.stringify({
-      query,
-      numResults: 3,
-      type: 'neural',
-      useAutoprompt: true,
-      contents: { text: { maxCharacters: 500 } }
-    });
-    const req = https.request({
-      hostname: 'api.exa.ai',
-      path: '/search',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.EXA_API_KEY || '',
-        'Content-Length': Buffer.byteLength(postData),
-      },
+  // 不用Exa了，用Jina Reader直接抓项目网站和推特
+  return '(跳过搜索，用Jina抓网站)';
+}
+
+// Jina Reader: 抓任意URL内容
+async function jinaFetch(url) {
+  if (!url || url === '-') return '';
+  return new Promise((resolve) => {
+    const req = https.get(`https://r.jina.ai/${url}`, {
+      headers: { 'Accept': 'text/plain', 'User-Agent': 'Mozilla/5.0' },
     }, res => {
-      let d = ''; res.on('data', c => d += c);
-      res.on('end', () => {
-        try {
-          const j = JSON.parse(d);
-          const snippets = (j.results || []).map(r => `${r.title}: ${r.text?.slice(0, 200) || ''}`).join('\n');
-          resolve(snippets || '(无结果)');
-        } catch { resolve('(解析失败)'); }
-      });
+      let d = ''; 
+      res.on('data', c => { d += c; if (d.length > 3000) { res.destroy(); resolve(d.slice(0, 3000)); } });
+      res.on('end', () => resolve(d.slice(0, 3000)));
     });
-    req.on('error', e => resolve('(请求失败)'));
-    req.setTimeout(10000, () => { req.destroy(); resolve('(超时)'); });
-    req.write(postData);
-    req.end();
+    req.on('error', () => resolve(''));
+    req.setTimeout(15000, () => { req.destroy(); resolve(''); });
   });
 }
 
 async function callAI(s, searchContext) {
   const prompt = `你是土狗meme币分析师。用中文分析这个信号，简洁有力，不要说"小仓试探"之类的保守建议。
+
+重要：这些币能到你面前说明已经通过了聪明钱确认门槛，SM正在持仓。你的任务是客观分析优劣势，不是唱空劝退。好的就说好，差的就说差，别默认看空。土狗本来就是高风险高回报，不需要你提醒风险。
 
 信号数据:
 - 币名: ${s.tokenName || s.symbol} (${s.symbol})
@@ -104,12 +95,12 @@ async function callAI(s, searchContext) {
 - 网站: ${s.website || '无'}
 - 推特: ${s.twitter || '无'}
 
-搜索结果:
-${searchContext}
+项目网站/推特内容:
+${searchContext || '(无法获取)'}
 
 请按以下5个维度分析，每个维度1-2句话：
 1. 叙事（宏大性/唯一性/热点关联）
-2. SM态度（持仓力度/钱包级别）
+2. SM态度（持仓力度/钱包级别）— 注意：信号已通过确认门槛，SM确实在持仓，不要说"已清仓"或"已跑了"
 3. 盘面（市值/流动性/成交量）
 4. 社区（网站/推特/运营投入）
 5. 推特热度（🟢高/🟡中/🔴低）
