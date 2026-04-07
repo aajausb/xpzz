@@ -2160,38 +2160,54 @@ async function handleSignal(signal) {
   ];
   
   log('INFO', `🔔 通知模式: ${symbol}(${chain}) 猎手=${realHunters} 哨兵=${finalScouts} 市值=${mcapStr}`);
-  // 立刻发TG基础通知（带按钮），AI分析异步补发
+  // spawn子进程做AI分析+发TG（不阻塞引擎主线程）
   try {
-    const inlineKeyboard = [[
-      { text: buttons[0]?.text || '买$100', callback_data: buttons[0]?.callback_data || 'noop' },
-      { text: buttons[1]?.text || '买$200', callback_data: buttons[1]?.callback_data || 'noop' },
-      { text: buttons[2]?.text || '买$300', callback_data: buttons[2]?.callback_data || 'noop' },
-    ], [
-      { text: buttons[3]?.text || '❌ 跳过', callback_data: buttons[3]?.callback_data || 'noop' },
-    ]];
-    const tgPayload = {
-      chat_id: '877233818',
-      text: notifyMsg,
-      parse_mode: 'HTML',
-      reply_markup: JSON.stringify({ inline_keyboard: inlineKeyboard }),
+    const analyzeData = {
+      type: 'analyze',
+      ts: Date.now(),
+      symbol, chain, token,
+      hunters: realHunters, scouts: finalScouts,
+      smLiveTotal: Math.round(smLiveTotal > 0 ? smLiveTotal : smTotal2),
+      smWallets: smLabels,
+      mcap: dexInfo.mcap, liquidity: dexInfo.liquidity,
+      quoteSymbol: dexInfo.quoteSymbol,
+      priceChange24h: dexInfo.priceChange24h || 0,
+      volume24h: dexInfo.volume24h || 0,
+      buys: dexInfo.buys || 0, sells: dexInfo.sells || 0,
+      tokenName: dexInfo.tokenName || symbol,
+      website: dexInfo.website || '', twitter: dexInfo.twitter || '',
+      pairCreatedAt: dexInfo.pairCreatedAt || 0,
+      notifyMsg,
+      buttons,
+      mcapStr, liqStr,
     };
-    const postData = JSON.stringify(tgPayload);
-    const tgReq = require('https').request({
-      hostname: 'api.telegram.org',
-      path: `/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postData) },
-    }, (res) => {
-      let d = ''; res.on('data', c => d += c);
-      res.on('end', () => { try { const r = JSON.parse(d); if(!r.ok) log('WARN', `TG通知失败: ${d.slice(0,100)}`); } catch {} });
-    });
-    tgReq.on('error', e => log('WARN', `TG通知请求失败: ${e.message?.slice(0,50)}`));
-    tgReq.write(postData);
-    tgReq.end();
-    log('INFO', `📨 已发TG通知: ${symbol}(${chain})`);
-  } catch(e) { log('WARN', `TG通知发送失败: ${e.message?.slice(0,50)}`); }
-  
-  // 同时写AI分析队列（heartbeat异步补发分析）
+    // 去重：同一个token 1小时内不重复
+    const queueFile = path.join(__dirname, 'data/v8/analyze_queue.json');
+    let queue = [];
+    try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
+    const lastEntry = queue.filter(q => q.token === token).sort((a,b) => b.ts - a.ts)[0];
+    if (lastEntry && Date.now() - lastEntry.ts < 3600000) {
+      log('INFO', `📝 ${symbol}(${chain}) 已在分析队列中(${Math.round((Date.now()-lastEntry.ts)/60000)}分钟前)，跳过`);
+    } else {
+      // 记录到queue（防重复）
+      queue.push({ token, ts: Date.now(), symbol, chain });
+      const tmp = queueFile + '.tmp';
+      fs.writeFileSync(tmp, JSON.stringify(queue));
+      fs.renameSync(tmp, queueFile);
+      // spawn子进程分析+发TG
+      const child = require('child_process').spawn('node', [path.join(__dirname, 'signal_analyzer.js')], {
+        stdio: ['pipe', 'pipe', 'pipe'],
+        detached: true,
+        env: process.env,
+      });
+      child.stdin.write(JSON.stringify(analyzeData));
+      child.stdin.end();
+      child.stdout.on('data', d => log('INFO', `📨 分析器: ${d.toString().trim()}`));
+      child.stderr.on('data', d => log('WARN', `📨 分析器错误: ${d.toString().trim().slice(0,100)}`));
+      child.unref();
+      log('INFO', `🚀 已启动AI分析子进程: ${symbol}(${chain})`);
+    }
+  } catch(e) { log('WARN', `分析请求失败: ${e.message?.slice(0,60)}`); }
   try {
     const analyzeData = {
       type: 'analyze',
