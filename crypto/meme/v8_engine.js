@@ -464,7 +464,9 @@ async function dexScreenerGet(tokenAddr) {
   return data;
 }
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+let _positionsSaveMs = 0; // 热加载用：记录引擎自己最后一次save positions的时间
 const saveJSON = (file, data) => {
+  if (file.includes('positions')) _positionsSaveMs = Date.now();
   const tmp = file + '.tmp';
   const json = JSON.stringify(data, null, 2);
   if (file.includes('positions') && typeof data === 'object') {
@@ -2158,9 +2160,38 @@ async function handleSignal(signal) {
   ];
   
   log('INFO', `🔔 通知模式: ${symbol}(${chain}) 猎手=${realHunters} 哨兵=${finalScouts} 市值=${mcapStr}`);
-  // 不直发TG，写完整数据到队列，等AI分析后合成一条消息发出
+  // 立刻发TG基础通知（带按钮），AI分析异步补发
+  try {
+    const inlineKeyboard = [[
+      { text: buttons[0]?.text || '买$100', callback_data: buttons[0]?.callback_data || 'noop' },
+      { text: buttons[1]?.text || '买$200', callback_data: buttons[1]?.callback_data || 'noop' },
+      { text: buttons[2]?.text || '买$300', callback_data: buttons[2]?.callback_data || 'noop' },
+    ], [
+      { text: buttons[3]?.text || '❌ 跳过', callback_data: buttons[3]?.callback_data || 'noop' },
+    ]];
+    const tgPayload = {
+      chat_id: '877233818',
+      text: notifyMsg,
+      parse_mode: 'HTML',
+      reply_markup: JSON.stringify({ inline_keyboard: inlineKeyboard }),
+    };
+    const postData = JSON.stringify(tgPayload);
+    const tgReq = require('https').request({
+      hostname: 'api.telegram.org',
+      path: `/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postData) },
+    }, (res) => {
+      let d = ''; res.on('data', c => d += c);
+      res.on('end', () => { try { const r = JSON.parse(d); if(!r.ok) log('WARN', `TG通知失败: ${d.slice(0,100)}`); } catch {} });
+    });
+    tgReq.on('error', e => log('WARN', `TG通知请求失败: ${e.message?.slice(0,50)}`));
+    tgReq.write(postData);
+    tgReq.end();
+    log('INFO', `📨 已发TG通知: ${symbol}(${chain})`);
+  } catch(e) { log('WARN', `TG通知发送失败: ${e.message?.slice(0,50)}`); }
   
-  // 写AI分析请求到notify_queue（包含通知数据+按钮）
+  // 同时写AI分析队列（heartbeat异步补发分析）
   try {
     const analyzeData = {
       type: 'analyze',
@@ -2184,10 +2215,16 @@ async function handleSignal(signal) {
     const queueFile = path.join(__dirname, 'data/v8/analyze_queue.json');
     let queue = [];
     try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch {}
-    queue.push(analyzeData);
-    const tmp = queueFile + '.tmp';
-    fs.writeFileSync(tmp, JSON.stringify(queue));
-    fs.renameSync(tmp, queueFile);
+    // 去重：同一个token 1小时内不重复写入queue
+    const lastEntry = queue.filter(q => q.token === token).sort((a,b) => b.ts - a.ts)[0];
+    if (lastEntry && Date.now() - lastEntry.ts < 3600000) {
+      log('INFO', `📝 ${symbol}(${chain}) 已在分析队列中(${Math.round((Date.now()-lastEntry.ts)/60000)}分钟前)，跳过`);
+    } else {
+      queue.push(analyzeData);
+      const tmp = queueFile + '.tmp';
+      fs.writeFileSync(tmp, JSON.stringify(queue));
+      fs.renameSync(tmp, queueFile);
+    }
   } catch(e) { log('WARN', `分析请求写入失败: ${e.message?.slice(0,60)}`); }
   
   // 解锁boughtTokens（不自动买，保留pending信号等跑步哥决定）
@@ -4002,13 +4039,9 @@ async function main() {
   log('INFO', `📦 加载持仓: ${Object.keys(positions).length}个 keys=${Object.keys(positions).map(k=>positions[k]?.symbol||k.slice(0,8)).join(',')}`);
   
   // 热加载：监听positions.json外部修改，合并新entry（手动买入不用停引擎）
-  let _lastPositionsSave = Date.now();
-  const _origSaveJSON = saveJSON;
-  // 用全局标记追踪引擎自己的save
-  const _positionsSaveTracker = { lastMs: Date.now() };
   fs.watchFile(POSITIONS_FILE, { interval: 3000 }, () => {
     // 如果是引擎自己刚保存的（3秒内），忽略
-    if (Date.now() - _positionsSaveTracker.lastMs < 3000) return;
+    if (Date.now() - _positionsSaveMs < 3000) return;
     try {
       const filePos = loadJSON(POSITIONS_FILE, {});
       let added = 0;
@@ -4021,9 +4054,8 @@ async function main() {
         }
       }
       if (added > 0) {
-        _positionsSaveTracker.lastMs = Date.now();
-        _origSaveJSON(POSITIONS_FILE, positions);
-        _origSaveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+        saveJSON(POSITIONS_FILE, positions);
+        saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
         log('INFO', `🔥 热加载完成: 新增${added}个，总持仓${Object.keys(positions).length}个`);
       }
     } catch(e) { log('WARN', `热加载positions失败: ${e.message?.slice(0,50)}`); }
