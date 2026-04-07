@@ -2083,6 +2083,7 @@ async function handleSignal(signal) {
       dexInfo.buys = mainPair.txns?.h24?.buys || 0;
       dexInfo.sells = mainPair.txns?.h24?.sells || 0;
       dexInfo.pairCreatedAt = mainPair.pairCreatedAt || 0;
+      dexInfo.volume24h = parseFloat(mainPair.volume?.h24 || 0);
       const info = mainPair.info;
       if (info?.websites?.[0]?.url) dexInfo.website = info.websites[0].url;
       if (info?.socials) {
@@ -2141,52 +2142,74 @@ async function handleSignal(signal) {
   const liqStr = dexInfo.liquidity >= 1e6 ? `$${(dexInfo.liquidity / 1e6).toFixed(1)}M` : `$${Math.round(dexInfo.liquidity / 1000)}K`;
   
   // === 综合评分 + 叙事 ===
-  let score = 5; // 基础分5/10
+  let score = 3; // 基础分3/10（偏保守，好币才能拿高分）
   const flags = [];
   const goods = [];
   
-  // 1. 主池quote token检查
+  // 1. 主池quote token检查（最重要，野鸡池直接判死刑）
   const mainstreamQuotes = ['WETH', 'SOL', 'WSOL', 'USDC', 'USDT', 'WBNB', 'ETH'];
   if (!mainstreamQuotes.includes(dexInfo.quoteSymbol?.toUpperCase())) {
     score -= 3;
-    flags.push(`⚠️ 野鸡池(${dexInfo.quoteSymbol})非主流配对`);
+    flags.push(`💀 野鸡池(${dexInfo.quoteSymbol})非主流配对`);
   } else {
     score += 1;
-    goods.push('主流池配对');
+    goods.push('主流池');
   }
   
-  // 2. 24h涨跌幅
+  // 2. $300买入冲击评估（流动性能承受多少）
+  const impactPct = dexInfo.liquidity > 0 ? (300 / dexInfo.liquidity * 100) : 100;
+  if (impactPct > 5) { score -= 2; flags.push(`💀 $300占流动性${impactPct.toFixed(1)}%，会打穿`); }
+  else if (impactPct > 2) { score -= 1; flags.push(`⚠️ $300占流动性${impactPct.toFixed(1)}%`); }
+  else { score += 1; goods.push(`深度OK($300占${impactPct.toFixed(1)}%)`); }
+  
+  // 3. 24h涨跌幅
   const priceChange24h = dexInfo.priceChange24h || 0;
-  if (priceChange24h < -30) { score -= 1; flags.push(`📉 24h跌${Math.abs(priceChange24h).toFixed(0)}%`); }
-  else if (priceChange24h > 50) { score += 1; goods.push(`📈 24h涨${priceChange24h.toFixed(0)}%`); }
+  if (priceChange24h < -50) { score -= 2; flags.push(`📉 24h暴跌${Math.abs(priceChange24h).toFixed(0)}%`); }
+  else if (priceChange24h < -20) { score -= 1; flags.push(`📉 24h跌${Math.abs(priceChange24h).toFixed(0)}%`); }
+  else if (priceChange24h > 100) { score += 1; goods.push(`🚀 24h涨${priceChange24h.toFixed(0)}%`); }
   
-  // 3. 有无社交/官网
+  // 4. 有无社交/官网
   if (!dexInfo.website && !dexInfo.twitter) { score -= 1; flags.push('无官网/社交'); }
-  else { score += 1; goods.push('有社交链接'); }
+  else if (dexInfo.website && dexInfo.twitter) { score += 1; goods.push('官网+Twitter'); }
   
-  // 4. 买卖比
-  if (dexInfo.sells > dexInfo.buys * 1.3 && dexInfo.sells > 20) { score -= 1; flags.push(`卖压(买${dexInfo.buys}/卖${dexInfo.sells})`); }
-  else if (dexInfo.buys > dexInfo.sells * 1.3 && dexInfo.buys > 20) { score += 1; goods.push(`买盘强(买${dexInfo.buys}/卖${dexInfo.sells})`); }
+  // 5. 24h交易量/市值比（换手率）
+  const vol24h = dexInfo.volume24h || 0;
+  const turnover = dexInfo.mcap > 0 ? vol24h / dexInfo.mcap : 0;
+  if (vol24h < 5000) { score -= 1; flags.push(`交易量极低$${Math.round(vol24h)}`); }
+  else if (turnover > 0.3) { score += 1; goods.push(`活跃(换手${(turnover*100).toFixed(0)}%)`); }
   
-  // 5. 流动性/市值比
+  // 6. 买卖比
+  if (dexInfo.sells > dexInfo.buys * 1.5 && dexInfo.sells > 30) { score -= 1; flags.push(`卖压重(买${dexInfo.buys}/卖${dexInfo.sells})`); }
+  else if (dexInfo.buys > dexInfo.sells * 1.5 && dexInfo.buys > 30) { score += 1; goods.push(`买盘强(买${dexInfo.buys}/卖${dexInfo.sells})`); }
+  
+  // 7. 流动性/市值比
   const liqRatio = dexInfo.liquidity / (dexInfo.mcap || 1);
-  if (liqRatio < 0.03) { score -= 1; flags.push('流动性极低'); }
-  else if (liqRatio > 0.15) { score += 1; goods.push('流动性充足'); }
+  if (liqRatio < 0.02) { score -= 1; flags.push('流动性极薄'); }
+  else if (liqRatio > 0.15) { score += 1; goods.push('流动性厚'); }
   
-  // 6. 币龄
+  // 8. 币龄+趋势组合
   const ageHours = dexInfo.pairCreatedAt ? (Date.now() - dexInfo.pairCreatedAt) / 3600000 : 0;
-  if (ageHours > 72 && priceChange24h < -20) { flags.push(`币龄${Math.round(ageHours/24)}天且在跌`); score -= 1; }
-  else if (ageHours < 24) { goods.push('新币(<24h)'); }
+  if (ageHours > 168 && priceChange24h < -10) { score -= 1; flags.push(`老币(${Math.round(ageHours/24)}天)且在跌`); }
+  else if (ageHours < 6) { score += 1; goods.push(`极新(<6h)`); }
+  else if (ageHours < 24) { goods.push(`新币(<24h)`); }
   
-  // 7. SM持有金额加分
-  if (smLiveTotal > 5000) { score += 1; goods.push(`SM重仓$${Math.round(smLiveTotal)}`); }
-  if (smLiveTotal > 20000) { score += 1; }
+  // 9. SM持仓分布（多个SM持有 vs 只有1个）
+  const smHoldingCount = confirmWallets.filter((w, i) => {
+    // 估算：如果smLiveTotal > 0且均匀分布，或者直接看有几个SM
+    return true; // 用confirmWallets数量作为SM共识度
+  }).length;
+  if (smLiveTotal > 10000 && smHoldingCount >= 3) { score += 2; goods.push(`SM强共识(${smHoldingCount}个持$${Math.round(smLiveTotal)})`); }
+  else if (smLiveTotal > 5000) { score += 1; goods.push(`SM持$${Math.round(smLiveTotal)}`); }
+  else if (smLiveTotal < 1000) { flags.push(`SM持仓少$${Math.round(smLiveTotal)}`); }
   
-  // 8. 猎手数加分
-  if (realHunters >= 3) { score += 1; goods.push(`${realHunters}猎手共识`); }
+  // 10. 猎手共识（3+才加分，2个是基本门槛不加）
+  if (realHunters >= 4) { score += 2; goods.push(`${realHunters}猎手强共识`); }
+  else if (realHunters >= 3) { score += 1; goods.push(`${realHunters}猎手共识`); }
+  else if (realHunters === 0) { score -= 1; flags.push('纯哨兵信号'); }
   
   score = Math.max(1, Math.min(10, score));
-  const scoreEmoji = score >= 7 ? '🟢' : score >= 5 ? '🟡' : '🔴';
+  const scoreEmoji = score >= 7 ? '🟢' : score >= 4 ? '🟡' : '🔴';
+  const scoreComment = score >= 8 ? '强烈推荐' : score >= 6 ? '可以考虑' : score >= 4 ? '谨慎' : '建议跳过';
   
   // 叙事：从DexScreener的tokenName推断
   let narrative = dexInfo.tokenName || symbol;
@@ -2207,7 +2230,7 @@ async function handleSignal(signal) {
     } catch {}
   }
   
-  const scoreSection = `${scoreEmoji} 评分: ${score}/10\n` +
+  const scoreSection = `${scoreEmoji} 评分: ${score}/10 (${scoreComment})\n` +
     (goods.length ? `✅ ${goods.join(' | ')}\n` : '') +
     (flags.length ? `🚩 ${flags.join(' | ')}\n` : '') +
     `📖 ${narrative}`;
@@ -3972,7 +3995,6 @@ async function notifyTelegram(msg, buttons = null) {
       const body = {
         chat_id: chatId,
         text: msg,
-        parse_mode: 'Markdown',
         disable_web_page_preview: true
       };
       if (buttons && buttons.length > 0) {
@@ -3984,7 +4006,13 @@ async function notifyTelegram(msg, buttons = null) {
         if (skipBtns.length) keyboard.push(skipBtns);
         body.reply_markup = JSON.stringify({ inline_keyboard: keyboard });
       }
-      const res = await httpPost(`https://api.telegram.org/bot${botToken}/sendMessage`, body, { 'Content-Type': 'application/json' });
+      const fetch = require('node-fetch');
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        timeout: 15000
+      }).then(r => r.json());
       if (!res.ok) log('WARN', `TG发送失败: ${res.description || JSON.stringify(res).slice(0,100)}`);
     } catch(e) {
       log('WARN', `TG直发失败: ${e.message?.slice(0,60)}`);
