@@ -2069,14 +2069,6 @@ async function handleSignal(signal) {
   
   // === 通知模式：不自动买，发通知给跑步哥决定 ===
   const smTotal2 = Object.values(smWalletAmounts).reduce((a, b) => a + b, 0);
-  // SM累计<$500不发通知（防钓鱼）
-  if (smTotal2 < 500) {
-    log('INFO', `🚫 ${symbol}(${chain}) SM累计$${Math.round(smTotal2)}<$500，跳过通知`);
-    boughtTokens.delete(token);
-    saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
-    handleSignal._auditLock.delete(token);
-    return;
-  }
   // 查DexScreener获取市值、主池、网站信息
   let dexInfo = { mcap: mcap, liquidity: 0, quoteSymbol: '?', website: '', twitter: '', tokenName: symbol };
   try {
@@ -2125,7 +2117,7 @@ async function handleSignal(signal) {
   } catch(e) { log('WARN', `SM实时持有查询失败: ${e.message?.slice(0,40)}`); }
   
   // SM实时持有<$500也不发通知
-  if (smLiveTotal < 500 && smLiveTotal > 0) {
+  if (smLiveTotal < 500) {
     log('INFO', `🚫 ${symbol}(${chain}) SM实时持有$${Math.round(smLiveTotal)}<$500，跳过通知`);
     boughtTokens.delete(token);
     saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
@@ -2147,16 +2139,17 @@ async function handleSignal(signal) {
   const notifyMsg = `🔔 信号达标 ${symbol}(${chain})\n` +
     `📊 猎手${realHunters}+哨兵${finalScouts} | SM实时持有$${Math.round(smLiveTotal > 0 ? smLiveTotal : smTotal2)}\n` +
     `🏹 ${smLabels}\n` +
-    `📍 ${token}\n` +
     `💰 市值: ${mcapStr} | 流动性: ${liqStr}\n` +
     `🏊 主池: ${symbol}/${dexInfo.quoteSymbol}\n` +
-    `📖 ${dexInfo.tokenName}${dexInfo.website ? ' | ' + dexInfo.website : ''}${dexInfo.twitter ? ' | ' + dexInfo.twitter : ''}`;
+    `📖 ${dexInfo.tokenName}${dexInfo.website ? ' | ' + dexInfo.website : ''}${dexInfo.twitter ? ' | ' + dexInfo.twitter : ''}\n` +
+    `\`${token}\``;
   
+  const tokenShort = token.slice(0, 20);
   const buttons = [
-    { text: '买$100', callback_data: `buy_${chain}_${token}_100` },
-    { text: '买$200', callback_data: `buy_${chain}_${token}_200` },
-    { text: '买$300', callback_data: `buy_${chain}_${token}_300` },
-    { text: '❌ 跳过', callback_data: `skip_${token}` }
+    { text: '买$100', callback_data: `b_${chain[0]}_${tokenShort}_100` },
+    { text: '买$200', callback_data: `b_${chain[0]}_${tokenShort}_200` },
+    { text: '买$300', callback_data: `b_${chain[0]}_${tokenShort}_300` },
+    { text: '❌ 跳过', callback_data: `x_${tokenShort}` }
   ];
   
   log('INFO', `🔔 通知模式: ${symbol}(${chain}) 猎手=${realHunters} 哨兵=${finalScouts} 市值=${mcapStr}`);

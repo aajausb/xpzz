@@ -18,9 +18,11 @@
 5. **不要跳过这步**——BSC WS超限漏了5个猎手买骡子快跑，差点错过大机会
 
 ## 引擎通知转发（每次heartbeat执行）
-1. 读取 `crypto/meme/data/v8/notify_queue.json`
-2. 如果有消息，逐条用 `message` 工具发给跑步哥
-3. 发完后清空文件（写入 `[]`）
+1. 运行 `node crypto/meme/forward_notify.js`
+2. 解析每行 `NOTIFY:{...}` 输出
+3. 用 `message` 工具发送，**msg是消息文本，buttons是按钮数组，必须传！**
+4. 格式：`message(action=send, message=msg, buttons=buttons)`
+5. **不要自己读notify_queue.json，用脚本读！脚本会自动清空队列**
 4. **不要跳过**——引擎直连TG API被墙，所有买卖通知都靠这个转发
 
 ## 进程存活检查（每次heartbeat执行）
