@@ -3,7 +3,7 @@
     "symbol": "Iroha",
     "chain": "solana",
     "buyPrice": 0.00014828242269987338,
-    "currentPrice": 0.000116069265034016,
+    "currentPrice": 0.000118379087534272,
     "buyAmount": 674388765568,
     "buyCost": 100,
     "buyTime": 1775571702786,
@@ -11,9 +11,39 @@
     "sellRevenue": 0,
     "capitalRecovered": false,
     "source": "manual",
-    "currentValue": 78275808.36667508,
-    "pnlPercent": -21.724191633324917,
-    "totalPnl": 78275708.36667508,
-    "totalPnlPercent": 78275708.36667508
+    "currentValue": 79833526.7113039,
+    "pnlPercent": -20.166473288696082,
+    "totalPnl": 79833426.7113039,
+    "totalPnlPercent": 79833426.7113039
+  },
+  "CGEDT9QZDvvH5GmVkWJH2BXiMJqMJySC9ihWyr7Spump": {
+    "symbol": "BURNIE",
+    "chain": "solana",
+    "buyPrice": 0.0027565589943692945,
+    "currentPrice": 0.002751829287361928,
+    "buyAmount": 108831336682,
+    "buyCost": 300,
+    "buyTime": 1775575462108,
+    "soldRatio": 0,
+    "sellRevenue": 0,
+    "capitalRecovered": false,
+    "source": "manual",
+    "currentValue": 299485259.6642741,
+    "pnlPercent": -0.17158011190863837,
+    "totalPnl": 299484959.6642741,
+    "totalPnlPercent": 99828319.88809137
+  },
+  "TEST_HOT_LOAD_123": {
+    "symbol": "TEST",
+    "chain": "solana",
+    "buyPrice": 0.001,
+    "currentPrice": 0.001,
+    "buyAmount": 1000,
+    "buyCost": 1,
+    "buyTime": 1775575740164,
+    "soldRatio": 0,
+    "sellRevenue": 0,
+    "capitalRecovered": false,
+    "source": "test"
   }
 }

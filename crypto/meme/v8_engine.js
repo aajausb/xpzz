@@ -4001,6 +4001,34 @@ async function main() {
   saveJSON(POSITIONS_FILE, positions);
   log('INFO', `📦 加载持仓: ${Object.keys(positions).length}个 keys=${Object.keys(positions).map(k=>positions[k]?.symbol||k.slice(0,8)).join(',')}`);
   
+  // 热加载：监听positions.json外部修改，合并新entry（手动买入不用停引擎）
+  let _lastPositionsSave = Date.now();
+  const _origSaveJSON = saveJSON;
+  // 用全局标记追踪引擎自己的save
+  const _positionsSaveTracker = { lastMs: Date.now() };
+  fs.watchFile(POSITIONS_FILE, { interval: 3000 }, () => {
+    // 如果是引擎自己刚保存的（3秒内），忽略
+    if (Date.now() - _positionsSaveTracker.lastMs < 3000) return;
+    try {
+      const filePos = loadJSON(POSITIONS_FILE, {});
+      let added = 0;
+      for (const [token, pos] of Object.entries(filePos)) {
+        if (!positions[token]) {
+          positions[token] = pos;
+          boughtTokens.add(token);
+          added++;
+          log('INFO', `🔥 热加载新持仓: ${pos.symbol}(${pos.chain}) 成本$${pos.buyCost}`);
+        }
+      }
+      if (added > 0) {
+        _positionsSaveTracker.lastMs = Date.now();
+        _origSaveJSON(POSITIONS_FILE, positions);
+        _origSaveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+        log('INFO', `🔥 热加载完成: 新增${added}个，总持仓${Object.keys(positions).length}个`);
+      }
+    } catch(e) { log('WARN', `热加载positions失败: ${e.message?.slice(0,50)}`); }
+  });
+
   restoreSellTracker(); // 从positions恢复SM卖出记录（重启不丢）
   auditCache = loadJSON(AUDIT_CACHE_FILE, {});
   // 已买过的token（从持仓+历史记录双重加载）
