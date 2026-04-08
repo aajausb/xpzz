@@ -412,4 +412,4 @@ async function preApprove(chain, tokenAddress) {
   } catch(e) { console.log(`[dex_trader] pre-approve failed: ${e.message?.slice(0,40)}`); }
 }
 
-module.exports = { buy, sell, solanaBuy, solanaSell, evmBuy, evmSell, getWalletAddress, preApprove };
+module.exports = { buy, sell, solanaBuy, solanaSell, evmBuy, evmSell, getWalletAddress, preApprove, okxGet };

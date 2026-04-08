@@ -168,43 +168,48 @@ async function exaSearch(query) {
 
 // 查原生代币价格（SOL/BNB/ETH）
 async function getNativePrice(chain) {
-  // 先试CoinGecko
+  // 用OKX quote接口：查USDT→wSOL/wBNB/wETH报价，从toToken.tokenUnitPrice拿价格
+  try {
+    const dex = require('./dex_trader');
+    const CHAIN_ID = { solana: '501', bsc: '56', base: '8453' };
+    const USDT = {
+      solana: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+      bsc: '0x55d398326f99059fF775485246999027B3197955',
+      base: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+    };
+    const WRAPPED = {
+      solana: 'So11111111111111111111111111111111111111112',
+      bsc: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+      base: '0x4200000000000000000000000000000000000006'
+    };
+    const amt = chain === 'solana' ? '1000000' : '1000000000000000000';
+    const quote = await dex.okxGet('/api/v6/dex/aggregator/quote', {
+      chainIndex: CHAIN_ID[chain],
+      fromTokenAddress: USDT[chain],
+      toTokenAddress: WRAPPED[chain],
+      amount: amt
+    });
+    if (quote.code === '0' && quote.data?.[0]) {
+      // 从路由里找toToken的unitPrice
+      const routes = quote.data[0].dexRouterList || [];
+      for (const r of routes) {
+        const p = parseFloat(r.toToken?.tokenUnitPrice || '0');
+        if (p > 0) { console.log(`OKX报价: ${chain} = $${p}`); return p; }
+      }
+    }
+  } catch(e) {
+    console.log(`OKX价格查询失败: ${e.message}`);
+  }
+  
+  // Fallback: CoinGecko
   const ids = { solana: 'solana', bsc: 'binancecoin', base: 'ethereum' };
   const id = ids[chain] || 'solana';
-  let price = await new Promise(resolve => {
+  return new Promise(resolve => {
     https.get(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`, res => {
       let d = ''; res.on('data', c => d += c);
       res.on('end', () => {
         try { resolve(JSON.parse(d)[id]?.usd || 0); }
         catch { resolve(0); }
-      });
-    }).on('error', () => resolve(0));
-  });
-  if (price > 0) return price;
-  
-  // CoinGecko失败，用DexScreener查wrapped token
-  const nativeTokens = {
-    solana: 'So11111111111111111111111111111111111111112',
-    bsc: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-    base: '0x4200000000000000000000000000000000000006'
-  };
-  const nativeMint = nativeTokens[chain];
-  if (!nativeMint) return 0;
-  return new Promise(resolve => {
-    https.get(`https://api.dexscreener.com/latest/dex/tokens/${nativeMint}`, res => {
-      let d = ''; res.on('data', c => d += c);
-      res.on('end', () => {
-        try {
-          const pairs = JSON.parse(d).pairs;
-          if (pairs && pairs[0]) {
-            // wrapped token的价格就是原生代币价格
-            const p = pairs[0];
-            const basePrice = parseFloat(p.priceUsd) || 0;
-            // 如果base是wrapped token，直接用；如果是quote，用1/price
-            if (p.baseToken?.address === nativeMint) resolve(basePrice);
-            else resolve(parseFloat(p.quoteToken?.priceUsd || p.priceNative) || 0);
-          } else resolve(0);
-        } catch { resolve(0); }
       });
     }).on('error', () => resolve(0));
   });

@@ -46,6 +46,9 @@
 - **通知模式(2026-04-07)**: 审计通过不自动买，发TG通知(带按钮)给跑步哥决定。引擎直发TG Bot API不走notify_queue
 - **市值门槛(2026-04-07)**: $10K ~ $10M（三链统一）
 - **SM金额用实时持有**: 链上余额×DexScreener价格，<$500不发通知
+- **buy_queue机制**: analyzer/手动买入写buy_queue.json，引擎巡检读取加入内存。不直接写positions.json（会被引擎覆盖）
+- **自动买入**: signal_analyzer评分≥70自动买$200，3次重试。getNativePrice: CoinGecko→DexScreener双fallback
+- **买入失败待修**: getNativePrice价格不准导致OKX报"价格差异>90%"，需加合理性检查
 - **确认门槛(2026-03-30)**: ≥2猎手 / 1猎手+2哨兵 / ≥4哨兵（三链统一，去掉纯3哨兵因67%亏损率）
 - **minMarketCap**: 统一$10K（`CONFIG.minMarketCap: 10000`）
 - **卖出变量**: SELL_MAX_RETRIES=2（区别于买入MAX_RETRIES=3）
