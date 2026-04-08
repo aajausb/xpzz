@@ -3586,7 +3586,32 @@ async function getOkxWalletPrices() {
 }
 
 async function managePositions() {
+  const BUY_QUEUE_FILE = path.join(DATA_DIR, 'buy_queue.json');
   while (true) {
+    // 读取buy_queue：analyzer自动买入的持仓
+    try {
+      const queue = loadJSON(BUY_QUEUE_FILE, []);
+      if (queue.length > 0) {
+        for (const item of queue) {
+          if (!positions[item.token]) {
+            positions[item.token] = {
+              symbol: item.symbol, chain: item.chain, token: item.token,
+              buyPrice: item.buyPrice, buyCost: item.buyCost,
+              buyAmount: item.buyAmount, buyTime: item.buyTime,
+              sellRevenue: 0, recovered: false,
+              peakPnl: 0, trailingActive: false
+            };
+            boughtTokens.add(item.token);
+            log('INFO', `🤖 从buy_queue加入持仓: ${item.symbol}(${item.chain}) $${item.buyCost}`);
+          }
+        }
+        // 清空队列
+        saveJSON(BUY_QUEUE_FILE, []);
+        saveJSON(POSITIONS_FILE, positions);
+        saveJSON(BOUGHT_TOKENS_FILE, [...boughtTokens]);
+      }
+    } catch(e) {}
+
     const posKeys = Object.keys(positions);
     if (posKeys.length > 0) log('INFO', `🔍 巡检持仓 ${posKeys.length}个...`);
     // 批量查价格（OKX钱包API）

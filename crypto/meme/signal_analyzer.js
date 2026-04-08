@@ -128,20 +128,18 @@ async function processSignal(s) {
         }
         if (buyResult && buyResult.success) {
           console.log(`✅ 自动买入成功! TX: ${buyResult.txHash}`);
-          // 写入positions.json
-          const posPath = path.join(__dirname, 'data/v8/positions.json');
-          const positions = JSON.parse(fs.readFileSync(posPath, 'utf8'));
+          // 写入buy_queue.json，让引擎自己读取并加入positions
+          const queuePath = path.join(__dirname, 'data/v8/buy_queue.json');
+          const queue = (() => { try { return JSON.parse(fs.readFileSync(queuePath, 'utf8')); } catch { return []; } })();
           const tokenPrice = await getTokenPrice(s.token);
-          positions[s.token] = {
-            symbol: s.symbol, chain: s.chain, token: s.token,
+          queue.push({
+            token: s.token, symbol: s.symbol, chain: s.chain,
             buyPrice: tokenPrice, buyCost: buyAmountUsd,
             buyAmount: parseInt(buyResult.routerResult?.toTokenAmount || '0'),
-            buyTime: Date.now(),
-            sellRevenue: 0, recovered: false,
-            peakPnl: 0, trailingActive: false
-          };
-          fs.writeFileSync(posPath, JSON.stringify(positions, null, 2));
-          console.log(`📝 已加入positions，引擎将自动巡检止盈止损`);
+            buyTime: Date.now(), txHash: buyResult.txHash
+          });
+          fs.writeFileSync(queuePath, JSON.stringify(queue, null, 2));
+          console.log(`📝 已写入buy_queue，等待引擎读取`);
         } else {
           console.error(`❌ 自动买入失败: ${buyResult?.error || '未知错误'}`);
         }
