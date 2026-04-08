@@ -3,7 +3,7 @@
     "symbol": "BURNIE",
     "chain": "solana",
     "buyPrice": 0.0027565589943692945,
-    "currentPrice": 0.003682069936693913,
+    "currentPrice": 0.003607118724949749,
     "buyAmount": 108831336682,
     "buyCost": 300,
     "buyTime": 1775575462108,
@@ -11,10 +11,10 @@
     "sellRevenue": 0,
     "capitalRecovered": false,
     "source": "manual",
-    "currentValue": 400724592.96700567,
-    "pnlPercent": 33.574864322335216,
-    "totalPnl": 400724292.96700567,
-    "totalPnlPercent": 133574764.32233523
+    "currentValue": 392567552.4069527,
+    "pnlPercent": 30.855850802317548,
+    "totalPnl": 392567252.4069527,
+    "totalPnlPercent": 130855750.80231756
   },
   "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump": {
     "symbol": "ROCKET",
@@ -28,12 +28,12 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000495080728869341,
+    "currentPrice": 0.000516515161444406,
     "buyAmountRaw": 404767.048313,
-    "currentValue": 200.39236530109181,
-    "pnlPercent": 2.4907129443775258,
-    "totalPnl": 0.39236530109181444,
-    "totalPnlPercent": 0.1961826505459072
+    "currentValue": 209.06831730676487,
+    "pnlPercent": 6.928030230375887,
+    "totalPnl": 9.068317306764868,
+    "totalPnlPercent": 4.534158653382434
   },
   "CpFJrfYq32Wae2Bt36hEAUwzdyT29WwVLpZmYDF7pump": {
     "symbol": "Rise",
@@ -47,11 +47,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000351197136705441,
-    "currentValue": 204082942.27337795,
-    "pnlPercent": 204.5942209067138,
-    "totalPnl": 204083055.7155178,
-    "totalPnlPercent": 102041527.8577589,
+    "currentPrice": 0.000313838128765131,
+    "currentValue": 182373379.56909057,
+    "pnlPercent": 172.19265287522202,
+    "totalPnl": 182373493.0112304,
+    "totalPnlPercent": 91186746.5056152,
     "capitalRecovered": true,
     "lastSellPrice": 0.000484304063555027,
     "soldRatio": 0.65
@@ -68,11 +68,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000276029594181722,
-    "currentValue": 246996617.83230844,
-    "pnlPercent": 30.57218267820342,
-    "totalPnl": 246996417.83230844,
-    "totalPnlPercent": 123498208.91615422
+    "currentPrice": 0.000258211530714114,
+    "currentValue": 231052670.13399306,
+    "pnlPercent": 22.143581227111635,
+    "totalPnl": 231052470.13399306,
+    "totalPnlPercent": 115526235.06699654
   },
   "nNcqotFpBF7hsAqbNs1v2cYWeMnaKjFc3D2gHoQpump": {
     "symbol": "milkers",
@@ -86,11 +86,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000699704172844616,
-    "currentValue": 183607346.71852058,
-    "pnlPercent": -7.348494061888775,
-    "totalPnl": 183607146.71852058,
-    "totalPnlPercent": 91803573.35926029
+    "currentPrice": 0.000695583238243572,
+    "currentValue": 182525984.19781104,
+    "pnlPercent": -7.894168664781261,
+    "totalPnl": 182525784.19781104,
+    "totalPnlPercent": 91262892.09890552
   },
   "CYTUg8qLd45EGbx7MXxSwR5PSMNoUck5SetxxSDHpump": {
     "symbol": "stonks",
@@ -104,10 +104,28 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000043414532307261,
-    "currentValue": 165855291.25429225,
-    "pnlPercent": -14.081669686797937,
-    "totalPnl": 165855091.25429225,
-    "totalPnlPercent": 82927545.62714612
+    "currentPrice": 0.000042938178723079,
+    "currentValue": 164035491.33371776,
+    "pnlPercent": -15.024384082566788,
+    "totalPnl": 164035291.33371776,
+    "totalPnlPercent": 82017645.66685888
+  },
+  "2pjcq9k2X5oSArNKiVeQ2ENB63eJt8pwCabciGQGpump": {
+    "symbol": "Optimistic",
+    "chain": "solana",
+    "token": "2pjcq9k2X5oSArNKiVeQ2ENB63eJt8pwCabciGQGpump",
+    "buyPrice": 0.0000993,
+    "buyCost": 200,
+    "buyAmount": 1919560935723,
+    "buyTime": 1775676089398,
+    "sellRevenue": 0,
+    "recovered": false,
+    "peakPnl": 0,
+    "trailingActive": false,
+    "currentPrice": 0.000101304450588523,
+    "currentValue": 194460065.96460962,
+    "pnlPercent": 2.0185806530946615,
+    "totalPnl": 194459865.96460962,
+    "totalPnlPercent": 97229932.98230481
   }
 }
