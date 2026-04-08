@@ -572,19 +572,28 @@ async function sendTG(text, buttons, token, chain) {
       });
     });
     req.on('error', e => { console.error('TG请求失败:', e.message); resolve({ ok: false, retryable: true }); });
+    req.setTimeout(15000, () => { req.destroy(); console.error('TG请求超时15s'); resolve({ ok: false, retryable: true }); });
     req.write(postData);
     req.end();
   });
 }
 
-// 带重试的TG发送
+// 带重试的TG发送（5次重试，间隔递增）
 async function sendTGWithRetry(text, buttons, token, chain) {
-  let result = await sendTG(text, buttons, token, chain);
-  if (!result.ok) {
-    console.log('TG发送失败，3秒后重试...');
-    await new Promise(r => setTimeout(r, 3000));
-    result = await sendTG(text, buttons, token, chain);
-    if (!result.ok) console.error('TG重试仍失败');
+  for (let i = 1; i <= 5; i++) {
+    const result = await sendTG(text, buttons, token, chain);
+    if (result.ok) return result;
+    const wait = i * 3000; // 3s, 6s, 9s, 12s, 15s
+    console.log(`TG第${i}次失败，${wait/1000}秒后重试...`);
+    await new Promise(r => setTimeout(r, wait));
   }
-  return result;
+  console.error('TG 5次重试全部失败，写入notify_queue保底');
+  // 保底：写notify_queue让heartbeat转发
+  try {
+    const nqPath = path.join(__dirname, 'data/v8/notify_queue.json');
+    const nq = (() => { try { return JSON.parse(fs.readFileSync(nqPath, 'utf8')); } catch { return []; } })();
+    nq.push(text);
+    fs.writeFileSync(nqPath, JSON.stringify(nq, null, 2));
+  } catch {}
+  return { ok: false };
 }
