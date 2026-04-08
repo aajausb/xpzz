@@ -34,6 +34,48 @@ process.stdin.on('end', async () => {
 });
 
 async function processSignal(s) {
+  // 0. 如果SM数据不完整，从pending_signals查钱包地址并查链上余额
+  if (!s.smLiveTotal || s.smLiveTotal === 0) {
+    try {
+      const pendingPath = path.join(__dirname, 'data/v8/pending_signals.json');
+      const pending = JSON.parse(fs.readFileSync(pendingPath, 'utf8'));
+      const entries = pending[s.token];
+      if (entries && Array.isArray(entries) && entries.length > 0) {
+        const wallets = entries.map(e => ({
+          address: e.wallet,
+          rank: e.walletRank,
+          status: e.walletStatus
+        })).filter(w => w.address);
+        
+        if (wallets.length > 0) {
+          // 查链上余额
+          const price = await getTokenPrice(s.token);
+          let totalValue = 0;
+          let holdingCount = 0;
+          const hunters = wallets.filter(w => w.status === 'hunter').length;
+          const scouts = wallets.filter(w => w.status === 'scout').length;
+          
+          for (const w of wallets) {
+            const bal = await queryOnChainBalance(s.chain, w.address, s.token);
+            if (bal > 0 && price > 0) {
+              const val = bal * price;
+              totalValue += val;
+              holdingCount++;
+            }
+          }
+          
+          s.hunters = s.hunters || hunters;
+          s.scouts = s.scouts || scouts;
+          s.smLiveTotal = Math.round(totalValue);
+          s.smWallets = `${hunters}猎手+${scouts}哨兵(${holdingCount}个仍持仓)`;
+          console.log(`SM链上查询: ${wallets.length}个钱包, ${holdingCount}个持仓, 总值$${Math.round(totalValue)}`);
+        }
+      }
+    } catch (e) {
+      console.log('SM链上查询跳过:', e.message);
+    }
+  }
+
   // 1. 用Jina Reader抓项目网站和推特内容 + DuckDuckGo搜叙事
   let searchContext = '';
   try {
@@ -67,6 +109,76 @@ async function processSignal(s) {
 
 async function exaSearch(query) {
   return '(跳过搜索，用DuckDuckGo)';
+}
+
+// 查token现价（DexScreener）
+async function getTokenPrice(tokenAddress) {
+  return new Promise(resolve => {
+    https.get(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`, res => {
+      let d = ''; res.on('data', c => d += c);
+      res.on('end', () => {
+        try {
+          const pairs = JSON.parse(d).pairs;
+          if (pairs && pairs[0]) resolve(parseFloat(pairs[0].priceUsd) || 0);
+          else resolve(0);
+        } catch { resolve(0); }
+      });
+    }).on('error', () => resolve(0));
+  });
+}
+
+// 查链上token余额
+async function queryOnChainBalance(chain, walletAddress, tokenAddress) {
+  if (chain === 'solana') {
+    return new Promise(resolve => {
+      const postData = JSON.stringify({
+        jsonrpc: '2.0', id: 1, method: 'getTokenAccountsByOwner',
+        params: [walletAddress, { mint: tokenAddress }, { encoding: 'jsonParsed', commitment: 'confirmed' }]
+      });
+      const req = https.request({ hostname: 'api.mainnet-beta.solana.com', path: '/', method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postData) }
+      }, res => {
+        let d = ''; res.on('data', c => d += c);
+        res.on('end', () => {
+          try {
+            const accs = JSON.parse(d).result?.value || [];
+            if (accs.length > 0) {
+              resolve(parseFloat(accs[0].account.data.parsed.info.tokenAmount.uiAmountString) || 0);
+            } else resolve(0);
+          } catch { resolve(0); }
+        });
+      });
+      req.on('error', () => resolve(0));
+      req.setTimeout(10000, () => { req.destroy(); resolve(0); });
+      req.write(postData);
+      req.end();
+    });
+  }
+  // EVM (BSC/Base): 用OKX钱包API查余额
+  return new Promise(resolve => {
+    const chainIndex = chain === 'bsc' ? '56' : '8453';
+    const apiPath = `/api/v5/wallet/asset/token-balances-by-address?chainIndex=${chainIndex}&address=${walletAddress}&tokenContractAddresses=${tokenAddress}`;
+    const req = https.request({
+      hostname: 'www.okx.com', path: apiPath, method: 'GET',
+      headers: { 'OK-ACCESS-KEY': process.env.OKX_API_KEY || '' }
+    }, res => {
+      let d = ''; res.on('data', c => d += c);
+      res.on('end', () => {
+        try {
+          const data = JSON.parse(d).data;
+          if (data && data[0]) {
+            const raw = data[0].balance || '0';
+            const decimals = parseInt(data[0].tokenContractDecimal || data[0].decimals || '18');
+            const humanBalance = parseFloat(raw) / Math.pow(10, decimals);
+            resolve(humanBalance);
+          } else resolve(0);
+        } catch { resolve(0); }
+      });
+    });
+    req.on('error', () => resolve(0));
+    req.setTimeout(10000, () => { req.destroy(); resolve(0); });
+    req.end();
+  });
 }
 
 // DuckDuckGo HTML搜索：抓搜索结果标题+摘要
@@ -176,7 +288,7 @@ ${searchContext || '(无法获取)'}
 4. 风险信号（20分，满分=低风险）— 评判标准：
    - LP是否burn/合约是否renounce
    - 流动性是否过低（<$10K=高危）
-   - 持仓是否过于集中
+   - 只根据已知数据评分，没有的数据不扣分也不提
 
 格式要求：纯文本，不要用markdown。
 SM共识(x/30): 一句话
