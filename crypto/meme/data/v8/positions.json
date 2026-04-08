@@ -3,7 +3,7 @@
     "symbol": "BURNIE",
     "chain": "solana",
     "buyPrice": 0.0027565589943692945,
-    "currentPrice": 0.003454805779209941,
+    "currentPrice": 0.003289799625326363,
     "buyAmount": 108831336682,
     "buyCost": 300,
     "buyTime": 1775575462108,
@@ -11,10 +11,10 @@
     "sellRevenue": 0,
     "capitalRecovered": false,
     "source": "manual",
-    "currentValue": 375991130.92811644,
-    "pnlPercent": 25.330376976038803,
-    "totalPnl": 375990830.92811644,
-    "totalPnlPercent": 125330276.97603881
+    "currentValue": 358033290.64021087,
+    "pnlPercent": 19.344430213403616,
+    "totalPnl": 358032990.64021087,
+    "totalPnlPercent": 119344330.21340363
   },
   "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump": {
     "symbol": "ROCKET",
@@ -28,12 +28,12 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000514055395399502,
+    "currentPrice": 0.000610205438119812,
     "buyAmountRaw": 404767.048313,
-    "currentValue": 208.07268506522854,
-    "pnlPercent": 6.418813933077609,
-    "totalPnl": 8.07268506522854,
-    "totalPnlPercent": 4.03634253261427
+    "currentValue": 246.99105405229727,
+    "pnlPercent": 26.323621075424825,
+    "totalPnl": 46.99105405229727,
+    "totalPnlPercent": 23.495527026148636
   },
   "CpFJrfYq32Wae2Bt36hEAUwzdyT29WwVLpZmYDF7pump": {
     "symbol": "Rise",
@@ -47,11 +47,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000260273633545614,
-    "currentValue": 216066718.16642058,
-    "pnlPercent": 125.73602215577975,
-    "totalPnl": 216066716.60154608,
-    "totalPnlPercent": 108033358.30077302,
+    "currentPrice": 0.000290188043823503,
+    "currentValue": 240900230.3688564,
+    "pnlPercent": 151.68087061882312,
+    "totalPnl": 240900228.8039819,
+    "totalPnlPercent": 120450114.40199095,
     "capitalRecovered": true,
     "lastSellPrice": 0.000234740168665904,
     "soldRatio": 0.5
@@ -68,10 +68,10 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000230986659760019,
-    "currentValue": 206691329.21865803,
-    "pnlPercent": 9.265212753083732,
-    "totalPnl": 206691129.21865803,
-    "totalPnlPercent": 103345564.60932902
+    "currentPrice": 0.000216011564550235,
+    "currentValue": 193291324.48547578,
+    "pnlPercent": 2.1814401845955653,
+    "totalPnl": 193291124.48547578,
+    "totalPnlPercent": 96645562.24273789
   }
 }
