@@ -160,6 +160,13 @@ async function processSignal(s) {
           console.log(`📝 已写入buy_queue，等待引擎读取`);
         } else {
           console.error(`❌ 自动买入失败: ${buyResult?.error || '未知错误'}`);
+          // 写入notify_queue，让heartbeat转发给跑步哥+提醒手动补买
+          try {
+            const nqPath = path.join(__dirname, 'data/v8/notify_queue.json');
+            const nq = (() => { try { return JSON.parse(fs.readFileSync(nqPath, 'utf8')); } catch { return []; } })();
+            nq.push(`⚠️ 自动买入失败！${s.symbol}(${s.chain}) 评分${score}，需要手动补买\n合约: ${s.token}\n原因: ${buyResult?.error || '未知'}`);
+            fs.writeFileSync(nqPath, JSON.stringify(nq, null, 2));
+          } catch {}
         }
       } else {
         console.error('❌ 无法获取原生代币价格，跳过自动买入');
