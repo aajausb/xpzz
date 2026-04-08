@@ -34,12 +34,20 @@ process.stdin.on('end', async () => {
 });
 
 async function processSignal(s) {
-  // 1. 用Jina Reader抓项目网站和推特内容
+  // 1. 用Jina Reader抓项目网站和推特内容 + DuckDuckGo搜叙事
   let searchContext = '';
   try {
     const fetches = [];
     if (s.website) fetches.push(jinaFetch(s.website).then(t => t ? `[网站] ${t}` : ''));
     if (s.twitter) fetches.push(jinaFetch(s.twitter).then(t => t ? `[推特] ${t}` : ''));
+    // DuckDuckGo搜索叙事补充
+    const chainName = s.chain === 'solana' ? 'solana' : s.chain === 'bsc' ? 'BSC' : 'base';
+    const ddgQuery = `${s.symbol} ${chainName} meme coin`;
+    fetches.push(ddgSearch(ddgQuery).then(t => t ? `[搜索] ${t}` : ''));
+    // 如果是pump币，搜推特讨论
+    if (s.token && s.token.endsWith('pump')) {
+      fetches.push(ddgSearch(`${s.symbol} solana site:x.com`).then(t => t ? `[推特搜索] ${t}` : ''));
+    }
     const results = await Promise.all(fetches);
     searchContext = results.filter(r => r).join('\n\n');
   } catch (e) {
@@ -58,8 +66,43 @@ async function processSignal(s) {
 }
 
 async function exaSearch(query) {
-  // 不用Exa了，用Jina Reader直接抓项目网站和推特
-  return '(跳过搜索，用Jina抓网站)';
+  return '(跳过搜索，用DuckDuckGo)';
+}
+
+// DuckDuckGo HTML搜索：抓搜索结果标题+摘要
+async function ddgSearch(query) {
+  return new Promise((resolve) => {
+    const url = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+    const req = https.get(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+    }, res => {
+      let d = '';
+      res.on('data', c => { d += c; if (d.length > 10000) { res.destroy(); finish(d); } });
+      res.on('end', () => finish(d));
+    });
+    req.on('error', () => resolve(''));
+    req.setTimeout(10000, () => { req.destroy(); resolve(''); });
+
+    function finish(html) {
+      // 检查是否被限流（人机验证）
+      if (html.includes('Please complete the following challenge') || html.includes('select all squares')) {
+        resolve('(搜索限流)');
+        return;
+      }
+      // 提取搜索结果：标题和摘要
+      const results = [];
+      const titleRe = /<a[^>]*class="result__a"[^>]*>(.*?)<\/a>/gs;
+      const snippetRe = /<a[^>]*class="result__snippet"[^>]*>(.*?)<\/a>/gs;
+      let m;
+      while ((m = titleRe.exec(html)) && results.length < 5) {
+        results.push(m[1].replace(/<[^>]+>/g, '').trim());
+      }
+      while ((m = snippetRe.exec(html)) && results.length < 10) {
+        results.push(m[1].replace(/<[^>]+>/g, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').trim());
+      }
+      resolve(results.join('\n').slice(0, 2000) || '(无结果)');
+    }
+  });
 }
 
 // Jina Reader: 抓任意URL内容
