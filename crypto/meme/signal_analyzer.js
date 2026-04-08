@@ -102,13 +102,114 @@ async function processSignal(s) {
   // 3. 组装消息
   const msg = buildMessage(s, analysis);
 
-  // 4. 发TG（带重试）
-  await sendTGWithRetry(msg, s.buttons, s.token, s.chain);
+  // 4. 解析评分，≥70自动买入
+  const scoreMatch = analysis.match(/总分[:\s]*(\d+)\/100/);
+  const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+  let buyResult = null;
+  
+  if (score >= 70 && s.token) {
+    try {
+      const dex = require('./dex_trader');
+      const buyAmountUsd = 200;
+      const nativePrice = await getNativePrice(s.chain);
+      if (nativePrice > 0) {
+        const decimals = s.chain === 'solana' ? 1e9 : 1e18;
+        const amountNative = Math.floor(buyAmountUsd / nativePrice * decimals);
+        console.log(`🤖 评分${score}≥70，自动买入$${buyAmountUsd} ${s.symbol}(${s.chain})...`);
+        // 最多重试3次
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          buyResult = await dex.buy(s.chain, s.token, amountNative);
+          if (buyResult && buyResult.success) {
+            console.log(`✅ 自动买入成功(第${attempt}次)! TX: ${buyResult.txHash}`);
+            break;
+          }
+          console.log(`❌ 第${attempt}次买入失败: ${buyResult?.error || '未知'}, ${attempt < 3 ? '3秒后重试...' : '放弃'}`);
+          if (attempt < 3) await new Promise(r => setTimeout(r, 3000));
+        }
+        if (buyResult && buyResult.success) {
+          console.log(`✅ 自动买入成功! TX: ${buyResult.txHash}`);
+          // 写入positions.json
+          const posPath = path.join(__dirname, 'data/v8/positions.json');
+          const positions = JSON.parse(fs.readFileSync(posPath, 'utf8'));
+          const tokenPrice = await getTokenPrice(s.token);
+          positions[s.token] = {
+            symbol: s.symbol, chain: s.chain, token: s.token,
+            buyPrice: tokenPrice, buyCost: buyAmountUsd,
+            buyAmount: parseInt(buyResult.routerResult?.toTokenAmount || '0'),
+            buyTime: Date.now(),
+            sellRevenue: 0, recovered: false,
+            peakPnl: 0, trailingActive: false
+          };
+          fs.writeFileSync(posPath, JSON.stringify(positions, null, 2));
+          console.log(`📝 已加入positions，引擎将自动巡检止盈止损`);
+        } else {
+          console.error(`❌ 自动买入失败: ${buyResult?.error || '未知错误'}`);
+        }
+      } else {
+        console.error('❌ 无法获取原生代币价格，跳过自动买入');
+      }
+    } catch (e) {
+      console.error('❌ 自动买入异常:', e.message);
+    }
+  }
+
+  // 5. 发TG（带重试）
+  let finalMsg = msg;
+  if (buyResult && buyResult.success) {
+    finalMsg += `\n\n🤖 <b>自动买入$200</b> ✅`;
+  } else if (score >= 70 && !buyResult?.success) {
+    finalMsg += `\n\n🤖 自动买入失败 ❌`;
+  }
+  await sendTGWithRetry(finalMsg, score >= 70 ? [] : s.buttons, s.token, s.chain);
   console.log(`✅ ${s.symbol}(${s.chain}) 分析完成并发送`);
 }
 
 async function exaSearch(query) {
   return '(跳过搜索，用DuckDuckGo)';
+}
+
+// 查原生代币价格（SOL/BNB/ETH）
+async function getNativePrice(chain) {
+  // 先试CoinGecko
+  const ids = { solana: 'solana', bsc: 'binancecoin', base: 'ethereum' };
+  const id = ids[chain] || 'solana';
+  let price = await new Promise(resolve => {
+    https.get(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`, res => {
+      let d = ''; res.on('data', c => d += c);
+      res.on('end', () => {
+        try { resolve(JSON.parse(d)[id]?.usd || 0); }
+        catch { resolve(0); }
+      });
+    }).on('error', () => resolve(0));
+  });
+  if (price > 0) return price;
+  
+  // CoinGecko失败，用DexScreener查wrapped token
+  const nativeTokens = {
+    solana: 'So11111111111111111111111111111111111111112',
+    bsc: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    base: '0x4200000000000000000000000000000000000006'
+  };
+  const nativeMint = nativeTokens[chain];
+  if (!nativeMint) return 0;
+  return new Promise(resolve => {
+    https.get(`https://api.dexscreener.com/latest/dex/tokens/${nativeMint}`, res => {
+      let d = ''; res.on('data', c => d += c);
+      res.on('end', () => {
+        try {
+          const pairs = JSON.parse(d).pairs;
+          if (pairs && pairs[0]) {
+            // wrapped token的价格就是原生代币价格
+            const p = pairs[0];
+            const basePrice = parseFloat(p.priceUsd) || 0;
+            // 如果base是wrapped token，直接用；如果是quote，用1/price
+            if (p.baseToken?.address === nativeMint) resolve(basePrice);
+            else resolve(parseFloat(p.quoteToken?.priceUsd || p.priceNative) || 0);
+          } else resolve(0);
+        } catch { resolve(0); }
+      });
+    }).on('error', () => resolve(0));
+  });
 }
 
 // 查token现价（DexScreener）
@@ -343,7 +444,20 @@ SM共识(x/30): 一句话
 function buildMessage(s, analysis) {
   // 解析AI分析内容，提取各维度
   let text = `🔔 信号达标 ${s.symbol}(${s.chain})\n`;
-  text += `📊 猎手${s.hunters}+哨兵${s.scouts} | SM实时持有$${s.smLiveTotal}\n`;
+  
+  // SM状态：显示实时持仓情况
+  const smTotal = (s.hunters || 0) + (s.scouts || 0);
+  const holdingInfo = s.smWallets || '';
+  const holdingMatch = holdingInfo.match(/(\d+)个仍持仓/);
+  const stillHolding = holdingMatch ? parseInt(holdingMatch[1]) : smTotal;
+  
+  if (s.smLiveTotal > 0) {
+    text += `📊 SM ${stillHolding}/${smTotal}个仍持仓 | 实时持有$${s.smLiveTotal}\n`;
+  } else if (smTotal > 0) {
+    text += `📊 SM ${smTotal}个曾买入 | ⚠️ 全部已清仓\n`;
+  } else {
+    text += `📊 SM数据未知\n`;
+  }
   text += `🏹 ${s.smWallets}\n`;
   text += `💰 市值: ${s.mcapStr} | 流动性: ${s.liqStr}\n`;
   
