@@ -3,7 +3,7 @@
     "symbol": "BURNIE",
     "chain": "solana",
     "buyPrice": 0.0027565589943692945,
-    "currentPrice": 0.00353982376302918,
+    "currentPrice": 0.003630913476017535,
     "buyAmount": 108831336682,
     "buyCost": 300,
     "buyTime": 1775575462108,
@@ -11,10 +11,10 @@
     "sellRevenue": 0,
     "capitalRecovered": false,
     "source": "manual",
-    "currentValue": 385243751.74917287,
-    "pnlPercent": 28.41458391639094,
-    "totalPnl": 385243451.74917287,
-    "totalPnlPercent": 128414483.91639097
+    "currentValue": 395157166.9716753,
+    "pnlPercent": 31.719055657225077,
+    "totalPnl": 395156866.9716753,
+    "totalPnlPercent": 131718955.6572251
   },
   "2pjcq9k2X5oSArNKiVeQ2ENB63eJt8pwCabciGQGpump": {
     "symbol": "Optimistic",
@@ -28,11 +28,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000095397966825764,
-    "currentValue": 92117618.10014889,
-    "pnlPercent": -5.304124759780477,
-    "totalPnl": 92117518.10014889,
-    "totalPnlPercent": 92117518.10014889
+    "currentPrice": 0.000094240107659495,
+    "currentValue": 90999573.00924115,
+    "pnlPercent": -6.45346253712546,
+    "totalPnl": 90999473.00924115,
+    "totalPnlPercent": 90999473.00924115
   },
   "CYTUg8qLd45EGbx7MXxSwR5PSMNoUck5SetxxSDHpump": {
     "symbol": "stonks",
@@ -46,11 +46,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000065471535425654,
-    "currentValue": 178446474.36179298,
-    "pnlPercent": -9.557210352736561,
-    "totalPnl": 178446274.36179298,
-    "totalPnlPercent": 89223137.18089649
+    "currentPrice": 0.0000639796260744,
+    "currentValue": 174380188.7299098,
+    "pnlPercent": -11.618143287194371,
+    "totalPnl": 174379988.7299098,
+    "totalPnlPercent": 87189994.3649549
   },
   "97PGWGgGJorRwwYgNqF5Z68SqwoyiuT2UjumzSjDpump": {
     "symbol": "49",
@@ -64,11 +64,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000451248991883433,
+    "currentPrice": 0.000388753819642629,
     "buyAmountRaw": 416837.909458,
-    "currentValue": 188.0976864217202,
-    "pnlPercent": -7.398113711587737,
-    "totalPnl": -11.902313578279802,
-    "totalPnlPercent": -5.951156789139901
+    "currentValue": 162.04732947364585,
+    "pnlPercent": -20.222897672351948,
+    "totalPnl": -37.952670526354154,
+    "totalPnlPercent": -18.976335263177077
   }
 }
