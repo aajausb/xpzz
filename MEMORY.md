@@ -47,7 +47,7 @@
 - **市值门槛(2026-04-07)**: $10K ~ $10M（三链统一）
 - **SM金额用实时持有**: 链上余额×DexScreener价格，<$500不发通知
 - **确认门槛(2026-03-30)**: ≥2猎手 / 1猎手+2哨兵 / ≥4哨兵（三链统一，去掉纯3哨兵因67%亏损率）
-- **minMarketCap**: `{ solana: 100000, bsc: 100000, base: 30000 }`，fallback $30K
+- **minMarketCap**: 统一$10K（`CONFIG.minMarketCap: 10000`）
 - **卖出变量**: SELL_MAX_RETRIES=2（区别于买入MAX_RETRIES=3）
 - **分批卖出第二次查链上余额卖全部** — 固定half会残留
 - **EVM预approve**: 买入后5秒自动approve max，dex_trader.preApprove()
