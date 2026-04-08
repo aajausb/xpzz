@@ -3,7 +3,7 @@
     "symbol": "BURNIE",
     "chain": "solana",
     "buyPrice": 0.0027565589943692945,
-    "currentPrice": 0.003184523600082583,
+    "currentPrice": 0.003263050879209858,
     "buyAmount": 108831336682,
     "buyCost": 300,
     "buyTime": 1775575462108,
@@ -11,9 +11,27 @@
     "sellRevenue": 0,
     "capitalRecovered": false,
     "source": "manual",
-    "currentValue": 346575960.0923623,
-    "pnlPercent": 15.525320030787423,
-    "totalPnl": 346575660.0923623,
-    "totalPnlPercent": 115525220.03078742
+    "currentValue": 355122188.8457842,
+    "pnlPercent": 18.374062948594716,
+    "totalPnl": 355121888.8457842,
+    "totalPnlPercent": 118373962.94859473
+  },
+  "2pjcq9k2X5oSArNKiVeQ2ENB63eJt8pwCabciGQGpump": {
+    "symbol": "Optimistic",
+    "chain": "solana",
+    "token": "2pjcq9k2X5oSArNKiVeQ2ENB63eJt8pwCabciGQGpump",
+    "buyPrice": 0.000100741417283238,
+    "buyCost": 100,
+    "buyAmount": 965614060396,
+    "buyTime": 1775611144715,
+    "sellRevenue": 0,
+    "recovered": false,
+    "peakPnl": 0,
+    "trailingActive": false,
+    "currentPrice": 0.000095546836069601,
+    "currentValue": 92261368.33515841,
+    "pnlPercent": -5.1563511351366556,
+    "totalPnl": 92261268.33515841,
+    "totalPnlPercent": 92261268.33515841
   }
 }
