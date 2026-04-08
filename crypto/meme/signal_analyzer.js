@@ -190,11 +190,13 @@ async function getNativePrice(chain) {
       amount: amt
     });
     if (quote.code === '0' && quote.data?.[0]) {
-      // 从路由里找toToken的unitPrice
+      // 从路由里找toToken=wSOL/wBNB/wETH的unitPrice
       const routes = quote.data[0].dexRouterList || [];
       for (const r of routes) {
-        const p = parseFloat(r.toToken?.tokenUnitPrice || '0');
-        if (p > 0) { console.log(`OKX报价: ${chain} = $${p}`); return p; }
+        if (r.toToken?.tokenContractAddress === WRAPPED[chain]) {
+          const p = parseFloat(r.toToken?.tokenUnitPrice || '0');
+          if (p > 0) { console.log(`OKX报价: ${chain} = $${p}`); return p; }
+        }
       }
     }
   } catch(e) {
