@@ -61,7 +61,7 @@ async function processSignal(s) {
   const msg = buildMessage(s, analysis);
 
   // 4. 发TG
-  await sendTG(msg, s.buttons);
+  await sendTG(msg, s.buttons, s.token, s.chain);
   console.log(`✅ ${s.symbol}(${s.chain}) 分析完成并发送`);
 }
 
@@ -122,35 +122,69 @@ async function jinaFetch(url) {
 }
 
 async function callAI(s, searchContext) {
-  const prompt = `你是土狗meme币分析师。用中文分析这个信号，简洁有力，不要说"小仓试探"之类的保守建议。
+  // 计算辅助数据
+  const mcapNum = parseFloat((s.mcapStr || '').replace(/[$,KMB]/gi, '')) || 0;
+  const mcapMultiplier = (s.mcapStr || '').includes('M') ? 1000000 : (s.mcapStr || '').includes('K') ? 1000 : 1;
+  const mcapUsd = mcapNum * mcapMultiplier;
+  const smPct = mcapUsd > 0 ? ((s.smLiveTotal || 0) / mcapUsd * 100).toFixed(2) : '?';
+  const turnoverRate = mcapUsd > 0 ? ((s.volume24h || 0) / mcapUsd * 100).toFixed(0) : '?';
+  const buyRatio = (s.buys || 0) + (s.sells || 0) > 0 ? ((s.buys || 0) / ((s.buys || 0) + (s.sells || 0)) * 100).toFixed(0) : '?';
 
-重要：这些币能到你面前说明已经通过了聪明钱确认门槛，SM正在持仓。你的任务是客观分析优劣势，不是唱空劝退。好的就说好，差的就说差，别默认看空。土狗本来就是高风险高回报，不需要你提醒风险。
+  const prompt = `你是Web3土狗meme币分析师，用链上数据思维评估信号。
+
+核心原则：
+- 这些币已通过聪明钱(SM)确认门槛，SM正在持仓，不要默认看空
+- "没网站没推特"不扣分——pump.fun上90%的十倍币啥都没有，有精美网站反而可能是包装骗局
+- 评分基于链上硬数据，不基于"看起来正不正规"
+- 不要说"小仓试探"之类的保守建议，土狗就是高风险高回报
 
 信号数据:
 - 币名: ${s.tokenName || s.symbol} (${s.symbol})
 - 链: ${s.chain}
-- 猎手: ${s.hunters}, 哨兵: ${s.scouts}
-- SM实时持有: $${s.smLiveTotal}
+- 猎手: ${s.hunters}, 哨兵: ${s.scouts}（总SM: ${(s.hunters || 0) + (s.scouts || 0)}个）
+- SM实时持有: $${s.smLiveTotal}（占市值${smPct}%）
 - SM钱包: ${s.smWallets}
 - 市值: ${s.mcapStr}, 流动性: ${s.liqStr}
-- 24h成交: $${Math.round(s.volume24h || 0)}
-- 买/卖笔数: ${s.buys || 0}/${s.sells || 0}
+- 24h成交: $${Math.round(s.volume24h || 0)}（换手率${turnoverRate}%）
+- 买/卖笔数: ${s.buys || 0}/${s.sells || 0}（买盘占比${buyRatio}%）
 - 网站: ${s.website || '无'}
 - 推特: ${s.twitter || '无'}
 
-项目网站/推特内容:
+搜索到的叙事信息:
 ${searchContext || '(无法获取)'}
 
-请按以下5个维度分析，每个维度1-2句话：
-1. 叙事（宏大性/唯一性/热点关联）
-2. SM态度（持仓力度/钱包级别）— 注意：信号已通过确认门槛，SM确实在持仓，不要说"已清仓"或"已跑了"
-3. 盘面（市值/流动性/成交量）
-4. 社区（网站/推特/运营投入）
-5. 推特热度（🟢高/🟡中/🔴低）
+按以下4个维度分析，严格按权重评分：
 
-最后给评分 xx/100 和一句话总结。不要评价24h涨跌和币龄。
+1. SM共识（30分）— 评判标准：
+   - SM数量（≥3个=高共识，2个=中等，1个=低）
+   - 持仓占市值比（>1%=重仓，0.1-1%=中等，<0.1%=轻仓）
+   - 猎手vs哨兵比例（猎手多=更强信号）
+   参考：$1000在$50K币里=2%重仓，在$5M币里=0.02%可忽略
 
-格式要求：纯文本，不要用markdown（不要#标题、不要**加粗**、不要---分割线）。每个维度用"叙事:"、"SM态度:"、"盘面:"、"社区:"、"推特热度:"开头，评分用"📊 评分: xx/100 🟢/🟡/🔴"格式，最后一行"💡"开头写总结。`;
+2. 盘面动能（25分）— 评判标准：
+   - 换手率（>100%=极活跃，50-100%=活跃，<50%=冷清）
+   - 买卖比（买盘>55%=买压强，45-55%=均衡，<45%=卖压）
+   - 流动性占市值比（>10%=健康，5-10%=尚可，<5%=危险）
+
+3. 叙事传播力（25分）— 评判标准：
+   - 能否一句话说清概念（能=好，需要解释=差）
+   - 有没有情绪触发点（搞笑/愤怒/FOMO/蹭热点）
+   - 有没有催化剂（名人背书/事件驱动/病毒传播）
+   - 注意：简单的概念（数字梗/emoji/动物）反而更容易传播
+   - 注意：有没有网站和推特不影响这个维度的评分
+
+4. 风险信号（20分，满分=低风险）— 评判标准：
+   - LP是否burn/合约是否renounce
+   - 流动性是否过低（<$10K=高危）
+   - 持仓是否过于集中
+
+格式要求：纯文本，不要用markdown。
+SM共识(x/30): 一句话
+盘面(x/25): 一句话
+叙事(x/25): 2-3句，说清概念+情绪触发点+催化剂
+风险(x/20): 一句话
+📊 总分: xx/100 🟢(≥65)/🟡(40-64)/🔴(<40)
+💡 一句话总结`;
 
   // 读fusecode API key和配置
   let fusecodeKey = '';
@@ -220,6 +254,8 @@ function buildMessage(s, analysis) {
     let clean = line.replace(/\*\*/g, '').trim();
     // 去掉开头的数字编号 (1. 2. 等)
     clean = clean.replace(/^\d+\.\s*/, '');
+    // HTML转义（防止<$500之类的被TG当标签解析）
+    clean = clean.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     formatted += clean + '\n';
   }
   text += formatted.trim();
@@ -229,7 +265,18 @@ function buildMessage(s, analysis) {
   return text;
 }
 
-async function sendTG(text, buttons) {
+async function sendTG(text, buttons, token, chain) {
+  // 如果没传buttons但有token，自动生成买入按钮
+  if ((!buttons || buttons.length === 0) && token) {
+    const shortToken = token.slice(0, 20);
+    const c = chain === 'solana' ? 's' : chain === 'bsc' ? 'b' : 'a';
+    buttons = [
+      { text: '买$100', callback_data: `b_${c}_${shortToken}_100` },
+      { text: '买$200', callback_data: `b_${c}_${shortToken}_200` },
+      { text: '买$300', callback_data: `b_${c}_${shortToken}_300` },
+      { text: '跳过', callback_data: `b_${c}_${shortToken}_0` },
+    ];
+  }
   const inlineKeyboard = [];
   if (buttons && buttons.length >= 3) {
     inlineKeyboard.push([
