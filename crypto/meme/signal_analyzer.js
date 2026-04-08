@@ -60,8 +60,8 @@ async function processSignal(s) {
   // 3. 组装消息
   const msg = buildMessage(s, analysis);
 
-  // 4. 发TG
-  await sendTG(msg, s.buttons, s.token, s.chain);
+  // 4. 发TG（带重试）
+  await sendTGWithRetry(msg, s.buttons, s.token, s.chain);
   console.log(`✅ ${s.symbol}(${s.chain}) 分析完成并发送`);
 }
 
@@ -315,8 +315,20 @@ async function sendTG(text, buttons, token, chain) {
         } catch { resolve({}); }
       });
     });
-    req.on('error', e => { console.error('TG请求失败:', e.message); resolve({}); });
+    req.on('error', e => { console.error('TG请求失败:', e.message); resolve({ ok: false, retryable: true }); });
     req.write(postData);
     req.end();
   });
+}
+
+// 带重试的TG发送
+async function sendTGWithRetry(text, buttons, token, chain) {
+  let result = await sendTG(text, buttons, token, chain);
+  if (!result.ok) {
+    console.log('TG发送失败，3秒后重试...');
+    await new Promise(r => setTimeout(r, 3000));
+    result = await sendTG(text, buttons, token, chain);
+    if (!result.ok) console.error('TG重试仍失败');
+  }
+  return result;
 }
