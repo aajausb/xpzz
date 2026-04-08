@@ -3,7 +3,7 @@
     "symbol": "BURNIE",
     "chain": "solana",
     "buyPrice": 0.0027565589943692945,
-    "currentPrice": 0.003772110261557865,
+    "currentPrice": 0.004130272341527397,
     "buyAmount": 108831336682,
     "buyCost": 300,
     "buyTime": 1775575462108,
@@ -11,10 +11,10 @@
     "sellRevenue": 0,
     "capitalRecovered": false,
     "source": "manual",
-    "currentValue": 410523801.8772311,
-    "pnlPercent": 36.84126729241036,
-    "totalPnl": 410523501.8772311,
-    "totalPnlPercent": 136841167.29241037
+    "currentValue": 449503059.7891206,
+    "pnlPercent": 49.834353263040185,
+    "totalPnl": 449502759.7891206,
+    "totalPnlPercent": 149834253.2630402
   },
   "2pjcq9k2X5oSArNKiVeQ2ENB63eJt8pwCabciGQGpump": {
     "symbol": "Optimistic",
@@ -28,11 +28,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000101244650477797,
-    "currentValue": 97763258.04123938,
-    "pnlPercent": 0.49952959580084855,
-    "totalPnl": 97763158.04123938,
-    "totalPnlPercent": 97763158.04123938
+    "currentPrice": 0.000096701484291099,
+    "currentValue": 93376312.89264812,
+    "pnlPercent": -4.010200671269678,
+    "totalPnl": 93376212.89264812,
+    "totalPnlPercent": 93376212.89264812
   },
   "CYTUg8qLd45EGbx7MXxSwR5PSMNoUck5SetxxSDHpump": {
     "symbol": "stonks",
@@ -46,11 +46,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.000068437245396588,
-    "currentValue": 186529689.2253537,
-    "pnlPercent": -5.460359999187736,
-    "totalPnl": 186529489.2253537,
-    "totalPnlPercent": 93264744.61267684
+    "currentPrice": 0.000065786831701808,
+    "currentValue": 179305832.68435705,
+    "pnlPercent": -9.121658099450196,
+    "totalPnl": 179305632.68435705,
+    "totalPnlPercent": 89652816.34217852
   },
   "97PGWGgGJorRwwYgNqF5Z68SqwoyiuT2UjumzSjDpump": {
     "symbol": "49",
@@ -64,12 +64,12 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.00040551820284367,
+    "currentPrice": 0.000401783800552431,
     "buyAmountRaw": 416837.909458,
-    "currentValue": 169.03535992052056,
-    "pnlPercent": -16.782638447841176,
-    "totalPnl": -30.964640079479437,
-    "totalPnlPercent": -15.482320039739719
+    "currentValue": 167.47871947636534,
+    "pnlPercent": -17.548984085279915,
+    "totalPnl": -32.52128052363466,
+    "totalPnlPercent": -16.26064026181733
   },
   "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump": {
     "symbol": "ROCKET",
@@ -83,11 +83,11 @@
     "recovered": false,
     "peakPnl": 0,
     "trailingActive": false,
-    "currentPrice": 0.00044558886456821,
+    "currentPrice": 0.000436985093330881,
     "buyAmountRaw": 404767.048313,
-    "currentValue": 180.35968947241548,
-    "pnlPercent": -7.7550028780777644,
-    "totalPnl": -19.640310527584518,
-    "totalPnlPercent": -9.820155263792259
+    "currentValue": 176.87716638432153,
+    "pnlPercent": -9.536139966847186,
+    "totalPnl": -23.122833615678474,
+    "totalPnlPercent": -11.561416807839237
   }
 }
