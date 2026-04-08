@@ -47,6 +47,24 @@ async function processSignal(s) {
           status: e.walletStatus
         })).filter(w => w.address);
         
+        // 用wallet_db校正地址（排名刷新后同rank可能对应不同钱包）
+        try {
+          const dbPath = path.join(__dirname, 'data/v8/wallet_db.json');
+          const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+          for (const w of wallets) {
+            const key = w.address + '_' + s.chain;
+            if (!db[key]) {
+              // pending地址不在wallet_db里，按前12位找真实地址
+              const prefix = w.address.slice(0, 12);
+              const match = Object.values(db).find(v => v.address?.startsWith(prefix) && v.chain === s.chain);
+              if (match) {
+                console.log(`地址校正: ${w.status}#${w.rank} ${w.address.slice(0,12)}→${match.address.slice(0,12)}`);
+                w.address = match.address;
+              }
+            }
+          }
+        } catch {}
+        
         if (wallets.length > 0) {
           // 查链上余额
           const price = await getTokenPrice(s.token);
