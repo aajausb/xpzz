@@ -8809,5 +8809,28 @@
     "riskLevel": "MID",
     "reason": "OK",
     "_time": 1775684138172
+  },
+  "qyzQwsyTYhAEGvonp5mcDaRSFuesDH4pfyRymLfpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "HjXzvecze7yeV1gwNerrTFpAdUiYBdbBZDjGYAZoBAGS": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "8BrKogqwr7Uad9Pwkxw91w31v2x5qf8yDL4x52Qhpump": {
+    "safe": true,
+    "reason": "SOL跳过审计",
+    "source": "skip"
+  },
+  "0x5b3342568136cb4644fd91d05d8860bfa699bb52": {
+    "safe": true,
+    "isHoneypot": false,
+    "sellTax": 0,
+    "riskLevel": "MID",
+    "reason": "OK",
+    "_time": 1775698301566
   }
 }
