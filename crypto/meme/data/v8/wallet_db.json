@@ -2,10 +2,10 @@
   "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o_solana": {
     "chain": "solana",
     "address": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
-    "pnl": 150022.8664462353,
-    "winRate": 68.71000000000001,
-    "tokens": 1307,
-    "txCount": 8269,
+    "pnl": 146853.63507953737,
+    "winRate": 68.99,
+    "tokens": 1222,
+    "txCount": 7676,
     "period": "30d",
     "topTokens": [
       {
@@ -34,9 +34,9 @@
     "lastActivity": 1773552743000,
     "verifiedBal": 1372.148234274,
     "addedAt": 1773536878397,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "missCount": 0,
-    "score": 36.82137852511614,
+    "score": 36.55964861780639,
     "status": "scout",
     "rank": 1
   },
@@ -79,15 +79,15 @@
     "missCount": 0,
     "score": 19.32818905625678,
     "status": "scout",
-    "rank": 21
+    "rank": 22
   },
   "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk_solana": {
     "chain": "solana",
     "address": "4BdKaxN8G6ka4GYtQQWk4G4dZRUTX2vQH9GcXdBREFUk",
-    "pnl": 29457.596395227392,
-    "winRate": 70.21,
-    "tokens": 191,
-    "txCount": 940,
+    "pnl": 27842.68545863979,
+    "winRate": 70,
+    "tokens": 162,
+    "txCount": 832,
     "period": "30d",
     "topTokens": [
       {
@@ -116,11 +116,11 @@
     "lastActivity": 1773521548000,
     "verifiedBal": 679.181010939,
     "addedAt": 1773536878397,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "missCount": 0,
-    "score": 23.80035155872113,
+    "score": 22.8641618645902,
     "status": "hunter",
-    "rank": 13
+    "rank": 14
   },
   "5vweNikgScdnGkZCC3ya2FoJrezJBrSrhZgp8kK8bbtg_solana": {
     "chain": "solana",
@@ -161,7 +161,7 @@
     "missCount": 0,
     "score": 19.643132686522993,
     "status": "scout",
-    "rank": 20,
+    "rank": 21,
     "_staleDemoted": true
   },
   "4EsYuWFZAt1PfNJq8Jr7monip43gNqrQ7k2Kne1npqJx_solana": {
@@ -203,7 +203,7 @@
     "missCount": 0,
     "score": 17.199802025974893,
     "status": "scout",
-    "rank": 30,
+    "rank": 31,
     "_staleDemoted": true
   },
   "2GmtrUJRCzi33PuSbcU585Tgc4jU68WpACkBZ9BiMZwV_solana": {
@@ -287,7 +287,7 @@
     "missCount": 0,
     "score": 22.12558330441932,
     "status": "hunter",
-    "rank": 15,
+    "rank": 16,
     "_staleDemoted": true
   },
   "EU1bFxZ9oiUC2V6tme6gaPgTP6mvVm54q2oUKD27U3pm_solana": {
@@ -329,7 +329,7 @@
     "missCount": 0,
     "score": 18.460072466288036,
     "status": "hunter",
-    "rank": 23
+    "rank": 24
   },
   "7z6iJpR3KaEhbr9KMPa5kBm49DuYu3C99ixbPZ3roUKp_solana": {
     "chain": "solana",
@@ -370,7 +370,7 @@
     "missCount": 11,
     "score": 18.054046123989668,
     "status": "scout",
-    "rank": 27,
+    "rank": 28,
     "_staleDemoted": true
   },
   "4zeVXCXXr4dZ14GqKUZLPFj6adAKd844xGVM92QwfYJZ_solana": {
@@ -405,7 +405,7 @@
     "missCount": 94,
     "score": 7.269636074898031,
     "status": "hunter",
-    "rank": 103,
+    "rank": 104,
     "_staleDemoted": true
   },
   "6RiZZntbV9XFdRec6VhJTV5kZRijdsYV8BZEzGwmMbcB_solana": {
@@ -447,7 +447,7 @@
     "missCount": 0,
     "score": 11.922959810279165,
     "status": "scout",
-    "rank": 56,
+    "rank": 57,
     "_staleDemoted": true
   },
   "0x8d5624fa29526c879a1ca7560961e4c5a08089ae_bsc": {
@@ -1723,7 +1723,7 @@
     "missCount": 0,
     "score": 7.315231986842342,
     "status": "scout",
-    "rank": 46,
+    "rank": 45,
     "_staleDemoted": true
   },
   "0x811ebabacdaf293e860a66637e5049f8eb36e85e_base": {
@@ -1800,7 +1800,7 @@
     "missCount": 90,
     "score": 6.330601244294866,
     "status": "hunter",
-    "rank": 53,
+    "rank": 52,
     "_staleDemoted": true
   },
   "0x28d3bdece9a0c7f54687f734fa73fba04ecf5785_base": {
@@ -1869,7 +1869,7 @@
     "missCount": 0,
     "score": 9.051096539450011,
     "status": "scout",
-    "rank": 38,
+    "rank": 37,
     "_staleDemoted": true
   },
   "0x50fae72047f9714384c2e01a9ad47cc5b4571c6c_base": {
@@ -1953,7 +1953,7 @@
     "missCount": 0,
     "score": 11.496349205696706,
     "status": "scout",
-    "rank": 24,
+    "rank": 23,
     "_staleDemoted": true
   },
   "0x5ca12f79e4d33b0bd153b40df59f6db9ee03482e_base": {
@@ -2035,7 +2035,7 @@
     "missCount": 0,
     "score": 9.322652089229306,
     "status": "hunter",
-    "rank": 37,
+    "rank": 36,
     "_staleDemoted": true
   },
   "Hj5DTVGwUo1LQXjmSveE9JWSUc5j3LdK6aWyKaeEvSnb_solana": {
@@ -2077,7 +2077,7 @@
     "missCount": 0,
     "score": 8.754880287667001,
     "status": "scout",
-    "rank": 91,
+    "rank": 92,
     "_staleDemoted": true
   },
   "32mRYcNZJfG8gFrn9gvqusUtaWekXVAVQpkc97j5M9iT_solana": {
@@ -2119,7 +2119,7 @@
     "missCount": 93,
     "score": 22.835022108143818,
     "status": "hunter",
-    "rank": 14,
+    "rank": 15,
     "_staleDemoted": true
   },
   "gAd5gDX6jn9mYK5b5UAHVC1o3hJWGZYUwG3bDKqZxXQ_solana": {
@@ -2161,7 +2161,7 @@
     "missCount": 0,
     "score": 17.89242971023768,
     "status": "scout",
-    "rank": 29,
+    "rank": 30,
     "_staleDemoted": true
   },
   "DxLmcz6DmrNXZ4Zn6qMR4Y4FKVk54GqpJiadGMT3Nmrk_solana": {
@@ -2203,16 +2203,16 @@
     "missCount": 0,
     "score": 9.404939963692387,
     "status": "scout",
-    "rank": 85,
+    "rank": 86,
     "_staleDemoted": true
   },
   "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9_solana": {
     "chain": "solana",
     "address": "Bz429AezLuxgftrYKGCaTJsjZBN6LibmYp9eVfL9MXZ9",
-    "pnl": 14025.09003866962,
-    "winRate": 80,
-    "tokens": 16,
-    "txCount": 140,
+    "pnl": 13385.038526098697,
+    "winRate": 85.71,
+    "tokens": 15,
+    "txCount": 123,
     "period": "30d",
     "topTokens": [
       {
@@ -2241,11 +2241,11 @@
     "lastActivity": 1773528550000,
     "verifiedBal": 1.819440761,
     "addedAt": 1773556678660,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "missCount": 0,
-    "score": 13.560359479489545,
+    "score": 14.147813958858178,
     "status": "hunter",
-    "rank": 45,
+    "rank": 42,
     "_staleDemoted": true
   },
   "8deJ9xeUvXSJwicYptA9mHsU2rN2pDx37KWzkDkEXhU6_solana": {
@@ -2287,7 +2287,7 @@
     "missCount": 0,
     "score": 19.66743077683146,
     "status": "hunter",
-    "rank": 18
+    "rank": 19
   },
   "ASVzakePP6GNg9r95d4LPZHJDMXun6L6E4um4pu5ybJk_solana": {
     "chain": "solana",
@@ -2410,7 +2410,7 @@
     "missCount": 0,
     "score": 14.037410266601343,
     "status": "hunter",
-    "rank": 41,
+    "rank": 43,
     "_staleDemoted": true
   },
   "6rud1S5nYrUWh7SkftyZvhumwc8xzQ9UadJAhaYnSBng_solana": {
@@ -2452,7 +2452,7 @@
     "missCount": 0,
     "score": 12.243192395411988,
     "status": "scout",
-    "rank": 53,
+    "rank": 54,
     "_staleDemoted": true
   },
   "7zc5tFyTAHjtVeAiKvjU8Y7kDWn2zmjVnHVuhXuftBxh_solana": {
@@ -2500,10 +2500,10 @@
   "J485YzQjuJPLYoFEYjrjxd7NAoLHTiyUU63JwK7kLxRr_solana": {
     "chain": "solana",
     "address": "J485YzQjuJPLYoFEYjrjxd7NAoLHTiyUU63JwK7kLxRr",
-    "pnl": 19574.198524476084,
-    "winRate": 67.28,
-    "tokens": 394,
-    "txCount": 2630,
+    "pnl": 19203.679388431745,
+    "winRate": 66.58,
+    "tokens": 380,
+    "txCount": 2527,
     "period": "30d",
     "topTokens": [
       {
@@ -2532,11 +2532,11 @@
     "lastActivity": 1773568653000,
     "verifiedBal": 111.593545705,
     "addedAt": 1773557822595,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "missCount": 0,
-    "score": 24.906388520046004,
+    "score": 24.451119437623188,
     "status": "scout",
-    "rank": 11
+    "rank": 12
   },
   "94LBANHCUJCBRcKB3z1x55R951j1PS6GM1jPSGQHDPrU_solana": {
     "chain": "solana",
@@ -2577,7 +2577,7 @@
     "missCount": 4,
     "score": 12.604364447849143,
     "status": "scout",
-    "rank": 50,
+    "rank": 51,
     "_staleDemoted": true
   },
   "Ci4RrZ4G16NWUey4GFzvTWAXQBnYRxUvkN3vPpwMfwhP_solana": {
@@ -2619,7 +2619,7 @@
     "missCount": 4,
     "score": 21.787460822152504,
     "status": "hunter",
-    "rank": 16,
+    "rank": 17,
     "_staleDemoted": true
   },
   "D8n8Dy6DWC9691mR4NroSA9TdxXBxDV6Rr639RapanS4_solana": {
@@ -2661,7 +2661,7 @@
     "missCount": 0,
     "score": 16.1451676546902,
     "status": "hunter",
-    "rank": 35,
+    "rank": 36,
     "_staleDemoted": true
   },
   "4hvruD7YDRZL2xh5aCUrN2DoxZKCjGv9jofDXMvwGagC_solana": {
@@ -2703,7 +2703,7 @@
     "missCount": 0,
     "score": 7.002739998099919,
     "status": "scout",
-    "rank": 106
+    "rank": 107
   },
   "0x698f8414171f4438ab2db94c6ba8508a2a9fcb82_bsc": {
     "chain": "bsc",
@@ -2909,7 +2909,7 @@
     "missCount": 0,
     "score": 8.808924402084026,
     "status": "scout",
-    "rank": 90,
+    "rank": 91,
     "_staleDemoted": true
   },
   "0xe6b0f1cd32b53f9d5dc06eb547a35211fd1b635a_bsc": {
@@ -3063,7 +3063,7 @@
     "missCount": 0,
     "score": 7.121552019268443,
     "status": "scout",
-    "rank": 105,
+    "rank": 106,
     "_staleDemoted": true
   },
   "H8hNbGFhefhvBwf6E1ScMHeVo6aKEhoXcTrMUR6xVQQR_solana": {
@@ -3105,7 +3105,7 @@
     "missCount": 0,
     "score": 9.025544143145067,
     "status": "hunter",
-    "rank": 89,
+    "rank": 90,
     "_staleDemoted": true
   },
   "De1WZZZ6Gp7i7ec3pAyL4xzKQQxfx9pRpLkDutn8wJnB_solana": {
@@ -3147,7 +3147,7 @@
     "missCount": 0,
     "score": 9.947877432089903,
     "status": "hunter",
-    "rank": 79
+    "rank": 80
   },
   "E9CAsaxaMiRDNS1X2Vb7FC3RdyGtoLZNWhVffADBTWQo_solana": {
     "chain": "solana",
@@ -3188,7 +3188,7 @@
     "missCount": 0,
     "score": 9.521418975873207,
     "status": "scout",
-    "rank": 84
+    "rank": 85
   },
   "F4YRDqkXKmSdUcwAoZGJBjcXVYDetXMAGaV8W7DYtsmX_solana": {
     "chain": "solana",
@@ -3229,7 +3229,7 @@
     "missCount": 0,
     "score": 11.477785073352866,
     "status": "scout",
-    "rank": 62,
+    "rank": 63,
     "_staleDemoted": true
   },
   "6kSdHG4CgGi6CwDFt9FYa4jwN5BegcJ479RzrThXLKEv_solana": {
@@ -3264,7 +3264,7 @@
     "missCount": 0,
     "score": 7.366009805526466,
     "status": "scout",
-    "rank": 102,
+    "rank": 103,
     "_staleDemoted": true
   },
   "0xe04723b83fc521a5bc5b707ca0f15e2108c448b3_bsc": {
@@ -3381,7 +3381,7 @@
     "missCount": 0,
     "score": 11.080718844735816,
     "status": "hunter",
-    "rank": 27
+    "rank": 26
   },
   "0xa63d8e8a4dd26544d56d4a015792c3df06e97f25_base": {
     "chain": "base",
@@ -3422,7 +3422,7 @@
     "missCount": 0,
     "score": 7.00940650056595,
     "status": "scout",
-    "rank": 49
+    "rank": 48
   },
   "0xbca1cf24a02950981d4a25d2ea532f2a131010ff_bsc": {
     "chain": "bsc",
@@ -3505,7 +3505,7 @@
     "missCount": 0,
     "score": 13.349689145376619,
     "status": "hunter",
-    "rank": 47
+    "rank": 48
   },
   "0x77542dddaa14ed5ae08a8b9fbddeb669bb91a4d2_bsc": {
     "chain": "bsc",
@@ -3616,7 +3616,7 @@
     "missCount": 0,
     "score": 16.459448987106814,
     "status": "hunter",
-    "rank": 33
+    "rank": 34
   },
   "Za7LfQJ6LCnBiNrdAAL7e75DPmExG6y3deLmYk6ozu4_solana": {
     "chain": "solana",
@@ -3657,7 +3657,7 @@
     "missCount": 0,
     "score": 10.39330952682767,
     "status": "scout",
-    "rank": 75,
+    "rank": 76,
     "_staleDemoted": true
   },
   "FfyLxGLJu6WnCMahP9AKEDkC3VFWRvcH8wUx42CQTGhB_solana": {
@@ -3699,7 +3699,7 @@
     "missCount": 0,
     "score": 10.354989832939426,
     "status": "scout",
-    "rank": 76,
+    "rank": 77,
     "_staleDemoted": true
   },
   "ED2AhgH5m9D5Zit7jKm9Ktcp8vKhmJHqt5t3wiuKJkYE_solana": {
@@ -3741,7 +3741,7 @@
     "missCount": 0,
     "score": 11.906307739072128,
     "status": "scout",
-    "rank": 58,
+    "rank": 59,
     "_staleDemoted": true
   },
   "0x23d5c48c73c51668f4eb3f33fb349f8d0cf4c748_bsc": {
@@ -4257,7 +4257,7 @@
     "missCount": 0,
     "score": 7.030908167105921,
     "status": "hunter",
-    "rank": 48,
+    "rank": 47,
     "_staleDemoted": true
   },
   "7VR6WfmAwGRdg1yzJgUxJHnTe87GvZM41yMdSjFHaYCJ_solana": {
@@ -4292,7 +4292,7 @@
     "missCount": 0,
     "score": 8.41211156915962,
     "status": "scout",
-    "rank": 95,
+    "rank": 96,
     "_staleDemoted": true
   },
   "3SK8DLRi7ZawwPmFYkQLyx5m9xLWNcb7dmmVZWq1LTdA_solana": {
@@ -4334,7 +4334,7 @@
     "missCount": 0,
     "score": 11.908119609741547,
     "status": "hunter",
-    "rank": 57,
+    "rank": 58,
     "_staleDemoted": true
   },
   "EHXRqrpttvDLXxsgvav5mHQ8RX7pcUZd2nCzystxmYGe_solana": {
@@ -4376,7 +4376,7 @@
     "missCount": 0,
     "score": 16.193873878898078,
     "status": "hunter",
-    "rank": 34
+    "rank": 35
   },
   "0x82f67478b063c5ba36e6ddcaf8bce4ebb7f21eaa_bsc": {
     "chain": "bsc",
@@ -4605,7 +4605,7 @@
     "missCount": 0,
     "score": 6.441365094033993,
     "status": "hunter",
-    "rank": 52,
+    "rank": 51,
     "_staleDemoted": true
   },
   "0x2948ebe47277da144a86f43f2b48981c8ff72a3e_bsc": {
@@ -4970,7 +4970,7 @@
     "missCount": 0,
     "score": 7.733268143844244,
     "status": "hunter",
-    "rank": 45,
+    "rank": 44,
     "_staleDemoted": true
   },
   "0xbc53811a4d05e5a18b521bc40a809611eb010b65_base": {
@@ -5005,7 +5005,7 @@
     "missCount": 0,
     "score": 7.241147072197531,
     "status": "hunter",
-    "rank": 47
+    "rank": 46
   },
   "0x39d925c69831b2f54425ab15716d98a492c9bfac_base": {
     "chain": "base",
@@ -5046,7 +5046,7 @@
     "missCount": 0,
     "score": 7.78599759354933,
     "status": "hunter",
-    "rank": 44
+    "rank": 43
   },
   "0x8603a26ee4528f3ca11be876510a220d79819f31_base": {
     "chain": "base",
@@ -5080,7 +5080,7 @@
     "missCount": 0,
     "score": 9.849135048808666,
     "status": "hunter",
-    "rank": 33,
+    "rank": 32,
     "_staleDemoted": true
   },
   "0x2f47ca870e6febbd7cd9b7fdbe1d76467709a085_bsc": {
@@ -5164,7 +5164,7 @@
     "missCount": 0,
     "score": 14.307529975589558,
     "status": "hunter",
-    "rank": 40
+    "rank": 41
   },
   "EyvfBbisDzyjejbL4PkF3dvddhtNZMiy1V4fX17Tbxzo_solana": {
     "chain": "solana",
@@ -5233,7 +5233,7 @@
     "missCount": 0,
     "score": 14.65672210037304,
     "status": "hunter",
-    "rank": 39
+    "rank": 40
   },
   "0xd72b6ddb390be19032af0495cf7f26c63c04dd29_bsc": {
     "chain": "bsc",
@@ -5541,7 +5541,7 @@
     "missCount": 0,
     "score": 7.902195680348897,
     "status": "hunter",
-    "rank": 43
+    "rank": 42
   },
   "0x3e7a3dbf8c99beba8afdea55317ef999a339a016_base": {
     "chain": "base",
@@ -5582,7 +5582,7 @@
     "missCount": 0,
     "score": 8.799434397190364,
     "status": "hunter",
-    "rank": 41
+    "rank": 40
   },
   "99xnE2zEFi8YhmKDaikc1EvH6ELTQJppnqUwMzmpLXrs_solana": {
     "chain": "solana",
@@ -5623,7 +5623,7 @@
     "missCount": 0,
     "score": 24.04224451113373,
     "status": "scout",
-    "rank": 12
+    "rank": 13
   },
   "G15bKHgJHv8Z4qg6Q5sy2uz9DXqG93sZoRPxALPCmdrq_solana": {
     "chain": "solana",
@@ -5664,7 +5664,7 @@
     "missCount": 0,
     "score": 9.889216355001322,
     "status": "hunter",
-    "rank": 82
+    "rank": 83
   },
   "0x64f3f1691101cd41b9908fc10a6c7a292d5defd3_bsc": {
     "chain": "bsc",
@@ -6033,7 +6033,7 @@
     "missCount": 0,
     "score": 8.210075528634375,
     "status": "hunter",
-    "rank": 42
+    "rank": 41
   },
   "AstaWuJuQiAS3AfqmM3xZxrJhkkZNXtW4VyaGQfqV6JL_solana": {
     "chain": "solana",
@@ -6074,7 +6074,7 @@
     "missCount": 0,
     "score": 12.188387918582759,
     "status": "hunter",
-    "rank": 54
+    "rank": 55
   },
   "0xca1a2fb7f3179d887504966b25d1606978adcd42_base": {
     "chain": "base",
@@ -6147,7 +6147,7 @@
     "lastSeen": 1774143024620,
     "score": 7.632077068664468,
     "status": "hunter",
-    "rank": 101
+    "rank": 102
   },
   "XG2JqMESPopRXCut5hJXt8KWmjgo4pYzGeNkLPu6A41_solana": {
     "chain": "solana",
@@ -6187,7 +6187,7 @@
     "lastSeen": 1774169631084,
     "score": 11.701066383945653,
     "status": "hunter",
-    "rank": 61
+    "rank": 62
   },
   "0x3dccf0cc9c6d8720ab1d9003cd6211f1f0a27147_bsc": {
     "chain": "bsc",
@@ -6267,7 +6267,7 @@
     "lastSeen": 1774248315261,
     "score": 9.07317517475222,
     "status": "scout",
-    "rank": 88
+    "rank": 89
   },
   "0xc751ef41f02ca9c87e5c7bbc8a4e1629bbd6df9a_bsc": {
     "chain": "bsc",
@@ -6331,10 +6331,10 @@
   "0x347ffc6db9acc54ac2019795173b9599e8b82bd9_base": {
     "chain": "base",
     "address": "0x347ffc6db9acc54ac2019795173b9599e8b82bd9",
-    "pnl": 1075.6752520821517,
-    "winRate": 64.71000000000001,
-    "tokens": 60,
-    "txCount": 162,
+    "pnl": 308.09903002013186,
+    "winRate": 66.67,
+    "tokens": 16,
+    "txCount": 42,
     "period": "7d",
     "topTokens": [
       {
@@ -6363,10 +6363,10 @@
     "lastActivity": 1774239195000,
     "verifiedTx": 15272,
     "addedAt": 1774262772951,
-    "lastSeen": 1774687279438,
-    "score": 11.636474535374548,
+    "lastSeen": 1775694203692,
+    "score": 6.7857936618018755,
     "status": "scout",
-    "rank": 23
+    "rank": 49
   },
   "0x537948624d4e8c4fa9cfcf8170906620d43b482c_base": {
     "chain": "base",
@@ -6406,7 +6406,7 @@
     "lastSeen": 1774850367091,
     "score": 9.023793682292393,
     "status": "scout",
-    "rank": 39
+    "rank": 38
   },
   "0x45e8ec806a08059b7e08de08f4b95ed356f83b6f_base": {
     "chain": "base",
@@ -6526,7 +6526,7 @@
     "lastSeen": 1774408727457,
     "score": 12.0863442730243,
     "status": "scout",
-    "rank": 55
+    "rank": 56
   },
   "AAMnoNo3TpezKcT7ah9puLFZ4D59muEhQHJJqpX16ccg_solana": {
     "chain": "solana",
@@ -6566,7 +6566,7 @@
     "lastSeen": 1774456139652,
     "score": 15.115701288715746,
     "status": "scout",
-    "rank": 38
+    "rank": 39
   },
   "7VBTpiiEjkwRbRGHJFUz6o5fWuhPFtAmy8JGhNqwHNnn_solana": {
     "chain": "solana",
@@ -6606,7 +6606,7 @@
     "lastSeen": 1774470524031,
     "score": 11.722923645639895,
     "status": "scout",
-    "rank": 60
+    "rank": 61
   },
   "iEcvb6FLkKmrSdT7n2UHv5jCencTqVbvwBFtEuh7mGM_solana": {
     "chain": "solana",
@@ -6646,7 +6646,7 @@
     "lastSeen": 1774396238580,
     "score": 12.707554245621788,
     "status": "scout",
-    "rank": 49
+    "rank": 50
   },
   "14KbXMEiDZ6jW4Q5fYyHkMn8HhAuF6rjdXQXrbaD9nZe_solana": {
     "chain": "solana",
@@ -6686,7 +6686,7 @@
     "lastSeen": 1774412884332,
     "score": 8.423421824823148,
     "status": "scout",
-    "rank": 94
+    "rank": 95
   },
   "0xdc291700d29da81a005abaf2e3c23ac6a9c4c3fa_base": {
     "chain": "base",
@@ -6752,7 +6752,7 @@
     "lastSeen": 1774412884332,
     "score": 14.000324370241204,
     "status": "scout",
-    "rank": 43
+    "rank": 45
   },
   "Gmgjj8Q7jCfSDLR5hLA9ZsHDprXEUz9wzfrrbAvnWcGh_solana": {
     "chain": "solana",
@@ -6785,7 +6785,7 @@
     "lastSeen": 1774874000105,
     "score": 10.315929703065187,
     "status": "scout",
-    "rank": 77
+    "rank": 78
   },
   "3kebnKw7cPdSkLRfiMEALyZJGZ4wdiSRvmoN4rD1yPzV_solana": {
     "chain": "solana",
@@ -6858,7 +6858,7 @@
     "lastSeen": 1774730524796,
     "score": 26.29935082609629,
     "status": "hunter",
-    "rank": 7
+    "rank": 8
   },
   "75qsE3p5y2BFSLnfS9MUMqSAwq6MW5FhTavrUPMTFkKz_solana": {
     "chain": "solana",
@@ -6898,7 +6898,7 @@
     "lastSeen": 1774498298345,
     "score": 27.95510580081787,
     "status": "hunter",
-    "rank": 6
+    "rank": 5
   },
   "3ffJULrc1VqrkKxf6BKwNmEhowmvGGX9TdLzi4euAXNf_solana": {
     "chain": "solana",
@@ -6971,7 +6971,7 @@
     "lastSeen": 1775330941259,
     "score": 19.020305431979356,
     "status": "scout",
-    "rank": 22
+    "rank": 23
   },
   "0x4bf526c312809a033f0b8fd0f4b121ff82ee514c_base": {
     "chain": "base",
@@ -7030,7 +7030,7 @@
     "lastSeen": 1774604118849,
     "score": 6.025382384550375,
     "status": "scout",
-    "rank": 54
+    "rank": 53
   },
   "666MXR2Ze4aDAKL15ydMTVfgu6PUMvBquVuguATGH999_solana": {
     "chain": "solana",
@@ -7070,7 +7070,7 @@
     "lastSeen": 1775287723937,
     "score": 18.003764265357994,
     "status": "hunter",
-    "rank": 28
+    "rank": 29
   },
   "0x819fb9eb4448ad85c30873de50d1aec529071285_base": {
     "chain": "base",
@@ -7110,7 +7110,7 @@
     "lastSeen": 1774687279438,
     "score": 8.887362273849368,
     "status": "scout",
-    "rank": 40
+    "rank": 39
   },
   "Cvjp5LVq63gcgTfRENobvvLDZwEHh9SnbwJMrRXQiyYd_solana": {
     "chain": "solana",
@@ -7150,15 +7150,15 @@
     "lastSeen": 1774674258726,
     "score": 10.263471260735173,
     "status": "scout",
-    "rank": 78
+    "rank": 79
   },
   "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9_solana": {
     "chain": "solana",
     "address": "4vw54BmAogeRV3vPKWyFet5yf8DTLcREzdSzx4rw9Ud9",
-    "pnl": 27653.803638451063,
-    "winRate": 60.64000000000001,
-    "tokens": 693,
-    "txCount": 3723,
+    "pnl": 24139.152724907115,
+    "winRate": 60.85,
+    "tokens": 614,
+    "txCount": 3213,
     "period": "7d",
     "topTokens": [
       {
@@ -7187,10 +7187,10 @@
     "lastActivity": 1774666133000,
     "verifiedBal": 178.228603732,
     "addedAt": 1774667188617,
-    "lastSeen": 1775679817065,
-    "score": 25.42328843888909,
+    "lastSeen": 1775694203692,
+    "score": 24.707316939300757,
     "status": "scout",
-    "rank": 9
+    "rank": 11
   },
   "BZhm3hnU5qTKAzcQYhR2Kzjebv5z2YVa2gsAELPZ8yfV_solana": {
     "chain": "solana",
@@ -7230,7 +7230,7 @@
     "lastSeen": 1774819517840,
     "score": 11.340941233286276,
     "status": "hunter",
-    "rank": 63
+    "rank": 64
   },
   "8jC3YvmpAfeH4yL5GZXgt2ECXGFnAFKkspZX9PkUppkh_solana": {
     "chain": "solana",
@@ -7270,7 +7270,7 @@
     "lastSeen": 1774730524796,
     "score": 9.180432672298425,
     "status": "hunter",
-    "rank": 87
+    "rank": 88
   },
   "4zb5WFzzAP6UZUva5iXPEz1JbKTU4Z6TC3sNEzLbpv98_solana": {
     "chain": "solana",
@@ -7310,7 +7310,7 @@
     "lastSeen": 1775402918242,
     "score": 15.186913203921245,
     "status": "hunter",
-    "rank": 37
+    "rank": 38
   },
   "0x11960d12811a406dd18a4fc3896b9821113e58dc_base": {
     "chain": "base",
@@ -7318,7 +7318,7 @@
     "pnl": 718.1506372418919,
     "winRate": 100,
     "tokens": 1,
-    "txCount": 2,
+    "txCount": 1,
     "period": "30d",
     "topTokens": [
       {
@@ -7333,7 +7333,7 @@
     "lastActivity": 1773197695000,
     "verifiedTx": 107,
     "addedAt": 1774667188617,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "score": 2.8568198696189486,
     "status": "hunter",
     "rank": 63
@@ -7376,7 +7376,7 @@
     "lastSeen": 1774730524796,
     "score": 12.29995137439586,
     "status": "hunter",
-    "rank": 52
+    "rank": 53
   },
   "6xWwezRSnNw7ox1gRhnejKNnewjYSU8PhPkH5b2bVR2u_solana": {
     "chain": "solana",
@@ -7416,7 +7416,7 @@
     "lastSeen": 1775431740530,
     "score": 8.584490212341159,
     "status": "scout",
-    "rank": 92
+    "rank": 93
   },
   "0x725a62fc1896a3898efa889f029d3ce00969eafc_base": {
     "chain": "base",
@@ -7529,15 +7529,15 @@
     "lastSeen": 1774770966854,
     "score": 5.743054500085191,
     "status": "scout",
-    "rank": 55
+    "rank": 54
   },
   "8MaVa9kdt3NW4Q5HyNAm1X5LbR8PQRVDc1W8NMVK88D5_solana": {
     "chain": "solana",
     "address": "8MaVa9kdt3NW4Q5HyNAm1X5LbR8PQRVDc1W8NMVK88D5",
-    "pnl": 14092.185377495953,
-    "winRate": 65.7,
-    "tokens": 765,
-    "txCount": 2445,
+    "pnl": 14347.459264673029,
+    "winRate": 64.68,
+    "tokens": 796,
+    "txCount": 2536,
     "period": "7d",
     "topTokens": [
       {
@@ -7566,10 +7566,10 @@
     "lastActivity": 1774715928000,
     "verifiedBal": 64.03472002,
     "addedAt": 1774716117980,
-    "lastSeen": 1775679817065,
-    "score": 26.117385287285817,
+    "lastSeen": 1775694203692,
+    "score": 25.91410745173246,
     "status": "scout",
-    "rank": 8
+    "rank": 9
   },
   "4GT6acGmU6L5Xjai2JTKnBLnwcK9NXtCk3tkQPj3soTo_solana": {
     "chain": "solana",
@@ -7609,7 +7609,7 @@
     "lastSeen": 1774730524796,
     "score": 11.871612334213461,
     "status": "scout",
-    "rank": 59
+    "rank": 60
   },
   "0x9c9fa9e7dc453a36258c63359059e0901a70a937_base": {
     "chain": "base",
@@ -7769,7 +7769,7 @@
     "lastSeen": 1775431740530,
     "score": 15.787222967606626,
     "status": "scout",
-    "rank": 36
+    "rank": 37
   },
   "0x37156ef4af2d101fc661771311c4262019fd9142_base": {
     "chain": "base",
@@ -7849,7 +7849,7 @@
     "lastSeen": 1774890157687,
     "score": 9.94261985124094,
     "status": "hunter",
-    "rank": 80
+    "rank": 81
   },
   "D1PUhuRpa3yKT9GqXpXE82PZqMQghzvTq738UwznADZR_solana": {
     "chain": "solana",
@@ -7929,7 +7929,7 @@
     "lastSeen": 1774942073634,
     "score": 19.664145432414596,
     "status": "scout",
-    "rank": 19
+    "rank": 20
   },
   "0xe7ac8fdfe061efdf6bdc4429151d6723c587d0cb_base": {
     "chain": "base",
@@ -8049,7 +8049,7 @@
     "lastSeen": 1774942073634,
     "score": 11.482502399791512,
     "status": "hunter",
-    "rank": 25
+    "rank": 24
   },
   "0xe6eba751cc7ec98dacf380dd48a7034f31e841f3_base": {
     "chain": "base",
@@ -8089,7 +8089,7 @@
     "lastSeen": 1775028504468,
     "score": 9.459067080397205,
     "status": "hunter",
-    "rank": 36
+    "rank": 35
   },
   "2ssgEJ3g9WCCSXZQfCBoVD3vYGYKSXUtDKoVSgd6Z5bg_solana": {
     "chain": "solana",
@@ -8115,7 +8115,7 @@
     "lastSeen": 1775114902427,
     "score": 13.576820551511531,
     "status": "hunter",
-    "rank": 44
+    "rank": 46
   },
   "2AYpn6si7uLDe7zfc8Bzf7GKBzyJYc1p8jGX57ED1w6o_solana": {
     "chain": "solana",
@@ -8152,10 +8152,10 @@
     "lastActivity": 1774878676000,
     "verifiedBal": 0.656267159,
     "addedAt": 1775014102601,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "score": 9.937537511098684,
     "status": "scout",
-    "rank": 81
+    "rank": 82
   },
   "0xf4efc353b73df5c4a12775f9e1bc218bdf97ad89_base": {
     "chain": "base",
@@ -8188,7 +8188,7 @@
     "lastSeen": 1775086103187,
     "score": 6.4662820829716114,
     "status": "scout",
-    "rank": 51
+    "rank": 50
   },
   "0x92e9b91aa2171694d740e7066f787739ca1af9de_base": {
     "chain": "base",
@@ -8254,7 +8254,7 @@
     "lastSeen": 1775114902427,
     "score": 11.122357655129923,
     "status": "scout",
-    "rank": 26
+    "rank": 25
   },
   "0x4e20d0cf1cbc84e3886a9aa60c3f041f1081c0f7_base": {
     "chain": "base",
@@ -8454,7 +8454,7 @@
     "lastSeen": 1775201303795,
     "score": 10.474084165491261,
     "status": "hunter",
-    "rank": 31
+    "rank": 30
   },
   "BCrTEXmWutwPz8qv6w1S5gDbaLnSLpXKM5kSGVWyyfxu_solana": {
     "chain": "solana",
@@ -8494,7 +8494,7 @@
     "lastSeen": 1775417312607,
     "score": 13.454083888189857,
     "status": "scout",
-    "rank": 46
+    "rank": 47
   },
   "4uCT4g7YHH4xxfmfNfKUDenwGrRNGoZ9Ay1XFxfUGhQG_solana": {
     "chain": "solana",
@@ -8534,7 +8534,7 @@
     "lastSeen": 1775679817065,
     "score": 28.589808373857707,
     "status": "scout",
-    "rank": 5
+    "rank": 4
   },
   "J9TYAsWWidbrcZybmLSfrLzryANf4CgJBLdvwdGuC8MB_solana": {
     "chain": "solana",
@@ -8574,7 +8574,7 @@
     "lastSeen": 1775679817065,
     "score": 18.35282657078152,
     "status": "scout",
-    "rank": 26
+    "rank": 27
   },
   "0xae93c6b3a6a9b5c1fff30d1213c9804473d63d4b_base": {
     "chain": "base",
@@ -8619,10 +8619,10 @@
   "0xba5e54ed98d041b1f152274e37da68f7441edfb6_base": {
     "chain": "base",
     "address": "0xba5e54ed98d041b1f152274e37da68f7441edfb6",
-    "pnl": 1359.3815238601094,
-    "winRate": 80,
-    "tokens": 5,
-    "txCount": 15,
+    "pnl": 1461.8107931799598,
+    "winRate": 75,
+    "tokens": 4,
+    "txCount": 10,
     "period": "7d",
     "topTokens": [
       {
@@ -8644,10 +8644,10 @@
     "lastActivity": 1775179373000,
     "verifiedTx": 4164,
     "addedAt": 1775215718906,
-    "lastSeen": 1775679817065,
-    "score": 6.480316371063811,
+    "lastSeen": 1775694203692,
+    "score": 5.512004478886606,
     "status": "hunter",
-    "rank": 50
+    "rank": 55
   },
   "0x1610bb7929fab4b9da1e2b628e8c1ee5d80391b3_base": {
     "chain": "base",
@@ -8687,15 +8687,15 @@
     "lastSeen": 1775287723937,
     "score": 14.628551197191031,
     "status": "scout",
-    "rank": 3
+    "rank": 4
   },
   "Bi4rd5FH5bYEN8scZ7wevxNZyNmKHdaBcvewdPFxYdLt_solana": {
     "chain": "solana",
     "address": "Bi4rd5FH5bYEN8scZ7wevxNZyNmKHdaBcvewdPFxYdLt",
-    "pnl": 83244.2960476166,
-    "winRate": 60.96,
-    "tokens": 813,
-    "txCount": 4345,
+    "pnl": 69958.99128990444,
+    "winRate": 60.14000000000001,
+    "tokens": 716,
+    "txCount": 3912,
     "period": "7d",
     "topTokens": [
       {
@@ -8724,10 +8724,10 @@
     "lastActivity": 1775273208000,
     "verifiedBal": 1483.006076411,
     "addedAt": 1775273319316,
-    "lastSeen": 1775665439783,
-    "score": 29.001349388315493,
+    "lastSeen": 1775694203692,
+    "score": 27.638791019123467,
     "status": "scout",
-    "rank": 4
+    "rank": 6
   },
   "0x37d11c206956b489f34dc2515cd2005657fa75fd_base": {
     "chain": "base",
@@ -8772,10 +8772,10 @@
   "0x764b8899e3083f138e8c5beb4d925c9b5d9c11fc_base": {
     "chain": "base",
     "address": "0x764b8899e3083f138e8c5beb4d925c9b5d9c11fc",
-    "pnl": 4326.336339315167,
-    "winRate": 64.71000000000001,
-    "tokens": 23,
-    "txCount": 38,
+    "pnl": 4428.387872073154,
+    "winRate": 66.67,
+    "tokens": 22,
+    "txCount": 36,
     "period": "7d",
     "topTokens": [
       {
@@ -8804,10 +8804,10 @@
     "lastActivity": 1775259443000,
     "verifiedTx": 1402,
     "addedAt": 1775302103559,
-    "lastSeen": 1775679817065,
-    "score": 10.788409353763088,
+    "lastSeen": 1775694203692,
+    "score": 10.996857612181735,
     "status": "scout",
-    "rank": 30
+    "rank": 27
   },
   "0x10f7ba31ddff342ca6f818acf879d0cc13a96ce1_base": {
     "chain": "base",
@@ -8870,7 +8870,7 @@
     "lastActivity": 1775264669000,
     "verifiedTx": 1553,
     "addedAt": 1775302103559,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "score": 2.1503279195534657,
     "status": "hunter",
     "rank": 66
@@ -8906,7 +8906,7 @@
     "lastSeen": 1775606677202,
     "score": 5.16010286545559,
     "status": "scout",
-    "rank": 109
+    "rank": 110
   },
   "BxpFcT9fkZwKHuvXPKcfxo6k5v28VJdzozXD2scAgsn_solana": {
     "chain": "solana",
@@ -8946,7 +8946,7 @@
     "lastSeen": 1775431740530,
     "score": 18.422518223599283,
     "status": "scout",
-    "rank": 24
+    "rank": 25
   },
   "TyGoi1ZcfupVVz7XjTPNSf7SPtcWfE72TxmEbdEdcQB_solana": {
     "chain": "solana",
@@ -8972,7 +8972,7 @@
     "lastSeen": 1775374108802,
     "score": 6.803256289829088,
     "status": "scout",
-    "rank": 108
+    "rank": 109
   },
   "6XQP48HtA1YntvXEQ4YBkU5GbdXprrVXyEgQRjuAV6dW_solana": {
     "chain": "solana",
@@ -9012,7 +9012,7 @@
     "lastSeen": 1775330941259,
     "score": 7.760958895431296,
     "status": "scout",
-    "rank": 100
+    "rank": 101
   },
   "ABLeQAfxdS3bdzpgo2teT6iKLoX6eNhYHoqEekwvYbFi_solana": {
     "chain": "solana",
@@ -9085,15 +9085,15 @@
     "lastSeen": 1775546679658,
     "score": 8.571567613159386,
     "status": "hunter",
-    "rank": 93
+    "rank": 94
   },
   "7MfYnZtkHxNd1V65PocD8eTNe1rKqCPoruYB1QbpWzk9_solana": {
     "chain": "solana",
     "address": "7MfYnZtkHxNd1V65PocD8eTNe1rKqCPoruYB1QbpWzk9",
-    "pnl": 12904.043206957796,
-    "winRate": 70,
-    "tokens": 14,
-    "txCount": 65,
+    "pnl": 12860.535947033037,
+    "winRate": 66.67,
+    "tokens": 13,
+    "txCount": 59,
     "period": "30d",
     "topTokens": [
       {
@@ -9115,10 +9115,10 @@
     "lastActivity": 1775153054000,
     "verifiedBal": 100.625098542,
     "addedAt": 1775359712604,
-    "lastSeen": 1775679817065,
-    "score": 11.242201240569951,
-    "status": "hunter",
-    "rank": 65
+    "lastSeen": 1775694203692,
+    "score": 10.430879054475675,
+    "status": "scout",
+    "rank": 75
   },
   "aPjaQ8w1zkess91QaS9NKXTtjZMgWkzPMQMYNKvDb1X_solana": {
     "chain": "solana",
@@ -9158,7 +9158,7 @@
     "lastSeen": 1775431740530,
     "score": 9.287341733878911,
     "status": "scout",
-    "rank": 86
+    "rank": 87
   },
   "0x887888e78b608037ff291cc3ea4e971aa8b13a39_base": {
     "chain": "base",
@@ -9238,7 +9238,7 @@
     "lastSeen": 1775460279662,
     "score": 8.405421158218164,
     "status": "hunter",
-    "rank": 96
+    "rank": 97
   },
   "6EReqUeEjQjbEeLbwe8JFBmDCiF8ADjkRAvAx2GGaUqM_solana": {
     "chain": "solana",
@@ -9278,7 +9278,7 @@
     "lastSeen": 1775460279662,
     "score": 11.293698995161096,
     "status": "hunter",
-    "rank": 64
+    "rank": 65
   },
   "9A83CVdsY54CyAq4HtHMYckiVWi8KCBP8H1Yi354cq4B_solana": {
     "chain": "solana",
@@ -9304,7 +9304,7 @@
     "lastSeen": 1775503481878,
     "score": 3.601029202202482,
     "status": "hunter",
-    "rank": 110
+    "rank": 111
   },
   "0x24e8ab0e2f9c2b3290bdee0bc0e6c7c5d64f19fe_base": {
     "chain": "base",
@@ -9384,7 +9384,7 @@
     "lastSeen": 1775532283529,
     "score": 12.73971793451267,
     "status": "hunter",
-    "rank": 48
+    "rank": 49
   },
   "Ew6qBU7N34gRNgpgUwhJ3PgrtbPYpLYWLBEG5yuQTceD_solana": {
     "chain": "solana",
@@ -9410,7 +9410,7 @@
     "lastSeen": 1775606677202,
     "score": 6.91969582358588,
     "status": "scout",
-    "rank": 107
+    "rank": 108
   },
   "HQBqrLfMC1kczADVw4GhZtdzuJRRNNL7yie7KRgMiZur_solana": {
     "chain": "solana",
@@ -9418,7 +9418,7 @@
     "pnl": 12468.326838916963,
     "winRate": 60,
     "tokens": 9,
-    "txCount": 57,
+    "txCount": 49,
     "period": "30d",
     "topTokens": [
       {
@@ -9440,10 +9440,10 @@
     "lastActivity": 1775277918000,
     "verifiedBal": 0.952341606,
     "addedAt": 1775517899426,
-    "lastSeen": 1775679817065,
+    "lastSeen": 1775694203692,
     "score": 8.16365757744593,
     "status": "scout",
-    "rank": 97
+    "rank": 98
   },
   "8HcYptCBAaPFWkmupiSAmysZ6Z8jB7N1c4YhVjhX7zbg_solana": {
     "chain": "solana",
@@ -9483,7 +9483,7 @@
     "lastSeen": 1775532283529,
     "score": 14.00100940268805,
     "status": "scout",
-    "rank": 42
+    "rank": 44
   },
   "6AvRwxV1c7KsG4FyVeDN2ZuWX1BkyURpxXxUtghTwAk2_solana": {
     "chain": "solana",
@@ -9516,7 +9516,7 @@
     "lastSeen": 1775592274520,
     "score": 7.800026390943163,
     "status": "scout",
-    "rank": 99
+    "rank": 100
   },
   "4QrrNBid5WzAcXtqddHgW1XHtKo8aiQWyjABYK2dSjg7_solana": {
     "chain": "solana",
@@ -9596,7 +9596,7 @@
     "lastSeen": 1775621066605,
     "score": 18.360818817207676,
     "status": "hunter",
-    "rank": 25
+    "rank": 26
   },
   "D1ZyzuVMhADbxuXpKYfMTULw3yRRJzB9yrQnXJtqAUjq_solana": {
     "chain": "solana",
@@ -9636,7 +9636,7 @@
     "lastSeen": 1775571757449,
     "score": 7.171762793171161,
     "status": "scout",
-    "rank": 104
+    "rank": 105
   },
   "0x40d4cce2970f6c3f49342f068875e2c7efacd10e_base": {
     "chain": "base",
@@ -9716,7 +9716,7 @@
     "lastSeen": 1775665439783,
     "score": 16.692747570834133,
     "status": "scout",
-    "rank": 32
+    "rank": 33
   },
   "3uD6P4FG92ovz8q3SQMufHK3gVM2zkQtJx6UbHhdj3a3_solana": {
     "chain": "solana",
@@ -9756,7 +9756,7 @@
     "lastSeen": 1775577824700,
     "score": 16.995032195025185,
     "status": "hunter",
-    "rank": 31
+    "rank": 32
   },
   "EwTNPYTuwxMzrvL19nzBsSLXdAoEmVBKkisN87csKgtt_solana": {
     "chain": "solana",
@@ -9796,7 +9796,7 @@
     "lastSeen": 1775665439783,
     "score": 12.414021375459772,
     "status": "scout",
-    "rank": 51
+    "rank": 52
   },
   "0xc06deba7f1e12d0d94aedb01a5a41e90637201a4_base": {
     "chain": "base",
@@ -9862,7 +9862,7 @@
     "lastSeen": 1775636611554,
     "score": 20.836681364589392,
     "status": "scout",
-    "rank": 17
+    "rank": 18
   },
   "EscgZKpEY3BomCMDks2vBLqbZPnZLXMetUKyokUCDQsu_solana": {
     "chain": "solana",
@@ -9902,15 +9902,15 @@
     "lastSeen": 1775651034879,
     "score": 9.805045385624,
     "status": "hunter",
-    "rank": 83
+    "rank": 84
   },
   "0xaa02260ba81060e52b4a7cef311342d32e9ae873_base": {
     "chain": "base",
     "address": "0xaa02260ba81060e52b4a7cef311342d32e9ae873",
-    "pnl": 11149.051222906042,
-    "winRate": 68.75,
-    "tokens": 37,
-    "txCount": 68,
+    "pnl": 9112.365830940167,
+    "winRate": 70.97,
+    "tokens": 36,
+    "txCount": 62,
     "period": "7d",
     "topTokens": [
       {
@@ -9939,18 +9939,18 @@
     "lastActivity": 1775632117000,
     "verifiedTx": 4048,
     "addedAt": 1775651034879,
-    "lastSeen": 1775679817065,
-    "score": 14.602373225926076,
-    "status": "scout",
-    "rank": 4
+    "lastSeen": 1775694203692,
+    "score": 14.63952274337384,
+    "status": "hunter",
+    "rank": 3
   },
   "0x62791eb6a6765dfee7cb776469f17de070a13adb_base": {
     "chain": "base",
     "address": "0x62791eb6a6765dfee7cb776469f17de070a13adb",
-    "pnl": 3298.374846177731,
+    "pnl": 3146.7789874664895,
     "winRate": 83.33,
-    "tokens": 10,
-    "txCount": 18,
+    "tokens": 9,
+    "txCount": 16,
     "period": "7d",
     "topTokens": [
       {
@@ -9979,18 +9979,18 @@
     "lastActivity": 1775545453000,
     "verifiedTx": 1224,
     "addedAt": 1775651034879,
-    "lastSeen": 1775679817065,
-    "score": 10.142739048789366,
+    "lastSeen": 1775694203692,
+    "score": 9.683044774590272,
     "status": "hunter",
-    "rank": 32
+    "rank": 33
   },
   "0x48260a95ec90269512e76171f47df467660c9ee0_base": {
     "chain": "base",
     "address": "0x48260a95ec90269512e76171f47df467660c9ee0",
-    "pnl": 8648.521905239939,
-    "winRate": 70,
-    "tokens": 10,
-    "txCount": 31,
+    "pnl": 8812.12505627161,
+    "winRate": 77.78,
+    "tokens": 9,
+    "txCount": 26,
     "period": "7d",
     "topTokens": [
       {
@@ -10019,10 +10019,10 @@
     "lastActivity": 1775606263000,
     "verifiedTx": 3052,
     "addedAt": 1775651034879,
-    "lastSeen": 1775679817065,
-    "score": 9.533828474121075,
+    "lastSeen": 1775694203692,
+    "score": 10.19340964640922,
     "status": "hunter",
-    "rank": 35
+    "rank": 31
   },
   "JD2e4rqCJ5qQz42BbtZZoZANtMSqHarkAoF6DZAiTVTK_solana": {
     "chain": "solana",
@@ -10062,6 +10062,46 @@
     "lastSeen": 1775665439783,
     "score": 7.963772608793747,
     "status": "scout",
-    "rank": 98
+    "rank": 99
+  },
+  "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3_solana": {
+    "chain": "solana",
+    "address": "6EDaVsS6enYgJ81tmhEkiKFcb4HuzPUVFZeom6PHUqN3",
+    "pnl": 40417.73438739677,
+    "winRate": 64.1,
+    "tokens": 528,
+    "txCount": 1583,
+    "period": "30d",
+    "topTokens": [
+      {
+        "tokenAddress": "6MxLhwC7u7bq6v7CXURPmT5Fc4ZdZUAMyWnZpdgSpump",
+        "tokenSymbol": "7DOGE",
+        "tokenUrl": "/images/web3-data/public/token/logos/0CA03A3E128FD4F58D1CFD339DA243D0.jpg",
+        "realizedPnl": "3249.127834457666917915",
+        "profitRate": "7.892885504241887869"
+      },
+      {
+        "tokenAddress": "7Hge4Kcurq2418tmncLjiodNp58CNAkFPp5uWMYypump",
+        "tokenSymbol": "ARTEMIS II",
+        "tokenUrl": "/images/web3-data/public/token/logos/ECCF599D237719ACDB6C2F83310BFDE2.jpg",
+        "realizedPnl": "2031.103186491962868523",
+        "profitRate": "6.708446173673491622"
+      },
+      {
+        "tokenAddress": "HeC2xWqGT9gPfdvaMuqxPo2bUQ1XgY5wRtnrwTEHpump",
+        "tokenSymbol": "BELIEVE",
+        "tokenUrl": "/images/web3-data/public/token/logos/29AC0BBF0BB30CE08D12FE067D04C8C5.jpg",
+        "realizedPnl": "1970.707114026184179981",
+        "profitRate": "5.724486699053320304"
+      }
+    ],
+    "balance": 105.765321385,
+    "lastActivity": 1775659398000,
+    "verifiedBal": 105.765321385,
+    "addedAt": 1775694203692,
+    "lastSeen": 1775694203692,
+    "score": 26.7145240645093,
+    "status": "scout",
+    "rank": 7
   }
 }
